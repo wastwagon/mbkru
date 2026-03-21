@@ -2,52 +2,62 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArticleBody } from "@/components/news/ArticleBody";
+
+import { MarkdownBody } from "@/components/news/MarkdownBody";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { images, newsPlaceholders } from "@/lib/placeholders";
-import { formatPostDate, getPostBySlug, getPostSlugs } from "@/lib/sanity/posts";
-import { urlForImage } from "@/lib/sanity/image";
+import {
+  formatPostDate,
+  getPublishedPostBySlug,
+  postHeroImage,
+} from "@/lib/content/posts-db";
+import { prisma } from "@/lib/db/prisma";
+import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { newsPlaceholders } from "@/lib/placeholders";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  const slugs = await getPostSlugs();
-  return slugs.map((slug) => ({ slug }));
+  if (!isDatabaseConfigured()) return [];
+  try {
+    const rows = await prisma.post.findMany({
+      where: { publishedAt: { not: null } },
+      select: { slug: true },
+    });
+    return rows.map((r) => ({ slug: r.slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const cms = await getPostBySlug(slug);
+  const cms = await getPublishedPostBySlug(slug);
   if (cms) {
-    return {
-      title: cms.title,
-      description: cms.excerpt ?? undefined,
-    };
+    return { title: cms.title, description: cms.excerpt ?? undefined };
   }
   const article = newsPlaceholders.find((n) => n.slug === slug);
   if (!article) return { title: "Not Found" };
-  return {
-    title: article.title,
-    description: article.excerpt,
-  };
+  return { title: article.title, description: article.excerpt };
 }
 
 export default async function NewsArticlePage({ params }: Props) {
   const { slug } = await params;
 
-  const cms = await getPostBySlug(slug);
+  const cms = await getPublishedPostBySlug(slug);
   if (cms) {
-    const hero = urlForImage(cms.mainImage, 1600) ?? images.news;
-    const dateLabel = formatPostDate(cms.publishedAt, cms._createdAt);
-
+    const hero = postHeroImage(cms);
+    const dateLabel = formatPostDate(cms.publishedAt, cms.createdAt);
     return (
       <div>
         <PageHeader
           title={cms.title}
-          description={cms.excerpt ? `${dateLabel ? `${dateLabel} — ` : ""}${cms.excerpt}` : dateLabel || undefined}
+          description={
+            cms.excerpt
+              ? `${dateLabel ? `${dateLabel} — ` : ""}${cms.excerpt}`
+              : dateLabel || undefined
+          }
           breadcrumbCurrentLabel={cms.title}
         />
-
         <section className="section-spacing section-full bg-[var(--section-light)]">
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <div className="relative aspect-[21/9] overflow-hidden rounded-2xl">
@@ -64,14 +74,9 @@ export default async function NewsArticlePage({ params }: Props) {
               {dateLabel ? (
                 <span className="text-sm font-medium text-[var(--muted-foreground)]">{dateLabel}</span>
               ) : null}
-              <ArticleBody body={cms.body} />
-              {!cms.body || (Array.isArray(cms.body) && cms.body.length === 0) ? (
-                cms.excerpt ? (
-                  <div className="prose prose-slate max-w-none prose-p:text-[var(--muted-foreground)]">
-                    <p>{cms.excerpt}</p>
-                  </div>
-                ) : null
-              ) : null}
+              <div className="mt-6">
+                <MarkdownBody content={cms.body} />
+              </div>
             </div>
             <div className="mt-10">
               <Link
@@ -97,7 +102,6 @@ export default async function NewsArticlePage({ params }: Props) {
         description={`${article.date} — ${article.excerpt}`}
         breadcrumbCurrentLabel={article.title}
       />
-
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="relative aspect-[21/9] overflow-hidden rounded-2xl">
@@ -114,9 +118,7 @@ export default async function NewsArticlePage({ params }: Props) {
             <span className="text-sm font-medium text-[var(--muted-foreground)]">{article.date}</span>
             <div className="mt-6 prose prose-slate max-w-none prose-headings:font-display prose-headings:text-[var(--foreground)] prose-p:text-[var(--muted-foreground)]">
               <p>{article.excerpt}</p>
-              <p>
-                Full article content will appear when this story is published from Sanity CMS. This is a sample layout.
-              </p>
+              <p>Sample layout until live posts are published from the admin.</p>
             </div>
           </div>
           <div className="mt-10">

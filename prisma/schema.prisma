@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Single admin account for now (expand to AdminRole / many admins later).
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+/// Reusable images for posts (and future resources).
+model Media {
+  id          String   @id @default(cuid())
+  filename    String
+  storagePath String
+  mimeType    String
+  alt         String?
+  width       Int?
+  height      Int?
+  createdAt   DateTime @default(now())
+  posts       Post[]
+}
+
+model Post {
+  id              String    @id @default(cuid())
+  title           String
+  slug            String    @unique
+  excerpt         String?
+  body            String    @db.Text
+  publishedAt     DateTime?
+  featuredMediaId String?
+  featuredMedia   Media?    @relation(fields: [featuredMediaId], references: [id], onDelete: SetNull)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}

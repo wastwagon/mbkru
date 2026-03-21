@@ -17,4 +17,6 @@ services:
       - NODE_ENV=development
       - NEXT_PUBLIC_SITE_URL=http://localhost:1100
       - WATCHPACK_POLLING=true
+      # For admin + Prisma news locally, also set DATABASE_URL, ADMIN_*, ADMIN_SESSION_SECRET
+      # and run: npx prisma migrate dev && npx prisma db seed
     command: npm run dev

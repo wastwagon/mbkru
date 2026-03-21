@@ -31,13 +31,13 @@
 
 | Route | Status | Notes |
 |-------|--------|-------|
-| `/news/[slug]` | 404 | Returns notFound; no article template yet |
+| `/news/[slug]` | ✓ | Article template; content from Postgres when `DATABASE_URL` is set |
 
 ### Not in Nav/Footer
 
 | Route | Notes |
 |-------|-------|
-| `/studio/[[...index]]` | Sanity Studio (if used) |
+| `/admin/*` | Built-in admin (login, posts, media library) — not linked from public nav |
 
 ---
 
@@ -100,7 +100,7 @@
 
 ### Out of Scope (Phase 2+)
 
-- [ ] News article detail (`/news/[slug]`) — needs CMS or static data
+- [x] News article detail (`/news/[slug]`) — Prisma-backed when DB is configured
 - [ ] Resources document list/downloads
 - [ ] Partner logos grid
 - [ ] Ghana-specific imagery (use placeholders)

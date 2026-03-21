@@ -4,20 +4,20 @@
 
 **Engineering context:** See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for stack boundaries, Docker build-time env, and how Phase 2/3 extend the same codebase.
 
-**Completion & recovery:** See [`docs/PHASE1_STATUS.md`](docs/PHASE1_STATUS.md) for a verified checklist against this scope, recovery steps on a new machine, and honest notes on CMS wiring vs polish.
+**Completion & recovery:** See [`docs/PHASE1_STATUS.md`](docs/PHASE1_STATUS.md) for a verified checklist against this scope, recovery steps on a new machine, and honest notes on admin content vs polish.
 
 ## Phase 1 Deliverables (from Proposal)
 
 | # | Page/Feature | Type | Status |
 |---|--------------|------|--------|
 | 1 | Homepage | Static | ✓ |
-| 2 | About Us | Static + CMS (team) | ✓ |
+| 2 | About Us | Static (+ future admin-managed team if needed) | ✓ |
 | 3 | Citizens Voice | **Preview only** — teaser, early access form | ✓ |
 | 4 | Situational Alerts | **Preview only** — teaser, categories | ✓ |
 | 5 | Parliament & Ministers Tracker | **Preview only** — teaser, signup form | ✓ |
-| 6 | News & Updates / Blog | CMS-managed | ✓ |
-| 7 | Resources | CMS-managed | ✓ |
-| 8 | Partners & Supporters | Static + CMS (logos) | ✓ |
+| 6 | News & Updates / Blog | Admin-managed (Postgres) | ✓ |
+| 7 | Resources | Static / future admin | ✓ |
+| 8 | Partners & Supporters | Static (+ future admin for logos if needed) | ✓ |
 | 9 | Contact Us | Static + form | ✓ |
 | 10 | Privacy Policy & Terms | Static | ✓ |
 
