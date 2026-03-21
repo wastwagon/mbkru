@@ -2,6 +2,8 @@
 
 Civic Accountability & Citizens Engagement Platform for Ghana.
 
+**Source:** [github.com/wastwagon/mbkru](https://github.com/wastwagon/mbkru)
+
 ## Architecture & phases
 
 - **Full write-up:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — Phase 1 vs 2 vs 3 boundaries, Sanity vs Postgres, Docker build args, extension checklist.
