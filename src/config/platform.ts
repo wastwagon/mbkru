@@ -1,0 +1,51 @@
+/**
+ * Platform phase and feature flags for MBKRU delivery.
+ * Phase 1 = marketing + CMS + lead capture (no auth, no complaints DB).
+ * Phase 2+ = gated in code and via NEXT_PUBLIC_PLATFORM_PHASE at build time.
+ *
+ * @see docs/ARCHITECTURE.md
+ */
+
+export type PlatformPhase = 1 | 2 | 3;
+
+function parsePhase(raw: string | undefined): PlatformPhase {
+  const n = Number.parseInt(raw ?? "1", 10);
+  if (n === 2 || n === 3) return n;
+  return 1;
+}
+
+/** Server or build: optional override without exposing to client bundle. */
+export function getServerPlatformPhase(): PlatformPhase {
+  if (process.env.PLATFORM_PHASE !== undefined) {
+    return parsePhase(process.env.PLATFORM_PHASE);
+  }
+  return parsePhase(process.env.NEXT_PUBLIC_PLATFORM_PHASE);
+}
+
+/**
+ * Client-visible phase — must match build-time NEXT_PUBLIC_PLATFORM_PHASE.
+ * Use only in Client Components or after passing from a Server Component.
+ */
+export function getPublicPlatformPhase(): PlatformPhase {
+  return parsePhase(process.env.NEXT_PUBLIC_PLATFORM_PHASE);
+}
+
+/**
+ * Feature gates for Phase 2+ work. Keep conservative: default false until phase matches.
+ */
+export const platformFeatures = {
+  /** User accounts, sessions (Phase 2+) */
+  authentication: (phase: PlatformPhase) => phase >= 2,
+
+  /** MBKRU Voice — complaints, geo workflows (Phase 2+) */
+  citizensVoicePlatform: (phase: PlatformPhase) => phase >= 2,
+
+  /** Situational alerts submission / routing (Phase 2–3) */
+  situationalAlertsSystem: (phase: PlatformPhase) => phase >= 2,
+
+  /** MP / minister data pipelines, scorecards (Phase 2–3) */
+  parliamentTrackerData: (phase: PlatformPhase) => phase >= 2,
+
+  /** Heavy analytics / election scorecards (Phase 3) */
+  accountabilityScorecards: (phase: PlatformPhase) => phase >= 3,
+} as const;

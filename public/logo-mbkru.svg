@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 48" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="blue-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c4a6e"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e5b84d"/>
+      <stop offset="100%" stop-color="#d4a017"/>
+    </linearGradient>
+    <linearGradient id="teal-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#0d9488"/>
+    </linearGradient>
+    <linearGradient id="warm-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9a3412"/>
+      <stop offset="100%" stop-color="#c2410c"/>
+    </linearGradient>
+  </defs>
+  <!-- Four figures — pinwheel: body (rect) + arms (rect) + head (circle) -->
+  <g transform="translate(6, 6)">
+    <!-- Top: Teal -->
+    <rect x="7" y="2" width="2" height="6" rx="0.5" fill="url(#teal-grad)"/>
+    <rect x="5" y="0" width="6" height="2" rx="0.5" fill="url(#teal-grad)"/>
+    <circle cx="8" cy="0" r="1.2" fill="url(#teal-grad)"/>
+    <!-- Right: Blue -->
+    <g transform="rotate(90 8 8)">
+      <rect x="7" y="2" width="2" height="6" rx="0.5" fill="url(#blue-grad)"/>
+      <rect x="5" y="0" width="6" height="2" rx="0.5" fill="url(#blue-grad)"/>
+      <circle cx="8" cy="0" r="1.2" fill="url(#blue-grad)"/>
+    </g>
+    <!-- Bottom: Gold -->
+    <g transform="rotate(180 8 8)">
+      <rect x="7" y="2" width="2" height="6" rx="0.5" fill="url(#gold-grad)"/>
+      <rect x="5" y="0" width="6" height="2" rx="0.5" fill="url(#gold-grad)"/>
+      <circle cx="8" cy="0" r="1.2" fill="url(#gold-grad)"/>
+    </g>
+    <!-- Left: Warm -->
+    <g transform="rotate(-90 8 8)">
+      <rect x="7" y="2" width="2" height="6" rx="0.5" fill="url(#warm-grad)"/>
+      <rect x="5" y="0" width="6" height="2" rx="0.5" fill="url(#warm-grad)"/>
+      <circle cx="8" cy="0" r="1.2" fill="url(#warm-grad)"/>
+    </g>
+  </g>
+  <!-- Text: MBKRU -->
+  <text x="44" y="34" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" letter-spacing="0.03em" fill="#0c1222">MBKRU</text>
+</svg>

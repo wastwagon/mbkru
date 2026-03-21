@@ -1,26 +1,218 @@
 @import "tailwindcss";
 
 :root {
+  /* MBKRU Brand — Bright, appealing (teal-led, gold accents) */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1e3a4f;
+  --primary: #0d9488;
+  --primary-dark: #0f766e;
+  --primary-foreground: #ffffff;
+  --secondary: #14b8a6;
+  --accent: #0d9488;
+  --accent-gold: #d4a017;
+  --accent-gold-bright: #e5b02a;
+  --accent-gold-light: #fef3c7;
+  --accent-warm: #c2410c;
+  --muted: #f0fdfa;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --card: #ffffff;
+  --card-foreground: #1e3a4f;
+  --ring: #0d9488;
+  --radius: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow: 0 2px 8px rgb(0 0 0 / 0.06), 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-md: 0 4px 16px rgb(0 0 0 / 0.08), 0 2px 4px rgb(0 0 0 / 0.04);
+  --shadow-lg: 0 8px 32px rgb(0 0 0 / 0.1), 0 4px 8px rgb(0 0 0 / 0.06);
+  --shadow-xl: 0 16px 48px rgb(0 0 0 / 0.12), 0 8px 16px rgb(0 0 0 / 0.08);
+  --shadow-gold: 0 4px 24px rgb(212, 160, 23 / 0.2);
+  --shadow-teal: 0 4px 24px rgb(13, 148, 136 / 0.15);
+  --shadow-card: 0 4px 50px rgb(0 0 0 / 0.08);
+  --shadow-card-hover: 0 8px 40px rgb(0 0 0 / 0.12);
+  --shadow-dropdown: 0 20px 30px rgb(0 0 0 / 0.2);
+  --primary-on-dark: rgba(255, 255, 255, 0.95);
+  --primary-on-dark-muted: rgba(255, 255, 255, 0.8);
+  --footer-bg: #0f766e;
+  --section-light: #fafdfc;
+  --section-light-alt: #f0fdfa;
+  --section-light-tertiary: #ecfdfb;
+  --section-dark: #0f766e;
+  --section-light-cream: #fffbeb;
+  --topbar-bg: #1e293b;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-accent-gold: var(--accent-gold);
+  --color-accent-gold-bright: var(--accent-gold-bright);
+  --color-accent-gold-light: var(--accent-gold-light);
+  --color-accent-warm: var(--accent-warm);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary-on-dark: var(--primary-on-dark);
+  --color-primary-on-dark-muted: var(--primary-on-dark-muted);
+  --color-footer-bg: var(--footer-bg);
+  --color-section-light: var(--section-light);
+  --color-section-light-alt: var(--section-light-alt);
+  --color-section-light-tertiary: var(--section-light-tertiary);
+  --color-section-dark: var(--section-dark);
+  --color-section-light-cream: var(--section-light-cream);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --font-logo: var(--font-logo);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+}
+
+.font-logo {
+  font-family: var(--font-logo), var(--font-display), Georgia, serif;
+}
+
+/* Focus styles for accessibility (WCAG 2.1 AA) */
+*:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Premium layout utilities — mobile-first */
+.container-narrow {
+  width: 100%;
+  max-width: 72rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+@media (min-width: 640px) {
+  .container-narrow {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .container-narrow {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Full-width section — edge-to-edge background with padded content */
+.section-full {
+  width: 100%;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+@media (min-width: 640px) {
+  .section-full {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+@media (min-width: 1024px) {
+  .section-full {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+@media (min-width: 1280px) {
+  .section-full {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+}
+
+/* Section spacing — compact (was 4/5/7.5rem, now 2.5/3/3.5rem) */
+.section-spacing {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+@media (min-width: 640px) {
+  .section-spacing {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+}
+@media (min-width: 1024px) {
+  .section-spacing {
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+  }
+}
+
+/* Typography — refined scale */
+.text-display {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.text-eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Premium nav active indicator — pill with visible circular outline */
+.nav-active-pill {
+  position: relative;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(212, 160, 23, 0.15) 0%, rgba(245, 230, 200, 0.4) 50%, rgba(212, 160, 23, 0.08) 100%);
+  border: 1.5px solid rgba(180, 130, 20, 0.7);
+  box-shadow: 0 2px 12px rgba(212, 160, 23, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+.nav-active-pill::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -2px;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+  border-radius: 2px;
+}
+
+/* Nav pill over dark hero */
+.nav-active-pill-over-hero {
+  position: relative;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 20px rgba(212, 160, 23, 0.15);
+}
+.nav-active-pill-over-hero::before {
+  background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+}
+
+/* Hide scrollbar for carousel (keep functionality) */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }

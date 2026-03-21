@@ -1,0 +1,23 @@
+# MBKRU Advocates - Local Docker setup
+# Run: docker compose up -d
+
+services:
+  mbkru-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:1100}
+        NEXT_PUBLIC_SANITY_PROJECT_ID: ${NEXT_PUBLIC_SANITY_PROJECT_ID:-}
+        NEXT_PUBLIC_SANITY_DATASET: ${NEXT_PUBLIC_SANITY_DATASET:-production}
+        NEXT_PUBLIC_PLATFORM_PHASE: ${NEXT_PUBLIC_PLATFORM_PHASE:-1}
+    container_name: mbkru-website
+    ports:
+      - "1100:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL:-http://localhost:1100}
+      - NEXT_PUBLIC_SANITY_PROJECT_ID=${NEXT_PUBLIC_SANITY_PROJECT_ID:-}
+      - NEXT_PUBLIC_SANITY_DATASET=${NEXT_PUBLIC_SANITY_DATASET:-production}
+      - NEXT_PUBLIC_PLATFORM_PHASE=${NEXT_PUBLIC_PLATFORM_PHASE:-1}
+    restart: unless-stopped

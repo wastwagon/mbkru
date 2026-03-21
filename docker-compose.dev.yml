@@ -1,0 +1,20 @@
+# MBKRU Advocates - Development with Docker
+# Run: docker compose -f docker-compose.dev.yml up
+# Hot reload enabled - edit code and see changes
+
+services:
+  mbkru-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: mbkru-website-dev
+    ports:
+      - "1100:1100"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_SITE_URL=http://localhost:1100
+      - WATCHPACK_POLLING=true
+    command: npm run dev
