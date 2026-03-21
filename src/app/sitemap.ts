@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/situational-alerts",
     "/parliament-tracker",
     "/news",
+    "/diaspora",
     "/contact",
     "/privacy",
     "/terms",

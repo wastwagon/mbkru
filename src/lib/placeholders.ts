@@ -53,6 +53,13 @@ export const images = {
   /** Partners — collaboration, teamwork */
   partnership: img("1522071820081-009f0129c71c", 800),
 
+  /**
+   * Diaspora / “17th Region” — global ties, dialogue, Ghana & world
+   * (Unsplash — see file header)
+   */
+  diaspora: img("1573497019940-1c28c88b4f2e", 1920),
+  diasporaSummit: img("1540575467063-178a50c2df87", 1600),
+
   /** News — media, press */
   news: img("1504711434969-e33886168f5c", 1200),
 

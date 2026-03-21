@@ -13,6 +13,7 @@ const footerLinks = {
   organization: [
     { href: "/about", label: "About Us" },
     { href: "/news", label: "News & Updates" },
+    { href: "/diaspora", label: "Diaspora (17th Region)" },
     { href: "/resources", label: "Resources" },
     { href: "/faq", label: "FAQ" },
     { href: "/partners", label: "Partners & Supporters" },

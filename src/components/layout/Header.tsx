@@ -15,6 +15,7 @@ const navStructure: NavItem[] = [
   { href: "/situational-alerts", label: "Engagement" },
   { href: "/parliament-tracker", label: "Accountability" },
   { href: "/news", label: "News & Updates" },
+  { href: "/diaspora", label: "Diaspora" },
 ];
 
 export function Header() {

@@ -82,11 +82,12 @@ Copy `.env.example` to `.env.local` and fill in:
 | 4 | Situational Alerts (Preview) | `/situational-alerts` |
 | 5 | Parliament & Ministers Tracker (Preview) | `/parliament-tracker` |
 | 6 | News & Updates | `/news` |
-| 7 | Resources | `/resources` |
-| 8 | Partners & Supporters | `/partners` |
-| 9 | Contact Us | `/contact` |
-| 10 | Privacy Policy | `/privacy` |
-| 11 | Terms of Use | `/terms` |
+| 7 | Diaspora — 17th Region (context) | `/diaspora` |
+| 8 | Resources | `/resources` |
+| 9 | Partners & Supporters | `/partners` |
+| 10 | Contact Us | `/contact` |
+| 11 | Privacy Policy | `/privacy` |
+| 12 | Terms of Use | `/terms` |
 
 ## Integrations (To Configure)
 
