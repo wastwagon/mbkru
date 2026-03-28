@@ -10,7 +10,7 @@ Civic Accountability & Citizens Engagement Platform for Ghana.
 - **Phase 1 completion & recovery:** [`docs/PHASE1_STATUS.md`](docs/PHASE1_STATUS.md) — verified against scope, how to run/restore the project.
 - **Phase 1 product scope:** [`PHASE1_SCOPE.md`](PHASE1_SCOPE.md)
 - **Business roadmap (2028 election):** [`ROADMAP_2028_ELECTION.md`](ROADMAP_2028_ELECTION.md)
-- **Health check:** `GET /api/health` — use for Coolify/uptime (extend in Phase 2 for DB/Redis probes).
+- **Health check:** `GET /api/health` — probes Postgres (`SELECT 1`) and Redis (`PING`) when URLs are set; returns **503** only when Postgres is configured but unreachable (**unhealthy**). Redis failure yields **degraded** with HTTP 200 so optional Redis does not fail the container.
 
 ## Tech Stack
 
@@ -20,13 +20,13 @@ Civic Accountability & Citizens Engagement Platform for Ghana.
 - **Animations:** Framer Motion
 - **Content:** PostgreSQL + Prisma; built-in admin at `/admin` (posts + shared media library)
 - **Forms:** React Hook Form + Zod
-- **Deployment:** Vercel
+- **Deployment:** **Docker / Coolify (recommended)** — `output: "standalone"` in `next.config.ts`. Vercel is possible with a managed Postgres URL and the same env vars.
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js **20+** (see `.nvmrc`)
 - npm
 
 ### Install & Run
@@ -59,7 +59,9 @@ Copy `.env.example` to `.env.local` (or `.env` for Docker Compose) and fill in. 
 | `DATABASE_URL` | PostgreSQL connection string (Prisma) |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | First admin account; `prisma db seed` upserts this user |
 | `ADMIN_SESSION_SECRET` | Secret for signing the admin session cookie (≥32 characters in production) |
-| `REDIS_URL` | Optional; used when Redis-backed features are enabled (e.g. full stack compose) |
+| `REDIS_URL` | Optional; **shared rate limits** for public form APIs when set; health check pings Redis |
+| `RATE_LIMIT_WINDOW_MS` | Optional; default `60000` (ms window per IP + route) |
+| `RATE_LIMIT_MAX` | Optional; default `30` requests per window |
 
 **Docker / Coolify:** `NEXT_PUBLIC_*` variables must be passed as **build arguments** when building the image (see `Dockerfile` and `docker-compose.yml`), not only at container runtime.
 
@@ -76,9 +78,11 @@ On container start, `docker-entrypoint.sh` runs **`prisma migrate deploy`** and 
 
 Additional admin accounts can be added later (e.g. new `Admin` rows + the same auth flow, or a small “invite admin” UI in Phase 2).
 
-### Redis (optional)
+### Redis (optional, recommended in production)
 
-The main `docker-compose.yml` is **Next.js + Postgres** only. **`docker-compose.fullstack.yml`** also starts **Redis** and sets `REDIS_URL` for work you have not wired yet (rate limiting, queues). The app does not open a Redis connection in Phase 1; `/api/health` only reports whether `REDIS_URL` is set.
+`docker-compose.yml` includes **Redis** next to Postgres. When **`REDIS_URL`** is set, public lead-capture routes (`/api/contact`, `/api/newsletter`, `/api/early-access`, `/api/tracker-signup`) use **Redis-backed rate limits** so limits apply across multiple app instances. Without Redis, a **per-process memory limiter** is used (fine for single-container dev).
+
+`docker-compose.fullstack.yml` is available if you prefer that layout; behavior is the same once `REDIS_URL` is set.
 
 ### One-off import from Sanity (posts only)
 
@@ -183,6 +187,13 @@ Coolify handles SSL (Let's Encrypt), restarts, and zero-downtime deploys automat
 2. Import project in [Vercel](https://vercel.com)
 3. Add environment variables
 4. Deploy
+
+## Production hardening (included)
+
+- **HTTP security headers** — Set in `next.config.ts`: `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and **HSTS** when `NEXT_PUBLIC_SITE_URL` uses `https://`.
+- **Rate limiting** — `POST` handlers for contact, newsletter, early access, and tracker signup limit requests per IP (shared via **Redis** when `REDIS_URL` is set; otherwise in-memory for single-instance/dev).
+- **Input validation** — Zod schemas in `src/lib/validation/public-forms.ts`.
+- **CI** — `.github/workflows/ci.yml` runs `npm ci`, `lint`, and `build` on push/PR to `main` or `master`.
 
 ## Client Handover Checklist
 

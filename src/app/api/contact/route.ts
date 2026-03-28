@@ -1,28 +1,37 @@
 import { NextResponse } from "next/server";
 
+import { allowPublicFormRequest } from "@/lib/server/rate-limit";
+import { contactBodySchema } from "@/lib/validation/public-forms";
+
 // Placeholder: integrate with your email service (e.g. Resend, SendGrid)
-// For production: add reCAPTCHA validation, rate limiting
 export async function POST(request: Request) {
+  if (!(await allowPublicFormRequest(request, "contact"))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
-    const { name, email, subject, message, enquiryType } = body;
-
-    if (!name || !email || !subject || !message) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
+    const parsed = contactBodySchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
     }
 
+    const { name, email, subject, message, enquiryType } = parsed.data;
+
     // TODO: Send email via Resend, SendGrid, or other provider
-    // Example: await resend.emails.send({ from, to, subject, html })
-    console.log("Contact form submission:", { name, email, subject, message, enquiryType });
+    console.log("Contact form submission:", {
+      name,
+      email,
+      subject,
+      message,
+      enquiryType,
+    });
 
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json(
       { error: "Failed to process request" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

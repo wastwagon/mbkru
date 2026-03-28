@@ -2,6 +2,9 @@
   "name": "mbkru-website",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "next dev -p 1100 --webpack",
     "build": "prisma generate && next build",
@@ -22,6 +25,7 @@
     "@prisma/client": "^6.19.0",
     "bcryptjs": "^3.0.2",
     "framer-motion": "^12.36.0",
+    "ioredis": "^5.10.1",
     "jose": "^6.0.10",
     "next": "16.1.6",
     "next-seo": "^7.2.0",

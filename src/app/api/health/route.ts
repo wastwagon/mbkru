@@ -2,14 +2,12 @@ import { NextResponse } from "next/server";
 
 import { getHealthStatus } from "@/lib/server/health-status";
 
-/**
- * Liveness for Coolify, reverse proxies, and monitoring.
- * Extend `getHealthStatus()` in Phase 2 with real DB/Redis checks.
- */
+/** Liveness / readiness for Coolify and reverse proxies (Postgres + optional Redis probes). */
 export async function GET() {
-  const body = getHealthStatus();
+  const body = await getHealthStatus();
+  const httpStatus = body.status === "unhealthy" ? 503 : 200;
   return NextResponse.json(body, {
-    status: body.status === "ok" ? 200 : 503,
+    status: httpStatus,
     headers: {
       "Cache-Control": "no-store",
     },

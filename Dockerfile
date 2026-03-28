@@ -2,11 +2,13 @@
 # MBKRU — Next.js standalone + Prisma (Postgres)
 
 # Hoisted deps for Prisma CLI (@prisma/config → effect, c12, …) — not all are in Next standalone.
-# Pin prisma version to match package-lock "node_modules/prisma".version when you upgrade Prisma.
+# Prisma version is read from package-lock.json so it stays in sync with npm ci in the deps stage.
 FROM node:20-alpine AS prisma-cli-deps
 WORKDIR /pcd
+COPY package-lock.json ./package-lock.json
 RUN apk add --no-cache libc6-compat openssl \
-  && printf '%s\n' '{"private":true,"dependencies":{"prisma":"6.19.2"}}' > package.json \
+  && PRISMA_VER=$(node -p "require('./package-lock.json').packages['node_modules/prisma'].version") \
+  && printf '%s\n' "{\"private\":true,\"dependencies\":{\"prisma\":\"${PRISMA_VER}\"}}" > package.json \
   && npm install --omit=dev --ignore-scripts
 
 FROM node:20-alpine AS deps
