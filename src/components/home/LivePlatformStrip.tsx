@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
+import { useMemberMe } from "@/hooks/useMemberMe";
 
 const pill =
   "inline-flex items-center rounded-full border border-[var(--border)] bg-white px-4 py-2 text-sm font-semibold text-[var(--foreground)] shadow-sm transition hover:border-[var(--primary)]/40 hover:text-[var(--primary)]";
@@ -10,6 +12,7 @@ const pillDark =
   "inline-flex items-center rounded-full border border-white/30 bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20";
 
 export function LivePlatformStrip() {
+  const pathname = usePathname();
   const phase = getPublicPlatformPhase();
   const voice = platformFeatures.citizensVoicePlatform(phase);
   const parliament = platformFeatures.parliamentTrackerData(phase);
@@ -17,6 +20,7 @@ export function LivePlatformStrip() {
   const legal = platformFeatures.legalEmpowermentDesk(phase);
   const townHalls = platformFeatures.townHallDirectory(phase);
   const auth = platformFeatures.authentication(phase);
+  const { member, busy: authBusy } = useMemberMe(phase >= 2 && auth, pathname);
 
   if (phase < 2) {
     return (
@@ -52,14 +56,20 @@ export function LivePlatformStrip() {
             </>
           ) : null}
           {auth ? (
-            <>
-              <Link href="/register" className={pill}>
-                Register
+            member != null ? (
+              <Link href="/account" className={pill}>
+                Account
               </Link>
-              <Link href="/login" className={pill}>
-                Sign in
-              </Link>
-            </>
+            ) : (
+              <>
+                <Link href="/register" className={pill}>
+                  Register
+                </Link>
+                <Link href="/login" className={`${pill} ${authBusy ? "opacity-75" : ""}`}>
+                  Sign in
+                </Link>
+              </>
+            )
           ) : null}
           {parliament ? (
             <Link href="/promises" className={pill}>
@@ -92,7 +102,11 @@ export function LivePlatformStrip() {
 
 /** Compact variant for dark hero backgrounds */
 export function LivePlatformHeroChips() {
+  const pathname = usePathname();
   const phase = getPublicPlatformPhase();
+  const auth = platformFeatures.authentication(phase);
+  const { member, busy: authBusy } = useMemberMe(phase >= 2 && auth, pathname);
+
   if (phase < 2) return null;
 
   const voice = platformFeatures.citizensVoicePlatform(phase);
@@ -101,6 +115,22 @@ export function LivePlatformHeroChips() {
 
   return (
     <div className="mt-3 flex flex-wrap gap-2">
+      {auth ? (
+        member != null ? (
+          <Link href="/account" className={pillDark}>
+            Account
+          </Link>
+        ) : (
+          <>
+            <Link href="/register" className={pillDark}>
+              Register
+            </Link>
+            <Link href="/login" className={`${pillDark} ${authBusy ? "opacity-75" : ""}`}>
+              Sign in
+            </Link>
+          </>
+        )
+      ) : null}
       {voice ? (
         <>
           <Link href="/citizens-voice/submit" className={pillDark}>

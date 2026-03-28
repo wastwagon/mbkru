@@ -165,8 +165,8 @@ Use `NEXT_PUBLIC_PLATFORM_PHASE` at build time plus optional `PLATFORM_PHASE` on
 ### Cross-phase platform (next engineering)
 
 - [x] **Next.js 16:** **`src/proxy.ts`** replaces deprecated **`middleware`** (same matchers and JWT gates).
-- [ ] **Prisma 7:** move config off deprecated `package.json#prisma`.
-- [ ] **Automated tests** (e.g. Vitest) for **`/api/health`** shape and accountability JSON handlers.
+- [x] **Prisma CLI config:** **`prisma.config.ts`** + seed path (replaces deprecated **`package.json#prisma`**). *Upgrade to **Prisma 7** when ready (separate migration + audit).*
+- [x] **Automated tests (partial):** Vitest for **`health-status-from-deps`**, **`public-forms`**, **`client-ip`**, **`rate-limit-config`**, tags, **`platformFeatures`**. *Next:* handler-level tests for **`GET /api/health`** JSON and partner JSON routes with mocks.
 
 ---
 

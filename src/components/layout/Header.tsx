@@ -6,10 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
+import { useMemberMe } from "@/hooks/useMemberMe";
 
 type NavItem = { href: string; label: string };
-
-type MeResponse = { member?: { displayName?: string | null; email: string } | null };
 
 function UserMenuIcon({ className }: { className?: string }) {
   return (
@@ -57,30 +56,10 @@ function MemberAuthNav({
   const router = useRouter();
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [member, setMember] = useState<{ displayName?: string | null; email: string } | null | undefined>(undefined);
+  const { member, setMember } = useMemberMe(true, pathname);
 
   const phase = getPublicPlatformPhase();
   const showMyReports = platformFeatures.citizensVoicePlatform(phase);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch("/api/auth/me", { credentials: "include" })
-      .then(async (res) => {
-        if (cancelled) return;
-        if (!res.ok) {
-          setMember(null);
-          return;
-        }
-        const data = (await res.json()) as MeResponse;
-        setMember(data.member ?? null);
-      })
-      .catch(() => {
-        if (!cancelled) setMember(null);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [pathname]);
 
   useEffect(() => {
     if (!menuOpen) return;
