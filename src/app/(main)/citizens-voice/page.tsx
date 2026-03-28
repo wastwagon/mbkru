@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { images } from "@/lib/placeholders";
+import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 
 export const metadata: Metadata = {
   title: "Digital Platform — MBKRU Voice",
@@ -42,7 +44,9 @@ const keyBenefits = [
   },
 ];
 
-export default function CitizensVoicePage() {
+export default async function CitizensVoicePage() {
+  const voiceOn = isCitizensVoiceEnabled();
+
   return (
     <div>
       <PageHeader
@@ -125,6 +129,32 @@ export default function CitizensVoicePage() {
           </div>
         </div>
       </section>
+
+      {voiceOn ? (
+        <section className="section-spacing section-full bg-[var(--section-dark)] text-white">
+          <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+            <h2 className="font-display text-xl font-bold sm:text-2xl">Pilot reporting</h2>
+            <p className="mx-auto mt-2 max-w-2xl text-sm text-white/85">
+              Phase 2 pilot: submit a report and track it with a code. Staff may email you when the status
+              changes (if Resend is configured).
+            </p>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
+              <Link
+                href="/citizens-voice/submit"
+                className="inline-flex rounded-xl bg-[var(--accent-gold)] px-6 py-3 text-sm font-semibold text-[var(--section-dark)] shadow-md hover:bg-[var(--accent-warm)]"
+              >
+                Submit a report
+              </Link>
+              <Link
+                href="/track-report"
+                className="inline-flex rounded-xl border-2 border-white/40 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
+              >
+                Track a report
+              </Link>
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       {/* Early Access — premium CTA card */}
       <section className="section-spacing section-full bg-[var(--section-light)]">

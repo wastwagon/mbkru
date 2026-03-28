@@ -73,7 +73,7 @@ flowchart TB
 | Public site + admin CMS | Yes | Yes | Yes |
 | Lead capture (forms) | Yes (Postgres + optional ESP) | Hardened + stored | Yes |
 | User registration / login | No | Yes (MVP) | Yes |
-| MBKRU Voice (complaints, geo) | Preview only | Pilot → full | Yes |
+| MBKRU Voice (complaints, geo) | Preview only | **Pilot:** `POST /api/reports`, track API, `/citizens-voice/submit`, admin queue; attachments TBD | Yes |
 | Parliament / minister datasets | Preview only | Pipeline | Scorecards |
 | People’s Report Card / Accountability Scorecards | No | Data collection | **Flagship** |
 

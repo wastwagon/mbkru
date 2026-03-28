@@ -34,7 +34,8 @@ export default function PrivacyPage() {
             <li>
               <strong>Personal data you provide:</strong> Name, email address,
               and other contact details when you subscribe to our newsletter,
-              register for early access, or contact us.
+              register for early access, contact us, or (in Phase 2+) submit MBKRU Voice reports
+              (including narrative text you choose to include and optional location fields).
             </li>
             <li>
               <strong>Usage data:</strong> Information about how you use our

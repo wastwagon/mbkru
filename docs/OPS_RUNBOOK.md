@@ -42,4 +42,5 @@ docker compose exec mbkru-web node /app/node_modules/prisma/build/index.js db se
 ## Content
 
 - Starter **news posts** are upserted by seed (same slugs as `newsPlaceholders`). Edit or unpublish from **`/admin/posts`** as needed.
+- **Citizen reports** (`CitizenReport`) — triage in **`/admin/reports`**. Schema may gain columns via migrations (e.g. `submitterEmail`); always run **`prisma migrate deploy`** on deploy.
 - Re-running **seed** will **overwrite** those slugs’ titles and bodies. After go-live, prefer **`SKIP_DB_SEED=1`** and manage content only from the admin UI (or drop starter posts from `prisma/seed.mjs` once you no longer want them refreshed).

@@ -39,15 +39,16 @@
 
 ---
 
-## Sprint 3 — Phase 2: MBKRU Voice (MVP)
+## Sprint 3 — Phase 2: MBKRU Voice (MVP) — baseline shipped
 
 | # | Task | Outcome |
 |---|------|---------|
-| 1 | **Reports API** | `POST /api/reports` (kind, region, narrative, optional geo) |
-| 2 | **Tracking** | Public `GET` by opaque tracking code (no PII leak) |
-| 3 | **Uploads** | Reuse patterns from admin media; size/type limits; virus scan policy |
-| 4 | **Admin** | `/admin/reports` queue + status transitions |
-| 5 | **Email** | Notify submitter on status change (provider from Sprint 1) |
+| 1 | **Reports API** | **`POST /api/reports`** (kind, title, body, category, region, lat/lng, submitterEmail); **`GET /api/reports/me`** (member); gated `platformFeatures.citizensVoicePlatform` |
+| 2 | **Tracking** | **`GET /api/reports/track/[code]`** — status/kind/dates only · UI **`/track-report`** |
+| 3 | **Uploads** | **Deferred:** `CitizenReportAttachment` model exists — wire multipart + virus policy in a follow-up sprint |
+| 4 | **Admin** | **`/admin/reports`** list + **`/admin/reports/[id]`** status form + server action |
+| 5 | **Email** | **`sendReportStatusNotification`** (Resend) when staff changes status → `submitterEmail` or member email |
+| — | **Public UI** | **`/citizens-voice/submit`**, pilot CTA on **`/citizens-voice`**, **`/account/reports`** |
 
 ---
 

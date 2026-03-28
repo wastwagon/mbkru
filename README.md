@@ -204,7 +204,8 @@ Coolify handles SSL (Let's Encrypt), restarts, and zero-downtime deploys automat
 ## Production hardening (included)
 
 - **HTTP security headers** — Set in `next.config.ts`: `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and **HSTS** when `NEXT_PUBLIC_SITE_URL` uses `https://`.
-- **Rate limiting** — `POST` handlers for contact, newsletter, early access, and tracker signup limit requests per IP (shared via **Redis** when `REDIS_URL` is set; otherwise in-memory for single-instance/dev).
+- **Rate limiting** — `POST` handlers for contact, newsletter, early access, tracker signup, **auth**, and **report submit / track** limit requests per IP (shared via **Redis** when `REDIS_URL` is set; otherwise in-memory for single-instance/dev).
+- **Phase 2+ (`NEXT_PUBLIC_PLATFORM_PHASE` ≥ 2 at build)** — Public **member** auth (`/login`, `/register`, `/account`), **MBKRU Voice** `POST /api/reports`, **track** `GET /api/reports/track/[code]`, **`/citizens-voice/submit`**, **`/track-report`**, and admin **Citizen reports** queue at `/admin/reports`. Requires **`MEMBER_SESSION_SECRET`** for member APIs; apply migration adding `CitizenReport.submitterEmail` for anonymous follow-up email.
 - **Input validation** — Zod schemas in `src/lib/validation/public-forms.ts`.
 - **CI** — `.github/workflows/ci.yml` runs `npm ci`, `lint`, and `build` on push/PR to `main` or `master`.
 

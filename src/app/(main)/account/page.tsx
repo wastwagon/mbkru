@@ -1,10 +1,15 @@
+import Link from "next/link";
+
 import { prisma } from "@/lib/db/prisma";
 import { getMemberSession } from "@/lib/member/session";
+import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 import { SignOutButton } from "./SignOutButton";
 
 export default async function AccountPage() {
   const session = await getMemberSession();
   if (!session) return null;
+
+  const voiceOn = isCitizensVoiceEnabled();
 
   const member = await prisma.member.findUnique({
     where: { id: session.memberId },
@@ -32,8 +37,29 @@ export default async function AccountPage() {
         </p>
       ) : null}
       <p className="mt-6 text-sm text-[var(--muted-foreground)]">
-        MBKRU Voice reporting and your full dashboard will appear here as Phase 2 features ship.
+        {voiceOn
+          ? "Use the links below for MBKRU Voice pilot reporting."
+          : "MBKRU Voice reporting and your full dashboard will appear here when this environment runs Phase 2+."}
       </p>
+      {voiceOn ? (
+        <ul className="mt-4 space-y-2 text-sm">
+          <li>
+            <Link href="/citizens-voice/submit" className="font-semibold text-[var(--primary)] hover:underline">
+              Submit a report
+            </Link>
+          </li>
+          <li>
+            <Link href="/account/reports" className="font-semibold text-[var(--primary)] hover:underline">
+              My reports
+            </Link>
+          </li>
+          <li>
+            <Link href="/track-report" className="text-[var(--primary)] hover:underline">
+              Track by code
+            </Link>
+          </li>
+        </ul>
+      ) : null}
       <div className="mt-8">
         <SignOutButton />
       </div>

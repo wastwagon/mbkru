@@ -129,6 +129,8 @@ model CitizenReport {
   kind           CitizenReportKind
   memberId       String?
   member         Member?                 @relation(fields: [memberId], references: [id], onDelete: SetNull)
+  /// For anonymous submissions — status notifications when Resend is configured.
+  submitterEmail String?
   title          String
   body           String                  @db.Text
   category       String?
