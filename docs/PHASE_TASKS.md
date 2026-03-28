@@ -41,8 +41,8 @@
 | [x] | Parliament **CSV import**, **`/admin/parliament`**, public **`/promises`**, **`GET /api/mps`**, **`GET /api/promises`** |
 | [x] | Maps (lazy Leaflet), region centroids, rate limits on public POSTs |
 | [ ] | **Privacy policy** — explicit copy for location data, retention, moderation (member accounts) |
-| [ ] | **Vitest:** `GET /api/health` JSON handler test (mock `getHealthStatus`) |
-| [ ] | **Vitest:** partner JSON routes smoke tests with mocks (`/api/mps`, `/api/promises`) |
+| [x] | **Vitest:** `GET /api/health` JSON handler test (mock `getHealthStatus`) |
+| [x] | **Vitest:** partner JSON routes — `/api/mps`, `/api/promises`, `/api/report-card/[year]` (mocks) |
 | [ ] | **Tracker leads:** operational email “pilot open” or ESP export ([`SPRINT_BACKLOG`](./SPRINT_BACKLOG.md) Sprint 4) |
 | [ ] | **Situational:** playbooks / SLA fields (schema + admin) — *if product wants beyond MVP* |
 | [ ] | **Stretch:** SMS or second-channel notifications |
@@ -62,7 +62,6 @@
 | [x] | Pillar routes **`/legal-empowerment`**, **`/town-halls`** when phase ≥ 2 |
 | [ ] | **Partner programme:** written embed terms, attribution, API **versioning** (`Accept` or path version) |
 | [ ] | **Real datasets:** vetted CSV import + editorial sign-off before toggling Phase 3 in prod |
-| [ ] | **Vitest:** `/api/report-card/[year]` handler tests (200/404 cache headers) |
 | [ ] | **Optional:** public CSV/JSON export for researchers (scope + rate limit) |
 | [ ] | **Stretch:** PMO-style modules (bills, votes, plenary) — *new product verticals; scope separately* |
 
@@ -85,7 +84,7 @@
 Work **top to bottom** within your target phase; do not skip legal/ops items if going live.
 
 1. **Phase 1 verify** — OPS runbook walkthrough + content/legal pass  
-2. **Phase 2 tests** — `/api/health` + one partner route in Vitest  
+2. **Phase 2 tests** — `/api/health` + partner JSON routes in Vitest *(done — see `src/app/api/**/route.test.ts`)*  
 3. **Phase 2 privacy** — policy update for members + location  
 4. **Data** — `SEED_ACCOUNTABILITY_DEMO=1` on staging; then real CSV import dry-run  
 5. **Phase 3 partner** — embed terms + API version note in `ARCHITECTURE` or small `docs/PARTNER_API.md`  
