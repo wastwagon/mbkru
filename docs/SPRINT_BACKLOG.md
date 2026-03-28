@@ -105,7 +105,7 @@ Do not add large new sprint tables here unless you want a time-boxed release nam
 
 **Shipped (engineering completion pass, Mar 2026):** mobile-first **`PageHeader`** horizontal padding; **`main`** `min-w-0` + `overflow-x-hidden` + bottom safe-area; **`GET /api/export/mps-csv`** + **`GET /api/export/promises-csv`** (UTF-8 BOM, Vitest; promises = full DB export, optional `memberSlug`); **`NEXT_PUBLIC_CONTACT_PHONE`** + TopBar phone hidden until set; social icons hidden until URLs are real `http(s)`; footer gallery **distinct `alt`** strings; **`touch-manipulation`** on **`Button`**; roadmap copy + submit-flow breadcrumbs; **Lighthouse CI** (`lighthouserc.cjs`, mobile · `/` · `/about` · `/contact` · `/news`, a11y assert ≥0.85).
 
-**Seed demo accountability data (local/staging):** `SEED_ACCOUNTABILITY_DEMO=1 npx prisma db seed` — see [`.env.example`](../.env.example).
+**Seed demo data (local/staging):** `SEED_ACCOUNTABILITY_DEMO=1` (MPs/promises/report card **2099**); **`SEED_MEMBER_DEMO=1`** (two pilot **`Member`** logins) — [`.env.example`](../.env.example).
 
 ---
 

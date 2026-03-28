@@ -307,6 +307,50 @@ async function seedAccountabilityDemo() {
   );
 }
 
+/** Fictional public Member rows for /login and Voice testing — not for production identity. */
+async function seedMemberDemo() {
+  const accra = await prisma.region.findUnique({ where: { slug: "greater-accra" } });
+  const users = [
+    {
+      email: (process.env.SEED_MEMBER_EMAIL || "pilot.member@mbkru.local").trim().toLowerCase(),
+      password: process.env.SEED_MEMBER_PASSWORD || "PilotMember!change-me-2026",
+      displayName: "Pilot Member (seed)",
+      regionId: accra?.id ?? null,
+    },
+    {
+      email: (process.env.SEED_MEMBER_2_EMAIL || "pilot.two@mbkru.local").trim().toLowerCase(),
+      password: process.env.SEED_MEMBER_2_PASSWORD || process.env.SEED_MEMBER_PASSWORD || "PilotMember!change-me-2026",
+      displayName: "Pilot Two (seed)",
+      regionId: null,
+    },
+  ];
+
+  const seen = new Set();
+  for (const u of users) {
+    if (!u.email || seen.has(u.email)) continue;
+    seen.add(u.email);
+    const password = await bcrypt.hash(u.password, 12);
+    await prisma.member.upsert({
+      where: { email: u.email },
+      create: {
+        email: u.email,
+        password,
+        displayName: u.displayName,
+        regionId: u.regionId,
+      },
+      update: {
+        password,
+        displayName: u.displayName,
+        regionId: u.regionId,
+      },
+    });
+    console.log("Member demo upserted:", u.email);
+  }
+  console.warn(
+    "SEED_MEMBER_DEMO: change passwords before any real pilot — credentials are in env or defaults above.",
+  );
+}
+
 async function main() {
   for (let i = 0; i < REGIONS_SEED.length; i++) {
     const r = REGIONS_SEED[i];
@@ -354,6 +398,10 @@ async function main() {
 
   if (process.env.SEED_ACCOUNTABILITY_DEMO === "1") {
     await seedAccountabilityDemo();
+  }
+
+  if (process.env.SEED_MEMBER_DEMO === "1") {
+    await seedMemberDemo();
   }
 }
 

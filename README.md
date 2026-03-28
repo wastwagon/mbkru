@@ -39,7 +39,7 @@ Civic Accountability & Citizens Engagement Platform for Ghana.
 npm install
 # Start Postgres (e.g. docker compose up -d postgres) and set DATABASE_URL in .env.local
 npx prisma migrate dev
-npx prisma db seed   # creates/updates first admin from ADMIN_EMAIL / ADMIN_PASSWORD
+npx prisma db seed   # admin from ADMIN_EMAIL / ADMIN_PASSWORD; optional: SEED_ACCOUNTABILITY_DEMO=1, SEED_MEMBER_DEMO=1 (see .env.example)
 npm run dev
 ```
 

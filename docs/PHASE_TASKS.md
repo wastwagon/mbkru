@@ -6,7 +6,7 @@
 
 1. Finish **ops, legal, and data governance** before scaling public intake or publishing accountability claims.
 2. Match **build-time** `NEXT_PUBLIC_PLATFORM_PHASE` to what you are allowed to show in production (`1` → marketing + admin; `2` → + Voice + members + promises; `3` → + report card flagship).
-3. **Demo data:** `SEED_ACCOUNTABILITY_DEMO=1 npx prisma db seed` (fictional MPs/promises/report card year **2099**). **Real data:** verified CSV via **`POST /api/admin/parliament-members/import`** + admin promises/report card.
+3. **Demo data:** `SEED_ACCOUNTABILITY_DEMO=1 npx prisma db seed` (fictional MPs/promises/report card year **2099**). **Pilot members:** `SEED_MEMBER_DEMO=1` (see [`.env.example`](../.env.example)) — two fictional **`Member`** rows for **`/login`**. **Real data:** verified CSV via **`POST /api/admin/parliament-members/import`** + admin promises/report card.
 
 **Companion docs:** [`PHASES_2_3_IMPLEMENTATION.md`](./PHASES_2_3_IMPLEMENTATION.md) · [`ARCHITECTURE.md`](./ARCHITECTURE.md) · [`PHASE1_SCOPE.md`](../PHASE1_SCOPE.md) · [`ROADMAP_2028_ELECTION.md`](../ROADMAP_2028_ELECTION.md)
 
