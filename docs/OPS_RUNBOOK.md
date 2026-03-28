@@ -60,5 +60,5 @@ docker compose exec mbkru-web node /app/node_modules/prisma/build/index.js db se
 ## Public accountability cache (promises / report card)
 
 - **`unstable_cache`** + tags in **`src/lib/server/accountability-cache.ts`** (default **300s** revalidate). Admin actions and parliament CSV import call **`revalidateTag`** so updates appear without waiting for TTL.
-- Partner JSON: **`GET /api/promises`**, **`GET /api/report-card/[year]`** — rate-limited; successful **200** responses send **`Cache-Control`** aligned with the same **300s** TTL (`accountabilityPublicCacheControl` in code). Errors (**429**, **503**, etc.) are not marked cacheable. Agree **terms of use** before giving third parties embed access.
+- Partner JSON: **`GET /api/promises`**, **`GET /api/report-card/[year]`** — rate-limited; successful **200** responses send **`Cache-Control`** aligned with the same **300s** TTL (`accountabilityPublicCacheControl` in code). **404** on report-card JSON uses **`private, no-store`** so a “not found” is not pinned in shared caches until a cycle is published. Other errors (**429**, **503**, etc.) are not given long-lived caching. Agree **terms of use** before giving third parties embed access.
 - **Creating** a report-card cycle (even draft) runs **`revalidateTag`** for the index and year so server-side caches stay coherent with admin and publish flows.

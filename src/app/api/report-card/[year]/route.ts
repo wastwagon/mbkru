@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import {
+  accountabilityApiNotFoundCacheControl,
   accountabilityPublicCacheControl,
   getCachedReportCardApiPayload,
 } from "@/lib/server/accountability-cache";
@@ -33,7 +34,13 @@ export async function GET(request: Request, { params }: Props) {
   const payload = await getCachedReportCardApiPayload(year);
 
   if (!payload) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Not found" },
+      {
+        status: 404,
+        headers: { "Cache-Control": accountabilityApiNotFoundCacheControl() },
+      },
+    );
   }
 
   return NextResponse.json(payload, {

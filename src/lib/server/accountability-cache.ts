@@ -16,6 +16,11 @@ export function accountabilityPublicCacheControl(): string {
   return `public, max-age=${s}, s-maxage=${s}, stale-while-revalidate=${s * 2}`;
 }
 
+/** `Cache-Control` for accountability JSON 404s so shared caches do not pin “not found” across publish. */
+export function accountabilityApiNotFoundCacheControl(): string {
+  return "private, no-store";
+}
+
 /** Invalidate when any public “promises index” or API list (all) changes. */
 export const PROMISES_INDEX_TAG = "mbkru:promises-index";
 
