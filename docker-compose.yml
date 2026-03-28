@@ -32,6 +32,9 @@ services:
     networks:
       - mbkru
 
+  # Coolify: assign the public domain with internal port 3000, e.g.
+  #   https://your-host.sslip.io:3000
+  # (The :3000 tells the proxy to forward to this container’s port 3000; users still use 443.)
   mbkru-web:
     build:
       context: .
