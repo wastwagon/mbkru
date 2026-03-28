@@ -63,12 +63,12 @@ export async function AboutPlatformLinks() {
           </Link>
           {isLegalEmpowermentPageEnabled() ? (
             <Link href="/legal-empowerment" className={pill}>
-              Legal desk
+              Legal
             </Link>
           ) : null}
           {isTownHallDirectoryPageEnabled() ? (
             <Link href="/town-halls" className={pill}>
-              Town halls
+              Forums
             </Link>
           ) : null}
         </div>

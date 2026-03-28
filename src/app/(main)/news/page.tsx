@@ -6,7 +6,7 @@ import { formatPostDate, getPublishedPostSummaries, postHeroImage } from "@/lib/
 import { newsPlaceholders } from "@/lib/placeholders";
 
 export const metadata: Metadata = {
-  title: "News & Updates",
+  title: "News",
   description:
     "News, press releases, and advocacy updates from MBKRU.",
 };
@@ -24,7 +24,7 @@ export default async function NewsPage() {
     return (
       <div>
         <PageHeader
-          title="News & Updates"
+          title="News"
           description="Latest news, press releases, and advocacy updates from My Brother's Keeper Restoration United (MBKRU)."
         />
         <section className="section-spacing section-full bg-[var(--section-light)]">
@@ -127,7 +127,7 @@ export default async function NewsPage() {
   return (
     <div>
       <PageHeader
-        title="News & Updates"
+        title="News"
         description="Latest news, press releases, and advocacy updates from My Brother's Keeper Restoration United (MBKRU)."
       />
       <section className="section-spacing section-full bg-[var(--section-light)]">

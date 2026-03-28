@@ -99,14 +99,14 @@ export default async function AccountPage() {
             {showLegal ? (
               <li>
                 <Link href="/legal-empowerment" className="font-medium text-[var(--primary)] hover:underline">
-                  Legal desk
+                  Legal
                 </Link>
               </li>
             ) : null}
             {showTownHalls ? (
               <li>
                 <Link href="/town-halls" className="font-medium text-[var(--primary)] hover:underline">
-                  Town halls
+                  Forums
                 </Link>
               </li>
             ) : null}

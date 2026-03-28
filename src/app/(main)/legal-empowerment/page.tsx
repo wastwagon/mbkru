@@ -22,7 +22,7 @@ export default function LegalEmpowermentPage() {
       <PageHeader
         title="Legal empowerment desk"
         description="Plain-language signposting to official channels. MBKRU does not provide individual legal representation or formal complaints handling on behalf of regulators."
-        breadcrumbCurrentLabel="Legal desk"
+        breadcrumbCurrentLabel="Legal"
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl space-y-6 px-4 text-[var(--muted-foreground)] sm:px-6 lg:px-8">

@@ -371,7 +371,7 @@ export default function Home() {
               viewport={{ once: true }}
             >
               <span className="inline-block rounded bg-[var(--primary)]/10 px-3 py-1.5 text-sm font-medium text-[var(--primary)]">
-                About Us
+                About
               </span>
               <h2 className="mt-2 font-display text-lg font-bold text-[var(--foreground)] sm:text-xl lg:text-2xl">
                 Guiding Ghana with purposeful strategic objectives
@@ -598,7 +598,7 @@ export default function Home() {
               Latest
             </span>
             <h2 className="mt-2 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
-              News & Updates
+              News
             </h2>
             <p className="mt-2 text-[var(--muted-foreground)]">
               Press releases and advocacy updates from MBKRU.

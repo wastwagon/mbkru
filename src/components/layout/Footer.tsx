@@ -15,8 +15,8 @@ import {
 const footerLinks = {
   organization: [
     { href: "/methodology", label: "Accountability methodology" },
-    { href: "/about", label: "About Us" },
-    { href: "/news", label: "News & Updates" },
+    { href: "/about", label: "About" },
+    { href: "/news", label: "News" },
     { href: "/diaspora", label: "Diaspora (17th Region)" },
     { href: "/resources", label: "Resources" },
     { href: "/faq", label: "FAQ" },
@@ -33,7 +33,7 @@ export async function Footer() {
   const phase = getServerPlatformPhase();
   const voiceOn = platformFeatures.citizensVoicePlatform(phase);
 
-  const platformLinks: { href: string; label: string }[] = [{ href: "/citizens-voice", label: "MBKRU Voice" }];
+  const platformLinks: { href: string; label: string }[] = [{ href: "/citizens-voice", label: "Voice" }];
   if (voiceOn) {
     platformLinks.push(
       { href: "/citizens-voice/submit", label: "Submit a report" },
@@ -46,8 +46,8 @@ export async function Footer() {
   );
   if (isPromisesBrowseEnabled()) platformLinks.push({ href: "/promises", label: "Campaign promises" });
   if (isReportCardPublicEnabled()) platformLinks.push({ href: "/report-card", label: "Report card" });
-  if (isLegalEmpowermentPageEnabled()) platformLinks.push({ href: "/legal-empowerment", label: "Legal desk" });
-  if (isTownHallDirectoryPageEnabled()) platformLinks.push({ href: "/town-halls", label: "Town halls" });
+  if (isLegalEmpowermentPageEnabled()) platformLinks.push({ href: "/legal-empowerment", label: "Legal" });
+  if (isTownHallDirectoryPageEnabled()) platformLinks.push({ href: "/town-halls", label: "Forums" });
 
   return (
     <footer className="relative bg-[var(--footer-bg)] text-white">
@@ -66,7 +66,7 @@ export async function Footer() {
           </div>
           <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
             <Button href="/citizens-voice">
-              Join MBKRU Voice
+              Join Voice
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>

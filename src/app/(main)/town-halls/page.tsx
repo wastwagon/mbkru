@@ -21,7 +21,7 @@ export default function TownHallsPage() {
       <PageHeader
         title="Town halls & regional forums"
         description="Presidential and regional listening sessions in development. This page will list confirmed dates, venues, and registration when programmes open."
-        breadcrumbCurrentLabel="Town halls"
+        breadcrumbCurrentLabel="Forums"
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl space-y-6 px-4 text-[var(--muted-foreground)] sm:px-6 lg:px-8">

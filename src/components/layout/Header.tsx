@@ -227,18 +227,18 @@ function MemberAuthNav({
 function buildMainNav(phase: ReturnType<typeof getPublicPlatformPhase>): NavItem[] {
   const items: NavItem[] = [
     { href: "/", label: "Home" },
-    { href: "/about", label: "About Us" },
-    { href: "/citizens-voice", label: "MBKRU Voice" },
+    { href: "/about", label: "About" },
+    { href: "/citizens-voice", label: "Voice" },
     { href: "/situational-alerts", label: "Engagement" },
     { href: "/parliament-tracker", label: "Accountability" },
   ];
   if (platformFeatures.legalEmpowermentDesk(phase)) {
-    items.push({ href: "/legal-empowerment", label: "Legal desk" });
+    items.push({ href: "/legal-empowerment", label: "Legal" });
   }
   if (platformFeatures.townHallDirectory(phase)) {
-    items.push({ href: "/town-halls", label: "Town halls" });
+    items.push({ href: "/town-halls", label: "Forums" });
   }
-  items.push({ href: "/news", label: "News & Updates" }, { href: "/diaspora", label: "Diaspora" });
+  items.push({ href: "/news", label: "News" }, { href: "/diaspora", label: "Diaspora" });
   return items;
 }
 

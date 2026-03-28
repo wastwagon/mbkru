@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { images, pillarImages, leadershipPlaceholders, registrationPlaceholder, advisoryPlaceholders, heroContent } from "@/lib/placeholders";
 
 export const metadata: Metadata = {
-  title: "About Us",
+  title: "About",
   description:
     "My Brother's Keeper Restoration United (MBKRU) — Restorative justice and sustainable development in Ghana.",
 };

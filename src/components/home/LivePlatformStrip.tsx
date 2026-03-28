@@ -86,12 +86,12 @@ export function LivePlatformStrip() {
           </Link>
           {legal ? (
             <Link href="/legal-empowerment" className={pill}>
-              Legal desk
+              Legal
             </Link>
           ) : null}
           {townHalls ? (
             <Link href="/town-halls" className={pill}>
-              Town halls
+              Forums
             </Link>
           ) : null}
         </div>

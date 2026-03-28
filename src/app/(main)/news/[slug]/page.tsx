@@ -83,7 +83,7 @@ export default async function NewsArticlePage({ params }: Props) {
                 href="/news"
                 className="inline-flex min-h-[44px] items-center gap-2 text-sm font-semibold text-[var(--primary)] hover:underline"
               >
-                ← Back to News & Updates
+                ← Back to News
               </Link>
             </div>
           </div>
@@ -126,7 +126,7 @@ export default async function NewsArticlePage({ params }: Props) {
               href="/news"
               className="inline-flex min-h-[44px] items-center gap-2 text-sm font-semibold text-[var(--primary)] hover:underline"
             >
-              ← Back to News & Updates
+              ← Back to News
             </Link>
           </div>
         </div>

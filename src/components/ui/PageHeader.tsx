@@ -17,14 +17,14 @@ interface PageHeaderProps {
 }
 
 const PATH_BREADCRUMBS: Record<string, string> = {
-  "/about": "About Us",
-  "/news": "News & Updates",
+  "/about": "About",
+  "/news": "News",
   "/contact": "Contact",
-  "/citizens-voice": "MBKRU Voice",
+  "/citizens-voice": "Voice",
   "/situational-alerts": "Engagement",
   "/parliament-tracker": "Accountability",
-  "/legal-empowerment": "Legal desk",
-  "/town-halls": "Town halls",
+  "/legal-empowerment": "Legal",
+  "/town-halls": "Forums",
   "/promises": "Campaign promises",
   "/report-card": "Report card",
   "/methodology": "Methodology",
@@ -49,7 +49,7 @@ function buildBreadcrumbs(pathname: string, currentLabel?: string): BreadcrumbIt
   if (segments.length === 0) return items;
 
   if (segments[0] === "news" && segments.length > 1 && currentLabel) {
-    items.push({ label: PATH_BREADCRUMBS["/news"] ?? "News & Updates", href: "/news" });
+    items.push({ label: PATH_BREADCRUMBS["/news"] ?? "News", href: "/news" });
     items.push({ label: currentLabel });
     return items;
   }
@@ -74,7 +74,7 @@ function buildBreadcrumbs(pathname: string, currentLabel?: string): BreadcrumbIt
 
   if (segments[0] === "citizens-voice" && segments[1] === "submit") {
     items.push({
-      label: PATH_BREADCRUMBS["/citizens-voice"] ?? "MBKRU Voice",
+      label: PATH_BREADCRUMBS["/citizens-voice"] ?? "Voice",
       href: "/citizens-voice",
     });
     items.push({ label: PATH_BREADCRUMBS["/citizens-voice/submit"] ?? "Submit a report" });
