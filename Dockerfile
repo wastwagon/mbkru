@@ -38,16 +38,21 @@ RUN mkdir -p /app/public/uploads && chown nextjs:nodejs /app/public/uploads
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
+# Standalone only traces @prisma/client — merging COPY can leave a broken tree and
+# `Cannot find module '@prisma/engines'` for migrate/seed. Replace Prisma dirs wholesale.
+RUN rm -rf /app/node_modules/.prisma /app/node_modules/@prisma /app/node_modules/prisma
+
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-# Full @prisma/* (client + engines + fetch-engine, …) — CLI migrate/seed needs @prisma/engines
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
 
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
-RUN chmod +x /app/docker-entrypoint.sh && chown -R nextjs:nodejs /app/prisma
+RUN chmod +x /app/docker-entrypoint.sh \
+  && chown -R nextjs:nodejs /app/prisma \
+  && chown -R nextjs:nodejs /app/node_modules/.prisma /app/node_modules/@prisma /app/node_modules/prisma /app/node_modules/bcryptjs
 
 USER nextjs
 EXPOSE 3000
