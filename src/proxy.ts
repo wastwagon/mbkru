@@ -9,7 +9,7 @@ import { getMemberSessionSecretKey } from "@/lib/member/jwt-config";
 
 const ADMIN_COOKIE = "mbkru_admin";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith("/admin")) {

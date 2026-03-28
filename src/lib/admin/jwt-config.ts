@@ -1,4 +1,4 @@
-/** Shared JWT config for middleware (Edge) and server routes. Do not import `next/headers` here. */
+/** Shared JWT config for Next.js proxy and server routes. Do not import `next/headers` here. */
 
 export function getSessionSecretKey(): Uint8Array | null {
   const s = process.env.ADMIN_SESSION_SECRET;

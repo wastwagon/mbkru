@@ -59,7 +59,7 @@ flowchart TB
 | `src/config/` | **Platform phase**, feature flags — single source of truth |
 | `src/lib/` | Shared utilities; **`env.server.ts`** is server-only |
 | `src/lib/admin/` | JWT session helpers, `requireSession` for server actions |
-| `prisma/` | Schema, migrations, **seed** (first admin from env) |
+| `prisma/`, **`prisma.config.ts`** | Schema, migrations, **seed** (first admin from env); seed command is configured in **`prisma.config.ts`** (replaces deprecated `package.json#prisma`) |
 | `docker-compose*.yml`, `Dockerfile` | Container images; **build args** bake `NEXT_PUBLIC_*` at build time |
 
 **API route naming:** Keep one concern per route (`/api/contact`, `/api/newsletter`, …). Phase 2 can add `/api/v2/...` or versioned packages if the surface grows large.

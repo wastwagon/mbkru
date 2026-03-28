@@ -33,7 +33,7 @@
 |---|------|---------|
 | 1 | **Prisma** | **`Member`** already in schema + migration; email unique |
 | 2 | **Auth API** | **`POST /api/auth/register`**, **`login`**, **`logout`**; **`GET /api/auth/me`** — cookie **`mbkru_member`**, secret **`MEMBER_SESSION_SECRET`** |
-| 3 | **Sessions** | **JWT** in httpOnly cookie; **`jti` + Redis** when `REDIS_URL` set (server-side logout); Edge middleware verifies JWT only — full check in RSC / APIs |
+| 3 | **Sessions** | **JWT** in httpOnly cookie; **`jti` + Redis** when `REDIS_URL` set (server-side logout); Next.js **proxy** verifies JWT for `/admin` and `/account` — full check in RSC / APIs |
 | 4 | **UI** | **`/login`**, **`/register`**, **`/account`** + header **Sign in** when `NEXT_PUBLIC_PLATFORM_PHASE` ≥ 2 |
 | 5 | **Legal** | Privacy policy — **Member accounts (Phase 2+)** |
 
@@ -92,7 +92,7 @@
 | 2 | **Pillar flags → routes** | **Shipped:** **`/legal-empowerment`**, **`/town-halls`** when phase ≥ 2; **Header** nav + **sitemap**; `isLegalEmpowermentPageEnabled` / `isTownHallDirectoryPageEnabled` in `accountability-pages.ts` |
 | 3 | **Trust UX** | **Shipped:** post-submit **“How we use your report”** `<details>` on **VoiceReportForm** success |
 | 4 | **Contact audit trail** | **Shipped:** **`ContactSubmission`** model + migrate; **`POST /api/contact`** writes DB before email; **`/admin/contact-submissions`** |
-| 5 | **Platform hygiene** | **Started:** **`vitest`** + **`npm run test`** in CI + README; **`accountability-http`**, **`normalize-email`**, **`accountability-tags`** (cache tag strings); **`platformFeatures`** tests. *Next:* **`middleware` → `proxy`**; Prisma config migration; expand API tests |
+| 5 | **Platform hygiene** | **Shipped:** **`src/proxy.ts`** (replaces deprecated middleware); **`prisma.config.ts`** (seed + migrations path; drops `package.json#prisma`); Vitest for **`public-forms`** Zod schemas. *Next:* broader route-handler tests with mocks; dependency audit |
 | 6 | **Marketing UX (phase-aware)** | **Shipped:** Homepage **live tools** strip + hero chips; pillar / footer links to **Legal desk**, **Town halls**, **Submit**/**Track**; admin **metrics** row; accountability hub **linked cards**; account **quick links**; Voice header copy when pilot on |
 
 ---
