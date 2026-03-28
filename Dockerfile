@@ -1,4 +1,13 @@
+# syntax=docker/dockerfile:1
 # MBKRU — Next.js standalone + Prisma (Postgres)
+
+# Hoisted deps for Prisma CLI (@prisma/config → effect, c12, …) — not all are in Next standalone.
+# Pin prisma version to match package-lock "node_modules/prisma".version when you upgrade Prisma.
+FROM node:20-alpine AS prisma-cli-deps
+WORKDIR /pcd
+RUN apk add --no-cache libc6-compat openssl \
+  && printf '%s\n' '{"private":true,"dependencies":{"prisma":"6.19.2"}}' > package.json \
+  && npm install --omit=dev --ignore-scripts
 
 FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat openssl
@@ -49,10 +58,17 @@ COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
 
+# Merge Prisma CLI hoisted deps (effect, c12, …) without overwriting next/react/etc.
+RUN --mount=from=prisma-cli-deps,source=/pcd/node_modules,target=/pcm \
+    sh -euc 'cd /pcm && for p in *; do \
+      [ -d "$$p" ] || continue; \
+      case "$$p" in @prisma|prisma|.prisma|bcryptjs) continue ;; esac; \
+      if [ ! -e "/app/node_modules/$$p" ]; then cp -a "$$p" /app/node_modules/; fi; \
+    done'
+
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 RUN chmod +x /app/docker-entrypoint.sh \
-  && chown -R nextjs:nodejs /app/prisma \
-  && chown -R nextjs:nodejs /app/node_modules/.prisma /app/node_modules/@prisma /app/node_modules/prisma /app/node_modules/bcryptjs
+  && chown -R nextjs:nodejs /app/prisma /app/node_modules
 
 USER nextjs
 EXPOSE 3000
