@@ -138,9 +138,9 @@ MBKRU Advocates aims to position itself as Ghana's premier citizen accountabilit
 
 ## Recommended Next Steps (Immediate)
 
-1. **Finalise Phase 2 scope** — Define MBKRU Voice MVP features (registration, dashboard, complaint intake).
+1. **Engineering spec** — Implementation checklist, research references, data model, and UI charter: [`docs/PHASES_2_3_IMPLEMENTATION.md`](docs/PHASES_2_3_IMPLEMENTATION.md).
 2. **Secure partnerships** — Government, CHRAJ, media, development partners.
-3. **Hire or contract** — Technical lead for platform development.
+3. **Hire or contract** — Technical lead for platform development (Phase 2 auth + reporting + moderation).
 4. **Town Hall pilot** — Confirm Greater Accra pilot venue and date (Q2 2026).
 5. **Update website roadmap** — Replace placeholder roadmap on homepage with this timeline.
 

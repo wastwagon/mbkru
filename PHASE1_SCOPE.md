@@ -2,7 +2,7 @@
 
 **Purpose:** Ensure we deliver Phase 1 fully before Phase 2. No feature creep.
 
-**Engineering context:** See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for stack boundaries, Docker build-time env, and how Phase 2/3 extend the same codebase.
+**Engineering context:** See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for stack boundaries, Docker build-time env, and how Phase 2/3 extend the same codebase. **Phase 2 & 3 delivery (APIs, Prisma models, UX research):** [`docs/PHASES_2_3_IMPLEMENTATION.md`](docs/PHASES_2_3_IMPLEMENTATION.md).
 
 **Completion & recovery:** See [`docs/PHASE1_STATUS.md`](docs/PHASE1_STATUS.md) for a verified checklist against this scope, recovery steps on a new machine, and honest notes on admin content vs polish.
 

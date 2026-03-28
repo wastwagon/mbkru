@@ -48,4 +48,16 @@ export const platformFeatures = {
 
   /** Heavy analytics / election scorecards (Phase 3) */
   accountabilityScorecards: (phase: PlatformPhase) => phase >= 3,
+
+  /** Legal empowerment desk content + referrals (Phase 2+) */
+  legalEmpowermentDesk: (phase: PlatformPhase) => phase >= 2,
+
+  /** Town halls / forums directory and RSVP (Phase 2+) */
+  townHallDirectory: (phase: PlatformPhase) => phase >= 2,
+
+  /** Election observation–style situational reporting UI (Phase 3 hard launch) */
+  electionObservatory: (phase: PlatformPhase) => phase >= 3,
+
+  /** Logged-in member dashboard (MBKRU Voice) */
+  memberDashboard: (phase: PlatformPhase) => phase >= 2,
 } as const;

@@ -63,6 +63,10 @@ Copy `.env.example` to `.env.local` (or `.env` for Docker Compose) and fill in. 
 
 **Docker / Coolify:** `NEXT_PUBLIC_*` variables must be passed as **build arguments** when building the image (see `Dockerfile` and `docker-compose.yml`), not only at container runtime.
 
+### Database on deploy (Docker / Coolify)
+
+On container start, `docker-entrypoint.sh` runs **`prisma migrate deploy`** and then **`prisma db seed`** when `DATABASE_URL` is set. Set **`SKIP_DB_SEED=1`** to run migrations only. If migrate or seed fails, the app still starts so you can fix the database and use **Admin → Settings** to run **Run migrations**, **Seed database**, or **Migrate + seed** manually (same Prisma commands, admin session required).
+
 ## Admin & content (news + media library)
 
 1. Set `DATABASE_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET` in `.env.local`.

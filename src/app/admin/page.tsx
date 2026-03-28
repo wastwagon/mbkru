@@ -41,6 +41,17 @@ export default async function AdminHomePage() {
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">Upload once, reuse on any post.</p>
           </Link>
         </li>
+        <li>
+          <Link
+            href="/admin/settings"
+            className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
+          >
+            <span className="font-semibold text-[var(--foreground)]">Settings</span>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              Run migrations or seed if deploy-time database steps failed.
+            </p>
+          </Link>
+        </li>
       </ul>
       <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
         <Link href="/" className="text-[var(--primary)] hover:underline">

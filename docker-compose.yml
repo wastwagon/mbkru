@@ -1,6 +1,7 @@
 # MBKRU — Next.js + Postgres (admin CMS: /admin)
 # Run: docker compose up -d --build
-# First time: docker compose exec mbkru-web npx prisma db seed
+# Entrypoint runs migrate + seed when DATABASE_URL is set (see docker-entrypoint.sh).
+# Manual retry: Admin → Settings, or: docker compose exec mbkru-web npx prisma db seed
 
 services:
   postgres:

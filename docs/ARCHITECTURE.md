@@ -1,6 +1,6 @@
 # MBKRU Platform — Architecture & Phased Delivery
 
-This document describes how the codebase is structured for **Phase 1** (live marketing + admin-managed news + lead capture) and how it is intended to **expand into Phase 2 and Phase 3** without rewrites. It complements `PHASE1_SCOPE.md` (what ships in Phase 1) and `ROADMAP_2028_ELECTION.md` (business timeline).
+This document describes how the codebase is structured for **Phase 1** (live marketing + admin-managed news + lead capture) and how it is intended to **expand into Phase 2 and Phase 3** without rewrites. It complements `PHASE1_SCOPE.md` (what ships in Phase 1) and `ROADMAP_2028_ELECTION.md` (business timeline). **Full Phase 2 & 3 engineering scope, external research links, API build order, and UI charter:** [`docs/PHASES_2_3_IMPLEMENTATION.md`](PHASES_2_3_IMPLEMENTATION.md).
 
 ---
 
@@ -12,7 +12,7 @@ This document describes how the codebase is structured for **Phase 1** (live mar
 | Content | **PostgreSQL + Prisma** | News posts (`Post`), shared **media library** (`Media`), optional featured image per post |
 | Auth (admin only) | bcrypt + **JWT in httpOnly cookie** | Single seeded admin for now; model supports more `Admin` rows later |
 | Forms | React Hook Form + Zod → Route Handlers | Contact, newsletter, early access, tracker signup — **server handlers are stubs / logging** until integrations are wired |
-| Hosting | Docker (standalone output), optional Coolify on VPS | `mbkru-web` + Postgres; optional Redis in full stack compose |
+| Hosting | Docker (standalone output), optional Coolify on VPS | `mbkru-web` + Postgres; **Redis** in `docker-compose.fullstack.yml` for Phase 2 sessions / rate limits |
 
 Phase 1 **intentionally excludes** public user accounts, complaint workflows, MP datasets, and scorecard engines. Those belong to **Phase 2+** and are gated in code via **platform phase** configuration (see §5).
 
@@ -93,6 +93,8 @@ Implementation: `src/config/platform.ts`. Use these flags to guard new routes, n
 | Data type | Phase 1 | Later phases |
 |-----------|---------|--------------|
 | News posts, media metadata | PostgreSQL (`Post`, `Media`) | Same; richer workflows |
+| Regions / members / citizen reports | — | `Region`, `Member`, `CitizenReport`, attachments (Phase 2+) |
+| MPs, promises, report cards | — | `ParliamentMember`, `CampaignPromise`, `ReportCardCycle`, `ScorecardEntry` (Phase 2–3) |
 | Uploaded files | Disk (`public/uploads`) + volume in Docker | Optional S3-compatible object storage |
 | Form submissions | Logs / external ESP | DB + ESP; Redis for rate limiting |
 | Public users, complaints | N/A | PostgreSQL (+ optional Auth.js / Clerk / etc.) |
@@ -115,7 +117,7 @@ See `.env.example`. Critical rules:
 
 - **Health check:** `GET /api/health` — uptime for proxies (Coolify, Traefik). Phase 1 returns phase and optional dependency status; extend for DB/Redis checks in Phase 2.
 - **Sitemap / SEO:** `src/app/sitemap.ts`, `robots.ts` — use `NEXT_PUBLIC_SITE_URL` everywhere the canonical URL matters.
-- **Migrations:** `docker-entrypoint.sh` runs `prisma migrate deploy` when `DATABASE_URL` is set. **Seed** (`prisma db seed`) is run manually after first deploy to create the admin.
+- **Migrations & seed:** `docker-entrypoint.sh` runs `prisma migrate deploy` then `prisma db seed` when `DATABASE_URL` is set (skip seed with `SKIP_DB_SEED=1`). If either step fails at deploy time, the app still starts; an admin can retry from **`/admin/settings`** (API: `POST /api/admin/database-maintenance`).
 
 ---
 

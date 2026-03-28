@@ -40,3 +40,161 @@ model Post {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 }
+
+// --- Phase 2 & 3 — see docs/PHASES_2_3_IMPLEMENTATION.md ---
+
+enum CitizenReportKind {
+  VOICE
+  SITUATIONAL_ALERT
+  ELECTION_OBSERVATION
+}
+
+enum CitizenReportStatus {
+  RECEIVED
+  UNDER_REVIEW
+  ESCALATED
+  CLOSED
+  ARCHIVED
+}
+
+enum PromiseStatus {
+  TRACKING
+  IN_PROGRESS
+  FULFILLED
+  BROKEN
+  DEFERRED
+}
+
+/// Ghana 16 regions — seeded in prisma/seed.mjs
+model Region {
+  id             String          @id @default(cuid())
+  name           String
+  slug           String          @unique
+  sortOrder      Int             @default(0)
+  members        Member[]
+  reports        CitizenReport[]
+  constituencies Constituency[]
+}
+
+model Constituency {
+  id       String   @id @default(cuid())
+  name     String
+  slug     String   @unique
+  code     String?  @unique
+  regionId String
+  region   Region   @relation(fields: [regionId], references: [id], onDelete: Cascade)
+
+  members   ParliamentMember[]
+  reports   CitizenReport[]
+
+  @@index([regionId])
+}
+
+/// Public registered user (MBKRU Voice) — separate from Admin
+model Member {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  password    String
+  displayName String?
+  phone       String?
+  regionId    String?
+  region      Region?  @relation(fields: [regionId], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  reports     CitizenReport[]
+
+  @@index([regionId])
+}
+
+model CitizenReport {
+  id             String                  @id @default(cuid())
+  trackingCode   String                  @unique
+  kind           CitizenReportKind
+  memberId       String?
+  member         Member?                 @relation(fields: [memberId], references: [id], onDelete: SetNull)
+  title          String
+  body           String                  @db.Text
+  category       String?
+  latitude       Float?
+  longitude      Float?
+  regionId       String?
+  region         Region?                 @relation(fields: [regionId], references: [id], onDelete: SetNull)
+  constituencyId String?
+  constituency   Constituency?           @relation(fields: [constituencyId], references: [id], onDelete: SetNull)
+  status         CitizenReportStatus     @default(RECEIVED)
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+  attachments    CitizenReportAttachment[]
+
+  @@index([kind, status])
+  @@index([memberId])
+}
+
+model CitizenReportAttachment {
+  id        String        @id @default(cuid())
+  reportId  String
+  report    CitizenReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  path      String
+  mimeType  String
+  createdAt DateTime      @default(now())
+
+  @@index([reportId])
+}
+
+model ParliamentMember {
+  id             String        @id @default(cuid())
+  name           String
+  slug           String        @unique
+  role           String
+  party          String?
+  constituencyId String?
+  constituency   Constituency? @relation(fields: [constituencyId], references: [id], onDelete: SetNull)
+  portraitPath   String?
+  active         Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  promises       CampaignPromise[]
+  scoreEntries   ScorecardEntry[]
+
+  @@index([constituencyId])
+}
+
+model CampaignPromise {
+  id          String            @id @default(cuid())
+  memberId    String?
+  member      ParliamentMember? @relation(fields: [memberId], references: [id], onDelete: SetNull)
+  title       String
+  description String?           @db.Text
+  sourceLabel String
+  sourceDate  DateTime?
+  status      PromiseStatus     @default(TRACKING)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([memberId])
+}
+
+/// People’s Report Card cycle (one row per year)
+model ReportCardCycle {
+  id          String           @id @default(cuid())
+  year        Int              @unique
+  label       String
+  publishedAt DateTime?
+  methodology String?          @db.Text
+  entries     ScorecardEntry[]
+}
+
+model ScorecardEntry {
+  id           String             @id @default(cuid())
+  cycleId      String
+  cycle        ReportCardCycle    @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+  memberId     String
+  member       ParliamentMember   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  narrative    String?            @db.Text
+  overallScore Float?
+  metrics      Json?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  @@unique([cycleId, memberId])
+}

@@ -63,10 +63,9 @@ Use this document to **recover context** after time away or a new machine: what 
    ```
 
 7. **Docker**
-   - App + Postgres: `docker compose up -d --build` then  
-     `docker compose exec mbkru-web npx prisma db seed` → **http://localhost:1100**
+   - App + Postgres: `docker compose up -d --build` — entrypoint runs **migrate + seed** when `DATABASE_URL` is set. If anything failed, use **Admin → Settings** or `docker compose exec mbkru-web npx prisma db seed` → **http://localhost:1100**
    - App + Postgres + Redis:  
-     `docker compose -f docker-compose.fullstack.yml up -d --build` then seed as above.  
+     `docker compose -f docker-compose.fullstack.yml up -d --build` (same entrypoint behaviour).  
    Use a `.env` beside compose so **build args** get `NEXT_PUBLIC_*` (see `docs/ARCHITECTURE.md`).
 
 8. **Health**
@@ -81,6 +80,7 @@ Use this document to **recover context** after time away or a new machine: what 
 | Phase boundaries & stack | `docs/ARCHITECTURE.md` |
 | Product scope (what Phase 1 is / isn’t) | `PHASE1_SCOPE.md` |
 | Business roadmap | `ROADMAP_2028_ELECTION.md` |
+| Phase 2 & 3 engineering + research | `docs/PHASES_2_3_IMPLEMENTATION.md` |
 | Platform phase flags | `src/config/platform.ts` |
 | Server env | `src/lib/env.server.ts` |
 | API routes | `src/app/api/*` |
