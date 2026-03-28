@@ -23,6 +23,7 @@ const PATH_BREADCRUMBS: Record<string, string> = {
   "/citizens-voice": "MBKRU Voice",
   "/situational-alerts": "Engagement",
   "/parliament-tracker": "Accountability",
+  "/methodology": "Methodology",
   "/resources": "Resources",
   "/faq": "FAQ",
   "/partners": "Partners & Supporters",

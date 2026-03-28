@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { TrackerSignupForm } from "@/components/forms/TrackerSignupForm";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
@@ -138,6 +139,11 @@ export default function ParliamentTrackerPage() {
               </h2>
               <p className="mt-2 text-[var(--muted-foreground)]">
                 Receive updates on People&apos;s Report Cards, Accountability Scorecards, and campaign promise tracking.
+              </p>
+              <p className="mt-2 text-sm">
+                <Link href="/methodology" className="font-medium text-[var(--primary)] hover:underline">
+                  Read our accountability methodology
+                </Link>
               </p>
               <TrackerSignupForm />
             </div>

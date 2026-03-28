@@ -11,6 +11,7 @@ const footerLinks = {
     { href: "/parliament-tracker", label: "Accountability" },
   ],
   organization: [
+    { href: "/methodology", label: "Accountability methodology" },
     { href: "/about", label: "About Us" },
     { href: "/news", label: "News & Updates" },
     { href: "/diaspora", label: "Diaspora (17th Region)" },

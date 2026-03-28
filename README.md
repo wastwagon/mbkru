@@ -87,7 +87,7 @@ On container start, `docker-entrypoint.sh` runs **`prisma migrate deploy`** and 
 1. Set `DATABASE_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET` in `.env.local`.
 2. Run `npx prisma migrate dev` (or `migrate deploy` in production).
 3. Run `npx prisma db seed` once to create or update the admin password hash.
-4. Sign in at **`/admin/login`**. Manage **posts** (public news), **Lead capture** (newsletter / early access / Parliament tracker waitlists), **Citizen reports**, and upload images once in **Media**; pick a featured image per post from the library.
+4. Sign in at **`/admin/login`**. Manage **posts** (public news), **Parliament & promises** (CSV import for `ParliamentMember`, campaign promises per person), **Lead capture** (newsletter / early access / Parliament tracker waitlists), **Citizen reports**, and upload images once in **Media**; pick a featured image per post from the library.
 
 Additional admin accounts can be added later (e.g. new `Admin` rows + the same auth flow, or a small “invite admin” UI in Phase 2).
 
@@ -205,7 +205,7 @@ Coolify handles SSL (Let's Encrypt), restarts, and zero-downtime deploys automat
 
 - **HTTP security headers** — Set in `next.config.ts`: `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and **HSTS** when `NEXT_PUBLIC_SITE_URL` uses `https://`.
 - **Rate limiting** — `POST` handlers for contact, newsletter, early access, tracker signup, **auth**, and **report submit / track** limit requests per IP (shared via **Redis** when `REDIS_URL` is set; otherwise in-memory for single-instance/dev).
-- **Phase 2+ (`NEXT_PUBLIC_PLATFORM_PHASE` ≥ 2 at build)** — Public **member** auth (`/login`, `/register`, `/account`), **MBKRU Voice** `POST /api/reports` (optional **Turnstile** when `TURNSTILE_SECRET_KEY` is set), **attachments** `POST /api/reports/[id]/attachments`, **track** `GET /api/reports/track/[code]`, **`/citizens-voice/submit`**, **`/track-report`**, and admin **Citizen reports** queue at `/admin/reports`. Requires **`MEMBER_SESSION_SECRET`** for member APIs; optional **`REPORT_ATTACHMENT_HMAC_SECRET`** (≥32 chars) enables anonymous attachment uploads via a short-lived token after submit.
+- **Phase 2+ (`NEXT_PUBLIC_PLATFORM_PHASE` ≥ 2 at build)** — Public **member** auth (`/login`, `/register`, `/account`), **MBKRU Voice** `POST /api/reports` (optional **Turnstile** when `TURNSTILE_SECRET_KEY` is set), **attachments** `POST /api/reports/[id]/attachments`, **track** `GET /api/reports/track/[code]`, **`GET /api/promises`** (campaign promises JSON), **`/citizens-voice/submit`**, **`/track-report`**, **`/methodology`**, admin **Citizen reports** (`/admin/reports`) and **Parliament & promises** (`/admin/parliament`, CSV import). Requires **`MEMBER_SESSION_SECRET`** for member APIs; optional **`REPORT_ATTACHMENT_HMAC_SECRET`** (≥32 chars) enables anonymous attachment uploads via a short-lived token after submit.
 - **Input validation** — Zod schemas in `src/lib/validation/public-forms.ts`.
 - **CI** — `.github/workflows/ci.yml` runs `npm ci`, `lint`, and `build` on push/PR to `main` or `master`.
 

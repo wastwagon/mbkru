@@ -67,9 +67,9 @@
 
 | # | Task | Outcome |
 |---|------|---------|
-| 1 | **Import pipeline** | CSV → `ParliamentMember` (+ review in admin) |
-| 2 | **Promises** | `CampaignPromise` CRUD in admin + public read API |
-| 3 | **Methodology page** | Static page explaining score dimensions (TI/IPU-inspired, adapted) |
+| 1 | **Import pipeline** | **Shipped:** CSV → **`POST /api/admin/parliament-members/import`** + **`/admin/parliament`** list |
+| 2 | **Promises** | **Shipped:** **`/admin/parliament/[id]`** create promise + status updates; public **`GET /api/promises`** (`?memberSlug=`) when Phase 2+ |
+| 3 | **Methodology page** | **Shipped:** **`/methodology`** — principles, promise tracking, score-style disclaimer |
 
 ---
 
