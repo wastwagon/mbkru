@@ -2,6 +2,37 @@
 
 Short checklist for production Docker / Coolify hosts. Complements `README.md` and `docker-entrypoint.sh`.
 
+**Related:** [`PHASE_TASKS.md`](./PHASE_TASKS.md) (phase backlog) · [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md) (MP roster import) · [`PARTNER_API.md`](./PARTNER_API.md) (embed JSON draft)
+
+---
+
+## Quarterly / pre-release verification
+
+Use before major traffic (e.g. election window) or after infra changes:
+
+- [ ] **Backups:** restore a `pg_dump` (or volume snapshot) to a scratch instance — confirm app boots and admin login works.
+- [ ] **`SKIP_DB_SEED=1`** on production after first stable deploy (see below).
+- [ ] **`GET /api/health`:** HTTP **200** (or **503** only if Postgres intentionally down in a test); JSON **`dependencies`** and **`accountability`** flags match the phase you intend.
+- [ ] **`NEXT_PUBLIC_*`:** any change (phase, site URL, Turnstile, analytics) required a **full image rebuild** — confirm current image matches env in your registry.
+- [ ] **Phase:** `NEXT_PUBLIC_PLATFORM_PHASE` at build time matches what product/legal approved for this environment.
+
+---
+
+## Staging / demo accountability data
+
+- Optional fictional MPs, promises, and report card cycle (**year 2099**): set **`SEED_ACCOUNTABILITY_DEMO=1`** when running **`npx prisma db seed`** (see [`.env.example`](../.env.example)). **Do not** rely on this for production narratives — use vetted CSV import for real rosters.
+- After demo seed, build with **Phase 2** or **3** as needed to see `/promises` and `/report-card` populated.
+
+---
+
+## Security cadence (recommended)
+
+- Rotate **`ADMIN_SESSION_SECRET`**, **`MEMBER_SESSION_SECRET`**, DB passwords, Resend/Turnstile keys on compromise or per org policy (e.g. annually).
+- Run **`npm audit`** periodically; plan **Prisma major** upgrades separately (see `PHASE_TASKS.md`).
+- Review **upload volume** size and backup retention for **`public/uploads/reports/`**.
+
+---
+
 ## Database backups (Postgres)
 
 - **Volume snapshot:** If Postgres data lives in a named Docker volume (e.g. `postgres_data`), include that volume in your host backup or snapshot strategy.

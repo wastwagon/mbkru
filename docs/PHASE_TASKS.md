@@ -61,7 +61,7 @@
 | [x] | **`/methodology`**, election-observation form notices, OPS notes in docs |
 | [x] | Pillar routes **`/legal-empowerment`**, **`/town-halls`** when phase ≥ 2 |
 | [x] | **Partner programme (draft):** [`docs/PARTNER_API.md`](PARTNER_API.md) — attribution, caching, rate limits, versioning *recommendation* *(final terms with legal + public page when launching)* |
-| [ ] | **Real datasets:** vetted CSV import + editorial sign-off before toggling Phase 3 in prod |
+| [ ] | **Real datasets:** vetted CSV import + editorial sign-off before toggling Phase 3 in prod — procedure: [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md) |
 | [ ] | **Optional:** public CSV/JSON export for researchers (scope + rate limit) |
 | [ ] | **Stretch:** PMO-style modules (bills, votes, plenary) — *new product verticals; scope separately* |
 
@@ -83,7 +83,7 @@
 
 Work **top to bottom** within your target phase; do not skip legal/ops items if going live.
 
-1. **Phase 1 verify** — OPS runbook walkthrough + content/legal pass  
+1. **Phase 1 verify** — run quarterly checklist in [`OPS_RUNBOOK.md`](./OPS_RUNBOOK.md) + content/legal pass  
 2. **Phase 2 tests** — `/api/health` + partner JSON routes in Vitest *(done — `src/app/api/**/route.test.ts`)*  
 3. **Phase 2 privacy** — expanded on site *(counsel review)*  
 4. **Data** — `SEED_ACCOUNTABILITY_DEMO=1` on staging; then real CSV import dry-run  
