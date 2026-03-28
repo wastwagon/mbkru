@@ -28,7 +28,7 @@ Use before major traffic (e.g. election window) or after infra changes:
 ## Security cadence (recommended)
 
 - Rotate **`ADMIN_SESSION_SECRET`**, **`MEMBER_SESSION_SECRET`**, DB passwords, Resend/Turnstile keys on compromise or per org policy (e.g. annually).
-- Run **`npm audit`** periodically; plan **Prisma major** upgrades separately (see `PHASE_TASKS.md`).
+- Run **`npm audit`** periodically; plan **Prisma major** upgrades separately — [`PRISMA7_NOTES.md`](./PRISMA7_NOTES.md).
 - Review **upload volume** size and backup retention for **`public/uploads/reports/`**.
 
 ---

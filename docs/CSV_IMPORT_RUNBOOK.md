@@ -2,7 +2,7 @@
 
 **Where:** Admin **`/admin/parliament`** → upload CSV → **`POST /api/admin/parliament-members/import`**.
 
-**Code:** Column contract in `src/lib/server/parliament-csv.ts` (`parseParliamentMembersCsv`).
+**Code:** Parser in `src/lib/parliament-csv-parse.ts` (tests: `parliament-csv-parse.test.ts`); server re-export in `src/lib/server/parliament-csv.ts`.
 
 ---
 
