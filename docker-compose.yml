@@ -1,9 +1,19 @@
-# MBKRU — Next.js + Postgres (admin CMS: /admin)
+# MBKRU — Next.js + Postgres + Redis (admin CMS: /admin)
 # Run: docker compose up -d --build
 # Entrypoint runs migrate + seed when DATABASE_URL is set (see docker-entrypoint.sh).
+# Redis: ready for Phase 2 (sessions/rate limits); app does not require REDIS_URL yet.
 # Manual retry: Admin → Settings, or: docker compose exec mbkru-web npx prisma db seed
 
 services:
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - mbkru
+
   postgres:
     image: postgres:16-alpine
     container_name: mbkru-postgres
@@ -37,12 +47,15 @@ services:
       - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL:-http://localhost:1100}
       - NEXT_PUBLIC_PLATFORM_PHASE=${NEXT_PUBLIC_PLATFORM_PHASE:-1}
       - DATABASE_URL=${DATABASE_URL:-postgresql://mbkru:mbkru_dev@postgres:5432/mbkru}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
       - ADMIN_SESSION_SECRET=${ADMIN_SESSION_SECRET}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_started
     volumes:
       - mbkru_uploads:/app/public/uploads
     restart: unless-stopped
@@ -51,6 +64,7 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:
   mbkru_uploads:
 
 networks:
