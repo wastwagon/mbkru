@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { Card } from "@/components/ui/Card";
+import Link from "next/link";
 import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
+import { Card } from "@/components/ui/Card";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { images } from "@/lib/placeholders";
+import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
+import { isSituationalAlertsIntakeEnabled } from "@/lib/reports/situational-alerts-gate";
 
 export const metadata: Metadata = {
   title: "Physical Engagement Network",
@@ -41,7 +44,9 @@ const howItWorks = [
   },
 ];
 
-export default function SituationalAlertsPage() {
+export default async function SituationalAlertsPage() {
+  const intakeOn = isSituationalAlertsIntakeEnabled() && isCitizensVoiceEnabled();
+
   return (
     <div>
       <PageHeader
@@ -116,6 +121,32 @@ export default function SituationalAlertsPage() {
           </div>
         </div>
       </section>
+
+      {intakeOn ? (
+        <section className="section-spacing section-full bg-[var(--section-dark)] text-white">
+          <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+            <h2 className="font-display text-xl font-bold sm:text-2xl">Situational alerts (pilot)</h2>
+            <p className="mx-auto mt-2 max-w-2xl text-sm text-white/85">
+              Submit a time-sensitive local alert for our team to review. You will get a tracking code; we do not
+              publish raw submissions. Use MBKRU Voice for general civic reports.
+            </p>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
+              <Link
+                href="/situational-alerts/submit"
+                className="inline-flex rounded-xl bg-[var(--accent-gold)] px-6 py-3 text-sm font-semibold text-[var(--section-dark)] shadow-md hover:bg-[var(--accent-warm)]"
+              >
+                Submit situational alert
+              </Link>
+              <Link
+                href="/track-report"
+                className="inline-flex rounded-xl border-2 border-white/40 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
+              >
+                Track a submission
+              </Link>
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       {/* Early Access — premium CTA card */}
       <section className="section-spacing section-full bg-[var(--section-light)]">

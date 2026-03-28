@@ -56,7 +56,7 @@
 
 | # | Task | Outcome |
 |---|------|---------|
-| 1 | **Situational alerts** | Intake path + moderation workflow (reuse `CitizenReport` kinds) |
+| 1 | **Situational alerts** | **Shipped (MVP):** `/situational-alerts/submit` (locked `SITUATIONAL_ALERT`), Engagement page CTAs, admin `/admin/reports?kind=…` filters + detail moderation notes for situational / election kinds. Further: playbooks, SLA fields — later |
 | 2 | **Parliament tracker** | Data model wiring for waitlist → notify when pilot opens |
 | 3 | **Maps** | Lazy map picker; region from coordinates where feasible |
 | 4 | **Rate limits** | Redis token bucket on all anonymous `POST` (enforce in code paths) |

@@ -44,6 +44,31 @@ export default async function AdminReportDetailPage({ params }: Props) {
       <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)] line-clamp-2">
         {report.title}
       </h1>
+
+      {report.kind === "SITUATIONAL_ALERT" ? (
+        <div
+          className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950"
+          role="note"
+        >
+          <p className="font-semibold">Moderation — situational alert</p>
+          <p className="mt-1 text-amber-900/90">
+            Verify time, place, and observable facts before escalation or external sharing. Do not treat this
+            submission as confirmed news.
+          </p>
+        </div>
+      ) : null}
+      {report.kind === "ELECTION_OBSERVATION" ? (
+        <div
+          className="mt-4 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-950"
+          role="note"
+        >
+          <p className="font-semibold">Moderation — election observation</p>
+          <p className="mt-1 text-blue-900/90">
+            Apply election-period policies and legal review before publication or third-party relay.
+          </p>
+        </div>
+      ) : null}
+
       <dl className="mt-4 grid gap-2 text-sm text-[var(--muted-foreground)]">
         <div>
           <dt className="inline font-medium text-[var(--foreground)]">Tracking code: </dt>

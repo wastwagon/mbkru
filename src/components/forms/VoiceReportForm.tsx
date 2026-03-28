@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 
+import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
+
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
 /** Keep in sync with `report-attachment-limits` (client bundle cannot import server-only module). */
@@ -14,7 +16,7 @@ const ATTACH_ACCEPT = "image/jpeg,image/png,image/webp,application/pdf";
 
 type RegionOption = { id: string; name: string };
 
-const KINDS = [
+const ALL_KINDS = [
   { value: "VOICE", label: "MBKRU Voice" },
   { value: "SITUATIONAL_ALERT", label: "Situational alert" },
   { value: "ELECTION_OBSERVATION", label: "Election observation" },
@@ -23,9 +25,32 @@ const KINDS = [
 const inputClass =
   "mt-1 block w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20";
 
-export function VoiceReportForm({ regions }: { regions: RegionOption[] }) {
+export type VoiceReportFormProps = {
+  regions: RegionOption[];
+  /** When set with `lockKind`, submission uses this kind only. */
+  defaultKind?: (typeof ALL_KINDS)[number]["value"];
+  /** Hide report-type selector (e.g. situational submit page). */
+  lockKind?: boolean;
+  /** Optional textarea placeholder override. */
+  bodyPlaceholder?: string;
+};
+
+export function VoiceReportForm({
+  regions,
+  defaultKind = "VOICE",
+  lockKind = false,
+  bodyPlaceholder,
+}: VoiceReportFormProps) {
+  const phase = getPublicPlatformPhase();
+  const electionOn = platformFeatures.electionObservatory(phase);
+  const kindOptions = ALL_KINDS.filter((k) => k.value !== "ELECTION_OBSERVATION" || electionOn);
+
   const [hasMember, setHasMember] = useState(false);
-  const [kind, setKind] = useState<string>("VOICE");
+  const [kind, setKind] = useState<string>(() => {
+    if (lockKind && defaultKind) return defaultKind;
+    if (defaultKind && kindOptions.some((k) => k.value === defaultKind)) return defaultKind;
+    return kindOptions[0]?.value ?? "VOICE";
+  });
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [category, setCategory] = useState("");
@@ -40,6 +65,15 @@ export function VoiceReportForm({ regions }: { regions: RegionOption[] }) {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (lockKind && defaultKind) setKind(defaultKind);
+  }, [lockKind, defaultKind]);
+
+  useEffect(() => {
+    if (lockKind) return;
+    if (!electionOn && kind === "ELECTION_OBSERVATION") setKind("VOICE");
+  }, [electionOn, lockKind, kind]);
 
   useEffect(() => {
     fetch("/api/auth/me", { credentials: "include" })
@@ -193,7 +227,9 @@ export function VoiceReportForm({ regions }: { regions: RegionOption[] }) {
           className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-green-900"
           role="status"
         >
-          <p className="font-semibold">Report received</p>
+          <p className="font-semibold">
+            {kind === "SITUATIONAL_ALERT" ? "Situational report received" : "Report received"}
+          </p>
           <p className="mt-1 text-sm">
             Save your tracking code:{" "}
             <span className="font-mono text-base font-bold tracking-wide">{trackingCode}</span>
@@ -212,23 +248,30 @@ export function VoiceReportForm({ regions }: { regions: RegionOption[] }) {
         </p>
       ) : null}
 
-      <div>
-        <label htmlFor="kind" className="block text-sm font-medium text-[var(--foreground)]">
-          Report type
-        </label>
-        <select
-          id="kind"
-          value={kind}
-          onChange={(e) => setKind(e.target.value)}
-          className={`${inputClass} cursor-pointer`}
-        >
-          {KINDS.map((k) => (
-            <option key={k.value} value={k.value}>
-              {k.label}
-            </option>
-          ))}
-        </select>
-      </div>
+      {lockKind ? (
+        <div className="rounded-xl border border-[var(--border)] bg-white/80 px-4 py-3 text-sm text-[var(--muted-foreground)]">
+          <span className="font-medium text-[var(--foreground)]">Report type: </span>
+          {ALL_KINDS.find((k) => k.value === kind)?.label ?? kind}
+        </div>
+      ) : (
+        <div>
+          <label htmlFor="kind" className="block text-sm font-medium text-[var(--foreground)]">
+            Report type
+          </label>
+          <select
+            id="kind"
+            value={kindOptions.some((k) => k.value === kind) ? kind : kindOptions[0]?.value}
+            onChange={(e) => setKind(e.target.value)}
+            className={`${inputClass} cursor-pointer`}
+          >
+            {kindOptions.map((k) => (
+              <option key={k.value} value={k.value}>
+                {k.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-[var(--foreground)]">
@@ -259,7 +302,10 @@ export function VoiceReportForm({ regions }: { regions: RegionOption[] }) {
           value={body}
           onChange={(e) => setBody(e.target.value)}
           className={`${inputClass} resize-y min-h-[160px]`}
-          placeholder="Describe facts, location, time, and who was involved. Avoid hearsay where possible."
+          placeholder={
+            bodyPlaceholder ??
+            "Describe facts, location, time, and who was involved. Avoid hearsay where possible."
+          }
         />
       </div>
 
