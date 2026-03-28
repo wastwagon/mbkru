@@ -58,12 +58,14 @@ COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
 
-# Merge Prisma CLI hoisted deps (effect, c12, …) without overwriting next/react/etc.
+# Merge Prisma CLI hoisted deps (effect, c12, …). Always overwrite by name: standalone
+# can leave a wrong or stub top-level entry so "[ ! -e ]" skipped copying and `effect` was missing.
+# Do not replace @prisma / prisma / .prisma / bcryptjs (those come from the builder + COPY above).
 RUN --mount=from=prisma-cli-deps,source=/pcd/node_modules,target=/pcm \
     sh -euc 'cd /pcm && for p in *; do \
       [ -d "$$p" ] || continue; \
       case "$$p" in @prisma|prisma|.prisma|bcryptjs) continue ;; esac; \
-      if [ ! -e "/app/node_modules/$$p" ]; then cp -a "$$p" /app/node_modules/; fi; \
+      rm -rf "/app/node_modules/$$p" && cp -a "$$p" /app/node_modules/; \
     done'
 
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
