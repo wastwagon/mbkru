@@ -28,14 +28,19 @@ export function Logo({ variant = "full", theme = "light", className = "", href =
   );
 
   const wrapperClass = `flex min-w-0 shrink-0 items-center gap-3 overflow-visible transition-opacity hover:opacity-90 ${className}`;
+  const variantAttr = { "data-logo-variant": variant } as const;
 
   if (href) {
     return (
-      <Link href={href} className={wrapperClass} aria-label="MBKRU Advocates — Home">
+      <Link href={href} className={wrapperClass} aria-label="MBKRU Advocates — Home" {...variantAttr}>
         {content}
       </Link>
     );
   }
 
-  return <div className={wrapperClass}>{content}</div>;
+  return (
+    <div className={wrapperClass} {...variantAttr}>
+      {content}
+    </div>
+  );
 }

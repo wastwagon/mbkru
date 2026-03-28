@@ -49,6 +49,14 @@ npm run build
 npm start
 ```
 
+### Unit tests
+
+```bash
+npm run test
+```
+
+Vitest runs fast unit tests for shared helpers (no database).
+
 ## Environment Variables
 
 Copy `.env.example` to `.env.local` (or `.env` for Docker Compose) and fill in. See the file for the full list.

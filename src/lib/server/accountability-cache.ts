@@ -3,6 +3,13 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 
 import { ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC } from "@/lib/accountability-http";
+import {
+  MPS_ROSTER_TAG,
+  PROMISES_INDEX_TAG,
+  REPORT_CARD_INDEX_TAG,
+  promisesMemberTag,
+  reportCardYearTag,
+} from "@/lib/accountability-tags";
 import { prisma } from "@/lib/db/prisma";
 
 export {
@@ -11,21 +18,13 @@ export {
   accountabilityPublicCacheControl,
 } from "@/lib/accountability-http";
 
-/** Invalidate when any public “promises index” or API list (all) changes. */
-export const PROMISES_INDEX_TAG = "mbkru:promises-index";
-
-export function promisesMemberTag(slug: string): string {
-  return `mbkru:promises-member:${slug}`;
-}
-
-export const REPORT_CARD_INDEX_TAG = "mbkru:report-card-index";
-
-export function reportCardYearTag(year: number): string {
-  return `mbkru:report-card-year:${year}`;
-}
-
-/** Invalidate when roster fields or promise counts in `GET /api/mps` should refresh. */
-export const MPS_ROSTER_TAG = "mbkru:mps-roster";
+export {
+  MPS_ROSTER_TAG,
+  PROMISES_INDEX_TAG,
+  REPORT_CARD_INDEX_TAG,
+  promisesMemberTag,
+  reportCardYearTag,
+} from "@/lib/accountability-tags";
 
 export async function getCachedPromisesIndexMembers() {
   return unstable_cache(
