@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
+import { sendContactNotification } from "@/lib/server/send-contact-email";
 import { contactBodySchema } from "@/lib/validation/public-forms";
 
-// Placeholder: integrate with your email service (e.g. Resend, SendGrid)
 export async function POST(request: Request) {
   if (!(await allowPublicFormRequest(request, "contact"))) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
@@ -18,14 +18,20 @@ export async function POST(request: Request) {
 
     const { name, email, subject, message, enquiryType } = parsed.data;
 
-    // TODO: Send email via Resend, SendGrid, or other provider
-    console.log("Contact form submission:", {
+    const out = await sendContactNotification({
       name,
       email,
       subject,
       message,
       enquiryType,
     });
+
+    if (out.mode === "failed") {
+      return NextResponse.json(
+        { error: "Could not deliver your message. Please try again later." },
+        { status: 502 },
+      );
+    }
 
     return NextResponse.json({ success: true });
   } catch {

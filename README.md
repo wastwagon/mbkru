@@ -6,6 +6,7 @@ Civic Accountability & Citizens Engagement Platform for Ghana.
 
 ## Architecture & phases
 
+- **Sprint plan (Phase 1 polish → Phase 3):** [`docs/SPRINT_BACKLOG.md`](docs/SPRINT_BACKLOG.md)
 - **Full write-up:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — Phase 1 vs 2 vs 3 boundaries, Postgres + built-in admin, Docker build args, extension checklist.
 - **Phase 1 completion & recovery:** [`docs/PHASE1_STATUS.md`](docs/PHASE1_STATUS.md) — verified against scope, how to run/restore the project.
 - **Phase 1 product scope:** [`PHASE1_SCOPE.md`](PHASE1_SCOPE.md)
@@ -59,6 +60,9 @@ Copy `.env.example` to `.env.local` (or `.env` for Docker Compose) and fill in. 
 | `DATABASE_URL` | PostgreSQL connection string (Prisma) |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | First admin account; `prisma db seed` upserts this user |
 | `ADMIN_SESSION_SECRET` | Secret for signing the admin session cookie (≥32 characters in production) |
+| `RESEND_API_KEY` | Optional; [Resend](https://resend.com) API key — contact form sends email when set with `CONTACT_INBOX_EMAIL` |
+| `CONTACT_INBOX_EMAIL` | Inbox that receives contact submissions (required with `RESEND_API_KEY`) |
+| `RESEND_FROM_EMAIL` | Optional; default `MBKRU Contact <onboarding@resend.dev>` (use your verified domain in production) |
 | `REDIS_URL` | Optional; **shared rate limits** for public form APIs when set; health check pings Redis |
 | `RATE_LIMIT_WINDOW_MS` | Optional; default `60000` (ms window per IP + route) |
 | `RATE_LIMIT_MAX` | Optional; default `30` requests per window |
