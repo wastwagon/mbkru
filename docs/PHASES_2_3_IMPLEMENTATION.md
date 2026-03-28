@@ -113,14 +113,14 @@ New / planned tables (see `prisma/schema.prisma`):
 ### Phase 2 — recommended sequence
 
 1. **Auth:** `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout` — separate cookie name from admin; Redis sessions optional (`docker-compose.fullstack.yml`).
-2. **Reports:** `POST /api/reports`, `GET /api/reports/me`, `GET /api/reports/:trackingCode` (public status).
+2. **Reports:** `POST /api/reports`, `GET /api/reports/me`, `GET /api/reports/track/[code]` (public status).
 3. **Uploads:** Reuse or extend admin media patterns with **virus scan / size limits** and **signed URLs** before production.
 4. **Rate limiting:** Redis token bucket on all anonymous `POST` (align with `docs/ARCHITECTURE.md`).
 5. **Admin moderation:** `/admin/reports` queue (new) — staff roles can wait until after MVP triage.
 
 ### Phase 3 — add
 
-6. **Public data:** `GET /api/mps`, `GET /api/promises`, `GET /api/scorecards/:year` (cached).
+6. **Public data:** `GET /api/promises` (optional `?memberSlug=`), `GET /api/report-card/[year]` — rate-limited; Next **`unstable_cache`** + tags / **`revalidateTag`**; **`Cache-Control`** on **200** (~300s) and **`private, no-store`** on report-card **404**. MP roster is the **`/promises`** UI plus admin CSV import — no separate public **`GET /api/mps`** in the current app.
 7. **Maps / aggregates:** Server components + static generation for published scorecards; avoid leaking draft data.
 
 ---

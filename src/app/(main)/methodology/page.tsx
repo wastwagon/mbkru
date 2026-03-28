@@ -86,7 +86,9 @@ export default async function MethodologyPage() {
                 GET /api/report-card/[year]
               </code>
             ) : null}
-            {(showPromises || showReportCard) ? " for JSON integrations." : " See ops docs for phase flags."}
+            {(showPromises || showReportCard)
+              ? " — rate-limited; responses may be cached briefly (see ops runbook). Contact us for partner terms before production embeds."
+              : " See ops docs for phase flags."}
           </p>
 
           <p className="mt-6">
