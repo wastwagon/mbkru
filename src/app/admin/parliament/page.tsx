@@ -20,8 +20,10 @@ export default async function AdminParliamentPage() {
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">Parliament &amp; promises</h1>
       <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-        Import MPs / ministers from CSV, then attach campaign promises per person. Public read API:{" "}
-        <code className="rounded bg-[var(--section-light)] px-1 text-xs">GET /api/promises</code> (Phase 2+ build).
+        Import MPs / ministers from CSV, then attach campaign promises per person. Public read APIs (Phase 2+ build):{" "}
+        <code className="rounded bg-[var(--section-light)] px-1 text-xs">GET /api/mps</code>
+        {" · "}
+        <code className="rounded bg-[var(--section-light)] px-1 text-xs">GET /api/promises</code>.
       </p>
 
       <div className="mt-8">

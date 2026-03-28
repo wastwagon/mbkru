@@ -120,7 +120,7 @@ New / planned tables (see `prisma/schema.prisma`):
 
 ### Phase 3 — add
 
-6. **Public data:** `GET /api/promises` (optional `?memberSlug=`), `GET /api/report-card/[year]` — rate-limited; Next **`unstable_cache`** + tags / **`revalidateTag`**; **`Cache-Control`** on **200** (~300s) and **`private, no-store`** on report-card **404**. MP roster is the **`/promises`** UI plus admin CSV import — no separate public **`GET /api/mps`** in the current app.
+6. **Public data:** `GET /api/mps` (active roster + promise counts), `GET /api/promises` (optional `?memberSlug=`), `GET /api/report-card/[year]` — rate-limited; Next **`unstable_cache`** + tags / **`revalidateTag`**; **`Cache-Control`** on **200** (~300s) and **`private, no-store`** on report-card **404**. Browse UI remains **`/promises`**; roster maintenance is admin CSV import.
 7. **Maps / aggregates:** Server components + static generation for published scorecards; avoid leaking draft data.
 
 ---

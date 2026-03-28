@@ -104,6 +104,18 @@ Implementation: `src/config/platform.ts`. Use these flags to guard new routes, n
 
 **Postgres + Redis** in `docker-compose.fullstack.yml` let **Coolify/VPS** run the full stack; the app uses Postgres today for news; Redis is ready for rate limits and jobs.
 
+### 6.1 Public accountability JSON (Phase ≥ 2 / 3)
+
+Read-only routes for partners and embeds (gated by `platformFeatures` in `src/config/platform.ts`). All use **Redis-backed rate limits** when `REDIS_URL` is set, **`unstable_cache`** with tags in **`src/lib/server/accountability-cache.ts`**, and aligned **`Cache-Control`** on successful responses — see **`docs/OPS_RUNBOOK.md`**.
+
+| HTTP | When enabled |
+|------|----------------|
+| `GET /api/mps` | Phase ≥ 2 (`parliamentTrackerData`) — active `ParliamentMember` rows + `promiseCount` |
+| `GET /api/promises` | Phase ≥ 2 — optional `?memberSlug=` filter |
+| `GET /api/report-card/[year]` | Phase ≥ 3 (`accountabilityScorecards`) — published cycle only; **404** uses `private, no-store` |
+
+Admin **CSV import** and **promise** mutations call **`revalidateTag`** so JSON and HTML stay in sync without waiting for the TTL.
+
 ---
 
 ## 7. Environment variables

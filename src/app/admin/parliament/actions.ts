@@ -6,7 +6,11 @@ import { z } from "zod";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
-import { PROMISES_INDEX_TAG, promisesMemberTag } from "@/lib/server/accountability-cache";
+import {
+  MPS_ROSTER_TAG,
+  PROMISES_INDEX_TAG,
+  promisesMemberTag,
+} from "@/lib/server/accountability-cache";
 
 const createPromiseSchema = z.object({
   memberId: z.string().cuid(),
@@ -70,6 +74,7 @@ export async function createCampaignPromiseAction(formData: FormData): Promise<v
   revalidatePath("/admin/parliament");
   revalidateTag(PROMISES_INDEX_TAG, "max");
   revalidateTag(promisesMemberTag(member.slug), "max");
+  revalidateTag(MPS_ROSTER_TAG, "max");
   revalidatePath("/promises");
   revalidatePath(`/promises/${member.slug}`);
 }
@@ -105,6 +110,7 @@ export async function updateCampaignPromiseStatusAction(formData: FormData): Pro
   if (member) {
     revalidateTag(PROMISES_INDEX_TAG, "max");
     revalidateTag(promisesMemberTag(member.slug), "max");
+    revalidateTag(MPS_ROSTER_TAG, "max");
     revalidatePath("/promises");
     revalidatePath(`/promises/${member.slug}`);
   }

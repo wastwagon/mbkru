@@ -3,7 +3,11 @@ import { NextResponse } from "next/server";
 
 import { getAdminSession } from "@/lib/admin/session";
 import { prisma } from "@/lib/db/prisma";
-import { PROMISES_INDEX_TAG, promisesMemberTag } from "@/lib/server/accountability-cache";
+import {
+  MPS_ROSTER_TAG,
+  PROMISES_INDEX_TAG,
+  promisesMemberTag,
+} from "@/lib/server/accountability-cache";
 import { parseParliamentMembersCsv } from "@/lib/server/parliament-csv";
 
 const MAX_BYTES = 2 * 1024 * 1024;
@@ -83,6 +87,7 @@ export async function POST(request: Request) {
 
   if (touchedSlugs.size > 0) {
     revalidateTag(PROMISES_INDEX_TAG, "max");
+    revalidateTag(MPS_ROSTER_TAG, "max");
     for (const s of touchedSlugs) {
       revalidateTag(promisesMemberTag(s), "max");
       revalidatePath(`/promises/${s}`);

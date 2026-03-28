@@ -75,6 +75,8 @@ export default async function MethodologyPage() {
             Technical access (when your deployment phase enables them):{" "}
             {showPromises ? (
               <>
+                <code className="rounded bg-[var(--section-light)] px-1.5 py-0.5 text-xs">GET /api/mps</code>
+                {" · "}
                 <code className="rounded bg-[var(--section-light)] px-1.5 py-0.5 text-xs">
                   GET /api/promises?memberSlug=…
                 </code>

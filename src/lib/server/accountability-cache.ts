@@ -10,7 +10,7 @@ import { prisma } from "@/lib/db/prisma";
  */
 export const ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC = 300;
 
-/** `Cache-Control` for successful GET /api/promises and /api/report-card/[year] responses. */
+/** `Cache-Control` for successful accountability JSON GETs (`/api/mps`, `/api/promises`, `/api/report-card/[year]`). */
 export function accountabilityPublicCacheControl(): string {
   const s = ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC;
   return `public, max-age=${s}, s-maxage=${s}, stale-while-revalidate=${s * 2}`;
@@ -34,6 +34,9 @@ export function reportCardYearTag(year: number): string {
   return `mbkru:report-card-year:${year}`;
 }
 
+/** Invalidate when roster fields or promise counts in `GET /api/mps` should refresh. */
+export const MPS_ROSTER_TAG = "mbkru:mps-roster";
+
 export async function getCachedPromisesIndexMembers() {
   return unstable_cache(
     async () => {
@@ -51,6 +54,36 @@ export async function getCachedPromisesIndexMembers() {
     },
     ["promises-index-v1"],
     { tags: [PROMISES_INDEX_TAG], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
+  )();
+}
+
+/** Active parliament members for `GET /api/mps` (includes zero-promise rows). */
+export async function getCachedMpsPublicRoster() {
+  return unstable_cache(
+    async () => {
+      const rows = await prisma.parliamentMember.findMany({
+        where: { active: true },
+        orderBy: { name: "asc" },
+        select: {
+          slug: true,
+          name: true,
+          role: true,
+          party: true,
+          constituency: { select: { name: true } },
+          _count: { select: { promises: true } },
+        },
+      });
+      return rows.map((m) => ({
+        slug: m.slug,
+        name: m.name,
+        role: m.role,
+        party: m.party,
+        constituencyName: m.constituency?.name ?? null,
+        promiseCount: m._count.promises,
+      }));
+    },
+    ["api-mps-v1"],
+    { tags: [MPS_ROSTER_TAG], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
 }
 
