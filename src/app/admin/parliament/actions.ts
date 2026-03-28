@@ -1,11 +1,12 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { PromiseStatus } from "@prisma/client";
 import { z } from "zod";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { PROMISES_INDEX_TAG, promisesMemberTag } from "@/lib/server/accountability-cache";
 
 const createPromiseSchema = z.object({
   memberId: z.string().cuid(),
@@ -50,7 +51,7 @@ export async function createCampaignPromiseAction(formData: FormData): Promise<v
 
   const member = await prisma.parliamentMember.findUnique({
     where: { id: parsed.data.memberId },
-    select: { id: true },
+    select: { id: true, slug: true },
   });
   if (!member) return;
 
@@ -67,6 +68,10 @@ export async function createCampaignPromiseAction(formData: FormData): Promise<v
 
   revalidatePath(`/admin/parliament/${parsed.data.memberId}`);
   revalidatePath("/admin/parliament");
+  revalidateTag(PROMISES_INDEX_TAG, "max");
+  revalidateTag(promisesMemberTag(member.slug), "max");
+  revalidatePath("/promises");
+  revalidatePath(`/promises/${member.slug}`);
 }
 
 export async function updateCampaignPromiseStatusAction(formData: FormData): Promise<void> {
@@ -91,5 +96,16 @@ export async function updateCampaignPromiseStatusAction(formData: FormData): Pro
     data: { status },
   });
 
+  const member = await prisma.parliamentMember.findUnique({
+    where: { id: parsed.data.memberId },
+    select: { slug: true },
+  });
+
   revalidatePath(`/admin/parliament/${parsed.data.memberId}`);
+  if (member) {
+    revalidateTag(PROMISES_INDEX_TAG, "max");
+    revalidateTag(promisesMemberTag(member.slug), "max");
+    revalidatePath("/promises");
+    revalidatePath(`/promises/${member.slug}`);
+  }
 }

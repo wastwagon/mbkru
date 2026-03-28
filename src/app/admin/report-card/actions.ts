@@ -1,11 +1,12 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { REPORT_CARD_INDEX_TAG, reportCardYearTag } from "@/lib/server/accountability-cache";
 
 const createCycleSchema = z.object({
   year: z.coerce.number().int().min(1992).max(2100),
@@ -56,6 +57,9 @@ export async function createReportCardCycleAction(formData: FormData): Promise<v
 
   revalidatePath("/admin/report-card");
   revalidatePath("/report-card");
+  revalidatePath(`/report-card/${parsed.data.year}`);
+  revalidateTag(REPORT_CARD_INDEX_TAG, "max");
+  revalidateTag(reportCardYearTag(parsed.data.year), "max");
 }
 
 export async function publishReportCardCycleAction(formData: FormData): Promise<void> {
@@ -73,7 +77,11 @@ export async function publishReportCardCycleAction(formData: FormData): Promise<
     where: { id: parsed.data.cycleId },
     select: { year: true },
   });
-  if (c) revalidatePath(`/report-card/${c.year}`);
+  if (c) {
+    revalidatePath(`/report-card/${c.year}`);
+    revalidateTag(REPORT_CARD_INDEX_TAG, "max");
+    revalidateTag(reportCardYearTag(c.year), "max");
+  }
 }
 
 export async function unpublishReportCardCycleAction(formData: FormData): Promise<void> {
@@ -91,7 +99,11 @@ export async function unpublishReportCardCycleAction(formData: FormData): Promis
   });
   revalidatePath("/admin/report-card");
   revalidatePath("/report-card");
-  if (c) revalidatePath(`/report-card/${c.year}`);
+  if (c) {
+    revalidatePath(`/report-card/${c.year}`);
+    revalidateTag(REPORT_CARD_INDEX_TAG, "max");
+    revalidateTag(reportCardYearTag(c.year), "max");
+  }
 }
 
 export async function upsertScorecardEntryAction(formData: FormData): Promise<void> {
@@ -152,7 +164,11 @@ export async function upsertScorecardEntryAction(formData: FormData): Promise<vo
   revalidatePath("/report-card");
   const cy = await prisma.reportCardCycle.findUnique({
     where: { id: parsed.data.cycleId },
-    select: { year: true },
+    select: { year: true, publishedAt: true },
   });
-  if (cy) revalidatePath(`/report-card/${cy.year}`);
+  if (cy?.publishedAt) {
+    revalidatePath(`/report-card/${cy.year}`);
+    revalidateTag(REPORT_CARD_INDEX_TAG, "max");
+    revalidateTag(reportCardYearTag(cy.year), "max");
+  }
 }

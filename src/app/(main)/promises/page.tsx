@@ -3,10 +3,11 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/ui/PageHeader";
+import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { getCachedPromisesIndexMembers } from "@/lib/server/accountability-cache";
+import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
 
 export const dynamic = "force-dynamic";
-import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
-import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
 
 export const metadata: Metadata = {
   title: "Campaign promises",
@@ -16,17 +17,7 @@ export const metadata: Metadata = {
 export default async function PromisesIndexPage() {
   if (!isPromisesBrowseEnabled() || !isDatabaseConfigured()) notFound();
 
-  const members = await prisma.parliamentMember.findMany({
-    where: {
-      active: true,
-      promises: { some: {} },
-    },
-    orderBy: { name: "asc" },
-    include: {
-      _count: { select: { promises: true } },
-      constituency: { select: { name: true } },
-    },
-  });
+  const members = await getCachedPromisesIndexMembers();
 
   return (
     <div>

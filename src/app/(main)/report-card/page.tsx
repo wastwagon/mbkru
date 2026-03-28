@@ -3,10 +3,11 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/ui/PageHeader";
+import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { getCachedPublishedReportCardCycles } from "@/lib/server/accountability-cache";
+import { isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
 
 export const dynamic = "force-dynamic";
-import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
-import { isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
 
 export const metadata: Metadata = {
   title: "People's Report Card",
@@ -16,11 +17,7 @@ export const metadata: Metadata = {
 export default async function ReportCardIndexPage() {
   if (!isReportCardPublicEnabled() || !isDatabaseConfigured()) notFound();
 
-  const cycles = await prisma.reportCardCycle.findMany({
-    where: { publishedAt: { not: null } },
-    orderBy: { year: "desc" },
-    include: { _count: { select: { entries: true } } },
-  });
+  const cycles = await getCachedPublishedReportCardCycles();
 
   return (
     <div>

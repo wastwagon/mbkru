@@ -297,6 +297,20 @@ export function VoiceReportForm({
         </div>
       )}
 
+      {kind === "ELECTION_OBSERVATION" ? (
+        <div
+          className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950"
+          role="note"
+        >
+          <p className="font-semibold">Election-period reporting</p>
+          <p className="mt-1 text-amber-900/95">
+            MBKRU is not the Electoral Commission or a court. This channel is for documentation and staff triage only
+            — not a formal election petition, legal outcome, or official results challenge. Do not submit threats or
+            knowingly false information.
+          </p>
+        </div>
+      ) : null}
+
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-[var(--foreground)]">
           Short title

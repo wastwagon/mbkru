@@ -51,3 +51,14 @@ docker compose exec mbkru-web node /app/node_modules/prisma/build/index.js db se
 - **Signed-in members** can upload attachments for their own report via the **member session cookie** (no extra secret).
 - **Anonymous** reporters need **`REPORT_ATTACHMENT_HMAC_SECRET`** (≥32 characters, server-only). The app returns a short-lived **`attachmentUploadToken`** after **`POST /api/reports`**; without this secret, anonymous users cannot upload (the report is still accepted).
 - **Antivirus:** there is **no** in-app scanning. For production at scale, scan the uploads volume on a schedule, use a reverse proxy / WAF with upload inspection, or move to object storage with malware scanning — see comments in `src/lib/server/report-attachment-limits.ts`.
+
+## Election window & legal positioning
+
+- **UI copy** reminds users that MBKRU is **not** the EC or a court; tracking codes and in-app status are **not** formal filings. Keep comms aligned with your legal adviser during live elections.
+- **Moderation:** surge staffing for **`ELECTION_OBSERVATION`** and **`SITUATIONAL_ALERT`** queues; defer public reuse of raw submissions until verified.
+
+## Public accountability cache (promises / report card)
+
+- **`unstable_cache`** + tags in **`src/lib/server/accountability-cache.ts`** (default **300s** revalidate). Admin actions and parliament CSV import call **`revalidateTag`** so updates appear without waiting for TTL.
+- Partner JSON: **`GET /api/promises`**, **`GET /api/report-card/[year]`** — rate-limited; successful **200** responses send **`Cache-Control`** aligned with the same **300s** TTL (`accountabilityPublicCacheControl` in code). Errors (**429**, **503**, etc.) are not marked cacheable. Agree **terms of use** before giving third parties embed access.
+- **Creating** a report-card cycle (even draft) runs **`revalidateTag`** for the index and year so server-side caches stay coherent with admin and publish flows.

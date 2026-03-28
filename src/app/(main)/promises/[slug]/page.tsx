@@ -3,10 +3,11 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/ui/PageHeader";
+import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
+import { getCachedPromisesMemberPublic } from "@/lib/server/accountability-cache";
+import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
 
 export const dynamic = "force-dynamic";
-import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
-import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "Promises" };
   }
   const member = await prisma.parliamentMember.findFirst({
-    where: { slug, active: true },
+    where: { slug: slug.toLowerCase(), active: true },
     select: { name: true },
   });
   return {
@@ -32,15 +33,9 @@ export default async function PromisesByMemberPage({ params }: Props) {
   if (!isPromisesBrowseEnabled() || !isDatabaseConfigured()) notFound();
 
   const { slug } = await params;
-  const member = await prisma.parliamentMember.findFirst({
-    where: { slug, active: true },
-    include: {
-      constituency: true,
-      promises: { orderBy: { updatedAt: "desc" } },
-    },
-  });
+  const member = await getCachedPromisesMemberPublic(slug.toLowerCase());
 
-  if (!member || member.promises.length === 0) notFound();
+  if (!member) notFound();
 
   return (
     <div>

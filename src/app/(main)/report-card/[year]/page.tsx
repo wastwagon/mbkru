@@ -3,10 +3,11 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/ui/PageHeader";
+import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { getCachedPublishedReportCardYear } from "@/lib/server/accountability-cache";
+import { isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
 
 export const dynamic = "force-dynamic";
-import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
-import { isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
 
 type Props = { params: Promise<{ year: string }> };
 
@@ -16,10 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!isReportCardPublicEnabled() || !isDatabaseConfigured() || !Number.isFinite(year)) {
     return { title: "Report card" };
   }
-  const cycle = await prisma.reportCardCycle.findFirst({
-    where: { year, publishedAt: { not: null } },
-    select: { label: true },
-  });
+  const cycle = await getCachedPublishedReportCardYear(year);
   return {
     title: cycle ? `Report card ${year}` : "Report card",
     description: cycle?.label,
@@ -33,25 +31,7 @@ export default async function ReportCardYearPage({ params }: Props) {
   const year = Number.parseInt(raw, 10);
   if (!Number.isFinite(year) || year < 1992 || year > 2100) notFound();
 
-  const cycle = await prisma.reportCardCycle.findFirst({
-    where: { year, publishedAt: { not: null } },
-    include: {
-      entries: {
-        orderBy: { member: { name: "asc" } },
-        include: {
-          member: {
-            select: {
-              name: true,
-              slug: true,
-              role: true,
-              party: true,
-              _count: { select: { promises: true } },
-            },
-          },
-        },
-      },
-    },
-  });
+  const cycle = await getCachedPublishedReportCardYear(year);
 
   if (!cycle) notFound();
 

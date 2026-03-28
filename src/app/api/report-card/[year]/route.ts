@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
-import { prisma } from "@/lib/db/prisma";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
+import {
+  accountabilityPublicCacheControl,
+  getCachedReportCardApiPayload,
+} from "@/lib/server/accountability-cache";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 
 type Props = { params: Promise<{ year: string }> };
@@ -27,36 +30,13 @@ export async function GET(request: Request, { params }: Props) {
     return NextResponse.json({ error: "Invalid year" }, { status: 400 });
   }
 
-  const cycle = await prisma.reportCardCycle.findFirst({
-    where: { year, publishedAt: { not: null } },
-    include: {
-      entries: {
-        orderBy: { member: { name: "asc" } },
-        include: { member: { select: { name: true, slug: true, role: true, party: true } } },
-      },
-    },
-  });
+  const payload = await getCachedReportCardApiPayload(year);
 
-  if (!cycle) {
+  if (!payload) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  return NextResponse.json({
-    year: cycle.year,
-    label: cycle.label,
-    publishedAt: cycle.publishedAt!.toISOString(),
-    methodology: cycle.methodology,
-    entries: cycle.entries.map((e) => ({
-      member: {
-        name: e.member.name,
-        slug: e.member.slug,
-        role: e.member.role,
-        party: e.member.party,
-      },
-      narrative: e.narrative,
-      overallScore: e.overallScore,
-      metrics: e.metrics,
-      updatedAt: e.updatedAt.toISOString(),
-    })),
+  return NextResponse.json(payload, {
+    headers: { "Cache-Control": accountabilityPublicCacheControl() },
   });
 }

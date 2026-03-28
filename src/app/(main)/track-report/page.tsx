@@ -15,6 +15,13 @@ export default async function TrackReportPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-md px-4 sm:px-6 lg:px-8">
+          <div
+            className="mb-6 rounded-xl border border-[var(--border)] bg-white/90 px-4 py-3 text-xs leading-relaxed text-[var(--muted-foreground)]"
+            role="note"
+          >
+            Status here is for your reference only. It does not create or prove a formal complaint to regulators, the
+            Electoral Commission, or the courts — use their official channels where those apply.
+          </div>
           <TrackReportLookup />
           <p className="mt-8 text-center text-sm text-[var(--muted-foreground)]">
             <Link href="/citizens-voice/submit" className="text-[var(--primary)] hover:underline">

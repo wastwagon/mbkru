@@ -1,7 +1,9 @@
+import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 import { getAdminSession } from "@/lib/admin/session";
 import { prisma } from "@/lib/db/prisma";
+import { PROMISES_INDEX_TAG, promisesMemberTag } from "@/lib/server/accountability-cache";
 import { parseParliamentMembersCsv } from "@/lib/server/parliament-csv";
 
 const MAX_BYTES = 2 * 1024 * 1024;
@@ -33,6 +35,7 @@ export async function POST(request: Request) {
   let created = 0;
   let updated = 0;
   const rowErrors: string[] = [];
+  const touchedSlugs = new Set<string>();
 
   for (let i = 0; i < parsed.rows.length; i++) {
     const row = parsed.rows[i]!;
@@ -71,10 +74,20 @@ export async function POST(request: Request) {
       });
       if (existing) updated += 1;
       else created += 1;
+      touchedSlugs.add(row.slug);
     } catch (e) {
       console.error(e);
       rowErrors.push(`Row ${i + 2}: database error for slug "${row.slug}"`);
     }
+  }
+
+  if (touchedSlugs.size > 0) {
+    revalidateTag(PROMISES_INDEX_TAG, "max");
+    for (const s of touchedSlugs) {
+      revalidateTag(promisesMemberTag(s), "max");
+      revalidatePath(`/promises/${s}`);
+    }
+    revalidatePath("/promises");
   }
 
   return NextResponse.json({

@@ -79,7 +79,7 @@
 |---|------|---------|
 | 1 | **Cycles** | **Shipped (MVP):** Admin **`/admin/report-card`** create cycle, **publish / unpublish** |
 | 2 | **Scorecards** | **Shipped (MVP):** Admin **`/admin/report-card/[cycleId]`** upsert entries; public **`/report-card`**, **`/report-card/[year]`** (Phase 3); *caching* optional later |
-| 3 | **Election window** | Hardened moderation + legal disclaimers for alerts |
+| 3 | **Election window** | **Shipped (MVP):** election-observation **form notice**, **track-report** + **submit** copy; **OPS** election/moderation notes — *surge staffing is operational, not code* |
 | 4 | **Embeds** | **Shipped (MVP):** **`GET /api/report-card/[year]`** (Phase 3, rate-limited) — partner scope/comms still TBD |
 
 ---
