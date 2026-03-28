@@ -2,24 +2,14 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 
+import { ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC } from "@/lib/accountability-http";
 import { prisma } from "@/lib/db/prisma";
 
-/**
- * Seconds for `unstable_cache` revalidate on public accountability reads.
- * Keep HTTP `Cache-Control` on partner APIs in sync (see `accountabilityPublicCacheControl`).
- */
-export const ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC = 300;
-
-/** `Cache-Control` for successful accountability JSON GETs (`/api/mps`, `/api/promises`, `/api/report-card/[year]`). */
-export function accountabilityPublicCacheControl(): string {
-  const s = ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC;
-  return `public, max-age=${s}, s-maxage=${s}, stale-while-revalidate=${s * 2}`;
-}
-
-/** `Cache-Control` for accountability JSON 404s so shared caches do not pin “not found” across publish. */
-export function accountabilityApiNotFoundCacheControl(): string {
-  return "private, no-store";
-}
+export {
+  ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC,
+  accountabilityApiNotFoundCacheControl,
+  accountabilityPublicCacheControl,
+} from "@/lib/accountability-http";
 
 /** Invalidate when any public “promises index” or API list (all) changes. */
 export const PROMISES_INDEX_TAG = "mbkru:promises-index";

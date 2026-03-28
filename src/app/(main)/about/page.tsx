@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { AboutPlatformLinks } from "@/components/about/AboutPlatformLinks";
 import { Badge } from "@/components/ui/Badge";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { images, pillarImages, leadershipPlaceholders, registrationPlaceholder, advisoryPlaceholders, heroContent } from "@/lib/placeholders";
@@ -110,13 +111,15 @@ const pillars = [
   },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
   return (
     <div>
       <PageHeader
         title="About MBKRU"
         description={`My Brother's Keeper Restoration United — ${heroContent.tagline}. ${heroContent.motto}`}
       />
+
+      <AboutPlatformLinks />
 
       {/* Section 1: Executive Summary — who we are (lead with overview) */}
       <section className="section-spacing section-full bg-[var(--section-light)]">

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/db/prisma";
-import { normalizeLeadEmail } from "@/lib/server/lead-capture";
+import { normalizeLeadEmail } from "@/lib/normalize-email";
 
 export type ContactSubmissionInput = {
   name: string;

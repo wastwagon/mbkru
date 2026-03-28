@@ -92,7 +92,7 @@
 | 2 | **Pillar flags → routes** | **Shipped:** **`/legal-empowerment`**, **`/town-halls`** when phase ≥ 2; **Header** nav + **sitemap**; `isLegalEmpowermentPageEnabled` / `isTownHallDirectoryPageEnabled` in `accountability-pages.ts` |
 | 3 | **Trust UX** | **Shipped:** post-submit **“How we use your report”** `<details>` on **VoiceReportForm** success |
 | 4 | **Contact audit trail** | **Shipped:** **`ContactSubmission`** model + migrate; **`POST /api/contact`** writes DB before email; **`/admin/contact-submissions`** |
-| 5 | **Platform hygiene** | *Next:* **`middleware` → `proxy`**; Prisma config migration; Vitest (or similar) for critical APIs |
+| 5 | **Platform hygiene** | **Started:** **`vitest`** + **`npm run test`** in CI; pure helpers in **`accountability-http`** / **`normalize-email`**. *Next:* **`middleware` → `proxy`**; Prisma config migration; expand API tests |
 | 6 | **Marketing UX (phase-aware)** | **Shipped:** Homepage **live tools** strip + hero chips; pillar / footer links to **Legal desk**, **Town halls**, **Submit**/**Track**; admin **metrics** row; accountability hub **linked cards**; account **quick links**; Voice header copy when pilot on |
 
 ---

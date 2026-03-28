@@ -1,10 +1,9 @@
 import type { LeadCaptureSource } from "@prisma/client";
 
 import { prisma } from "@/lib/db/prisma";
+import { normalizeLeadEmail } from "@/lib/normalize-email";
 
-export function normalizeLeadEmail(email: string): string {
-  return email.trim().toLowerCase();
-}
+export { normalizeLeadEmail } from "@/lib/normalize-email";
 
 /** Idempotent: same email + source updates nothing (keeps first createdAt). */
 export async function upsertLeadCapture(
