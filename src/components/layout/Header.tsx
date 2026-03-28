@@ -9,6 +9,103 @@ import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 
 type NavItem = { href: string; label: string };
 
+type MeResponse = { member?: { displayName?: string | null; email: string } | null };
+
+function UserMenuIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+  );
+}
+
+function MemberAuthNav({
+  isHomeHero,
+  pathname,
+  variant,
+  onNavigate,
+}: {
+  isHomeHero: boolean;
+  pathname: string;
+  variant: "desktop" | "mobile";
+  onNavigate?: () => void;
+}) {
+  const [member, setMember] = useState<{ displayName?: string | null; email: string } | null | undefined>(undefined);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/auth/me", { credentials: "include" })
+      .then(async (res) => {
+        if (cancelled) return;
+        if (!res.ok) {
+          setMember(null);
+          return;
+        }
+        const data = (await res.json()) as MeResponse;
+        setMember(data.member ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setMember(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [pathname]);
+
+  const signedIn = member != null;
+  const href = signedIn ? "/account" : "/login";
+  const label =
+    signedIn && member
+      ? member.displayName?.trim() || member.email.split("@")[0] || "Account"
+      : "Sign in";
+  const busy = member === undefined;
+
+  const active =
+    (!signedIn && (pathname === "/login" || pathname === "/register")) ||
+    (signedIn && pathname.startsWith("/account"));
+
+  const tone = isHomeHero
+    ? active
+      ? "text-[var(--accent-gold)]"
+      : "text-white/90 hover:text-[var(--accent-gold)]"
+    : active
+      ? "text-[var(--primary)]"
+      : "text-[var(--foreground)] hover:text-[var(--primary)]";
+
+  if (variant === "desktop") {
+    return (
+      <Link
+        href={href}
+        className={`inline-flex max-w-[200px] items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-semibold transition-colors ${tone} ${busy ? "opacity-80" : ""}`}
+        aria-busy={busy}
+        aria-label={signedIn ? `Account: ${label}` : "Sign in"}
+      >
+        <UserMenuIcon className="h-5 w-5 shrink-0" />
+        <span className="truncate">{label}</span>
+      </Link>
+    );
+  }
+
+  return (
+    <Link
+      href={href}
+      onClick={onNavigate}
+      className={`flex min-h-[44px] items-center gap-3 rounded-xl px-4 py-3 text-base font-medium transition-all hover:bg-[var(--muted)] ${
+        active ? "font-semibold text-[var(--primary)]" : "text-[var(--foreground)]"
+      } ${busy ? "opacity-80" : ""}`}
+      aria-busy={busy}
+    >
+      <UserMenuIcon className="h-5 w-5 shrink-0" />
+      {label}
+    </Link>
+  );
+}
+
 function buildMainNav(phase: ReturnType<typeof getPublicPlatformPhase>): NavItem[] {
   const items: NavItem[] = [
     { href: "/", label: "Home" },
@@ -82,14 +179,7 @@ export function Header() {
         {/* Desktop CTA — Get in Touch */}
         <div className="hidden lg:flex lg:shrink-0 lg:items-center lg:gap-4">
           {showMemberAuth ? (
-            <Link
-              href="/login"
-              className={`text-sm font-semibold transition-colors ${
-                isHomeHero ? "text-white/90 hover:text-[var(--accent-gold)]" : "text-[var(--foreground)] hover:text-[var(--primary)]"
-              }`}
-            >
-              Sign in
-            </Link>
+            <MemberAuthNav isHomeHero={isHomeHero} pathname={pathname} variant="desktop" />
           ) : null}
           <Link
             href="/contact"
@@ -150,13 +240,12 @@ export function Header() {
                 </Link>
               ))}
               {showMemberAuth ? (
-                <Link
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex min-h-[44px] items-center rounded-xl px-4 py-3 text-base font-medium text-[var(--foreground)] hover:bg-[var(--muted)]"
-                >
-                  Sign in
-                </Link>
+                <MemberAuthNav
+                  isHomeHero={false}
+                  pathname={pathname}
+                  variant="mobile"
+                  onNavigate={() => setMobileMenuOpen(false)}
+                />
               ) : null}
               <div className="pt-4">
                 <Link
