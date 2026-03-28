@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { PasswordInput } from "@/components/ui/PasswordInput";
+
 export function AdminLoginForm({ configError }: { configError: boolean }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -60,9 +62,8 @@ export function AdminLoginForm({ configError }: { configError: boolean }) {
             <label htmlFor="password" className="block text-sm font-medium text-[var(--foreground)]">
               Password
             </label>
-            <input
+            <PasswordInput
               id="password"
-              type="password"
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

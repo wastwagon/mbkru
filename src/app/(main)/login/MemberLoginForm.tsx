@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { PasswordInput } from "@/components/ui/PasswordInput";
 
 const inputClass =
   "mt-1 block w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20";
@@ -63,9 +64,8 @@ export function MemberLoginForm() {
         <label htmlFor="login-password" className="block text-sm font-medium text-[var(--foreground)]">
           Password
         </label>
-        <input
+        <PasswordInput
           id="login-password"
-          type="password"
           autoComplete="current-password"
           required
           value={password}
