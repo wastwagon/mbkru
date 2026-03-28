@@ -43,6 +43,7 @@
 | [x] | **Privacy policy** — Voice: location, attachments, anonymous/email + tracking, moderation; retention expanded *(counsel review still recommended)* |
 | [x] | **Vitest:** `GET /api/health` JSON handler test (mock `getHealthStatus`) |
 | [x] | **Vitest:** partner JSON routes — `/api/mps`, `/api/promises`, `/api/report-card/[year]` (mocks) |
+| [x] | **Vitest:** **`POST /api/admin/login`** — rate limit, credentials, cookie (`route.test.ts`) |
 | [ ] | **Tracker leads:** operational email “pilot open” or ESP export ([`SPRINT_BACKLOG`](./SPRINT_BACKLOG.md) Sprint 4) |
 | [ ] | **Situational:** playbooks / SLA fields (schema + admin) — *if product wants beyond MVP* |
 | [ ] | **Stretch:** SMS or second-channel notifications |
