@@ -63,7 +63,7 @@
 | [x] | Pillar routes **`/legal-empowerment`**, **`/town-halls`** when phase ≥ 2 |
 | [x] | **Partner programme (draft):** [`docs/PARTNER_API.md`](PARTNER_API.md) — attribution, caching, rate limits, versioning *recommendation* *(final terms with legal + public page when launching)* |
 | [ ] | **Real datasets:** vetted CSV import + editorial sign-off before toggling Phase 3 in prod — procedure: [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md); source pointers: [`DATA_SOURCES.md`](./DATA_SOURCES.md) |
-| [x] | **Research export:** `GET /api/export/mps-csv` (UTF-8 BOM CSV, same phase + rate limit as `/api/mps`) — see [`PARTNER_API.md`](./PARTNER_API.md) |
+| [x] | **Research export:** `GET /api/export/mps-csv` + `GET /api/export/promises-csv` (UTF-8 BOM CSV; promises export is full list) — [`PARTNER_API.md`](./PARTNER_API.md) |
 | [ ] | **Stretch:** PMO-style modules (bills, votes, plenary) — *new product verticals; scope separately* |
 
 ---

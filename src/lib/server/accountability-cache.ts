@@ -187,6 +187,56 @@ export async function getCachedPromisesApiRows(memberSlug: string) {
   )();
 }
 
+/** Full promise rows for CSV export (no row cap; same filters as JSON API). */
+export async function getCachedPromisesExportCsvRows(memberSlug: string) {
+  return unstable_cache(
+    async () => {
+      const items = await prisma.campaignPromise.findMany({
+        where: {
+          memberId: { not: null },
+          member: {
+            is: {
+              active: true,
+              ...(memberSlug ? { slug: memberSlug } : {}),
+            },
+          },
+        },
+        orderBy: { updatedAt: "desc" },
+        include: {
+          member: {
+            select: { name: true, slug: true, role: true, party: true, active: true },
+          },
+        },
+      });
+
+      return items.map((p) => ({
+        id: p.id,
+        title: p.title,
+        description: p.description,
+        sourceLabel: p.sourceLabel,
+        sourceDate: p.sourceDate?.toISOString() ?? null,
+        status: p.status,
+        updatedAt: p.updatedAt.toISOString(),
+        member: p.member
+          ? {
+              name: p.member.name,
+              slug: p.member.slug,
+              role: p.member.role,
+              party: p.member.party,
+            }
+          : null,
+      }));
+    },
+    ["api-promises-csv-export-v1", memberSlug || "__all__"],
+    {
+      tags: memberSlug
+        ? [PROMISES_INDEX_TAG, promisesMemberTag(memberSlug)]
+        : [PROMISES_INDEX_TAG],
+      revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC,
+    },
+  )();
+}
+
 export async function getCachedReportCardApiPayload(year: number) {
   return unstable_cache(
     async () => {
