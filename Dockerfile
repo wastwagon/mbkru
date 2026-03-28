@@ -1,15 +1,8 @@
 # syntax=docker/dockerfile:1
 # MBKRU — Next.js standalone + Prisma (Postgres)
 
-# Hoisted deps for Prisma CLI (@prisma/config → effect, c12, …) — not all are in Next standalone.
-# Prisma version is read from package-lock.json so it stays in sync with npm ci in the deps stage.
-FROM node:20-alpine AS prisma-cli-deps
-WORKDIR /pcd
-COPY package-lock.json ./package-lock.json
-RUN apk add --no-cache libc6-compat openssl \
-  && PRISMA_VER=$(node -p "require('./package-lock.json').packages['node_modules/prisma'].version") \
-  && printf '%s\n' "{\"private\":true,\"dependencies\":{\"prisma\":\"${PRISMA_VER}\"}}" > package.json \
-  && npm install --omit=dev --ignore-scripts
+# `deps` = full `npm ci` (never touched by `next build`). `builder`’s node_modules can be
+# pruned/altered by Next 16 / Turbopack — do NOT copy Prisma CLI hoisted deps from builder.
 
 FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat openssl
@@ -34,18 +27,6 @@ ENV NEXT_PUBLIC_PLATFORM_PHASE=$NEXT_PUBLIC_PLATFORM_PHASE
 # Do not use Compose/runtime DATABASE_URL here — host `postgres` is unreachable during `docker build`.
 RUN DATABASE_URL="" npm run build
 
-# Hoisted deps for Prisma CLI (@prisma/config → effect, c12, …): copy one subtree from full npm ci
-# so ESM packages (c12 → perfect-debounce, etc.) resolve the same as local `npm ci`.
-RUN mkdir -p /opt/prisma-cli-nm && cd /app/node_modules && \
-  for d in \
-    @standard-schema \
-    effect fast-check pure-rand \
-    c12 deepmerge-ts empathic \
-    confbox defu destr exsolve giget jiti ohash pathe perfect-debounce pkg-types rc9 \
-    citty consola node-fetch-native nypm tinyexec; do \
-    if [ -e "$$d" ]; then cp -a "$$d" /opt/prisma-cli-nm/; fi; \
-  done
-
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
@@ -61,8 +42,7 @@ RUN mkdir -p /app/public/uploads && chown nextjs:nodejs /app/public/uploads
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# Standalone only traces @prisma/client — merging COPY can leave a broken tree and
-# `Cannot find module '@prisma/engines'` for migrate/seed. Replace Prisma dirs wholesale.
+# Standalone only traces @prisma/client — replace Prisma dirs with full copies from builder.
 RUN rm -rf /app/node_modules/.prisma /app/node_modules/@prisma /app/node_modules/prisma
 
 COPY --from=builder /app/prisma ./prisma
@@ -72,21 +52,34 @@ COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
 
-# Merge Prisma CLI hoisted deps (effect, c12, …). Always overwrite by name.
-# Use COPY + RUN (not RUN --mount=from=…): some builders resolve that mount to an empty dir,
-# so nothing merged and `require('effect')` from @prisma/config still failed.
-# Do not replace @prisma / prisma / .prisma / bcryptjs (those come from the builder + COPY above).
-COPY --from=prisma-cli-deps /pcd/node_modules /tmp/pcm
-RUN sh -euc 'cd /tmp/pcm && for p in *; do \
-      [ -d "$$p" ] || continue; \
-      case "$$p" in @prisma|prisma|.prisma|bcryptjs|.bin) continue ;; esac; \
-      rm -rf "/app/node_modules/$$p" && cp -a "$$p" /app/node_modules/; \
-    done' \
-  && rm -rf /tmp/pcm
+# @prisma/config / prisma CLI — hoisted siblings must come from `deps`, not `builder`
+# (Next build can remove them from builder’s node_modules).
+COPY --from=deps /app/node_modules/@standard-schema ./node_modules/@standard-schema
+COPY --from=deps /app/node_modules/effect ./node_modules/effect
+COPY --from=deps /app/node_modules/fast-check ./node_modules/fast-check
+COPY --from=deps /app/node_modules/pure-rand ./node_modules/pure-rand
+COPY --from=deps /app/node_modules/c12 ./node_modules/c12
+COPY --from=deps /app/node_modules/deepmerge-ts ./node_modules/deepmerge-ts
+COPY --from=deps /app/node_modules/empathic ./node_modules/empathic
+COPY --from=deps /app/node_modules/confbox ./node_modules/confbox
+COPY --from=deps /app/node_modules/defu ./node_modules/defu
+COPY --from=deps /app/node_modules/destr ./node_modules/destr
+COPY --from=deps /app/node_modules/exsolve ./node_modules/exsolve
+COPY --from=deps /app/node_modules/giget ./node_modules/giget
+COPY --from=deps /app/node_modules/jiti ./node_modules/jiti
+COPY --from=deps /app/node_modules/ohash ./node_modules/ohash
+COPY --from=deps /app/node_modules/pathe ./node_modules/pathe
+COPY --from=deps /app/node_modules/perfect-debounce ./node_modules/perfect-debounce
+COPY --from=deps /app/node_modules/pkg-types ./node_modules/pkg-types
+COPY --from=deps /app/node_modules/rc9 ./node_modules/rc9
+COPY --from=deps /app/node_modules/citty ./node_modules/citty
+COPY --from=deps /app/node_modules/consola ./node_modules/consola
+COPY --from=deps /app/node_modules/node-fetch-native ./node_modules/node-fetch-native
+COPY --from=deps /app/node_modules/nypm ./node_modules/nypm
+COPY --from=deps /app/node_modules/tinyexec ./node_modules/tinyexec
 
-# Overlay full hoisted Prisma-config stack from builder (avoids one-off MODULE_NOT_FOUND per package).
-COPY --from=builder /opt/prisma-cli-nm /tmp/prisma-cli-nm
-RUN cp -a /tmp/prisma-cli-nm/. /app/node_modules/ && rm -rf /tmp/prisma-cli-nm
+# Fail the image build if Prisma CLI cannot load (catches missing hoisted deps early).
+RUN cd /app && node -e "require('effect'); require('@prisma/config');"
 
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 RUN chmod +x /app/docker-entrypoint.sh \
