@@ -1,11 +1,20 @@
-import { notFound, redirect } from "next/navigation";
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { MemberAuthUnavailable } from "@/components/member/MemberAuthUnavailable";
 import { isMemberAuthEnabled } from "@/lib/member/phase-gate";
 import { getMemberSession } from "@/lib/member/session";
 import { MemberRegisterForm } from "./MemberRegisterForm";
 
+export async function generateMetadata(): Promise<Metadata> {
+  if (!isMemberAuthEnabled()) {
+    return { title: "Create account", robots: { index: false, follow: true } };
+  }
+  return { title: "Create account" };
+}
+
 export default async function RegisterPage() {
-  if (!isMemberAuthEnabled()) notFound();
+  if (!isMemberAuthEnabled()) return <MemberAuthUnavailable variant="register" />;
   if (await getMemberSession()) redirect("/account");
 
   return (

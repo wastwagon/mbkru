@@ -1,12 +1,21 @@
-import { notFound, redirect } from "next/navigation";
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { MemberAuthUnavailable } from "@/components/member/MemberAuthUnavailable";
 import { isMemberAuthEnabled } from "@/lib/member/phase-gate";
 import { getMemberSession } from "@/lib/member/session";
 import { MemberLoginForm } from "./MemberLoginForm";
 
+export async function generateMetadata(): Promise<Metadata> {
+  if (!isMemberAuthEnabled()) {
+    return { title: "Sign in", robots: { index: false, follow: true } };
+  }
+  return { title: "Sign in" };
+}
+
 export default async function LoginPage() {
-  if (!isMemberAuthEnabled()) notFound();
+  if (!isMemberAuthEnabled()) return <MemberAuthUnavailable variant="login" />;
   if (await getMemberSession()) redirect("/account");
 
   return (

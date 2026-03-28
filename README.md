@@ -198,12 +198,15 @@ docker run -p 1100:3000 mbkru-website
    - Domain: Add your domain (e.g. mbkruadvocates.org) for SSL
 5. **Environment variables** — Add in Coolify (build + runtime as needed):
    - `NEXT_PUBLIC_SITE_URL` = https://yourdomain.com
-   - `NEXT_PUBLIC_PLATFORM_PHASE` = `1`
+   - `NEXT_PUBLIC_PLATFORM_PHASE` = `1` for marketing-only, or **`2`** / **`3`** when you want **`/login`**, **`/register`**, **`/account`**, and Voice APIs live (**must be set at build time** — rebuild after changing it).
    - `DATABASE_URL` (Postgres service on the same stack or managed DB)
    - `ADMIN_SESSION_SECRET` (long random string)
    - `ADMIN_EMAIL` / `ADMIN_PASSWORD` (then run seed once, or run seed in a deploy hook)
+   - For Phase 2+: **`MEMBER_SESSION_SECRET`** (≥32 chars, different from admin secret)
 6. **Persistent volume** — Mount or use a named volume for `/app/public/uploads` so media survives redeploys.
 7. **Deploy** — Coolify will build and run the container; ensure migrations run (entrypoint runs `prisma migrate deploy` when `DATABASE_URL` is set).
+
+**If `/login` or `/register` say member auth is off:** the running image was built with `NEXT_PUBLIC_PLATFORM_PHASE=1`. Bump the variable in Coolify **build arguments**, add `MEMBER_SESSION_SECRET`, and **trigger a new build** (not just a restart).
 
 Coolify handles SSL (Let's Encrypt), restarts, and zero-downtime deploys automatically.
 
