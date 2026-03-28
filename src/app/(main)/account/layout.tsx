@@ -7,5 +7,5 @@ export default async function AccountLayout({ children }: { children: React.Reac
   const session = await getMemberSession();
   if (!session) redirect("/login?next=/account");
 
-  return <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">{children}</div>;
+  return <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">{children}</div>;
 }
