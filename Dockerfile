@@ -72,9 +72,10 @@ RUN sh -euc 'cd /tmp/pcm && for p in *; do \
     done' \
   && rm -rf /tmp/pcm
 
-# @prisma/config (pulled in by prisma CLI) resolves these from /app/node_modules — same tree as npm ci.
-# Copy from builder so we never depend on merge/hoist quirks (fixes MODULE_NOT_FOUND: effect in production).
+# @prisma/config → effect loads fast-check from the app root (hoisted by npm ci, not inside effect/).
 COPY --from=builder /app/node_modules/effect ./node_modules/effect
+COPY --from=builder /app/node_modules/fast-check ./node_modules/fast-check
+COPY --from=builder /app/node_modules/pure-rand ./node_modules/pure-rand
 COPY --from=builder /app/node_modules/c12 ./node_modules/c12
 COPY --from=builder /app/node_modules/deepmerge-ts ./node_modules/deepmerge-ts
 COPY --from=builder /app/node_modules/empathic ./node_modules/empathic
