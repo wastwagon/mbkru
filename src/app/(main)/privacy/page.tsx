@@ -52,6 +52,10 @@ export default function PrivacyPage() {
           <ul>
             <li>Send newsletters and updates (with your consent)</li>
             <li>Respond to your enquiries</li>
+            <li>
+              Operate <strong>MBKRU Voice</strong>, situational alerts, and related reporting workflows (including
+              triage, moderation, and optional status updates)
+            </li>
             <li>Improve our website and services</li>
             <li>Comply with legal obligations</li>
           </ul>
@@ -67,6 +71,16 @@ export default function PrivacyPage() {
           <p>
             We retain your data only for as long as necessary to fulfil the
             purposes for which it was collected, or as required by law.
+          </p>
+          <p>
+            <strong>Reports and submissions (Phase 2+):</strong> MBKRU Voice, situational, and election-observation
+            submissions (including narrative text, optional{" "}
+            <strong>approximate map coordinates</strong>, region or constituency selections, and{" "}
+            <strong>file attachments</strong> you upload) are retained to operate the programme, support follow-up with
+            you where you provide contact details, and meet <strong>moderation</strong>, <strong>safeguarding</strong>,
+            and <strong>legal</strong> duties.
+            Retention periods may vary by case type; we may archive or pseudonymise data where appropriate. Operational
+            detail is also described in our runbook and moderation practices as they evolve.
           </p>
 
           <h2>6. Your Rights</h2>
@@ -108,6 +122,28 @@ export default function PrivacyPage() {
             includes <strong>Redis</strong>, we may store a short-lived server-side session identifier
             linked to that cookie so that <strong>sign-out</strong> can end the session immediately on
             the server. Without Redis, the cookie still expires automatically after a limited time.
+          </p>
+          <p>
+            <strong>Location in reports:</strong> If you choose to attach map coordinates or region data to a
+            report, that information is processed to understand context, route cases internally, and produce
+            aggregate statistics where we publish them. It is <strong>not</strong> used for continuous tracking of you
+            outside the submission flow unless we say otherwise in a specific programme notice.
+          </p>
+          <p>
+            <strong>Attachments:</strong> Files you upload (e.g. photos, PDFs) are stored securely and used
+            for moderation and case handling. Do not upload sensitive personal data about third parties
+            unless you have a lawful basis; we may remove or restrict content that puts others at risk or
+            breaches our policies.
+          </p>
+          <p>
+            <strong>Anonymous or email-only submissions:</strong> If you submit without a member account, we may process
+            an <strong>email address</strong> you provide so we can send status updates or clarify your report. We also
+            issue a <strong>tracking code</strong> so you can check status on our site without logging in.
+          </p>
+          <p>
+            <strong>Moderation:</strong> Staff and authorised reviewers may access submissions to assess
+            credibility, safety, and alignment with our mandate. We may document decisions internally. We do
+            not sell report content to third parties for marketing.
           </p>
           <p>
             We retain member account data until you ask us to delete your account or as required by law.
