@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 
-import { guardMemberAuthApi } from "@/lib/member/auth-api-guard";
+import { guardMemberAuthMeRoute } from "@/lib/member/auth-api-guard";
 import { getMemberSession } from "@/lib/member/session";
 import { prisma } from "@/lib/db/prisma";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 
 export async function GET() {
-  const denied = guardMemberAuthApi();
+  const denied = guardMemberAuthMeRoute();
   if (denied) return denied;
 
   if (!isDatabaseConfigured()) {
