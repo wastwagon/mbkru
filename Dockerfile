@@ -19,8 +19,9 @@ ARG NEXT_PUBLIC_PLATFORM_PHASE=1
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_PLATFORM_PHASE=$NEXT_PUBLIC_PLATFORM_PHASE
 
-# Prisma generate runs via npm run build (postinstall also generates)
-RUN npm run build
+# Prisma generate runs via npm run build (postinstall also generates).
+# Do not use Compose/runtime DATABASE_URL here — host `postgres` is unreachable during `docker build`.
+RUN DATABASE_URL="" npm run build
 
 FROM node:20-alpine AS runner
 WORKDIR /app

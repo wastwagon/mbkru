@@ -11,7 +11,7 @@ export type PostWithMedia = Post & { featuredMedia: Media | null };
 export async function getPublishedPostSummaries(): Promise<PostWithMedia[]> {
   if (!isDatabaseConfigured()) return [];
   try {
-    return prisma.post.findMany({
+    return await prisma.post.findMany({
       where: { publishedAt: { not: null } },
       orderBy: [{ publishedAt: "desc" }],
       include: { featuredMedia: true },
@@ -24,7 +24,7 @@ export async function getPublishedPostSummaries(): Promise<PostWithMedia[]> {
 export async function getPublishedPostBySlug(slug: string): Promise<PostWithMedia | null> {
   if (!isDatabaseConfigured()) return null;
   try {
-    return prisma.post.findFirst({
+    return await prisma.post.findFirst({
       where: { slug, publishedAt: { not: null } },
       include: { featuredMedia: true },
     });
