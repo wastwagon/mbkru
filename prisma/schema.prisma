@@ -58,6 +58,20 @@ model LeadCapture {
   @@index([source, createdAt])
 }
 
+/// Contact form messages (append-only audit trail; not deduplicated by email).
+model ContactSubmission {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  name        String
+  email       String
+  subject     String
+  message     String   @db.Text
+  enquiryType String?
+
+  @@index([createdAt])
+  @@index([email])
+}
+
 // --- Phase 2 & 3 — see docs/PHASES_2_3_IMPLEMENTATION.md ---
 
 enum CitizenReportKind {

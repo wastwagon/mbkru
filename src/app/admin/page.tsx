@@ -87,6 +87,17 @@ export default async function AdminHomePage() {
         </li>
         <li>
           <Link
+            href="/admin/contact-submissions"
+            className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
+          >
+            <span className="font-semibold text-[var(--foreground)]">Contact form</span>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              Inbound messages from the public contact form (Postgres audit trail).
+            </p>
+          </Link>
+        </li>
+        <li>
+          <Link
             href="/admin/settings"
             className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
           >

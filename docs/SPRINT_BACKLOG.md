@@ -91,7 +91,7 @@
 | 1 | **PHASES checklist** | **Done:** [`PHASES_2_3_IMPLEMENTATION.md`](PHASES_2_3_IMPLEMENTATION.md) §7 aligned with shipped vs open work |
 | 2 | **Pillar flags → routes** | **Shipped:** **`/legal-empowerment`**, **`/town-halls`** when phase ≥ 2; **Header** nav + **sitemap**; `isLegalEmpowermentPageEnabled` / `isTownHallDirectoryPageEnabled` in `accountability-pages.ts` |
 | 3 | **Trust UX** | **Shipped:** post-submit **“How we use your report”** `<details>` on **VoiceReportForm** success |
-| 4 | **Contact audit trail** | *Next optional:* persist **`POST /api/contact`** to Postgres (`LeadCapture` or dedicated model) for ops search |
+| 4 | **Contact audit trail** | **Shipped:** **`ContactSubmission`** model + migrate; **`POST /api/contact`** writes DB before email; **`/admin/contact-submissions`** |
 | 5 | **Platform hygiene** | *Next:* **`middleware` → `proxy`**; Prisma config migration; Vitest (or similar) for critical APIs |
 
 ---

@@ -98,7 +98,7 @@ Implementation: `src/config/platform.ts`. Use these flags to guard new routes, n
 | Regions / members / citizen reports | — | `Region`, `Member`, `CitizenReport`, attachments (Phase 2+) |
 | MPs, promises, report cards | — | `ParliamentMember`, `CampaignPromise`, `ReportCardCycle`, `ScorecardEntry` (Phase 2–3) |
 | Uploaded files | Disk (`public/uploads`) + volume in Docker | Optional S3-compatible object storage |
-| Form submissions | Logs / external ESP | DB + ESP; Redis for rate limiting |
+| Form submissions | Logs / external ESP | **`LeadCapture`** + **`ContactSubmission`** (contact form full text); ESP optional; Redis for rate limiting |
 | Public users, complaints | N/A | PostgreSQL (+ optional Auth.js / Clerk / etc.) |
 | Pillar pages (legal desk, town halls) | Preview / hidden | **`/legal-empowerment`**, **`/town-halls`** when Phase ≥ 2 (`platformFeatures`); 404 on Phase 1 builds |
 | Sessions / cache | Admin JWT cookie | Redis for sessions / queues |

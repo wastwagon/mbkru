@@ -46,7 +46,11 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
       <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">Lead capture</h1>
       <p className="mt-1 text-sm text-[var(--muted-foreground)]">
         Newsletter, early access, and Parliament tracker waitlist signups (deduplicated by email per source). Use for
-        pilot notifications and exports.
+        pilot notifications and exports.{" "}
+        <Link href="/admin/contact-submissions" className="text-[var(--primary)] hover:underline">
+          Contact form messages
+        </Link>{" "}
+        are stored separately (full text, append-only).
       </p>
 
       <ul className="mt-4 flex flex-wrap gap-3 text-sm text-[var(--muted-foreground)]">

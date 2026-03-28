@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { createContactSubmission } from "@/lib/server/contact-submission";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 import { sendContactNotification } from "@/lib/server/send-contact-email";
 import { requireTurnstileIfConfigured } from "@/lib/server/verify-turnstile";
@@ -24,6 +26,24 @@ export async function POST(request: Request) {
     if (turnstileBlock) return turnstileBlock;
 
     const { name, email, subject, message, enquiryType } = parsed.data;
+
+    if (isDatabaseConfigured()) {
+      try {
+        await createContactSubmission({
+          name,
+          email,
+          subject,
+          message,
+          enquiryType,
+        });
+      } catch (e) {
+        console.error("[contact] failed to persist submission", e);
+        return NextResponse.json(
+          { error: "Could not save your message. Please try again later." },
+          { status: 503 },
+        );
+      }
+    }
 
     const out = await sendContactNotification({
       name,

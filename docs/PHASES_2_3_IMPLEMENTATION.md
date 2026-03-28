@@ -140,7 +140,7 @@ Use `NEXT_PUBLIC_PLATFORM_PHASE` at build time plus optional `PLATFORM_PHASE` on
 - [x] Member auth + session store (**Redis `jti`** when `REDIS_URL` set; JWT in `mbkru_member`).
 - [x] Citizen report flows (MBKRU Voice, situational, election observation) + **`/track-report`** + tracking API.
 - [x] Admin report queue + status transitions + optional Resend on status change.
-- [x] Lead capture: newsletter, early access, tracker → **`LeadCapture`** / Postgres. **`POST /api/contact`** delivers via email (Resend or log-only) — **no DB row** for contact yet; add if you need a single CRM-style audit trail.
+- [x] Lead capture: newsletter, early access, tracker → **`LeadCapture`** / Postgres. **`POST /api/contact`** persists **`ContactSubmission`** when the DB is configured, then delivers via Resend or log-only; admin **`/admin/contact-submissions`**.
 - [x] Map picker (lazy Leaflet) + region suggestion from regional centroids (not boundary-accurate).
 - [x] Post-submit **trust UX:** expandable **“How we use your report”** on successful submit (Voice form).
 
