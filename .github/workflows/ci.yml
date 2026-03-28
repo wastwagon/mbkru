@@ -39,3 +39,12 @@ jobs:
           NEXT_PUBLIC_SITE_URL: https://example.com
           NEXT_PUBLIC_PLATFORM_PHASE: "1"
         run: npm run build
+
+      - name: Lighthouse CI
+        env:
+          # Avoid live DB during audit — pages use empty-roster / placeholder paths
+          DATABASE_URL: ""
+          NEXT_TELEMETRY_DISABLED: "1"
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+          NEXT_PUBLIC_PLATFORM_PHASE: "1"
+        run: npx --yes @lhci/cli@0.14.0 autorun --config=./lighthouserc.cjs

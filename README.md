@@ -60,6 +60,8 @@ npm run test
 
 Vitest runs fast unit tests for shared helpers (no database).
 
+**Lighthouse (CI):** pushes to `main` / `master` run **@lhci/cli** after production build on `/`, `/contact`, and `/news` (see `lighthouserc.cjs`). Local: `npm run build` then `DATABASE_URL= NEXT_PUBLIC_SITE_URL=http://localhost:3000 npx @lhci/cli autorun`.
+
 ## Environment Variables
 
 Copy `.env.example` to `.env.local` (or `.env` for Docker Compose) and fill in. See the file for the full list.

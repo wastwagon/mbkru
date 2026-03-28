@@ -24,7 +24,7 @@
 | [x] | Optional Resend, Turnstile, GA4/Plausible, Redis rate limits |
 | [ ] | **Verify** production: backups, `SKIP_DB_SEED`, secrets rotation ([`OPS_RUNBOOK.md`](./OPS_RUNBOOK.md)) |
 | [ ] | **Content:** replace/refresh seeded posts for live voice; legal pages reviewed by counsel |
-| [x] | **Phase 1 polish (baseline):** mobile PageHeader padding, main `overflow-x` + safe-area, optional `NEXT_PUBLIC_CONTACT_PHONE`, footer gallery alts, `touch-manipulation` on buttons — *run Lighthouse manually before major launch* |
+| [x] | **Phase 1 polish (baseline):** mobile PageHeader padding, main `overflow-x` + safe-area, optional `NEXT_PUBLIC_CONTACT_PHONE`, footer gallery alts, `touch-manipulation` on buttons — **Lighthouse CI** on `/`, `/contact`, `/news` (`lighthouserc.cjs` + GitHub Actions); *re-run full mobile Lighthouse before major launch* |
 
 ---
 
