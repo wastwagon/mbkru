@@ -58,15 +58,17 @@ COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
 
-# Merge Prisma CLI hoisted deps (effect, c12, …). Always overwrite by name: standalone
-# can leave a wrong or stub top-level entry so "[ ! -e ]" skipped copying and `effect` was missing.
+# Merge Prisma CLI hoisted deps (effect, c12, …). Always overwrite by name.
+# Use COPY + RUN (not RUN --mount=from=…): some builders resolve that mount to an empty dir,
+# so nothing merged and `require('effect')` from @prisma/config still failed.
 # Do not replace @prisma / prisma / .prisma / bcryptjs (those come from the builder + COPY above).
-RUN --mount=from=prisma-cli-deps,source=/pcd/node_modules,target=/pcm \
-    sh -euc 'cd /pcm && for p in *; do \
+COPY --from=prisma-cli-deps /pcd/node_modules /tmp/pcm
+RUN sh -euc 'cd /tmp/pcm && for p in *; do \
       [ -d "$$p" ] || continue; \
       case "$$p" in @prisma|prisma|.prisma|bcryptjs) continue ;; esac; \
       rm -rf "/app/node_modules/$$p" && cp -a "$$p" /app/node_modules/; \
-    done'
+    done' \
+  && rm -rf /tmp/pcm
 
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 RUN chmod +x /app/docker-entrypoint.sh \
