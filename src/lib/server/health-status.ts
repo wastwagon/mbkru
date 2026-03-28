@@ -4,8 +4,12 @@ import Redis from "ioredis";
 
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { getServerEnv, hasDatabaseUrl, hasRedisUrl } from "@/lib/env.server";
+import {
+  healthStatusFromDependencies,
+  type DependencyProbe,
+} from "@/lib/health-status-from-deps";
 
-export type DependencyProbe = "not_configured" | "ok" | "error";
+export type { DependencyProbe } from "@/lib/health-status-from-deps";
 
 export interface HealthPayload {
   status: "ok" | "degraded" | "unhealthy";
@@ -72,9 +76,7 @@ export async function getHealthStatus(): Promise<HealthPayload> {
 
   const [postgres, redis] = await Promise.all([probePostgres(), probeRedis()]);
 
-  let status: HealthPayload["status"] = "ok";
-  if (postgres === "error") status = "unhealthy";
-  else if (redis === "error") status = "degraded";
+  const status = healthStatusFromDependencies(postgres, redis);
 
   const accountability = {
     parliamentJson: platformFeatures.parliamentTrackerData(phase),
