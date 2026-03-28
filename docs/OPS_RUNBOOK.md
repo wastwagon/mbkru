@@ -30,7 +30,8 @@ docker compose exec mbkru-web node /app/node_modules/prisma/build/index.js db se
 
 ## Secrets and build-time variables
 
-- Rotate **`ADMIN_SESSION_SECRET`**, **`ADMIN_PASSWORD`**, Resend, Turnstile, and database credentials on any suspected leak.
+- Rotate **`ADMIN_SESSION_SECRET`**, **`MEMBER_SESSION_SECRET`** (Phase 2+), **`ADMIN_PASSWORD`**, Resend, Turnstile, and database credentials on any suspected leak.
+- **`MEMBER_SESSION_SECRET`** is server-only (≥32 characters), distinct from the admin secret. Member auth is enabled when **`NEXT_PUBLIC_PLATFORM_PHASE`** is **2 or 3** at **build** time (and optional **`PLATFORM_PHASE`** on the server matches).
 - Any **`NEXT_PUBLIC_*`** value (site URL, Turnstile site key, analytics IDs) is **baked at image build time**. After changing them, **rebuild and redeploy** the image — runtime env alone is not enough for those.
 
 ## Health and incidents

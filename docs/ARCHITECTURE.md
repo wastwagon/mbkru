@@ -10,7 +10,8 @@ This document describes how the codebase is structured for **Phase 1** (live mar
 |-------|------------|-----------------|
 | UI | Next.js 16 App Router, React 19, Tailwind 4 | Public pages, preview pillars, **admin UI** at `/admin` |
 | Content | **PostgreSQL + Prisma** | News posts (`Post`), shared **media library** (`Media`), optional featured image per post |
-| Auth (admin only) | bcrypt + **JWT in httpOnly cookie** | Single seeded admin for now; model supports more `Admin` rows later |
+| Auth (admin) | bcrypt + **JWT in httpOnly cookie** (`mbkru_admin`) | Single seeded admin for now; model supports more `Admin` rows later |
+| Auth (members, Phase 2+) | bcrypt + **JWT** (`mbkru_member`, `MEMBER_SESSION_SECRET`) | Register/login/logout + `/account`; optional **Redis `jti`** for server-side session end; gated by `NEXT_PUBLIC_PLATFORM_PHASE` ≥ 2 |
 | Forms | React Hook Form + Zod → Route Handlers | Contact (optional Resend); newsletter, early access, tracker → **Postgres `LeadCapture`**; optional **Cloudflare Turnstile** when `TURNSTILE_SECRET_KEY` + public site key are set |
 | Analytics | `next/script` in `(main)/layout` | Optional **GA4** and/or **Plausible** via `NEXT_PUBLIC_*` env; **not** injected on `/admin` |
 | Hosting | Docker (standalone output), optional Coolify on VPS | `mbkru-web` + Postgres; **Redis** in `docker-compose.fullstack.yml` for Phase 2 sessions / rate limits |

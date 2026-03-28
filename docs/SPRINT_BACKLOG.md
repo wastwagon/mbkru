@@ -27,15 +27,15 @@
 
 ---
 
-## Sprint 2 — Phase 2 kickoff: identity
+## Sprint 2 — Phase 2 kickoff: identity (baseline shipped)
 
 | # | Task | Outcome |
 |---|------|---------|
-| 1 | **Prisma** | `Member` model migrations + indexes (email unique) |
-| 2 | **Auth API** | `POST /api/auth/register`, `login`, `logout` — JWT or session cookie **separate from admin** |
-| 3 | **Sessions** | Redis session store when `REDIS_URL` set; fallback cookie strategy documented |
-| 4 | **UI** | Minimal `/login` `/register` (or modal) gated by `platformFeatures.authentication(phase)` |
-| 5 | **Legal** | Privacy policy updates for accounts + retention |
+| 1 | **Prisma** | **`Member`** already in schema + migration; email unique |
+| 2 | **Auth API** | **`POST /api/auth/register`**, **`login`**, **`logout`**; **`GET /api/auth/me`** — cookie **`mbkru_member`**, secret **`MEMBER_SESSION_SECRET`** |
+| 3 | **Sessions** | **JWT** in httpOnly cookie; **`jti` + Redis** when `REDIS_URL` set (server-side logout); Edge middleware verifies JWT only — full check in RSC / APIs |
+| 4 | **UI** | **`/login`**, **`/register`**, **`/account`** + header **Sign in** when `NEXT_PUBLIC_PLATFORM_PHASE` ≥ 2 |
+| 5 | **Legal** | Privacy policy — **Member accounts (Phase 2+)** |
 
 ---
 

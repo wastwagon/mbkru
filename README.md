@@ -60,6 +60,8 @@ Copy `.env.example` to `.env.local` (or `.env` for Docker Compose) and fill in. 
 | `DATABASE_URL` | PostgreSQL connection string (Prisma) |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | First admin account; `prisma db seed` upserts this user |
 | `ADMIN_SESSION_SECRET` | Secret for signing the admin session cookie (≥32 characters in production) |
+| `MEMBER_SESSION_SECRET` | When **Phase 2+** (`NEXT_PUBLIC_PLATFORM_PHASE` ≥ 2): secret for **public member** sessions (≥32 chars); must differ from `ADMIN_SESSION_SECRET` |
+| `PLATFORM_PHASE` | Optional server override of phase (otherwise uses `NEXT_PUBLIC_PLATFORM_PHASE`) |
 | `RESEND_API_KEY` | Optional; [Resend](https://resend.com) API key — contact form sends email when set with `CONTACT_INBOX_EMAIL` |
 | `CONTACT_INBOX_EMAIL` | Inbox that receives contact submissions (required with `RESEND_API_KEY`) |
 | `RESEND_FROM_EMAIL` | Optional; default `MBKRU Contact <onboarding@resend.dev>` (use your verified domain in production) |

@@ -94,7 +94,27 @@ export default function PrivacyPage() {
             appropriate data processing agreements.
           </p>
 
-          <h2>9. Contact</h2>
+          <h2>9. Member accounts (Phase 2+)</h2>
+          <p>
+            If you create an MBKRU <strong>member</strong> account (separate from newsletter sign-ups and
+            from staff admin access), we process your email address and a password stored only as a
+            cryptographic hash. We may also store optional details you provide, such as display name,
+            phone number, or region, to operate member-only features (for example MBKRU Voice as they
+            launch).
+          </p>
+          <p>
+            Member sign-in uses an <strong>httpOnly</strong> session cookie. When our infrastructure
+            includes <strong>Redis</strong>, we may store a short-lived server-side session identifier
+            linked to that cookie so that <strong>sign-out</strong> can end the session immediately on
+            the server. Without Redis, the cookie still expires automatically after a limited time.
+          </p>
+          <p>
+            We retain member account data until you ask us to delete your account or as required by law.
+            To exercise access, correction, deletion, or portability for member data, contact us using
+            the details below.
+          </p>
+
+          <h2>10. Contact</h2>
           <p>
             For privacy-related enquiries, contact us via the Contact page or
             email {content.privacyContact}.

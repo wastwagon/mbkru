@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
+import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 
 type NavItem = { href: string; label: string };
 
@@ -22,6 +23,7 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const showMemberAuth = platformFeatures.authentication(getPublicPlatformPhase());
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 100);
@@ -69,6 +71,16 @@ export function Header() {
 
         {/* Desktop CTA — Get in Touch */}
         <div className="hidden lg:flex lg:shrink-0 lg:items-center lg:gap-4">
+          {showMemberAuth ? (
+            <Link
+              href="/login"
+              className={`text-sm font-semibold transition-colors ${
+                isHomeHero ? "text-white/90 hover:text-[var(--accent-gold)]" : "text-[var(--foreground)] hover:text-[var(--primary)]"
+              }`}
+            >
+              Sign in
+            </Link>
+          ) : null}
           <Link
             href="/contact"
             className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold shadow-md transition-all duration-[400ms] ease-in-out ${
@@ -127,6 +139,15 @@ export function Header() {
                   {item.label}
                 </Link>
               ))}
+              {showMemberAuth ? (
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex min-h-[44px] items-center rounded-xl px-4 py-3 text-base font-medium text-[var(--foreground)] hover:bg-[var(--muted)]"
+                >
+                  Sign in
+                </Link>
+              ) : null}
               <div className="pt-4">
                 <Link
                   href="/contact"
