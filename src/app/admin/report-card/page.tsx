@@ -21,7 +21,8 @@ export default async function AdminReportCardPage() {
       <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">People&apos;s Report Card</h1>
       <p className="mt-1 text-sm text-[var(--muted-foreground)]">
         Create a cycle per year, add scorecard rows per MP/minister, then publish when ready. Public site shows only
-        published cycles (Phase 3 build).
+        published cycles (Phase 3 build). Partner read API:{" "}
+        <code className="rounded bg-[var(--section-light)] px-1 text-xs">GET /api/report-card/[year]</code>.
       </p>
 
       <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6">
