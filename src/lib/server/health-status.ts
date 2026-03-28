@@ -2,7 +2,7 @@ import "server-only";
 
 import Redis from "ioredis";
 
-import { getServerPlatformPhase } from "@/config/platform";
+import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { getServerEnv, hasDatabaseUrl, hasRedisUrl } from "@/lib/env.server";
 
 export type DependencyProbe = "not_configured" | "ok" | "error";
@@ -15,6 +15,11 @@ export interface HealthPayload {
   dependencies: {
     postgres: DependencyProbe;
     redis: DependencyProbe;
+  };
+  /** Which public accountability JSON routes this build can serve (still needs Postgres `ok` for 200 + data). */
+  accountability: {
+    parliamentJson: boolean;
+    reportCardJson: boolean;
   };
   notes?: string;
 }
@@ -71,12 +76,18 @@ export async function getHealthStatus(): Promise<HealthPayload> {
   if (postgres === "error") status = "unhealthy";
   else if (redis === "error") status = "degraded";
 
+  const accountability = {
+    parliamentJson: platformFeatures.parliamentTrackerData(phase),
+    reportCardJson: platformFeatures.accountabilityScorecards(phase),
+  };
+
   return {
     status,
     service: "mbkru-web",
     phase,
     timestamp: new Date().toISOString(),
     dependencies: { postgres, redis },
+    accountability,
     notes:
       phase === 1
         ? "Postgres required for admin/news; Redis optional (rate limits when REDIS_URL is set)."

@@ -11,7 +11,7 @@ Civic Accountability & Citizens Engagement Platform for Ghana.
 - **Phase 1 completion & recovery:** [`docs/PHASE1_STATUS.md`](docs/PHASE1_STATUS.md) — verified against scope, how to run/restore the project.
 - **Phase 1 product scope:** [`PHASE1_SCOPE.md`](PHASE1_SCOPE.md)
 - **Business roadmap (2028 election):** [`ROADMAP_2028_ELECTION.md`](ROADMAP_2028_ELECTION.md)
-- **Health check:** `GET /api/health` — probes Postgres (`SELECT 1`) and Redis (`PING`) when URLs are set; returns **503** only when Postgres is configured but unreachable (**unhealthy**). Redis failure yields **degraded** with HTTP 200 so optional Redis does not fail the container.
+- **Health check:** `GET /api/health` — probes Postgres (`SELECT 1`) and Redis (`PING`) when URLs are set; returns **503** only when Postgres is configured but unreachable (**unhealthy**). Redis failure yields **degraded** with HTTP 200 so optional Redis does not fail the container. JSON includes **`accountability.parliamentJson`** and **`accountability.reportCardJson`** (build-time gates for partner **`GET /api/mps`**, **`/api/promises`**, **`/api/report-card/[year]`**).
 
 ## Tech Stack
 

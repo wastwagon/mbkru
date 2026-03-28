@@ -129,7 +129,7 @@ See `.env.example`. Critical rules:
 
 ## 8. Operations
 
-- **Health check:** `GET /api/health` — uptime for proxies (Coolify, Traefik). Phase 1 returns phase and optional dependency status; extend for DB/Redis checks in Phase 2.
+- **Health check:** `GET /api/health` — uptime for proxies (Coolify, Traefik). Returns **phase**, Postgres/Redis probe status, and **`accountability`** booleans (`parliamentJson`, `reportCardJson`) so monitors know which public JSON routes the build enables. **503** when Postgres is configured but unreachable; Redis probe failure yields **degraded** with HTTP 200.
 - **Sitemap / SEO:** `src/app/sitemap.ts`, `robots.ts` — use `NEXT_PUBLIC_SITE_URL` everywhere the canonical URL matters.
 - **Migrations & seed:** `docker-entrypoint.sh` runs `prisma migrate deploy` then `prisma db seed` when `DATABASE_URL` is set (skip seed with `SKIP_DB_SEED=1`). If either step fails at deploy time, the app still starts; an admin can retry from **`/admin/settings`** (API: `POST /api/admin/database-maintenance`).
 

@@ -36,7 +36,7 @@ docker compose exec mbkru-web node /app/node_modules/prisma/build/index.js db se
 
 ## Health and incidents
 
-- Use **`GET /api/health`** for load balancers (returns **503** if Postgres is configured but unreachable).
+- Use **`GET /api/health`** for load balancers (returns **503** if Postgres is configured but unreachable). JSON includes **`phase`**, **`dependencies`**, and **`accountability`**: **`parliamentJson`** / **`reportCardJson`** mirror which partner **`GET`** routes this build can serve (`/api/mps`, `/api/promises` vs `/api/report-card/[year]`). Data responses still require Postgres **`ok`**.
 - If migrate fails on start, the app still boots; use **Admin → Settings → Database** to retry migrations or seed.
 
 ## Content
