@@ -16,6 +16,7 @@
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
     "import:sanity": "tsx scripts/import-sanity-posts.ts",
+    "data:members-csv": "node scripts/json-members-to-mbkru-csv.mjs",
     "postinstall": "prisma generate"
   },
   "dependencies": {

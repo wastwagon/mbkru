@@ -4,6 +4,8 @@
 
 **Code:** Parser in `src/lib/parliament-csv-parse.ts` (tests: `parliament-csv-parse.test.ts`); server re-export in `src/lib/server/parliament-csv.ts`.
 
+**Real-world roster sources & manifesto rights:** [`docs/DATA_SOURCES.md`](./DATA_SOURCES.md). **JSON → CSV:** `npm run data:members-csv -- path/to/members.json > import.csv`
+
 ---
 
 ## 1. Prerequisites
