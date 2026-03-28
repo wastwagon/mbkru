@@ -2,6 +2,8 @@
 
 **How to use this:** One sprint = roughly **1–2 weeks** for a small team; adjust to your capacity. Do not skip **security / legal** items before turning on public data collection at scale.
 
+**Master phase task list (what to do next):** [`PHASE_TASKS.md`](./PHASE_TASKS.md) — all features/tasks grouped by Phase 1 / 2 / 3 + cross-cutting checkboxes.
+
 **Canonical engineering detail:** [`PHASES_2_3_IMPLEMENTATION.md`](./PHASES_2_3_IMPLEMENTATION.md) · **Product scope:** [`../PHASE1_SCOPE.md`](../PHASE1_SCOPE.md) · **Roadmap:** [`../ROADMAP_2028_ELECTION.md`](../ROADMAP_2028_ELECTION.md)
 
 ---
@@ -84,7 +86,7 @@
 
 ---
 
-## Sprint 7 — Phase continuity (in progress)
+## Sprint 7 — Phase continuity (**done**)
 
 | # | Task | Outcome |
 |---|------|---------|
@@ -94,6 +96,14 @@
 | 4 | **Contact audit trail** | **Shipped:** **`ContactSubmission`** model + migrate; **`POST /api/contact`** writes DB before email; **`/admin/contact-submissions`** |
 | 5 | **Platform hygiene** | **Shipped:** **`src/proxy.ts`**; **`prisma.config.ts`**; Vitest for **`public-forms`**, **`health-status-from-deps`**, **`client-ip`**, **`rate-limit-config`**; CI **`prisma validate`**; **Next 16.2.1** + **`npm audit fix`**. *Remaining audit:* Prisma **`effect`** — Prisma 7 or upstream; avoid **`audit fix --force`** until planned |
 | 6 | **Marketing UX (phase-aware)** | **Shipped:** Homepage **live tools** strip + hero chips (**Account** vs **Register**/**Sign in** from session); pillar / footer links; admin **metrics**; accountability hub **linked cards**; account **quick links**; Voice header copy when pilot on; **`useMemberMe`** shared with **Header** |
+
+---
+
+## Sprint 8+ — Ongoing (use phase task list)
+
+Do not add large new sprint tables here unless you want a time-boxed release name. **Pick work from [`PHASE_TASKS.md`](./PHASE_TASKS.md)** (checkboxes by phase), run 1–2 week sprints, and tick rows there when done.
+
+**Seed demo accountability data (local/staging):** `SEED_ACCOUNTABILITY_DEMO=1 npx prisma db seed` — see [`.env.example`](../.env.example).
 
 ---
 

@@ -1,7 +1,7 @@
 # Phase 2 & 3 — Engineering implementation guide
 
 **Purpose:** Expand MBKRU from Phase 1 (marketing + Postgres admin CMS + lead capture) through **Phase 2** (MBKRU Voice, alerts, data pipelines) and **Phase 3** (election readiness, Accountability Scorecards, promise tracking at scale).  
-**Companion docs:** [`ROADMAP_2028_ELECTION.md`](../ROADMAP_2028_ELECTION.md) (business timeline), [`docs/ARCHITECTURE.md`](ARCHITECTURE.md) (stack), [`PHASE1_SCOPE.md`](../PHASE1_SCOPE.md) (baseline).  
+**Companion docs:** [`ROADMAP_2028_ELECTION.md`](../ROADMAP_2028_ELECTION.md) (business timeline), [`docs/ARCHITECTURE.md`](ARCHITECTURE.md) (stack), [`PHASE1_SCOPE.md`](../PHASE1_SCOPE.md) (baseline). **All phase tasks (checkbox backlog):** [`docs/PHASE_TASKS.md`](PHASE_TASKS.md).  
 **Last updated:** March 2026
 
 ---
