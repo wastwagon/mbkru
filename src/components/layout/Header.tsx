@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 
@@ -24,6 +24,25 @@ function UserMenuIcon({ className }: { className?: string }) {
   );
 }
 
+function ChevronDownIcon({ className, open }: { className?: string; open?: boolean }) {
+  return (
+    <svg
+      className={`${className ?? ""} shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+      width={16}
+      height={16}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      aria-hidden
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+    </svg>
+  );
+}
+
+const accountMenuItemClass =
+  "flex min-h-[40px] w-full items-center px-4 py-2.5 text-left text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--muted)] focus-visible:bg-[var(--muted)] focus-visible:outline-none";
+
 function MemberAuthNav({
   isHomeHero,
   pathname,
@@ -35,7 +54,13 @@ function MemberAuthNav({
   variant: "desktop" | "mobile";
   onNavigate?: () => void;
 }) {
+  const router = useRouter();
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [member, setMember] = useState<{ displayName?: string | null; email: string } | null | undefined>(undefined);
+
+  const phase = getPublicPlatformPhase();
+  const showMyReports = platformFeatures.citizensVoicePlatform(phase);
 
   useEffect(() => {
     let cancelled = false;
@@ -56,6 +81,35 @@ function MemberAuthNav({
       cancelled = true;
     };
   }, [pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function onDoc(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setMenuOpen(false);
+    }
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [menuOpen]);
+
+  async function signOut() {
+    setMenuOpen(false);
+    onNavigate?.();
+    try {
+      await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+    } catch {
+      /* still clear local UI */
+    }
+    setMember(null);
+    router.push("/");
+    router.refresh();
+  }
 
   const signedIn = member != null;
   const href = signedIn ? "/account" : "/login";
@@ -78,31 +132,116 @@ function MemberAuthNav({
       : "text-[var(--foreground)] hover:text-[var(--primary)]";
 
   if (variant === "desktop") {
+    if (!signedIn) {
+      return (
+        <Link
+          href={href}
+          className={`inline-flex max-w-[200px] items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-semibold transition-colors ${tone} ${busy ? "opacity-80" : ""}`}
+          aria-busy={busy}
+          aria-label="Sign in"
+        >
+          <UserMenuIcon className="h-5 w-5 shrink-0" />
+          <span className="truncate">{label}</span>
+        </Link>
+      );
+    }
+
+    return (
+      <div className="relative" ref={menuRef}>
+        <button
+          type="button"
+          onClick={() => setMenuOpen((o) => !o)}
+          className={`inline-flex max-w-[220px] items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-semibold transition-colors ${tone} ${busy ? "opacity-80" : ""}`}
+          aria-busy={busy}
+          aria-expanded={menuOpen}
+          aria-haspopup="menu"
+          aria-label={`Account menu: ${label}`}
+        >
+          <UserMenuIcon className="h-5 w-5 shrink-0" />
+          <span className="truncate">{label}</span>
+          <ChevronDownIcon open={menuOpen} className={isHomeHero ? "opacity-90" : ""} />
+        </button>
+        {menuOpen ? (
+          <div
+            role="menu"
+            className="absolute right-0 top-full z-[60] mt-2 min-w-[220px] rounded-xl border border-[var(--border)] bg-white py-1 shadow-[var(--shadow-dropdown)]"
+          >
+            <Link
+              role="menuitem"
+              href="/account"
+              className={accountMenuItemClass}
+              onClick={() => setMenuOpen(false)}
+            >
+              Account overview
+            </Link>
+            {showMyReports ? (
+              <Link
+                role="menuitem"
+                href="/account/reports"
+                className={accountMenuItemClass}
+                onClick={() => setMenuOpen(false)}
+              >
+                My reports
+              </Link>
+            ) : null}
+            <button type="button" role="menuitem" className={accountMenuItemClass} onClick={() => void signOut()}>
+              Sign out
+            </button>
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  if (!signedIn) {
     return (
       <Link
         href={href}
-        className={`inline-flex max-w-[200px] items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-semibold transition-colors ${tone} ${busy ? "opacity-80" : ""}`}
+        onClick={onNavigate}
+        className={`flex min-h-[44px] items-center gap-3 rounded-xl px-4 py-3 text-base font-medium transition-all hover:bg-[var(--muted)] ${
+          active ? "font-semibold text-[var(--primary)]" : "text-[var(--foreground)]"
+        } ${busy ? "opacity-80" : ""}`}
         aria-busy={busy}
-        aria-label={signedIn ? `Account: ${label}` : "Sign in"}
       >
         <UserMenuIcon className="h-5 w-5 shrink-0" />
-        <span className="truncate">{label}</span>
+        {label}
       </Link>
     );
   }
 
   return (
-    <Link
-      href={href}
-      onClick={onNavigate}
-      className={`flex min-h-[44px] items-center gap-3 rounded-xl px-4 py-3 text-base font-medium transition-all hover:bg-[var(--muted)] ${
-        active ? "font-semibold text-[var(--primary)]" : "text-[var(--foreground)]"
-      } ${busy ? "opacity-80" : ""}`}
-      aria-busy={busy}
-    >
-      <UserMenuIcon className="h-5 w-5 shrink-0" />
-      {label}
-    </Link>
+    <div className="space-y-0 border-t border-[var(--border)] pt-2">
+      <p className="px-4 pb-1 pt-1 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+        Account
+      </p>
+      <Link
+        href="/account"
+        onClick={onNavigate}
+        className={`flex min-h-[44px] items-center rounded-xl px-4 py-3 text-base font-medium transition-all hover:bg-[var(--muted)] ${
+          pathname === "/account" ? "font-semibold text-[var(--primary)]" : "text-[var(--foreground)]"
+        }`}
+      >
+        Overview
+      </Link>
+      {showMyReports ? (
+        <Link
+          href="/account/reports"
+          onClick={onNavigate}
+          className={`flex min-h-[44px] items-center rounded-xl px-4 py-3 text-base font-medium transition-all hover:bg-[var(--muted)] ${
+            pathname.startsWith("/account/reports") ? "font-semibold text-[var(--primary)]" : "text-[var(--foreground)]"
+          }`}
+        >
+          My reports
+        </Link>
+      ) : null}
+      <button
+        type="button"
+        onClick={() => void signOut()}
+        className="flex min-h-[44px] w-full items-center rounded-xl px-4 py-3 text-left text-base font-medium text-[var(--foreground)] transition-all hover:bg-[var(--muted)]"
+      >
+        Sign out
+      </button>
+    </div>
   );
 }
 
