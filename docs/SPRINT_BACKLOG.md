@@ -14,7 +14,7 @@
 
 ---
 
-## Sprint 1 — Phase 1 “production ready” (current focus)
+## Sprint 1 — Phase 1 “production ready” (baseline shipped)
 
 | # | Task | Outcome |
 |---|------|---------|
@@ -22,8 +22,8 @@
 | 2 | **Lead capture** | **Postgres:** `LeadCapture` + APIs (newsletter, early-access, tracker). *Optional later:* ESP webhooks in parallel |
 | 3 | **Bot abuse** | **Turnstile:** `NEXT_PUBLIC_TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET_KEY` — contact + newsletter + early-access + tracker |
 | 4 | **Analytics** | **`(main)/layout`:** GA4 (`NEXT_PUBLIC_GA_MEASUREMENT_ID`) and/or Plausible (`NEXT_PUBLIC_PLAUSIBLE_DOMAIN`) |
-| 5 | **Content** | Replace placeholders (contact, footer, about); ship 3–5 real news posts |
-| 6 | **Ops** | DB backups, rotate any leaked secrets, `SKIP_DB_SEED=1` after first stable deploy |
+| 5 | **Content** | **Done (baseline):** footer + contact copy; placeholders clarified; **5 published posts** seeded (upsert by slug) — edit in `/admin` |
+| 6 | **Ops** | **`docs/OPS_RUNBOOK.md`** — backups, `SKIP_DB_SEED=1`, secrets, rebuild for `NEXT_PUBLIC_*` |
 
 ---
 

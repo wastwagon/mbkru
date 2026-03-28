@@ -78,6 +78,8 @@ Copy `.env.example` to `.env.local` (or `.env` for Docker Compose) and fill in. 
 
 On container start, `docker-entrypoint.sh` runs **`prisma migrate deploy`** and then **`prisma db seed`** when `DATABASE_URL` is set. Set **`SKIP_DB_SEED=1`** to run migrations only. If migrate or seed fails, the app still starts so you can fix the database and use **Admin → Settings** to run **Run migrations**, **Seed database**, or **Migrate + seed** manually (same Prisma commands, admin session required).
 
+**Production operations** (backups, when to skip seed, secret rotation, `NEXT_PUBLIC_*` rebuilds): see [`docs/OPS_RUNBOOK.md`](docs/OPS_RUNBOOK.md).
+
 ## Admin & content (news + media library)
 
 1. Set `DATABASE_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET` in `.env.local`.

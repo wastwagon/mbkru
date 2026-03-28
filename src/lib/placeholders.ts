@@ -115,8 +115,10 @@ export const content = {
   phone: "+233 XX XXX XXXX",
   email: "info@mbkruadvocates.org",
   address: "Accra, Ghana",
-  officeDetails: "Office details to be added.",
-  contactDetails: "Contact details to be added.",
+  officeDetails:
+    "Based in Accra. A public visit address and hours will be published when our walk-in office opens.",
+  contactDetails:
+    "Email info@mbkruadvocates.org — we aim to respond within two business days. Phone +233 XX XXX XXXX (replace with your public line when live).",
 
   /** Social — replace # with real URLs */
   social: {
@@ -126,7 +128,7 @@ export const content = {
   },
 
   /** Legal */
-  privacyContact: "[add contact email]",
+  privacyContact: "info@mbkruadvocates.org",
 } as const;
 
 /**
@@ -180,21 +182,21 @@ export const newsPlaceholders = [
  */
 export const leadershipPlaceholders = [
   {
-    name: "[Name to be added]",
+    name: "To be announced",
     role: "Founder / National Coordinator",
-    bio: "Brief bio to be added. Experience in governance, citizen engagement, or related field.",
+    bio: "Leadership bios will be published when the public team roster is confirmed.",
     image: images.leadership,
   },
   {
-    name: "[Name to be added]",
+    name: "To be announced",
     role: "Deputy Coordinator",
-    bio: "Brief bio to be added.",
+    bio: "Leadership bios will be published when the public team roster is confirmed.",
     image: images.community,
   },
   {
-    name: "[Name to be added]",
+    name: "To be announced",
     role: "Legal & Governance Advisor",
-    bio: "Brief bio to be added.",
+    bio: "Leadership bios will be published when the public team roster is confirmed.",
     image: images.legal,
   },
 ] as const;
@@ -203,10 +205,10 @@ export const leadershipPlaceholders = [
  * NGO registration — placeholder
  */
 export const registrationPlaceholder = {
-  status: "[Registration status to be added]",
-  number: "[NGO registration number if applicable]",
-  regulator: "[Regulatory body — e.g. Department of Social Welfare]",
-  date: "[Date of registration]",
+  status: "Formal registration details are being finalised",
+  number: "Registration number will be listed here when issued",
+  regulator: "As applicable under Ghanaian law (e.g. Registrar General / Department of Social Welfare)",
+  date: "To be confirmed",
 } as const;
 
 /**
@@ -214,12 +216,14 @@ export const registrationPlaceholder = {
  */
 export const advisoryPlaceholders = [
   {
-    quote: "[Endorsement or advisory quote to be added. E.g. from a governance expert, civil society leader, or partner.]",
-    author: "[Name, Title]",
+    quote:
+      "Endorsements and advisory quotes from partners will appear here as relationships are formalised.",
+    author: "—",
   },
   {
-    quote: "[Second endorsement or quote to be added.]",
-    author: "[Name, Title]",
+    quote:
+      "Additional voices from civil society, governance experts, and diaspora partners will be shared as MBKRU grows.",
+    author: "—",
   },
 ] as const;
 

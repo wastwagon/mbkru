@@ -36,7 +36,7 @@ const infoBlocks = [
       </svg>
     ),
     heading: "Press & Media Enquiries",
-    content: "Use the contact form above for press and media enquiries. We aim to respond within 48 hours.",
+    content: "Use the contact form above for press and media enquiries. We aim to respond within two business days.",
   },
 ];
 
@@ -45,7 +45,7 @@ export default function ContactPage() {
     <div>
       <PageHeader
         title="Contact Us"
-        description="We respectfully submit this concept for consideration and partnership with the Government of Ghana, civil society, development partners, and—most importantly—the citizens of our beloved country."
+        description="Reach the MBKRU team for partnerships, press, general enquiries, or feedback on this site. We read every message and aim to reply within two business days."
       />
 
       <section className="section-spacing section-full bg-[var(--section-light)]">
@@ -56,7 +56,7 @@ export default function ContactPage() {
                 Send a Message
               </h2>
               <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-                We aim to respond within 48 hours. For urgent matters, please call or visit our office.
+                We aim to respond within two business days. For urgent safety matters, contact the police or emergency services first.
               </p>
               <ContactForm />
             </div>

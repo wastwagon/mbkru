@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { formatPostDate, getPublishedPostSummaries, postHeroImage } from "@/lib/content/posts-db";
-import { images, newsPlaceholders } from "@/lib/placeholders";
+import { newsPlaceholders } from "@/lib/placeholders";
 
 export const metadata: Metadata = {
   title: "News & Updates",

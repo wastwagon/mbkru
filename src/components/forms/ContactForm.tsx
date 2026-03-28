@@ -199,7 +199,7 @@ export function ContactForm() {
           <svg className="h-5 w-5 shrink-0 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
-          <p className="text-sm font-medium">Thank you. Your message has been sent. We aim to respond within 48 hours.</p>
+          <p className="text-sm font-medium">Thank you. Your message has been sent. We aim to respond within two business days.</p>
         </div>
       )}
       {status === "error" && (

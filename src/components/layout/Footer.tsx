@@ -34,10 +34,10 @@ export function Footer() {
         <div className="flex flex-col items-start gap-6 border-b border-white/20 py-10 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
           <div className="max-w-2xl">
             <h2 className="font-display text-base font-bold text-white sm:text-lg lg:text-xl">
-              Get expert advice on citizen engagement and accountability
+              Stay close to accountability news and citizen-voice tools
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-white/85 sm:text-base">
-              We believe that informed citizens make better decisions. As part of our service, we&apos;ll provide educational resources and direct channels to the Presidency.
+              MBKRU is building non-partisan ways for Ghanaians to follow public commitments, share concerns safely, and access clear information — from MBKRU Voice to the Parliament tracker pilot.
             </p>
           </div>
           <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
