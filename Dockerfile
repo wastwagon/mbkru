@@ -65,10 +65,17 @@ COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
 COPY --from=prisma-cli-deps /pcd/node_modules /tmp/pcm
 RUN sh -euc 'cd /tmp/pcm && for p in *; do \
       [ -d "$$p" ] || continue; \
-      case "$$p" in @prisma|prisma|.prisma|bcryptjs) continue ;; esac; \
+      case "$$p" in @prisma|prisma|.prisma|bcryptjs|.bin) continue ;; esac; \
       rm -rf "/app/node_modules/$$p" && cp -a "$$p" /app/node_modules/; \
     done' \
   && rm -rf /tmp/pcm
+
+# @prisma/config (pulled in by prisma CLI) resolves these from /app/node_modules — same tree as npm ci.
+# Copy from builder so we never depend on merge/hoist quirks (fixes MODULE_NOT_FOUND: effect in production).
+COPY --from=builder /app/node_modules/effect ./node_modules/effect
+COPY --from=builder /app/node_modules/c12 ./node_modules/c12
+COPY --from=builder /app/node_modules/deepmerge-ts ./node_modules/deepmerge-ts
+COPY --from=builder /app/node_modules/empathic ./node_modules/empathic
 
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 RUN chmod +x /app/docker-entrypoint.sh \
