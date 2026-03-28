@@ -567,7 +567,11 @@ export default function Home() {
             </p>
           </motion.div>
           <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-[var(--muted-foreground)]">
-            Client approval enables completing all phases on schedule. Click any card for full details.
+            Funders and partners can align with our phased rollout. Click any card for full details — or reach us via{" "}
+            <Link href="/contact" className="font-medium text-[var(--primary)] hover:underline">
+              Contact
+            </Link>
+            .
           </p>
           <RoadmapSection />
           <div className="mt-10 text-center">

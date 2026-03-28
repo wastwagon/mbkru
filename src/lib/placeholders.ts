@@ -83,6 +83,19 @@ export const footerGalleryImages = [
   images.news,
 ] as const;
 
+/** Alt text for `footerGalleryImages` (same order) — accessibility */
+export const footerGalleryAlts = [
+  "Town hall and community meeting",
+  "Community and heritage",
+  "Civic engagement and dialogue",
+  "Digital citizen platform",
+  "Leadership listening session",
+  "Technology and connectivity",
+  "Partnership and collaboration",
+  "Ghana landscape and communities",
+  "News and public updates",
+] as const;
+
 /**
  * Pillar image map — for homepage and About page
  */
@@ -107,18 +120,23 @@ export const heroContent = {
   motto: "For the People, By the People, With the People",
 } as const;
 
+function publicContactPhone(): string {
+  if (typeof process === "undefined") return "";
+  return process.env.NEXT_PUBLIC_CONTACT_PHONE?.trim() ?? "";
+}
+
 /**
  * Content placeholders — replace with real data
  */
 export const content = {
-  /** Contact — TopBar, Footer, Contact page */
-  phone: "+233 XX XXX XXXX",
+  /** Contact — TopBar (hidden until set), Footer, Contact page */
+  phone: publicContactPhone(),
   email: "info@mbkruadvocates.org",
   address: "Accra, Ghana",
   officeDetails:
-    "Based in Accra. A public visit address and hours will be published when our walk-in office opens.",
+    "National programme based in Accra. A public visit address and hours will be published when our walk-in desk opens.",
   contactDetails:
-    "Email info@mbkruadvocates.org — we aim to respond within two business days. Phone +233 XX XXX XXXX (replace with your public line when live).",
+    "Email info@mbkruadvocates.org — we aim to respond within two business days. When an official phone line is published, it will appear in the top bar and here.",
 
   /** Social — replace # with real URLs */
   social: {

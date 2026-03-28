@@ -19,7 +19,11 @@ export default function MainLayout({
       </a>
       <TopBar />
       <Header />
-      <main id="main" className="flex-1 pt-16" tabIndex={-1}>
+      <main
+        id="main"
+        className="min-w-0 flex-1 overflow-x-hidden pt-16 pb-[max(1rem,env(safe-area-inset-bottom))]"
+        tabIndex={-1}
+      >
         {children}
       </main>
       <Footer />

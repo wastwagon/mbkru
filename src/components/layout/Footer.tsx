@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Logo } from "@/components/ui/Logo";
 import { FooterMemberAuth } from "@/components/layout/FooterMemberAuth";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
-import { content, heroContent, footerGalleryImages } from "@/lib/placeholders";
+import { content, heroContent, footerGalleryAlts, footerGalleryImages } from "@/lib/placeholders";
 import {
   isLegalEmpowermentPageEnabled,
   isPromisesBrowseEnabled,
@@ -189,7 +189,7 @@ export async function Footer() {
                 >
                   <Image
                     src={src}
-                    alt="Engagement gallery image"
+                    alt={footerGalleryAlts[i] ?? "MBKRU engagement"}
                     fill
                     className="object-cover opacity-90 transition-opacity group-hover:opacity-100"
                     sizes="80px"

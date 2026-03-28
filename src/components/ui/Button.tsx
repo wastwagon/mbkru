@@ -5,7 +5,7 @@ import Link from "next/link";
 import { type ButtonHTMLAttributes } from "react";
 
 const baseStyles =
-  "inline-flex items-center justify-center gap-2 font-semibold transition-all duration-[400ms] ease-in-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex touch-manipulation items-center justify-center gap-2 font-semibold transition-all duration-[400ms] ease-in-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 
 const variants = {
   primary:

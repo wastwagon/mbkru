@@ -34,6 +34,11 @@ const PATH_BREADCRUMBS: Record<string, string> = {
   "/diaspora": "Diaspora — 17th Region",
   "/privacy": "Privacy Policy",
   "/terms": "Terms of Use",
+  "/track-report": "Track a report",
+  "/login": "Sign in",
+  "/register": "Register",
+  "/citizens-voice/submit": "Submit a report",
+  "/situational-alerts/submit": "Submit engagement",
 };
 
 function buildBreadcrumbs(pathname: string, currentLabel?: string): BreadcrumbItem[] {
@@ -67,6 +72,24 @@ function buildBreadcrumbs(pathname: string, currentLabel?: string): BreadcrumbIt
     return items;
   }
 
+  if (segments[0] === "citizens-voice" && segments[1] === "submit") {
+    items.push({
+      label: PATH_BREADCRUMBS["/citizens-voice"] ?? "MBKRU Voice",
+      href: "/citizens-voice",
+    });
+    items.push({ label: PATH_BREADCRUMBS["/citizens-voice/submit"] ?? "Submit a report" });
+    return items;
+  }
+
+  if (segments[0] === "situational-alerts" && segments[1] === "submit") {
+    items.push({
+      label: PATH_BREADCRUMBS["/situational-alerts"] ?? "Engagement",
+      href: "/situational-alerts",
+    });
+    items.push({ label: PATH_BREADCRUMBS["/situational-alerts/submit"] ?? "Submit engagement" });
+    return items;
+  }
+
   const path = "/" + segments[0];
   const label = PATH_BREADCRUMBS[path] ?? segments[0].charAt(0).toUpperCase() + segments[0].slice(1).replace(/-/g, " ");
   items.push({ label });
@@ -80,7 +103,7 @@ export function PageHeader({ title, description, breadcrumbs, breadcrumbCurrentL
   return (
     <section className="relative overflow-hidden border-b border-[var(--border)] section-full bg-[var(--section-light-tertiary)]">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,var(--primary)/[0.08),transparent)]" aria-hidden />
-      <div className="relative mx-auto max-w-4xl py-8 sm:py-10 lg:py-12">
+      <div className="relative mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
         {crumbs.length > 0 && (
           <nav aria-label="Breadcrumb" className="mb-4">
             <ol className="flex flex-wrap items-center gap-2 text-sm">

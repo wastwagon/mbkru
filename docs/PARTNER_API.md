@@ -13,6 +13,7 @@
 | `GET` | `/api/mps` | `NEXT_PUBLIC_PLATFORM_PHASE` ≥ 2 + `parliamentTrackerData` | Active MP/minister roster (summary + promise counts) |
 | `GET` | `/api/promises` | Same | Campaign promises; optional `?memberSlug=` filter |
 | `GET` | `/api/report-card/[year]` | Phase ≥ 3 + `accountabilityScorecards` | Published People’s Report Card cycle (404 if unpublished / missing) |
+| `GET` | `/api/export/mps-csv` | Same gates as `/api/mps` | **CSV** roster (`slug`, `name`, `role`, `party`, `constituency_name`, `promise_count`); UTF-8 BOM for Excel; rate-limited like JSON |
 
 **Health:** `GET /api/health` includes `accountability.parliamentJson` and `accountability.reportCardJson` flags for build-time capability checks (not a data export).
 

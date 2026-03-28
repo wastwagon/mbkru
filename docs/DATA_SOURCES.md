@@ -15,7 +15,7 @@
 | **[ghanamps.com](https://ghanamps.com/)** | Browse 9th Parliament (2025–2029) and filters | Same verification rule as CLI; site is a convenience, not a legal record. |
 | **[openAFRICA — Members of Parliament Ghana](https://open.africa/dataset/members-of-parliament-ghana)** | Historical dataset | Often **stale** (e.g. pre-2012 snapshots); use only with date checks, not as current roster. |
 
-**This repo:** Run `npm run data:members-csv -- path/to/members.json > import.csv` to convert **ghanamps-style JSON** into the CSV format expected by **`POST /api/admin/parliament-members/import`**. See `scripts/json-members-to-mbkru-csv.mjs`.
+**This repo:** Run `npm run data:members-csv -- path/to/members.json > import.csv` to convert **ghanamps-style JSON** into the CSV format expected by **`POST /api/admin/parliament-members/import`**. See `scripts/json-members-to-mbkru-csv.mjs`. **Read-only export (Phase 2+):** `GET /api/export/mps-csv` returns the live roster as CSV (same gates as `GET /api/mps`).
 
 ---
 

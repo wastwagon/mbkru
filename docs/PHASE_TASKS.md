@@ -24,7 +24,7 @@
 | [x] | Optional Resend, Turnstile, GA4/Plausible, Redis rate limits |
 | [ ] | **Verify** production: backups, `SKIP_DB_SEED`, secrets rotation ([`OPS_RUNBOOK.md`](./OPS_RUNBOOK.md)) |
 | [ ] | **Content:** replace/refresh seeded posts for live voice; legal pages reviewed by counsel |
-| [ ] | **Phase 1 polish:** Lighthouse/a11y spot-check on `/contact`, `/news`, homepage |
+| [x] | **Phase 1 polish (baseline):** mobile PageHeader padding, main `overflow-x` + safe-area, optional `NEXT_PUBLIC_CONTACT_PHONE`, footer gallery alts, `touch-manipulation` on buttons — *run Lighthouse manually before major launch* |
 
 ---
 
@@ -63,7 +63,7 @@
 | [x] | Pillar routes **`/legal-empowerment`**, **`/town-halls`** when phase ≥ 2 |
 | [x] | **Partner programme (draft):** [`docs/PARTNER_API.md`](PARTNER_API.md) — attribution, caching, rate limits, versioning *recommendation* *(final terms with legal + public page when launching)* |
 | [ ] | **Real datasets:** vetted CSV import + editorial sign-off before toggling Phase 3 in prod — procedure: [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md); source pointers: [`DATA_SOURCES.md`](./DATA_SOURCES.md) |
-| [ ] | **Optional:** public CSV/JSON export for researchers (scope + rate limit) |
+| [x] | **Research export:** `GET /api/export/mps-csv` (UTF-8 BOM CSV, same phase + rate limit as `/api/mps`) — see [`PARTNER_API.md`](./PARTNER_API.md) |
 | [ ] | **Stretch:** PMO-style modules (bills, votes, plenary) — *new product verticals; scope separately* |
 
 ---
