@@ -65,6 +65,9 @@ Copy `.env.example` to `.env.local` (or `.env` for Docker Compose) and fill in. 
 | `RESEND_FROM_EMAIL` | Optional; default `MBKRU Contact <onboarding@resend.dev>` (use your verified domain in production) |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Optional; [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) site key — shows widget on public forms when set |
 | `TURNSTILE_SECRET_KEY` | Optional; Turnstile **secret** — when set, APIs require a valid widget token (use with the site key above) |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | Optional; [GA4](https://support.google.com/analytics) measurement ID (`G-…`) — loads on the **public** site only (not `/admin`) |
+| `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | Optional; [Plausible](https://plausible.io) site domain — can be used alone or alongside GA4 |
+| `NEXT_PUBLIC_PLAUSIBLE_SCRIPT_URL` | Optional; defaults to `https://plausible.io/js/script.js` — set for self-hosted Plausible |
 | `REDIS_URL` | Optional; **shared rate limits** for public form APIs when set; health check pings Redis |
 | `RATE_LIMIT_WINDOW_MS` | Optional; default `60000` (ms window per IP + route) |
 | `RATE_LIMIT_MAX` | Optional; default `30` requests per window |

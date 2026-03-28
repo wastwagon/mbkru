@@ -12,6 +12,7 @@ This document describes how the codebase is structured for **Phase 1** (live mar
 | Content | **PostgreSQL + Prisma** | News posts (`Post`), shared **media library** (`Media`), optional featured image per post |
 | Auth (admin only) | bcrypt + **JWT in httpOnly cookie** | Single seeded admin for now; model supports more `Admin` rows later |
 | Forms | React Hook Form + Zod → Route Handlers | Contact (optional Resend); newsletter, early access, tracker → **Postgres `LeadCapture`**; optional **Cloudflare Turnstile** when `TURNSTILE_SECRET_KEY` + public site key are set |
+| Analytics | `next/script` in `(main)/layout` | Optional **GA4** and/or **Plausible** via `NEXT_PUBLIC_*` env; **not** injected on `/admin` |
 | Hosting | Docker (standalone output), optional Coolify on VPS | `mbkru-web` + Postgres; **Redis** in `docker-compose.fullstack.yml` for Phase 2 sessions / rate limits |
 
 Phase 1 **intentionally excludes** public user accounts, complaint workflows, MP datasets, and scorecard engines. Those belong to **Phase 2+** and are gated in code via **platform phase** configuration (see §5).

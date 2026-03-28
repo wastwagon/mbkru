@@ -1,3 +1,4 @@
+import { AnalyticsScripts } from "@/components/analytics/AnalyticsScripts";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { TopBar } from "@/components/layout/TopBar";
@@ -23,6 +24,7 @@ export default function MainLayout({
       </main>
       <Footer />
       <BackToTop />
+      <AnalyticsScripts />
     </>
   );
 }
