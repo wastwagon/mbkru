@@ -34,6 +34,18 @@ ENV NEXT_PUBLIC_PLATFORM_PHASE=$NEXT_PUBLIC_PLATFORM_PHASE
 # Do not use Compose/runtime DATABASE_URL here — host `postgres` is unreachable during `docker build`.
 RUN DATABASE_URL="" npm run build
 
+# Hoisted deps for Prisma CLI (@prisma/config → effect, c12, …): copy one subtree from full npm ci
+# so ESM packages (c12 → perfect-debounce, etc.) resolve the same as local `npm ci`.
+RUN mkdir -p /opt/prisma-cli-nm && cd /app/node_modules && \
+  for d in \
+    @standard-schema \
+    effect fast-check pure-rand \
+    c12 deepmerge-ts empathic \
+    confbox defu destr exsolve giget jiti ohash pathe perfect-debounce pkg-types rc9 \
+    citty consola node-fetch-native nypm tinyexec; do \
+    if [ -e "$$d" ]; then cp -a "$$d" /opt/prisma-cli-nm/; fi; \
+  done
+
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
@@ -72,13 +84,9 @@ RUN sh -euc 'cd /tmp/pcm && for p in *; do \
     done' \
   && rm -rf /tmp/pcm
 
-# @prisma/config → effect loads fast-check from the app root (hoisted by npm ci, not inside effect/).
-COPY --from=builder /app/node_modules/effect ./node_modules/effect
-COPY --from=builder /app/node_modules/fast-check ./node_modules/fast-check
-COPY --from=builder /app/node_modules/pure-rand ./node_modules/pure-rand
-COPY --from=builder /app/node_modules/c12 ./node_modules/c12
-COPY --from=builder /app/node_modules/deepmerge-ts ./node_modules/deepmerge-ts
-COPY --from=builder /app/node_modules/empathic ./node_modules/empathic
+# Overlay full hoisted Prisma-config stack from builder (avoids one-off MODULE_NOT_FOUND per package).
+COPY --from=builder /opt/prisma-cli-nm /tmp/prisma-cli-nm
+RUN cp -a /tmp/prisma-cli-nm/. /app/node_modules/ && rm -rf /tmp/prisma-cli-nm
 
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 RUN chmod +x /app/docker-entrypoint.sh \
