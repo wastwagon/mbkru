@@ -63,6 +63,8 @@ Copy `.env.example` to `.env.local` (or `.env` for Docker Compose) and fill in. 
 | `RESEND_API_KEY` | Optional; [Resend](https://resend.com) API key — contact form sends email when set with `CONTACT_INBOX_EMAIL` |
 | `CONTACT_INBOX_EMAIL` | Inbox that receives contact submissions (required with `RESEND_API_KEY`) |
 | `RESEND_FROM_EMAIL` | Optional; default `MBKRU Contact <onboarding@resend.dev>` (use your verified domain in production) |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Optional; [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) site key — shows widget on public forms when set |
+| `TURNSTILE_SECRET_KEY` | Optional; Turnstile **secret** — when set, APIs require a valid widget token (use with the site key above) |
 | `REDIS_URL` | Optional; **shared rate limits** for public form APIs when set; health check pings Redis |
 | `RATE_LIMIT_WINDOW_MS` | Optional; default `60000` (ms window per IP + route) |
 | `RATE_LIMIT_MAX` | Optional; default `30` requests per window |

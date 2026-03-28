@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import type { TurnstileInstance } from "@marsidev/react-turnstile";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/Button";
+
+import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
 const contactSchema = z.object({
   enquiryType: z.string().min(1, "Please select an enquiry type"),
@@ -24,6 +27,8 @@ const inputNormal = "border-[var(--border)] hover:border-[var(--primary)]/30";
 
 export function ContactForm() {
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance>(undefined);
 
   const {
     register,
@@ -50,11 +55,16 @@ export function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          turnstileToken: turnstileToken ?? undefined,
+        }),
       });
       if (!res.ok) throw new Error("Failed to send");
       setStatus("success");
       reset();
+      setTurnstileToken(null);
+      turnstileRef.current?.reset();
     } catch {
       setStatus("error");
     }
@@ -174,6 +184,13 @@ export function ContactForm() {
         )}
       </div>
 
+      <FormTurnstile
+        ref={turnstileRef}
+        action="contact"
+        onTokenChange={setTurnstileToken}
+        className="flex justify-start"
+      />
+
       {status === "success" && (
         <div
           className="flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-green-800"
@@ -198,7 +215,12 @@ export function ContactForm() {
       )}
 
       <div className="pt-1">
-        <Button type="submit" disabled={isSubmitting} size="lg" className="w-full sm:w-auto min-w-[180px]">
+        <Button
+          type="submit"
+          disabled={isSubmitting || (isTurnstileWidgetEnabled && !turnstileToken)}
+          size="lg"
+          className="w-full sm:w-auto min-w-[180px]"
+        >
           {isSubmitting ? (
             <>
               <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden />

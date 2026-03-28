@@ -3,6 +3,10 @@ import { NextResponse } from "next/server";
 
 import { upsertLeadCapture } from "@/lib/server/lead-capture";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
+import {
+  requireTurnstileIfConfigured,
+  turnstileTokenFromFormData,
+} from "@/lib/server/verify-turnstile";
 import { emailOnlyBodySchema } from "@/lib/validation/public-forms";
 
 export async function POST(request: Request) {
@@ -19,6 +23,12 @@ export async function POST(request: Request) {
     if (!parsed.success) {
       return NextResponse.json({ error: "Valid email required" }, { status: 400 });
     }
+
+    const turnstileBlock = await requireTurnstileIfConfigured(
+      request,
+      turnstileTokenFromFormData(formData),
+    );
+    if (turnstileBlock) return turnstileBlock;
 
     await upsertLeadCapture(parsed.data.email, LeadCaptureSource.EARLY_ACCESS);
 

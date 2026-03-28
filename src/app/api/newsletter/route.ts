@@ -3,7 +3,8 @@ import { NextResponse } from "next/server";
 
 import { upsertLeadCapture } from "@/lib/server/lead-capture";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
-import { emailOnlyBodySchema } from "@/lib/validation/public-forms";
+import { requireTurnstileIfConfigured } from "@/lib/server/verify-turnstile";
+import { emailWithTurnstileBodySchema } from "@/lib/validation/public-forms";
 
 export async function POST(request: Request) {
   if (!(await allowPublicFormRequest(request, "newsletter"))) {
@@ -21,10 +22,16 @@ export async function POST(request: Request) {
       raw = { email: typeof e === "string" ? e : "" };
     }
 
-    const parsed = emailOnlyBodySchema.safeParse(raw);
+    const parsed = emailWithTurnstileBodySchema.safeParse(raw);
     if (!parsed.success) {
       return NextResponse.json({ error: "Valid email required" }, { status: 400 });
     }
+
+    const turnstileBlock = await requireTurnstileIfConfigured(
+      request,
+      parsed.data.turnstileToken,
+    );
+    if (turnstileBlock) return turnstileBlock;
 
     await upsertLeadCapture(parsed.data.email, LeadCaptureSource.NEWSLETTER);
 

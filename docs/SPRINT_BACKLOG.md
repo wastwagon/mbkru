@@ -20,7 +20,7 @@
 |---|------|---------|
 | 1 | **Contact email** | Resend (or SMTP) when env set; log-only fallback |
 | 2 | **Lead capture** | **Postgres:** `LeadCapture` + APIs (newsletter, early-access, tracker). *Optional later:* ESP webhooks in parallel |
-| 3 | **Bot abuse** | Cloudflare Turnstile or reCAPTCHA on public `POST` forms |
+| 3 | **Bot abuse** | **Turnstile:** `NEXT_PUBLIC_TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET_KEY` — contact + newsletter + early-access + tracker |
 | 4 | **Analytics** | GA4 (or Plausible) via env-gated script in `layout` |
 | 5 | **Content** | Replace placeholders (contact, footer, about); ship 3–5 real news posts |
 | 6 | **Ops** | DB backups, rotate any leaked secrets, `SKIP_DB_SEED=1` after first stable deploy |

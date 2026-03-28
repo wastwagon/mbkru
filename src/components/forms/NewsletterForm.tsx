@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import type { TurnstileInstance } from "@marsidev/react-turnstile";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
+
+import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
 export function NewsletterForm() {
   const [email, setEmail] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const turnstileRef = useRef<TurnstileInstance>(undefined);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -15,36 +20,49 @@ export function NewsletterForm() {
       const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({
+          email,
+          turnstileToken: turnstileToken ?? undefined,
+        }),
       });
       if (!res.ok) throw new Error();
       setStatus("success");
       setEmail("");
+      setTurnstileToken(null);
+      turnstileRef.current?.reset();
     } catch {
       setStatus("error");
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-3">
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Enter your email"
-        required
-        disabled={status === "loading"}
-        className="min-h-[56px] w-full rounded-xl border border-[var(--border)] bg-white px-5 py-4 text-[var(--foreground)] shadow-[var(--shadow-card)] transition-all duration-[400ms] ease-in-out placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 sm:min-h-[60px] sm:py-5 sm:w-80 sm:max-w-md"
-        aria-label="Email address"
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <FormTurnstile
+        ref={turnstileRef}
+        action="newsletter"
+        onTokenChange={setTurnstileToken}
+        className="flex justify-start"
       />
-      <Button
-        type="submit"
-        variant="primary"
-        disabled={status === "loading"}
-        className="min-h-[56px] rounded-xl bg-[var(--primary)] font-semibold text-white shadow-md hover:bg-[var(--primary-dark)] hover:shadow-lg sm:min-h-[60px] sm:shrink-0"
-      >
-        {status === "loading" ? "Subscribing…" : "Subscribe"}
-      </Button>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-3">
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your email"
+          required
+          disabled={status === "loading"}
+          className="min-h-[56px] w-full rounded-xl border border-[var(--border)] bg-white px-5 py-4 text-[var(--foreground)] shadow-[var(--shadow-card)] transition-all duration-[400ms] ease-in-out placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 sm:min-h-[60px] sm:py-5 sm:w-80 sm:max-w-md"
+          aria-label="Email address"
+        />
+        <Button
+          type="submit"
+          variant="primary"
+          disabled={status === "loading" || (isTurnstileWidgetEnabled && !turnstileToken)}
+          className="min-h-[56px] rounded-xl bg-[var(--primary)] font-semibold text-white shadow-md hover:bg-[var(--primary-dark)] hover:shadow-lg sm:min-h-[60px] sm:shrink-0"
+        >
+          {status === "loading" ? "Subscribing…" : "Subscribe"}
+        </Button>
+      </div>
       {status === "success" && (
         <p className="w-full text-center text-sm font-medium text-green-700">
           Thank you! Check your inbox to confirm.

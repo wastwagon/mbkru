@@ -20,8 +20,10 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 ARG NEXT_PUBLIC_SITE_URL=https://mbkruadvocates.org
 ARG NEXT_PUBLIC_PLATFORM_PHASE=1
+ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY=
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_PLATFORM_PHASE=$NEXT_PUBLIC_PLATFORM_PHASE
+ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
 # Prisma generate runs via npm run build (postinstall also generates).
 # Do not use Compose/runtime DATABASE_URL here — host `postgres` is unreachable during `docker build`.
