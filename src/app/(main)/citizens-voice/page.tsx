@@ -51,7 +51,11 @@ export default async function CitizensVoicePage() {
     <div>
       <PageHeader
         title="Digital Platform — MBKRU Voice"
-        description="Digital platform for citizen voice — membership portal, personal dashboard, and public statistics."
+        description={
+          voiceOn
+            ? "Pilot live: submit reports with evidence, track with a code, and manage submissions from your account. Full national rollout scales with programme phases."
+            : "Digital platform for citizen voice — membership portal, personal dashboard, and public statistics."
+        }
       />
 
       {/* Hero section — full-width with hero image */}

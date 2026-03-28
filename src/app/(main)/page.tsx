@@ -1,75 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { LivePlatformHeroChips, LivePlatformStrip } from "@/components/home/LivePlatformStrip";
 import { RoadmapModal, type RoadmapPhase } from "@/components/ui/RoadmapModal";
+import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { images, pillarImages, roadmapPlaceholders, heroContent, newsPlaceholders } from "@/lib/placeholders";
 import { RegionsViz } from "@/components/ui/RegionsViz";
 import { ObjectivesCarousel } from "@/components/ui/ObjectivesCarousel";
-
-const pillars = [
-  {
-    letter: "A",
-    title: "Digital Platform — MBKRU Voice",
-    items: ["Secure membership portal (mbkru.org.gh)", "Personal dashboard", "Geo-tagged complaints", "Public statistics"],
-    href: "/citizens-voice",
-    image: pillarImages[0].image,
-    alt: pillarImages[0].alt,
-  },
-  {
-    letter: "B",
-    title: "Physical Engagement Network",
-    items: ["Quarterly Town Hall Meetings", "Regional Public Forums", "Annual National People's Assembly"],
-    href: "/situational-alerts",
-    image: pillarImages[1].image,
-    alt: pillarImages[1].alt,
-  },
-  {
-    letter: "C",
-    title: "Legal Empowerment Desk",
-    items: ["Volunteer and partnered lawyers", "CHRAJ, police, courts guidance", "FOI requests", "Pro-bono referrals"],
-    href: "/about",
-    image: pillarImages[2].image,
-    alt: pillarImages[2].alt,
-  },
-  {
-    letter: "D",
-    title: "Accountability & Electoral Watch",
-    items: ["People's Report Cards", "Campaign promise tracking", "Accountability Scorecards", "Citizen petition mechanism"],
-    href: "/parliament-tracker",
-    image: pillarImages[3].image,
-    alt: pillarImages[3].alt,
-  },
-  {
-    letter: "E",
-    title: "Direct Presidential Interface",
-    items: ["Monthly Citizens' Brief", "Quarterly Presidential Listening Sessions", "Dedicated liaison office"],
-    href: "/about",
-    image: pillarImages[4].image,
-    alt: pillarImages[4].alt,
-  },
-];
-
-const objectives = [
-  {
-    title: "Restorative Justice & Reparations",
-    description: "Equitable reparations for historical injustice, transforming resources into tangible benefits for communities.",
-    href: "/about",
-  },
-  {
-    title: "Accountability & Electoral Watch",
-    description: "People's Report Cards, campaign promise tracking, and citizen petition mechanisms for recall.",
-    href: "/parliament-tracker",
-  },
-  {
-    title: "Direct Presidential Interface",
-    description: "Monthly Citizens' Brief, Quarterly Presidential Listening Sessions, and dedicated liaison with the Presidency.",
-    href: "/about",
-  },
-];
 
 const trustStats = [
   { value: "5", label: "Operational Pillars" },
@@ -150,6 +91,158 @@ function RoadmapSection() {
 }
 
 export default function Home() {
+  const phase = getPublicPlatformPhase();
+  const parliamentLive = platformFeatures.parliamentTrackerData(phase);
+
+  const pillars = useMemo(
+    () => [
+      {
+        letter: "A",
+        title: "Digital Platform — MBKRU Voice",
+        items: [
+          "Secure membership portal (mbkru.org.gh)",
+          "Personal dashboard",
+          "Geo-tagged complaints",
+          "Public statistics",
+        ],
+        href: "/citizens-voice",
+        image: pillarImages[0].image,
+        alt: pillarImages[0].alt,
+      },
+      {
+        letter: "B",
+        title: "Physical Engagement Network",
+        items: ["Quarterly Town Hall Meetings", "Regional Public Forums", "Annual National People's Assembly"],
+        href: platformFeatures.townHallDirectory(phase) ? "/town-halls" : "/situational-alerts",
+        image: pillarImages[1].image,
+        alt: pillarImages[1].alt,
+      },
+      {
+        letter: "C",
+        title: "Legal Empowerment Desk",
+        items: ["Volunteer and partnered lawyers", "CHRAJ, police, courts guidance", "FOI requests", "Pro-bono referrals"],
+        href: platformFeatures.legalEmpowermentDesk(phase) ? "/legal-empowerment" : "/about",
+        image: pillarImages[2].image,
+        alt: pillarImages[2].alt,
+      },
+      {
+        letter: "D",
+        title: "Accountability & Electoral Watch",
+        items: [
+          "People's Report Cards",
+          "Campaign promise tracking",
+          "Accountability Scorecards",
+          "Citizen petition mechanism",
+        ],
+        href: "/parliament-tracker",
+        image: pillarImages[3].image,
+        alt: pillarImages[3].alt,
+      },
+      {
+        letter: "E",
+        title: "Direct Presidential Interface",
+        items: ["Monthly Citizens' Brief", "Quarterly Presidential Listening Sessions", "Dedicated liaison office"],
+        href: "/about",
+        image: pillarImages[4].image,
+        alt: pillarImages[4].alt,
+      },
+    ],
+    [phase],
+  );
+
+  const objectives = useMemo(
+    () => [
+      {
+        title: "Restorative Justice & Reparations",
+        description:
+          "Equitable reparations for historical injustice, transforming resources into tangible benefits for communities.",
+        href: "/about",
+      },
+      {
+        title: "Accountability & Electoral Watch",
+        description: "People's Report Cards, campaign promise tracking, and citizen petition mechanisms for recall.",
+        href: parliamentLive ? "/promises" : "/parliament-tracker",
+      },
+      {
+        title: "Direct Presidential Interface",
+        description:
+          "Monthly Citizens' Brief, Quarterly Presidential Listening Sessions, and dedicated liaison with the Presidency.",
+        href: "/about",
+      },
+    ],
+    [parliamentLive],
+  );
+
+  const platformHighlightCards = useMemo(
+    () => [
+      {
+        icon: (
+          <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v9m0 0v-9m0 0V5a7 7 0 0114 0v6z"
+            />
+          </svg>
+        ),
+        title: "Citizen Voice",
+        description:
+          "Secure national membership portal connecting every Ghanaian directly to the Presidency. Personal dashboards, geo-tagged complaints, and live public statistics.",
+        href: "/citizens-voice",
+      },
+      {
+        icon: (
+          <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+            />
+          </svg>
+        ),
+        title: "Physical Engagement",
+        description:
+          "Quarterly Town Hall Meetings, Regional Public Forums, and Annual National People's Assembly — bringing citizens face-to-face with decision-makers.",
+        href: platformFeatures.townHallDirectory(phase) ? "/town-halls" : "/situational-alerts",
+      },
+      {
+        icon: (
+          <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+            />
+          </svg>
+        ),
+        title: "Accountability Watch",
+        description:
+          "People's Report Cards, campaign promise tracking, and Accountability Scorecards. Citizen petition mechanisms for recall of non-performing officials.",
+        href: "/parliament-tracker",
+      },
+      {
+        icon: (
+          <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"
+            />
+          </svg>
+        ),
+        title: "Legal Empowerment",
+        description:
+          "Volunteer lawyers, step-by-step guidance for CHRAJ, police, courts. Template letters, FOI requests, and referrals to pro-bono and legal aid organizations.",
+        href: platformFeatures.legalEmpowermentDesk(phase) ? "/legal-empowerment" : "/about",
+      },
+    ],
+    [phase],
+  );
+
   return (
     <div>
       {/* Hero — content right-aligned in glass containers */}
@@ -236,6 +329,7 @@ export default function Home() {
                 </svg>
               </Link>
             </motion.div>
+            <LivePlatformHeroChips />
           </motion.div>
           {/* Stats container */}
           <motion.div
@@ -257,6 +351,8 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      <LivePlatformStrip />
 
       {/* About — editorial layout: asymmetric grid (55/45) */}
       <section className="section-full bg-[var(--section-light)] py-10 sm:py-12 lg:py-14">
@@ -342,8 +438,13 @@ export default function Home() {
                     {pillar.letter}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-display text-base font-semibold text-white group-hover:text-[var(--accent-gold)] sm:text-lg">
-                      {pillar.title}
+                    <h3 className="flex flex-wrap items-center gap-2 font-display text-base font-semibold text-white group-hover:text-[var(--accent-gold)] sm:text-lg">
+                      <span>{pillar.title}</span>
+                      {pillar.letter === "D" && parliamentLive ? (
+                        <span className="rounded-full bg-emerald-400/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-200">
+                          Live data
+                        </span>
+                      ) : null}
                     </h3>
                     <p className="mt-2 text-sm leading-relaxed text-white/90">
                       {pillar.items.slice(0, 2).join(". ")}
@@ -424,48 +525,7 @@ export default function Home() {
               </Button>
             </motion.div>
             <div className="space-y-4">
-              {[
-                {
-                  icon: (
-                    <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v9m0 0v-9m0 0V5a7 7 0 0114 0v6z" />
-                    </svg>
-                  ),
-                  title: "Citizen Voice",
-                  description: "Secure national membership portal connecting every Ghanaian directly to the Presidency. Personal dashboards, geo-tagged complaints, and live public statistics.",
-                  href: "/citizens-voice",
-                },
-                {
-                  icon: (
-                    <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  ),
-                  title: "Physical Engagement",
-                  description: "Quarterly Town Hall Meetings, Regional Public Forums, and Annual National People's Assembly — bringing citizens face-to-face with decision-makers.",
-                  href: "/situational-alerts",
-                },
-                {
-                  icon: (
-                    <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                  ),
-                  title: "Accountability Watch",
-                  description: "People's Report Cards, campaign promise tracking, and Accountability Scorecards. Citizen petition mechanisms for recall of non-performing officials.",
-                  href: "/parliament-tracker",
-                },
-                {
-                  icon: (
-                    <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-                    </svg>
-                  ),
-                  title: "Legal Empowerment",
-                  description: "Volunteer lawyers, step-by-step guidance for CHRAJ, police, courts. Template letters, FOI requests, and referrals to pro-bono and legal aid organizations.",
-                  href: "/about",
-                },
-              ].map((card, i) => (
+              {platformHighlightCards.map((card, i) => (
                 <motion.div
                   key={card.title}
                   initial={{ opacity: 0, x: 20 }}

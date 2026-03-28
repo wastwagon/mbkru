@@ -2,14 +2,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { Logo } from "@/components/ui/Logo";
+import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { content, heroContent, footerGalleryImages } from "@/lib/placeholders";
-import { isPromisesBrowseEnabled, isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
-
-const footerPlatformBase = [
-  { href: "/citizens-voice", label: "MBKRU Voice" },
-  { href: "/situational-alerts", label: "Engagement" },
-  { href: "/parliament-tracker", label: "Accountability" },
-];
+import {
+  isLegalEmpowermentPageEnabled,
+  isPromisesBrowseEnabled,
+  isReportCardPublicEnabled,
+  isTownHallDirectoryPageEnabled,
+} from "@/lib/reports/accountability-pages";
 
 const footerLinks = {
   organization: [
@@ -29,11 +29,24 @@ const footerLinks = {
 
 export async function Footer() {
   const currentYear = new Date().getFullYear();
-  const platformLinks = [
-    ...footerPlatformBase,
-    ...(isPromisesBrowseEnabled() ? [{ href: "/promises" as const, label: "Campaign promises" }] : []),
-    ...(isReportCardPublicEnabled() ? [{ href: "/report-card" as const, label: "Report card" }] : []),
-  ];
+  const phase = getServerPlatformPhase();
+  const voiceOn = platformFeatures.citizensVoicePlatform(phase);
+
+  const platformLinks: { href: string; label: string }[] = [{ href: "/citizens-voice", label: "MBKRU Voice" }];
+  if (voiceOn) {
+    platformLinks.push(
+      { href: "/citizens-voice/submit", label: "Submit a report" },
+      { href: "/track-report", label: "Track a report" },
+    );
+  }
+  platformLinks.push(
+    { href: "/situational-alerts", label: "Engagement" },
+    { href: "/parliament-tracker", label: "Accountability" },
+  );
+  if (isPromisesBrowseEnabled()) platformLinks.push({ href: "/promises", label: "Campaign promises" });
+  if (isReportCardPublicEnabled()) platformLinks.push({ href: "/report-card", label: "Report card" });
+  if (isLegalEmpowermentPageEnabled()) platformLinks.push({ href: "/legal-empowerment", label: "Legal desk" });
+  if (isTownHallDirectoryPageEnabled()) platformLinks.push({ href: "/town-halls", label: "Town halls" });
 
   return (
     <footer className="relative bg-[var(--footer-bg)] text-white">
@@ -45,7 +58,9 @@ export async function Footer() {
               Stay close to accountability news and citizen-voice tools
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-white/85 sm:text-base">
-              MBKRU is building non-partisan ways for Ghanaians to follow public commitments, share concerns safely, and access clear information — from MBKRU Voice to the Parliament tracker pilot.
+              MBKRU is deploying non-partisan tools for Ghanaians to follow public commitments, share concerns safely, and
+              access clear information — Voice reporting, accountability datasets, and methodology scale with your
+              deployment phase.
             </p>
           </div>
           <div className="flex shrink-0 flex-col gap-3 sm:flex-row">

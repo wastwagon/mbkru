@@ -2,16 +2,31 @@ import Link from "next/link";
 
 import { logoutAction } from "@/app/admin/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { prisma } from "@/lib/db/prisma";
 
 export default async function AdminHomePage() {
   await requireAdminSession();
 
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
+
+  const [reportsTotal, reportsQueue, contactsWeek, leadsTotal] = await Promise.all([
+    prisma.citizenReport.count(),
+    prisma.citizenReport.count({
+      where: { status: { in: ["RECEIVED", "UNDER_REVIEW"] } },
+    }),
+    prisma.contactSubmission.count({ where: { createdAt: { gte: weekAgo } } }),
+    prisma.leadCapture.count(),
+  ]);
+
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">Dashboard</h1>
-          <p className="text-sm text-[var(--muted-foreground)]">Manage news posts and the shared image library.</p>
+          <p className="text-sm text-[var(--muted-foreground)]">
+            CMS, citizen voice, accountability data, and inbound leads — quick snapshot below.
+          </p>
         </div>
         <form action={logoutAction}>
           <button
@@ -22,7 +37,48 @@ export default async function AdminHomePage() {
           </button>
         </form>
       </div>
-      <ul className="mt-10 grid gap-4 sm:grid-cols-2">
+
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Link
+          href="/admin/reports"
+          className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition hover:border-[var(--primary)]/35"
+        >
+          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Citizen reports</p>
+          <p className="mt-1 font-display text-3xl font-bold tabular-nums text-[var(--foreground)]">{reportsTotal}</p>
+          <p className="mt-2 text-sm text-[var(--primary)]">
+            {reportsQueue} in queue <span className="text-[var(--muted-foreground)]">→ triage</span>
+          </p>
+        </Link>
+        <Link
+          href="/admin/contact-submissions"
+          className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition hover:border-[var(--primary)]/35"
+        >
+          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Contact (7 days)</p>
+          <p className="mt-1 font-display text-3xl font-bold tabular-nums text-[var(--foreground)]">{contactsWeek}</p>
+          <p className="mt-2 text-sm text-[var(--muted-foreground)]">Form messages saved to Postgres</p>
+        </Link>
+        <Link
+          href="/admin/leads"
+          className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition hover:border-[var(--primary)]/35"
+        >
+          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Lead captures</p>
+          <p className="mt-1 font-display text-3xl font-bold tabular-nums text-[var(--foreground)]">{leadsTotal}</p>
+          <p className="mt-2 text-sm text-[var(--muted-foreground)]">Newsletter · early access · tracker</p>
+        </Link>
+        <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--section-light)]/50 p-5">
+          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Public site</p>
+          <p className="mt-2 text-sm leading-snug text-[var(--muted-foreground)]">
+            Preview live pages from the{" "}
+            <Link href="/" className="font-medium text-[var(--primary)] hover:underline">
+              homepage
+            </Link>
+            .
+          </p>
+        </div>
+      </div>
+
+      <h2 className="mt-12 font-display text-lg font-semibold text-[var(--foreground)]">Admin tools</h2>
+      <ul className="mt-4 grid gap-4 sm:grid-cols-2">
         <li>
           <Link
             href="/admin/posts"

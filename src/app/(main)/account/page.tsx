@@ -3,6 +3,12 @@ import Link from "next/link";
 import { prisma } from "@/lib/db/prisma";
 import { getMemberSession } from "@/lib/member/session";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
+import {
+  isLegalEmpowermentPageEnabled,
+  isPromisesBrowseEnabled,
+  isReportCardPublicEnabled,
+  isTownHallDirectoryPageEnabled,
+} from "@/lib/reports/accountability-pages";
 import { SignOutButton } from "./SignOutButton";
 
 export default async function AccountPage() {
@@ -10,6 +16,10 @@ export default async function AccountPage() {
   if (!session) return null;
 
   const voiceOn = isCitizensVoiceEnabled();
+  const showPromises = isPromisesBrowseEnabled();
+  const showReportCard = isReportCardPublicEnabled();
+  const showLegal = isLegalEmpowermentPageEnabled();
+  const showTownHalls = isTownHallDirectoryPageEnabled();
 
   const member = await prisma.member.findUnique({
     where: { id: session.memberId },
@@ -60,6 +70,50 @@ export default async function AccountPage() {
           </li>
         </ul>
       ) : null}
+
+      {showPromises || showReportCard || showLegal || showTownHalls ? (
+        <div className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--section-light)]/60 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+            Public accountability
+          </p>
+          <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm">
+            {showPromises ? (
+              <li>
+                <Link href="/promises" className="font-medium text-[var(--primary)] hover:underline">
+                  Campaign promises
+                </Link>
+              </li>
+            ) : null}
+            {showReportCard ? (
+              <li>
+                <Link href="/report-card" className="font-medium text-[var(--primary)] hover:underline">
+                  Report card
+                </Link>
+              </li>
+            ) : null}
+            <li>
+              <Link href="/methodology" className="font-medium text-[var(--primary)] hover:underline">
+                Methodology
+              </Link>
+            </li>
+            {showLegal ? (
+              <li>
+                <Link href="/legal-empowerment" className="font-medium text-[var(--primary)] hover:underline">
+                  Legal desk
+                </Link>
+              </li>
+            ) : null}
+            {showTownHalls ? (
+              <li>
+                <Link href="/town-halls" className="font-medium text-[var(--primary)] hover:underline">
+                  Town halls
+                </Link>
+              </li>
+            ) : null}
+          </ul>
+        </div>
+      ) : null}
+
       <div className="mt-8">
         <SignOutButton />
       </div>
