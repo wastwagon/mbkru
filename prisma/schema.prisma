@@ -41,6 +41,23 @@ model Post {
   updatedAt       DateTime  @updatedAt
 }
 
+/// Marketing / waitlist signups (Phase 1). One row per email per source; upsert is idempotent.
+enum LeadCaptureSource {
+  NEWSLETTER
+  EARLY_ACCESS
+  PARLIAMENT_TRACKER
+}
+
+model LeadCapture {
+  id        String             @id @default(cuid())
+  email     String
+  source    LeadCaptureSource
+  createdAt DateTime           @default(now())
+
+  @@unique([email, source])
+  @@index([source, createdAt])
+}
+
 // --- Phase 2 & 3 — see docs/PHASES_2_3_IMPLEMENTATION.md ---
 
 enum CitizenReportKind {

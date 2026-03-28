@@ -1,9 +1,10 @@
+import { LeadCaptureSource } from "@prisma/client";
 import { NextResponse } from "next/server";
 
+import { upsertLeadCapture } from "@/lib/server/lead-capture";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 import { emailOnlyBodySchema } from "@/lib/validation/public-forms";
 
-// Placeholder: integrate with Mailchimp or ConvertKit API
 export async function POST(request: Request) {
   if (!(await allowPublicFormRequest(request, "newsletter"))) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
@@ -25,8 +26,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Valid email required" }, { status: 400 });
     }
 
-    // TODO: Add to Mailchimp/ConvertKit list
-    console.log("Newsletter signup:", parsed.data.email);
+    await upsertLeadCapture(parsed.data.email, LeadCaptureSource.NEWSLETTER);
 
     return NextResponse.json({ success: true });
   } catch {

@@ -11,7 +11,7 @@ This document describes how the codebase is structured for **Phase 1** (live mar
 | UI | Next.js 16 App Router, React 19, Tailwind 4 | Public pages, preview pillars, **admin UI** at `/admin` |
 | Content | **PostgreSQL + Prisma** | News posts (`Post`), shared **media library** (`Media`), optional featured image per post |
 | Auth (admin only) | bcrypt + **JWT in httpOnly cookie** | Single seeded admin for now; model supports more `Admin` rows later |
-| Forms | React Hook Form + Zod → Route Handlers | Contact, newsletter, early access, tracker signup — **server handlers are stubs / logging** until integrations are wired |
+| Forms | React Hook Form + Zod → Route Handlers | Contact (optional Resend); newsletter, early access, tracker → **Postgres `LeadCapture`** |
 | Hosting | Docker (standalone output), optional Coolify on VPS | `mbkru-web` + Postgres; **Redis** in `docker-compose.fullstack.yml` for Phase 2 sessions / rate limits |
 
 Phase 1 **intentionally excludes** public user accounts, complaint workflows, MP datasets, and scorecard engines. Those belong to **Phase 2+** and are gated in code via **platform phase** configuration (see §5).
@@ -69,7 +69,7 @@ flowchart TB
 | Capability | Phase 1 | Phase 2 | Phase 3 |
 |------------|---------|---------|---------|
 | Public site + admin CMS | Yes | Yes | Yes |
-| Lead capture (forms) | Yes (stubs / integrations TBD) | Hardened + stored | Yes |
+| Lead capture (forms) | Yes (Postgres + optional ESP) | Hardened + stored | Yes |
 | User registration / login | No | Yes (MVP) | Yes |
 | MBKRU Voice (complaints, geo) | Preview only | Pilot → full | Yes |
 | Parliament / minister datasets | Preview only | Pipeline | Scorecards |

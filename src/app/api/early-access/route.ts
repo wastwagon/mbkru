@@ -1,9 +1,10 @@
+import { LeadCaptureSource } from "@prisma/client";
 import { NextResponse } from "next/server";
 
+import { upsertLeadCapture } from "@/lib/server/lead-capture";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 import { emailOnlyBodySchema } from "@/lib/validation/public-forms";
 
-// Placeholder: integrate with newsletter list or separate beta list
 export async function POST(request: Request) {
   if (!(await allowPublicFormRequest(request, "early-access"))) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
@@ -19,8 +20,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Valid email required" }, { status: 400 });
     }
 
-    // TODO: Add to Citizens Voice beta list (Mailchimp tag, ConvertKit tag, or DB)
-    console.log("Early access signup (Citizens Voice):", parsed.data.email);
+    await upsertLeadCapture(parsed.data.email, LeadCaptureSource.EARLY_ACCESS);
 
     return NextResponse.json({ success: true });
   } catch {
