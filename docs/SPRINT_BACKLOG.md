@@ -103,7 +103,7 @@
 
 Do not add large new sprint tables here unless you want a time-boxed release name. **Pick work from [`PHASE_TASKS.md`](./PHASE_TASKS.md)** (checkboxes by phase), run 1–2 week sprints, and tick rows there when done.
 
-**Shipped (engineering completion pass, Mar 2026):** mobile-first **`PageHeader`** horizontal padding; **`main`** `min-w-0` + `overflow-x-hidden` + bottom safe-area; **`GET /api/export/mps-csv`** + **`GET /api/export/promises-csv`** (UTF-8 BOM, Vitest; promises = full DB export, optional `memberSlug`); **`NEXT_PUBLIC_CONTACT_PHONE`** + TopBar phone hidden until set; social icons hidden until URLs are real `http(s)`; footer gallery **distinct `alt`** strings; **`touch-manipulation`** on **`Button`**; roadmap copy + submit-flow breadcrumbs; **Lighthouse CI** (`lighthouserc.cjs`, `/` · `/contact` · `/news`, a11y assert ≥0.85).
+**Shipped (engineering completion pass, Mar 2026):** mobile-first **`PageHeader`** horizontal padding; **`main`** `min-w-0` + `overflow-x-hidden` + bottom safe-area; **`GET /api/export/mps-csv`** + **`GET /api/export/promises-csv`** (UTF-8 BOM, Vitest; promises = full DB export, optional `memberSlug`); **`NEXT_PUBLIC_CONTACT_PHONE`** + TopBar phone hidden until set; social icons hidden until URLs are real `http(s)`; footer gallery **distinct `alt`** strings; **`touch-manipulation`** on **`Button`**; roadmap copy + submit-flow breadcrumbs; **Lighthouse CI** (`lighthouserc.cjs`, mobile · `/` · `/about` · `/contact` · `/news`, a11y assert ≥0.85).
 
 **Seed demo accountability data (local/staging):** `SEED_ACCOUNTABILITY_DEMO=1 npx prisma db seed` — see [`.env.example`](../.env.example).
 

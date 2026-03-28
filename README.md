@@ -60,7 +60,7 @@ npm run test
 
 Vitest runs fast unit tests for shared helpers (no database).
 
-**Lighthouse (CI):** pushes to `main` / `master` run **@lhci/cli** after production build on `/`, `/contact`, and `/news` (see `lighthouserc.cjs`). Local: `npm run build` then `DATABASE_URL= NEXT_PUBLIC_SITE_URL=http://localhost:3000 npx @lhci/cli autorun`.
+**Lighthouse (CI):** pushes to `main` / `master` run **@lhci/cli** after production build — **mobile** emulation on `/`, `/about`, `/contact`, `/news` (`lighthouserc.cjs`). Local: `npm run build` then `DATABASE_URL= NEXT_PUBLIC_SITE_URL=http://localhost:3000 npx @lhci/cli autorun`.
 
 ## Environment Variables
 
