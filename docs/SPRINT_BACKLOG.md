@@ -92,7 +92,7 @@
 | 2 | **Pillar flags → routes** | **Shipped:** **`/legal-empowerment`**, **`/town-halls`** when phase ≥ 2; **Header** nav + **sitemap**; `isLegalEmpowermentPageEnabled` / `isTownHallDirectoryPageEnabled` in `accountability-pages.ts` |
 | 3 | **Trust UX** | **Shipped:** post-submit **“How we use your report”** `<details>` on **VoiceReportForm** success |
 | 4 | **Contact audit trail** | **Shipped:** **`ContactSubmission`** model + migrate; **`POST /api/contact`** writes DB before email; **`/admin/contact-submissions`** |
-| 5 | **Platform hygiene** | **Shipped:** **`src/proxy.ts`**; **`prisma.config.ts`**; Vitest for **`public-forms`**, **`health-status-from-deps`** (aggregate status + HTTP code); **`npm audit fix`** (transitive fixes); **Next.js 16.2.1** / **eslint-config-next 16.2.1** (security patches). *Remaining audit:* Prisma’s **`effect`** chain — needs **Prisma 7** or upstream fix; skip **`audit fix --force`** until migration |
+| 5 | **Platform hygiene** | **Shipped:** **`src/proxy.ts`**; **`prisma.config.ts`**; Vitest for **`public-forms`**, **`health-status-from-deps`**, **`client-ip`**, **`rate-limit-config`**; CI **`prisma validate`**; **Next 16.2.1** + **`npm audit fix`**. *Remaining audit:* Prisma **`effect`** — Prisma 7 or upstream; avoid **`audit fix --force`** until planned |
 | 6 | **Marketing UX (phase-aware)** | **Shipped:** Homepage **live tools** strip + hero chips; pillar / footer links to **Legal desk**, **Town halls**, **Submit**/**Track**; admin **metrics** row; accountability hub **linked cards**; account **quick links**; Voice header copy when pilot on |
 
 ---

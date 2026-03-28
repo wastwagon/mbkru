@@ -2,16 +2,12 @@ import "server-only";
 
 import Redis from "ioredis";
 
+import { getClientIp } from "@/lib/client-ip";
 import { hasRedisUrl } from "@/lib/env.server";
+import { parseRateLimitMax, parseRateLimitWindowMs } from "@/lib/rate-limit-config";
 
-const WINDOW_MS = Math.min(
-  Math.max(Number(process.env.RATE_LIMIT_WINDOW_MS) || 60_000, 5_000),
-  3600_000,
-);
-const MAX_PER_WINDOW = Math.min(
-  Math.max(Number(process.env.RATE_LIMIT_MAX) || 30, 5),
-  1000,
-);
+const WINDOW_MS = parseRateLimitWindowMs(process.env.RATE_LIMIT_WINDOW_MS);
+const MAX_PER_WINDOW = parseRateLimitMax(process.env.RATE_LIMIT_MAX);
 
 let redis: Redis | null = null;
 
@@ -57,16 +53,7 @@ async function redisAllow(key: Bucket): Promise<boolean> {
   }
 }
 
-export function getClientIp(request: Request): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) {
-    const first = forwarded.split(",")[0]?.trim();
-    if (first) return first.slice(0, 64);
-  }
-  const realIp = request.headers.get("x-real-ip")?.trim();
-  if (realIp) return realIp.slice(0, 64);
-  return "unknown";
-}
+export { getClientIp } from "@/lib/client-ip";
 
 /**
  * Returns true if the request is within limits. Uses Redis when REDIS_URL is set (shared across instances),
