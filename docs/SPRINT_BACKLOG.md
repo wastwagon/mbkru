@@ -95,7 +95,7 @@
 | 3 | **Trust UX** | **Shipped:** post-submit **“How we use your report”** `<details>` on **VoiceReportForm** success |
 | 4 | **Contact audit trail** | **Shipped:** **`ContactSubmission`** model + migrate; **`POST /api/contact`** writes DB before email; **`/admin/contact-submissions`** |
 | 5 | **Platform hygiene** | **Shipped:** **`src/proxy.ts`**; **`prisma.config.ts`**; Vitest for **`public-forms`**, **`health-status-from-deps`**, **`client-ip`**, **`rate-limit-config`**; CI **`prisma validate`**; **Next 16.2.1** + **`npm audit fix`**. *Remaining audit:* Prisma **`effect`** — Prisma 7 or upstream; avoid **`audit fix --force`** until planned |
-| 6 | **Marketing UX (phase-aware)** | **Shipped:** Homepage **live tools** strip + hero chips (**Account** vs **Register**/**Sign in** from session); pillar / footer links; admin **metrics**; accountability hub **linked cards**; account **quick links**; Voice header copy when pilot on; **`useMemberMe`** shared with **Header** |
+| 6 | **Marketing UX (phase-aware)** | **Shipped:** Homepage strip + hero chips; **footer** **Our Platform** session links (**FooterMemberAuth**); header; pillar links; admin **metrics**; accountability cards; account quick links; Voice copy; **`useMemberMe`** |
 
 ---
 

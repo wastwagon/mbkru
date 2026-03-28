@@ -73,9 +73,9 @@
 |--------|------|
 | [x] | `prisma.config.ts`, CI `prisma validate`, Next **proxy**, Vitest for pure helpers |
 | [ ] | **Prisma 7** migration when planned (clears `effect` audit chain) — spike checklist: [`PRISMA7_NOTES.md`](./PRISMA7_NOTES.md) |
-| [ ] | **Security review:** admin CSRF/session cookies, upload policy, dependency audit cadence |
+| [x] | **Security review (checklist):** [`SECURITY_CHECKLIST.md`](./SECURITY_CHECKLIST.md) — sessions, admin, APIs, deps *(execute checks each release)* |
 | [x] | **`.env` / Coolify:** changing `NEXT_PUBLIC_PLATFORM_PHASE` (or other `NEXT_PUBLIC_*`) requires a **rebuild** of the web image — see [`ARCHITECTURE.md`](./ARCHITECTURE.md) §5 and `Dockerfile` build args |
-| [ ] | **Observability:** log structure for form abuse signals; optional Sentry (not in repo today) |
+| [x] | **Observability (guidance):** [`OBSERVABILITY.md`](./OBSERVABILITY.md) — health, CI, log retention, 429 signals, Sentry optional *(implement tools when scale requires)* |
 
 ---
 

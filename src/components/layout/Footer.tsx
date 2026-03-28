@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { Logo } from "@/components/ui/Logo";
+import { FooterMemberAuth } from "@/components/layout/FooterMemberAuth";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { content, heroContent, footerGalleryImages } from "@/lib/placeholders";
 import {
@@ -125,6 +126,7 @@ export async function Footer() {
           <div className="pl-4 lg:pl-6">
             <h3 className="text-base font-semibold text-white">Our Platform</h3>
             <ul className="mt-5 space-y-3">
+              <FooterMemberAuth />
               {platformLinks.map((link) => (
                 <li key={link.href}>
                   <Link

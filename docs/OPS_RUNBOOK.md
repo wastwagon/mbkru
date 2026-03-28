@@ -2,7 +2,7 @@
 
 Short checklist for production Docker / Coolify hosts. Complements `README.md` and `docker-entrypoint.sh`.
 
-**Related:** [`PHASE_TASKS.md`](./PHASE_TASKS.md) (phase backlog) · [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md) (MP roster import) · [`PARTNER_API.md`](./PARTNER_API.md) (embed JSON draft)
+**Related:** [`PHASE_TASKS.md`](./PHASE_TASKS.md) (phase backlog) · [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md) (MP roster import) · [`PARTNER_API.md`](./PARTNER_API.md) (embed JSON draft) · [`OBSERVABILITY.md`](./OBSERVABILITY.md) · [`SECURITY_CHECKLIST.md`](./SECURITY_CHECKLIST.md)
 
 ---
 
