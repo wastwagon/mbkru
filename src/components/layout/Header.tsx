@@ -9,21 +9,31 @@ import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 
 type NavItem = { href: string; label: string };
 
-const navStructure: NavItem[] = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About Us" },
-  { href: "/citizens-voice", label: "MBKRU Voice" },
-  { href: "/situational-alerts", label: "Engagement" },
-  { href: "/parliament-tracker", label: "Accountability" },
-  { href: "/news", label: "News & Updates" },
-  { href: "/diaspora", label: "Diaspora" },
-];
+function buildMainNav(phase: ReturnType<typeof getPublicPlatformPhase>): NavItem[] {
+  const items: NavItem[] = [
+    { href: "/", label: "Home" },
+    { href: "/about", label: "About Us" },
+    { href: "/citizens-voice", label: "MBKRU Voice" },
+    { href: "/situational-alerts", label: "Engagement" },
+    { href: "/parliament-tracker", label: "Accountability" },
+  ];
+  if (platformFeatures.legalEmpowermentDesk(phase)) {
+    items.push({ href: "/legal-empowerment", label: "Legal desk" });
+  }
+  if (platformFeatures.townHallDirectory(phase)) {
+    items.push({ href: "/town-halls", label: "Town halls" });
+  }
+  items.push({ href: "/news", label: "News & Updates" }, { href: "/diaspora", label: "Diaspora" });
+  return items;
+}
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const showMemberAuth = platformFeatures.authentication(getPublicPlatformPhase());
+  const phase = getPublicPlatformPhase();
+  const navStructure = buildMainNav(phase);
+  const showMemberAuth = platformFeatures.authentication(phase);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 100);

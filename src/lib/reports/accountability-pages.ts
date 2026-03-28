@@ -9,3 +9,11 @@ export function isPromisesBrowseEnabled(): boolean {
 export function isReportCardPublicEnabled(): boolean {
   return platformFeatures.accountabilityScorecards(getServerPlatformPhase());
 }
+
+export function isLegalEmpowermentPageEnabled(): boolean {
+  return platformFeatures.legalEmpowermentDesk(getServerPlatformPhase());
+}
+
+export function isTownHallDirectoryPageEnabled(): boolean {
+  return platformFeatures.townHallDirectory(getServerPlatformPhase());
+}

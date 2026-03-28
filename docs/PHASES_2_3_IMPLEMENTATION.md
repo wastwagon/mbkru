@@ -133,22 +133,40 @@ Use `NEXT_PUBLIC_PLATFORM_PHASE` at build time plus optional `PLATFORM_PHASE` on
 
 ## 7. Sprint-style delivery checklist
 
-### Phase 2 (engineering)
+**Status:** This list tracks **engineering reality** in the repo. For sprint-sized narrative, see [`SPRINT_BACKLOG.md`](SPRINT_BACKLOG.md).
 
-- [ ] Member auth + session store (Redis recommended on VPS).
-- [ ] Citizen report wizard (mobile) + tracking page.
-- [ ] Admin report queue + status transitions.
-- [ ] Persist lead forms (`/api/contact`, early access, newsletter) to Postgres **or** ESP — pick one source of truth.
-- [ ] Map picker (lazy) + region auto-detect from coordinates where possible.
-- [ ] Email/SMS notifications for status changes (provider TBD).
+### Phase 2 (engineering) — shipped in codebase
 
-### Phase 3 (engineering)
+- [x] Member auth + session store (**Redis `jti`** when `REDIS_URL` set; JWT in `mbkru_member`).
+- [x] Citizen report flows (MBKRU Voice, situational, election observation) + **`/track-report`** + tracking API.
+- [x] Admin report queue + status transitions + optional Resend on status change.
+- [x] Lead capture: newsletter, early access, tracker → **`LeadCapture`** / Postgres. **`POST /api/contact`** delivers via email (Resend or log-only) — **no DB row** for contact yet; add if you need a single CRM-style audit trail.
+- [x] Map picker (lazy Leaflet) + region suggestion from regional centroids (not boundary-accurate).
+- [x] Post-submit **trust UX:** expandable **“How we use your report”** on successful submit (Voice form).
 
-- [ ] Parliament data import pipeline (CSV → Prisma) + review UI in admin.
-- [ ] Promise tracker public UI + admin CRUD.
-- [ ] Report Card / Scorecard publication workflow + methodology page.
-- [ ] Hardened situational alerts during election window (moderation + legal review).
-- [ ] Media partnerships: read-only embed API or static exports (scope with comms team).
+### Phase 2 (engineering) — still open / stretch
+
+- [ ] **SMS** or second-channel notifications (if product requires beyond email).
+- [ ] **Offline / retry queue** for flaky mobile networks (charter §3.1).
+
+### Phase 3 (engineering) — shipped in codebase
+
+- [x] Parliament CSV import + admin roster (**`/admin/parliament`**).
+- [x] Promise tracker UI + admin CRUD + **`GET /api/mps`**, **`GET /api/promises`** + tagged cache / `Cache-Control`.
+- [x] People’s Report Card: cycles, publish/unpublish, entries, public **`/report-card`**, **`GET /api/report-card/[year]`**, **`/methodology`**.
+- [x] **Election window (MVP):** form + track disclaimers, OPS notes; deeper **playbooks / SLA fields** remain operational design.
+- [x] **Partner JSON** surface (rate-limited, cached); **written embed terms + versioning** still with comms / legal.
+
+### Phase 3 — pillar routes (flags in `platform.ts`)
+
+- [x] **`legalEmpowermentDesk`** → public **`/legal-empowerment`** (Phase ≥ 2) + main nav when enabled.
+- [x] **`townHallDirectory`** → public **`/town-halls`** (Phase ≥ 2) + main nav when enabled.
+
+### Cross-phase platform (next engineering)
+
+- [ ] **Next.js 16:** migrate **`middleware`** → **`proxy`** when you adopt the stable pattern for this app.
+- [ ] **Prisma 7:** move config off deprecated `package.json#prisma`.
+- [ ] **Automated tests** (e.g. Vitest) for **`/api/health`** shape and accountability JSON handlers.
 
 ---
 

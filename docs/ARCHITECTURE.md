@@ -100,6 +100,7 @@ Implementation: `src/config/platform.ts`. Use these flags to guard new routes, n
 | Uploaded files | Disk (`public/uploads`) + volume in Docker | Optional S3-compatible object storage |
 | Form submissions | Logs / external ESP | DB + ESP; Redis for rate limiting |
 | Public users, complaints | N/A | PostgreSQL (+ optional Auth.js / Clerk / etc.) |
+| Pillar pages (legal desk, town halls) | Preview / hidden | **`/legal-empowerment`**, **`/town-halls`** when Phase ≥ 2 (`platformFeatures`); 404 on Phase 1 builds |
 | Sessions / cache | Admin JWT cookie | Redis for sessions / queues |
 
 **Postgres + Redis** in `docker-compose.fullstack.yml` let **Coolify/VPS** run the full stack; the app uses Postgres today for news; Redis is ready for rate limits and jobs.

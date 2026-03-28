@@ -263,6 +263,19 @@ export function VoiceReportForm({
               Check status
             </Link>
           </p>
+          <details className="mt-4 rounded-lg border border-green-200/80 bg-white/60 px-3 py-2 text-sm text-green-950">
+            <summary className="cursor-pointer font-medium text-green-900 outline-none marker:text-green-700">
+              How we use your report
+            </summary>
+            <ul className="mt-2 list-inside list-disc space-y-1.5 text-green-900/90">
+              <li>Staff triage submissions for moderation and follow-up; we may contact you if you left an email.</li>
+              <li>Your tracking code shows status updates as the team works the queue — not a court or regulator docket.</li>
+              <li>
+                For formal complaints, use official channels (e.g. CHRAJ, sector regulators, or the courts) where they
+                apply.
+              </li>
+            </ul>
+          </details>
         </div>
       ) : null}
 

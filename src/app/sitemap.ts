@@ -1,6 +1,11 @@
 import { MetadataRoute } from "next";
 
-import { isPromisesBrowseEnabled, isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
+import {
+  isLegalEmpowermentPageEnabled,
+  isPromisesBrowseEnabled,
+  isReportCardPublicEnabled,
+  isTownHallDirectoryPageEnabled,
+} from "@/lib/reports/accountability-pages";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mbkruadvocates.org";
@@ -19,6 +24,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
   if (isPromisesBrowseEnabled()) routes.push("/promises");
   if (isReportCardPublicEnabled()) routes.push("/report-card");
+  if (isLegalEmpowermentPageEnabled()) routes.push("/legal-empowerment");
+  if (isTownHallDirectoryPageEnabled()) routes.push("/town-halls");
   return routes.map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
