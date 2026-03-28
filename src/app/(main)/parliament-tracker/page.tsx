@@ -5,6 +5,7 @@ import { TrackerSignupForm } from "@/components/forms/TrackerSignupForm";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { images } from "@/lib/placeholders";
+import { isPromisesBrowseEnabled, isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
 
 export const metadata: Metadata = {
   title: "Accountability & Electoral Watch",
@@ -42,7 +43,10 @@ const accountabilitySteps = [
   },
 ];
 
-export default function ParliamentTrackerPage() {
+export default async function ParliamentTrackerPage() {
+  const showPromises = isPromisesBrowseEnabled();
+  const showReportCard = isReportCardPublicEnabled();
+
   return (
     <div>
       <PageHeader
@@ -140,10 +144,20 @@ export default function ParliamentTrackerPage() {
               <p className="mt-2 text-[var(--muted-foreground)]">
                 Receive updates on People&apos;s Report Cards, Accountability Scorecards, and campaign promise tracking.
               </p>
-              <p className="mt-2 text-sm">
+              <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
                 <Link href="/methodology" className="font-medium text-[var(--primary)] hover:underline">
-                  Read our accountability methodology
+                  Methodology
                 </Link>
+                {showPromises ? (
+                  <Link href="/promises" className="font-medium text-[var(--primary)] hover:underline">
+                    Browse campaign promises
+                  </Link>
+                ) : null}
+                {showReportCard ? (
+                  <Link href="/report-card" className="font-medium text-[var(--primary)] hover:underline">
+                    Report card
+                  </Link>
+                ) : null}
               </p>
               <TrackerSignupForm />
             </div>

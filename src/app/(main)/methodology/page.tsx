@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { isPromisesBrowseEnabled, isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
 
 export const metadata: Metadata = {
   title: "Accountability methodology",
@@ -8,7 +9,10 @@ export const metadata: Metadata = {
     "How MBKRU approaches promise tracking and score-style accountability — independent, transparent, and adapted for Ghana.",
 };
 
-export default function MethodologyPage() {
+export default async function MethodologyPage() {
+  const showPromises = isPromisesBrowseEnabled();
+  const showReportCard = isReportCardPublicEnabled();
+
   return (
     <div>
       <PageHeader
@@ -18,7 +22,21 @@ export default function MethodologyPage() {
 
       <section className="section-spacing section-full bg-white">
         <div className="mx-auto max-w-3xl px-4 text-[var(--foreground)] sm:px-6 lg:px-8">
-          <h2 className="font-display text-xl font-bold">Principles</h2>
+          {showPromises || showReportCard ? (
+            <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-[var(--muted-foreground)]">
+              {showPromises ? (
+                <Link href="/promises" className="font-medium text-[var(--primary)] hover:underline">
+                  Campaign promises
+                </Link>
+              ) : null}
+              {showReportCard ? (
+                <Link href="/report-card" className="font-medium text-[var(--primary)] hover:underline">
+                  People&apos;s Report Card
+                </Link>
+              ) : null}
+            </p>
+          ) : null}
+          <h2 className="mt-8 font-display text-xl font-bold">Principles</h2>
           <ul className="mt-4 list-inside list-disc space-y-2 text-[var(--muted-foreground)]">
             <li>
               <strong className="text-[var(--foreground)]">Evidence-led:</strong> claims about promises or performance
@@ -54,11 +72,21 @@ export default function MethodologyPage() {
           </p>
 
           <p className="mt-12 text-sm text-[var(--muted-foreground)]">
-            Technical access: when enabled for your deployment,{" "}
-            <code className="rounded bg-[var(--section-light)] px-1.5 py-0.5 text-xs">
-              GET /api/promises?memberSlug=…
-            </code>{" "}
-            returns public JSON for integrated displays.
+            Technical access (when your deployment phase enables them):{" "}
+            {showPromises ? (
+              <>
+                <code className="rounded bg-[var(--section-light)] px-1.5 py-0.5 text-xs">
+                  GET /api/promises?memberSlug=…
+                </code>
+                {showReportCard ? " · " : ""}
+              </>
+            ) : null}
+            {showReportCard ? (
+              <code className="rounded bg-[var(--section-light)] px-1.5 py-0.5 text-xs">
+                GET /api/report-card/[year]
+              </code>
+            ) : null}
+            {(showPromises || showReportCard) ? " for JSON integrations." : " See ops docs for phase flags."}
           </p>
 
           <p className="mt-6">

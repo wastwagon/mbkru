@@ -3,13 +3,15 @@ import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { Logo } from "@/components/ui/Logo";
 import { content, heroContent, footerGalleryImages } from "@/lib/placeholders";
+import { isPromisesBrowseEnabled, isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
+
+const footerPlatformBase = [
+  { href: "/citizens-voice", label: "MBKRU Voice" },
+  { href: "/situational-alerts", label: "Engagement" },
+  { href: "/parliament-tracker", label: "Accountability" },
+];
 
 const footerLinks = {
-  platform: [
-    { href: "/citizens-voice", label: "MBKRU Voice" },
-    { href: "/situational-alerts", label: "Engagement" },
-    { href: "/parliament-tracker", label: "Accountability" },
-  ],
   organization: [
     { href: "/methodology", label: "Accountability methodology" },
     { href: "/about", label: "About Us" },
@@ -25,8 +27,13 @@ const footerLinks = {
   ],
 };
 
-export function Footer() {
+export async function Footer() {
   const currentYear = new Date().getFullYear();
+  const platformLinks = [
+    ...footerPlatformBase,
+    ...(isPromisesBrowseEnabled() ? [{ href: "/promises" as const, label: "Campaign promises" }] : []),
+    ...(isReportCardPublicEnabled() ? [{ href: "/report-card" as const, label: "Report card" }] : []),
+  ];
 
   return (
     <footer className="relative bg-[var(--footer-bg)] text-white">
@@ -103,7 +110,7 @@ export function Footer() {
           <div className="pl-4 lg:pl-6">
             <h3 className="text-base font-semibold text-white">Our Platform</h3>
             <ul className="mt-5 space-y-3">
-              {footerLinks.platform.map((link) => (
+              {platformLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}

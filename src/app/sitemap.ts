@@ -1,6 +1,8 @@
 import { MetadataRoute } from "next";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+import { isPromisesBrowseEnabled, isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mbkruadvocates.org";
   const routes = [
     "",
@@ -15,6 +17,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/privacy",
     "/terms",
   ];
+  if (isPromisesBrowseEnabled()) routes.push("/promises");
+  if (isReportCardPublicEnabled()) routes.push("/report-card");
   return routes.map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),

@@ -68,7 +68,7 @@
 | # | Task | Outcome |
 |---|------|---------|
 | 1 | **Import pipeline** | **Shipped:** CSV → **`POST /api/admin/parliament-members/import`** + **`/admin/parliament`** list |
-| 2 | **Promises** | **Shipped:** **`/admin/parliament/[id]`** create promise + status updates; public **`GET /api/promises`** (`?memberSlug=`) when Phase 2+ |
+| 2 | **Promises** | **Shipped:** **`/admin/parliament/[id]`** + public **`GET /api/promises`**; browse UI **`/promises`**, **`/promises/[slug]`** (Phase 2+) |
 | 3 | **Methodology page** | **Shipped:** **`/methodology`** — principles, promise tracking, score-style disclaimer |
 
 ---
@@ -77,10 +77,10 @@
 
 | # | Task | Outcome |
 |---|------|---------|
-| 1 | **Cycles** | `ReportCardCycle` + publish workflow |
-| 2 | **Scorecards** | `ScorecardEntry` public views + caching |
+| 1 | **Cycles** | **Shipped (MVP):** Admin **`/admin/report-card`** create cycle, **publish / unpublish** |
+| 2 | **Scorecards** | **Shipped (MVP):** Admin **`/admin/report-card/[cycleId]`** upsert entries; public **`/report-card`**, **`/report-card/[year]`** (Phase 3); *caching* optional later |
 | 3 | **Election window** | Hardened moderation + legal disclaimers for alerts |
-| 4 | **Embeds** | Read-only API or static exports for partners (scope with comms) |
+| 4 | **Embeds** | **Shipped (MVP):** **`GET /api/report-card/[year]`** (Phase 3, rate-limited) — partner scope/comms still TBD |
 
 ---
 
