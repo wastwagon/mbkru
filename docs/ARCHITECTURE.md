@@ -1,6 +1,6 @@
 # MBKRU Platform — Architecture & Phased Delivery
 
-This document describes how the codebase is structured for **Phase 1** (live marketing + admin-managed news + lead capture) and how it is intended to **expand into Phase 2 and Phase 3** without rewrites. It complements `PHASE1_SCOPE.md` (what ships in Phase 1) and `ROADMAP_2028_ELECTION.md` (business timeline). **Full Phase 2 & 3 engineering scope, external research links, API build order, and UI charter:** [`docs/PHASES_2_3_IMPLEMENTATION.md`](PHASES_2_3_IMPLEMENTATION.md).
+This document describes how the codebase is structured for **Phase 1** (live marketing + admin-managed news + lead capture) and how it is intended to **expand into Phase 2 and Phase 3** without rewrites. It complements `PHASE1_SCOPE.md` (what ships in Phase 1) and `ROADMAP_2028_ELECTION.md` (business timeline). **Full Phase 2 & 3 engineering scope, external research links, API build order, and UI charter:** [`docs/PHASES_2_3_IMPLEMENTATION.md`](PHASES_2_3_IMPLEMENTATION.md). **Living backlog of all phase tasks (checkboxes):** [`docs/PHASE_TASKS.md`](PHASE_TASKS.md).
 
 ---
 
