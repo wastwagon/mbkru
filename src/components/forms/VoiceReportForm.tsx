@@ -1,8 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import type { TurnstileInstance } from "@marsidev/react-turnstile";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+
+import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
+
+/** Keep in sync with `report-attachment-limits` (client bundle cannot import server-only module). */
+const MAX_ATTACH_FILES = 3;
+const MAX_ATTACH_BYTES = 5 * 1024 * 1024;
+const ATTACH_ACCEPT = "image/jpeg,image/png,image/webp,application/pdf";
 
 type RegionOption = { id: string; name: string };
 
@@ -28,6 +36,10 @@ export function VoiceReportForm({ regions }: { regions: RegionOption[] }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [trackingCode, setTrackingCode] = useState<string | null>(null);
+  const [uploadNote, setUploadNote] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance>(undefined);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetch("/api/auth/me", { credentials: "include" })
@@ -36,11 +48,42 @@ export function VoiceReportForm({ regions }: { regions: RegionOption[] }) {
       .catch(() => setHasMember(false));
   }, []);
 
+  function validateAttachmentList(list: File[]): string | null {
+    if (list.length > MAX_ATTACH_FILES) {
+      return `You can attach up to ${MAX_ATTACH_FILES} files.`;
+    }
+    const allowed = new Set(["image/jpeg", "image/png", "image/webp", "application/pdf"]);
+    for (const f of list) {
+      if (f.size > MAX_ATTACH_BYTES) {
+        return "Each file must be 5 MB or smaller.";
+      }
+      if (!allowed.has(f.type)) {
+        return "Only JPEG, PNG, WebP, and PDF files are allowed.";
+      }
+    }
+    return null;
+  }
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setUploadNote(null);
     setLoading(true);
     setTrackingCode(null);
+
+    const fileList = fileInputRef.current?.files ? Array.from(fileInputRef.current.files) : [];
+    const attachErr = validateAttachmentList(fileList);
+    if (attachErr) {
+      setError(attachErr);
+      setLoading(false);
+      return;
+    }
+
+    if (isTurnstileWidgetEnabled && !turnstileToken) {
+      setError("Please complete the security check below.");
+      setLoading(false);
+      return;
+    }
 
     const lat = latitude.trim() === "" ? undefined : Number(latitude);
     const lng = longitude.trim() === "" ? undefined : Number(longitude);
@@ -67,6 +110,7 @@ export function VoiceReportForm({ regions }: { regions: RegionOption[] }) {
       category: category.trim() || undefined,
       regionId: regionId || undefined,
       submitterEmail: submitterEmail.trim() || undefined,
+      turnstileToken: turnstileToken ?? undefined,
     };
     if (lat !== undefined && lng !== undefined) {
       payload.latitude = lat;
@@ -80,12 +124,51 @@ export function VoiceReportForm({ regions }: { regions: RegionOption[] }) {
         credentials: "include",
         body: JSON.stringify(payload),
       });
-      const data = (await res.json().catch(() => ({}))) as { error?: string; trackingCode?: string };
+      const data = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        trackingCode?: string;
+        id?: string;
+        attachmentUploadToken?: string;
+      };
       if (!res.ok) {
         setError(data.error ?? "Submission failed.");
+        turnstileRef.current?.reset();
+        setTurnstileToken(null);
         return;
       }
       if (data.trackingCode) setTrackingCode(data.trackingCode);
+
+      if (fileList.length > 0 && data.id) {
+        const fd = new FormData();
+        for (const f of fileList) {
+          fd.append("file", f);
+        }
+        if (data.attachmentUploadToken) {
+          fd.append("uploadToken", data.attachmentUploadToken);
+        }
+        const headers: HeadersInit = {};
+        if (data.attachmentUploadToken) {
+          headers["X-Report-Upload-Token"] = data.attachmentUploadToken;
+        }
+        const up = await fetch(`/api/reports/${data.id}/attachments`, {
+          method: "POST",
+          credentials: "include",
+          headers,
+          body: fd,
+        });
+        const upJson = (await up.json().catch(() => ({}))) as { error?: string };
+        if (!up.ok) {
+          setUploadNote(
+            upJson.error ??
+              "Your report was saved, but uploads failed. If you are signed in, try again from this browser; otherwise contact support with your tracking code.",
+          );
+        }
+      } else if (fileList.length > 0 && !data.attachmentUploadToken && !hasMember) {
+        setUploadNote(
+          "Your report was saved, but file uploads require signing in or server configuration. Use your tracking code if you need help.",
+        );
+      }
+
       setTitle("");
       setBody("");
       setCategory("");
@@ -93,6 +176,9 @@ export function VoiceReportForm({ regions }: { regions: RegionOption[] }) {
       setSubmitterEmail("");
       setLatitude("");
       setLongitude("");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setTurnstileToken(null);
+      turnstileRef.current?.reset();
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -118,6 +204,12 @@ export function VoiceReportForm({ regions }: { regions: RegionOption[] }) {
             </Link>
           </p>
         </div>
+      ) : null}
+
+      {uploadNote ? (
+        <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950" role="status">
+          {uploadNote}
+        </p>
       ) : null}
 
       <div>
@@ -254,13 +346,42 @@ export function VoiceReportForm({ regions }: { regions: RegionOption[] }) {
         </p>
       )}
 
+      <div>
+        <label htmlFor="report-files" className="block text-sm font-medium text-[var(--foreground)]">
+          Evidence files <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+        </label>
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          Up to {MAX_ATTACH_FILES} files, 5 MB each — JPEG, PNG, WebP, or PDF.
+          {!hasMember ? " Anonymous uploads work when the site is configured for it; otherwise sign in to attach files." : null}
+        </p>
+        <input
+          ref={fileInputRef}
+          id="report-files"
+          type="file"
+          multiple
+          accept={ATTACH_ACCEPT}
+          className={`${inputClass} cursor-pointer file:mr-3 file:rounded-lg file:border-0 file:bg-[var(--primary)]/10 file:px-3 file:py-2 file:text-sm file:font-medium file:text-[var(--primary)]`}
+        />
+      </div>
+
+      <FormTurnstile
+        ref={turnstileRef}
+        action="report-submit"
+        onTokenChange={setTurnstileToken}
+        className="flex justify-start"
+      />
+
       {error ? (
         <p className="text-sm text-red-600" role="alert">
           {error}
         </p>
       ) : null}
 
-      <Button type="submit" disabled={loading} size="lg">
+      <Button
+        type="submit"
+        disabled={loading || (isTurnstileWidgetEnabled && !turnstileToken)}
+        size="lg"
+      >
         {loading ? "Submitting…" : "Submit report"}
       </Button>
     </form>

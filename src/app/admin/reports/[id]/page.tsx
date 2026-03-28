@@ -27,6 +27,7 @@ export default async function AdminReportDetailPage({ params }: Props) {
       region: true,
       constituency: true,
       member: { select: { id: true, email: true, displayName: true } },
+      attachments: { orderBy: { createdAt: "asc" } },
     },
   });
 
@@ -102,6 +103,44 @@ export default async function AdminReportDetailPage({ params }: Props) {
           {report.body}
         </pre>
       </div>
+
+      {report.attachments.length > 0 ? (
+        <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
+          <h2 className="text-sm font-semibold text-[var(--foreground)]">Attachments</h2>
+          <ul className="mt-4 grid gap-4 sm:grid-cols-2">
+            {report.attachments.map((a) => {
+              const isImage = a.mimeType.startsWith("image/");
+              return (
+                <li key={a.id} className="rounded-lg border border-[var(--border)] p-3">
+                  {isImage ? (
+                    <a href={a.path} target="_blank" rel="noopener noreferrer" className="block">
+                      {/* eslint-disable-next-line @next/next/no-img-element -- admin-only local uploads */}
+                      <img
+                        src={a.path}
+                        alt=""
+                        className="max-h-40 w-full rounded-md object-contain bg-[var(--muted)]/10"
+                      />
+                    </a>
+                  ) : null}
+                  <a
+                    href={a.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 block text-sm text-[var(--primary)] underline break-all"
+                  >
+                    {a.mimeType === "application/pdf"
+                      ? "Open PDF"
+                      : isImage
+                        ? "View full size"
+                        : "Open file"}
+                  </a>
+                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">{a.mimeType}</p>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ) : null}
 
       <form action={updateCitizenReportStatusAction} className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
         <input type="hidden" name="id" value={report.id} />

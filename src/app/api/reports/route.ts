@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 
 import { citizensVoiceDisabledResponse, isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 import { allocateTrackingCode } from "@/lib/server/allocate-tracking-code";
+import { signReportAttachmentScope } from "@/lib/server/report-upload-token";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
+import { requireTurnstileIfConfigured } from "@/lib/server/verify-turnstile";
 import { prisma } from "@/lib/db/prisma";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { getMemberSession } from "@/lib/member/session";
@@ -27,6 +29,9 @@ export async function POST(request: Request) {
     }
 
     const data = parsed.data;
+    const turnstileBlock = await requireTurnstileIfConfigured(request, data.turnstileToken);
+    if (turnstileBlock) return turnstileBlock;
+
     const member = await getMemberSession();
 
     if (!member && !(data.submitterEmail?.trim())) {
@@ -81,10 +86,13 @@ export async function POST(request: Request) {
       select: { trackingCode: true, id: true },
     });
 
+    const attachmentUploadToken = signReportAttachmentScope(report.id);
+
     return NextResponse.json({
       ok: true,
       trackingCode: report.trackingCode,
       id: report.id,
+      ...(attachmentUploadToken ? { attachmentUploadToken } : {}),
     });
   } catch (e) {
     console.error(e);

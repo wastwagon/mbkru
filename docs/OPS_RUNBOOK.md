@@ -44,3 +44,10 @@ docker compose exec mbkru-web node /app/node_modules/prisma/build/index.js db se
 - Starter **news posts** are upserted by seed (same slugs as `newsPlaceholders`). Edit or unpublish from **`/admin/posts`** as needed.
 - **Citizen reports** (`CitizenReport`) — triage in **`/admin/reports`**. Schema may gain columns via migrations (e.g. `submitterEmail`); always run **`prisma migrate deploy`** on deploy.
 - Re-running **seed** will **overwrite** those slugs’ titles and bodies. After go-live, prefer **`SKIP_DB_SEED=1`** and manage content only from the admin UI (or drop starter posts from `prisma/seed.mjs` once you no longer want them refreshed).
+
+## Report evidence uploads (MBKRU Voice)
+
+- Files are stored on disk under **`public/uploads/reports/{reportId}/`** (same volume as other media in Docker: **`mbkru_uploads`**).
+- **Signed-in members** can upload attachments for their own report via the **member session cookie** (no extra secret).
+- **Anonymous** reporters need **`REPORT_ATTACHMENT_HMAC_SECRET`** (≥32 characters, server-only). The app returns a short-lived **`attachmentUploadToken`** after **`POST /api/reports`**; without this secret, anonymous users cannot upload (the report is still accepted).
+- **Antivirus:** there is **no** in-app scanning. For production at scale, scan the uploads volume on a schedule, use a reverse proxy / WAF with upload inspection, or move to object storage with malware scanning — see comments in `src/lib/server/report-attachment-limits.ts`.

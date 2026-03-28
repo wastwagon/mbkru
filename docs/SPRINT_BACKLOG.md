@@ -45,7 +45,7 @@
 |---|------|---------|
 | 1 | **Reports API** | **`POST /api/reports`** (kind, title, body, category, region, lat/lng, submitterEmail); **`GET /api/reports/me`** (member); gated `platformFeatures.citizensVoicePlatform` |
 | 2 | **Tracking** | **`GET /api/reports/track/[code]`** — status/kind/dates only · UI **`/track-report`** |
-| 3 | **Uploads** | **Deferred:** `CitizenReportAttachment` model exists — wire multipart + virus policy in a follow-up sprint |
+| 3 | **Uploads** | **`POST /api/reports/[id]/attachments`** — multipart, disk under `public/uploads/reports/{id}/`, max 3 × 5 MB (JPEG/PNG/WebP/PDF); **member session** or **`attachmentUploadToken`** when **`REPORT_ATTACHMENT_HMAC_SECRET`** is set; rate limit `reports-attach`. No in-app AV — ops policy in runbook / `report-attachment-limits` |
 | 4 | **Admin** | **`/admin/reports`** list + **`/admin/reports/[id]`** status form + server action |
 | 5 | **Email** | **`sendReportStatusNotification`** (Resend) when staff changes status → `submitterEmail` or member email |
 | — | **Public UI** | **`/citizens-voice/submit`**, pilot CTA on **`/citizens-voice`**, **`/account/reports`** |
