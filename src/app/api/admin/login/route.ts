@@ -4,10 +4,15 @@ import { NextResponse } from "next/server";
 import { createAdminSessionToken, adminCookieName } from "@/lib/admin/session";
 import { prisma } from "@/lib/db/prisma";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 
 export async function POST(request: Request) {
   if (!isDatabaseConfigured()) {
     return NextResponse.json({ error: "Database not configured (DATABASE_URL)" }, { status: 503 });
+  }
+
+  if (!(await allowPublicFormRequest(request, "admin-login"))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
   try {
     const body = await request.json();

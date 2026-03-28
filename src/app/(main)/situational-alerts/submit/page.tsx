@@ -13,7 +13,7 @@ export default async function SubmitSituationalAlertPage() {
 
   const regions = await prisma.region.findMany({
     orderBy: { sortOrder: "asc" },
-    select: { id: true, name: true },
+    select: { id: true, name: true, slug: true },
   });
 
   return (

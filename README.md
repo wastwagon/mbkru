@@ -87,13 +87,13 @@ On container start, `docker-entrypoint.sh` runs **`prisma migrate deploy`** and 
 1. Set `DATABASE_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET` in `.env.local`.
 2. Run `npx prisma migrate dev` (or `migrate deploy` in production).
 3. Run `npx prisma db seed` once to create or update the admin password hash.
-4. Sign in at **`/admin/login`**. Manage **posts** (public news) and upload images once in **Media**; pick a featured image per post from the library.
+4. Sign in at **`/admin/login`**. Manage **posts** (public news), **Lead capture** (newsletter / early access / Parliament tracker waitlists), **Citizen reports**, and upload images once in **Media**; pick a featured image per post from the library.
 
 Additional admin accounts can be added later (e.g. new `Admin` rows + the same auth flow, or a small “invite admin” UI in Phase 2).
 
 ### Redis (optional, recommended in production)
 
-`docker-compose.yml` includes **Redis** next to Postgres. When **`REDIS_URL`** is set, public lead-capture routes (`/api/contact`, `/api/newsletter`, `/api/early-access`, `/api/tracker-signup`) use **Redis-backed rate limits** so limits apply across multiple app instances. Without Redis, a **per-process memory limiter** is used (fine for single-container dev).
+`docker-compose.yml` includes **Redis** next to Postgres. When **`REDIS_URL`** is set, public lead-capture routes (`/api/contact`, `/api/newsletter`, `/api/early-access`, `/api/tracker-signup`), **report submit / track / attachments**, **member auth**, and **`/api/admin/login`** use **Redis-backed rate limits** so limits apply across multiple app instances. Without Redis, a **per-process memory limiter** is used (fine for single-container dev).
 
 `docker-compose.fullstack.yml` is available if you prefer that layout; behavior is the same once `REDIS_URL` is set.
 

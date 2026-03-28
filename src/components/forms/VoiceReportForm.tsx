@@ -1,20 +1,29 @@
 "use client";
 
 import type { TurnstileInstance } from "@marsidev/react-turnstile";
-import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
+import { nearestRegionSlug } from "@/lib/geo/ghana-region-centroids";
 
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
+
+const ReportMapLazy = dynamic(() => import("./VoiceReportMapPicker"), {
+  ssr: false,
+  loading: () => (
+    <p className="mt-2 text-sm text-[var(--muted-foreground)]">Loading map…</p>
+  ),
+});
 
 /** Keep in sync with `report-attachment-limits` (client bundle cannot import server-only module). */
 const MAX_ATTACH_FILES = 3;
 const MAX_ATTACH_BYTES = 5 * 1024 * 1024;
 const ATTACH_ACCEPT = "image/jpeg,image/png,image/webp,application/pdf";
 
-type RegionOption = { id: string; name: string };
+export type RegionOption = { id: string; name: string; slug: string };
 
 const ALL_KINDS = [
   { value: "VOICE", label: "MBKRU Voice" },
@@ -33,6 +42,8 @@ export type VoiceReportFormProps = {
   lockKind?: boolean;
   /** Optional textarea placeholder override. */
   bodyPlaceholder?: string;
+  /** Lazy OSM map to set coordinates (default true). */
+  enableMapPicker?: boolean;
 };
 
 export function VoiceReportForm({
@@ -40,6 +51,7 @@ export function VoiceReportForm({
   defaultKind = "VOICE",
   lockKind = false,
   bodyPlaceholder,
+  enableMapPicker = true,
 }: VoiceReportFormProps) {
   const phase = getPublicPlatformPhase();
   const electionOn = platformFeatures.electionObservatory(phase);
@@ -63,6 +75,7 @@ export function VoiceReportForm({
   const [trackingCode, setTrackingCode] = useState<string | null>(null);
   const [uploadNote, setUploadNote] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [mapSectionOpen, setMapSectionOpen] = useState(false);
   const turnstileRef = useRef<TurnstileInstance>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -74,6 +87,17 @@ export function VoiceReportForm({
     if (lockKind) return;
     if (!electionOn && kind === "ELECTION_OBSERVATION") setKind("VOICE");
   }, [electionOn, lockKind, kind]);
+
+  const handleMapPick = useCallback(
+    (lat: number, lng: number) => {
+      setLatitude(lat.toFixed(5));
+      setLongitude(lng.toFixed(5));
+      const slug = nearestRegionSlug(lat, lng);
+      const match = regions.find((r) => r.slug === slug);
+      if (match) setRegionId(match.id);
+    },
+    [regions],
+  );
 
   useEffect(() => {
     fetch("/api/auth/me", { credentials: "include" })
@@ -369,6 +393,24 @@ export function VoiceReportForm({
           />
         </div>
       </div>
+
+      {enableMapPicker ? (
+        <details
+          className="rounded-xl border border-[var(--border)] bg-white/60 px-4 py-3 open:pb-4"
+          onToggle={(e) => setMapSectionOpen((e.target as HTMLDetailsElement).open)}
+        >
+          <summary className="cursor-pointer text-sm font-medium text-[var(--foreground)]">
+            Map: tap or drag pin <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+          </summary>
+          <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+            Loads when opened. Sets latitude and longitude; suggests the nearest region using approximate regional
+            centres (not exact boundaries — you can change the region above).
+          </p>
+          {mapSectionOpen ? (
+            <ReportMapLazy latitude={latitude} longitude={longitude} onPick={handleMapPick} />
+          ) : null}
+        </details>
+      ) : null}
 
       {!hasMember ? (
         <div>

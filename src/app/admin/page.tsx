@@ -54,6 +54,17 @@ export default async function AdminHomePage() {
         </li>
         <li>
           <Link
+            href="/admin/leads"
+            className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
+          >
+            <span className="font-semibold text-[var(--foreground)]">Lead capture</span>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              Newsletter, early access, and Parliament tracker waitlists.
+            </p>
+          </Link>
+        </li>
+        <li>
+          <Link
             href="/admin/settings"
             className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
           >
