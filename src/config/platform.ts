@@ -60,4 +60,13 @@ export const platformFeatures = {
 
   /** Logged-in member dashboard (MBKRU Voice) */
   memberDashboard: (phase: PlatformPhase) => phase >= 2,
+
+  /** Queen Mothers / traditional-area community spaces (Phase 2+) */
+  communities: (phase: PlatformPhase) => phase >= 2,
+
+  /** Party manifesto registry + government-commitment tagging (Phase 2+) */
+  manifestoRegistry: (phase: PlatformPhase) => phase >= 2,
+
+  /** Whistleblower guidance page (Phase 2+; complements MBKRU Voice) */
+  whistleblowerGuidance: (phase: PlatformPhase) => phase >= 2,
 } as const;

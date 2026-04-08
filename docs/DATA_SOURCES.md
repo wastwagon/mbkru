@@ -33,11 +33,29 @@ The importer **does not** create `Constituency` rows. You need **`slug`** values
 
 ---
 
-## 3. Campaign promises & party manifestos (e.g. NDC)
+## 3. Campaign promises & party manifestos (2024 cycle and beyond)
 
-- **Party manifestos** (including **NDC**) are **party publications**, usually **copyrighted**. Do **not** bulk-copy full PDF text into the database without **permission** or a **clear fair-use / citation** policy from counsel.
+- **Party manifestos** are **party publications**, usually **copyrighted**. Do **not** bulk-copy full PDF text into the database without **permission** or a **clear fair-use / citation** policy from counsel.
 - **Production-ready approach:** Obtain the **official PDF or web version** from the **party or coalition**, then **manually** (or with licensed tooling) extract **short, cited** promise lines into **`CampaignPromise`** with **`sourceLabel`** (e.g. “NDC 2024 manifesto, p. 42, education”).
 - **Web search** alone is not a source of truth; treat search results as **leads** only until verified against an **official** document.
+
+### 3.1 Official-style publication entry points (verify before import)
+
+Use these only as **starting points** to download or cite the **same document** the party published. **Who governs** after an election is a matter of public record (EC results + inauguration); **which manifesto you track as “government programme”** should follow your **editorial policy** (usually the winning presidential party’s published manifesto for that cycle, plus opposition manifestos if you track comparative promises).
+
+| Party / document (2024 general election context) | Typical host (verify freshness) | Notes |
+|--------------------------------------------------|---------------------------------|--------|
+| **NPP 2024** — full / highlights PDFs | e.g. party / campaign sites hosting `2024_NPP_Manifesto_Full.pdf`, highlights PDFs | **Copyright:** party material; cite pages/sections in `sourceLabel`; link out where permitted. |
+| **NDC 2024** — manifesto (e.g. “Resetting Ghana”) | Official campaign / party file hosts; third-party mirrors (e.g. news CDNs) **only** if checksum matches party original | Track as **opposition** or **comparative** dataset if you publish multi-party promise dashboards. |
+
+**Non-partisan analysis (secondary):** Organisations such as **ACEP**, **Verité Research**, and academic papers may **summarise** manifestos — use them for **research**, not as a substitute for **primary** citations on your `CampaignPromise` rows.
+
+### 3.2 “Governing government” promise tracking (how MBKRU fits)
+
+1. **Roster truth:** Who is an MP → **Parliament of Ghana** directory ([members](https://www.parliament.gh/members)) + your imported `ParliamentMember` rows.  
+2. **Promise truth:** What was promised → **manifesto excerpts** you have rights to cite, stored as **`CampaignPromise`** with `sourceLabel`, `sourceDate`, `status` (TRACKING → FULFILLED / BROKEN / etc.).  
+3. **Performance narrative:** People’s Report Card / scorecards → **MBKRU editorial** methodology on `/methodology`, not raw scrapes.  
+4. **Citizen evidence:** **MBKRU Voice** and situational reports are **citizen submissions**, triaged by staff — they support advocacy and journalism-style accountability; they are **not** the Electoral Commission or a court.
 
 ---
 

@@ -9,23 +9,25 @@ datasource db {
 
 /// Single admin account for now (expand to AdminRole / many admins later).
 model Admin {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
+  id                      String          @id @default(cuid())
+  email                   String          @unique
+  password                String
+  createdAt               DateTime        @default(now())
+  moderatedCommunityPosts CommunityPost[] @relation("CommunityPostModerator")
 }
 
 /// Reusable images for posts (and future resources).
 model Media {
-  id          String   @id @default(cuid())
+  id          String      @id @default(cuid())
   filename    String
   storagePath String
   mimeType    String
   alt         String?
   width       Int?
   height      Int?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime    @default(now())
   posts       Post[]
+  communityCovers Community[] @relation("CommunityCover")
 }
 
 model Post {
@@ -58,7 +60,6 @@ model LeadCapture {
   @@index([source, createdAt])
 }
 
-/// Contact form messages (append-only audit trail; not deduplicated by email).
 model ContactSubmission {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now())
@@ -105,6 +106,7 @@ model Region {
   members        Member[]
   reports        CitizenReport[]
   constituencies Constituency[]
+  communities    Community[]
 }
 
 model Constituency {
@@ -134,33 +136,43 @@ model Member {
   updatedAt   DateTime @updatedAt
   reports     CitizenReport[]
 
+  communityMemberships   CommunityMembership[]
+  communityPosts         CommunityPost[]
+  communityPostReports   CommunityPostReport[]
+  verificationRequests   CommunityVerificationRequest[]
+  memberNotifications    MemberNotification[]
+
   @@index([regionId])
 }
 
 model CitizenReport {
-  id             String                  @id @default(cuid())
-  trackingCode   String                  @unique
-  kind           CitizenReportKind
-  memberId       String?
-  member         Member?                 @relation(fields: [memberId], references: [id], onDelete: SetNull)
-  /// For anonymous submissions — status notifications when Resend is configured.
-  submitterEmail String?
-  title          String
-  body           String                  @db.Text
-  category       String?
-  latitude       Float?
-  longitude      Float?
-  regionId       String?
-  region         Region?                 @relation(fields: [regionId], references: [id], onDelete: SetNull)
-  constituencyId String?
-  constituency   Constituency?           @relation(fields: [constituencyId], references: [id], onDelete: SetNull)
-  status         CitizenReportStatus     @default(RECEIVED)
-  createdAt      DateTime                @default(now())
-  updatedAt      DateTime                @updatedAt
-  attachments    CitizenReportAttachment[]
+  id                    String                  @id @default(cuid())
+  trackingCode          String                  @unique
+  kind                  CitizenReportKind
+  memberId              String?
+  member                Member?                 @relation(fields: [memberId], references: [id], onDelete: SetNull)
+  submitterEmail        String?
+  submitterPhone        String?
+  title                 String
+  body                  String                  @db.Text
+  category              String?
+  latitude              Float?
+  longitude             Float?
+  regionId              String?
+  region                Region?                 @relation(fields: [regionId], references: [id], onDelete: SetNull)
+  constituencyId        String?
+  constituency          Constituency?           @relation(fields: [constituencyId], references: [id], onDelete: SetNull)
+  status                CitizenReportStatus     @default(RECEIVED)
+  slaDueAt              DateTime?
+  operationsPlaybookKey String?
+  staffNotes            String?                 @db.Text
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  attachments           CitizenReportAttachment[]
 
   @@index([kind, status])
   @@index([memberId])
+  @@index([slaDueAt])
 }
 
 model CitizenReportAttachment {
@@ -175,39 +187,72 @@ model CitizenReportAttachment {
 }
 
 model ParliamentMember {
-  id             String        @id @default(cuid())
-  name           String
-  slug           String        @unique
-  role           String
-  party          String?
-  constituencyId String?
-  constituency   Constituency? @relation(fields: [constituencyId], references: [id], onDelete: SetNull)
-  portraitPath   String?
-  active         Boolean       @default(true)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  promises       CampaignPromise[]
-  scoreEntries   ScorecardEntry[]
+  id                 String        @id @default(cuid())
+  name               String
+  slug               String        @unique
+  role               String
+  party              String?
+  constituencyId     String?
+  constituency       Constituency? @relation(fields: [constituencyId], references: [id], onDelete: SetNull)
+  portraitPath       String?
+  active             Boolean       @default(true)
+  lastVerifiedAt     DateTime?
+  externalSourceKey  String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  promises           CampaignPromise[]
+  scoreEntries       ScorecardEntry[]
 
   @@index([constituencyId])
 }
 
-model CampaignPromise {
-  id          String            @id @default(cuid())
-  memberId    String?
-  member      ParliamentMember? @relation(fields: [memberId], references: [id], onDelete: SetNull)
-  title       String
-  description String?           @db.Text
-  sourceLabel String
-  sourceDate  DateTime?
-  status      PromiseStatus     @default(TRACKING)
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+/// Party manifesto metadata (full PDF not stored; cite in CampaignPromise).
+model ManifestoDocument {
+  id            String            @id @default(cuid())
+  title         String
+  partySlug     String
+  electionCycle String
+  sourceUrl     String            @db.Text
+  sha256        String?
+  publishedAt   DateTime?
+  notes         String?           @db.Text
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  promises      CampaignPromise[]
 
-  @@index([memberId])
+  @@index([partySlug, electionCycle])
 }
 
-/// People’s Report Card cycle (one row per year)
+model CampaignPromise {
+  id                    String             @id @default(cuid())
+  memberId              String?
+  member                ParliamentMember?  @relation(fields: [memberId], references: [id], onDelete: SetNull)
+  title                 String
+  description           String?            @db.Text
+  sourceLabel           String
+  /// Canonical URL for the cited source (speech, Hansard, party PDF, etc.). Falls back to manifesto document URL in UI when unset.
+  sourceUrl             String?            @db.Text
+  sourceDate            DateTime?
+  /// Editorial verification / impact notes shown on public commitment cards.
+  verificationNotes     String?            @db.Text
+  status                PromiseStatus      @default(TRACKING)
+  electionCycle         String?
+  partySlug             String?
+  manifestoDocumentId   String?
+  manifestoDocument     ManifestoDocument? @relation(fields: [manifestoDocumentId], references: [id], onDelete: SetNull)
+  manifestoPageRef      String?
+  isGovernmentProgramme Boolean            @default(false)
+  /// Optional theme for filters (e.g. FISCAL, EDUCATION). See `POLICY_SECTORS` in app code.
+  policySector          String?
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+
+  @@index([memberId])
+  @@index([partySlug, electionCycle])
+  @@index([isGovernmentProgramme])
+  @@index([policySector])
+}
+
 model ReportCardCycle {
   id          String           @id @default(cuid())
   year        Int              @unique
@@ -230,4 +275,171 @@ model ScorecardEntry {
   updatedAt    DateTime           @updatedAt
 
   @@unique([cycleId, memberId])
+}
+
+// --- Phase 4 — Communities (Queen Mothers & traditional areas) ---
+
+enum CommunityVisibility {
+  PUBLIC
+  MEMBERS_ONLY
+}
+
+enum CommunityJoinPolicy {
+  OPEN
+  APPROVAL_REQUIRED
+}
+
+enum CommunityStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum CommunityMembershipRole {
+  MEMBER
+  MODERATOR
+  QUEEN_MOTHER_VERIFIED
+}
+
+enum CommunityMembershipState {
+  ACTIVE
+  PENDING_JOIN
+  SUSPENDED
+  BANNED
+}
+
+enum CommunityPostKind {
+  GENERAL
+  CONCERN
+  ANNOUNCEMENT
+}
+
+enum CommunityPostModerationStatus {
+  PENDING
+  PUBLISHED
+  REJECTED
+  HIDDEN
+}
+
+enum CommunityVerificationStatus {
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+enum CommunityPostReportStatus {
+  OPEN
+  REVIEWED
+  DISMISSED
+}
+
+model Community {
+  id                  String              @id @default(cuid())
+  slug                String              @unique
+  name                String
+  description         String              @db.Text
+  regionId            String?
+  region              Region?             @relation(fields: [regionId], references: [id], onDelete: SetNull)
+  traditionalAreaName String?
+  visibility          CommunityVisibility @default(PUBLIC)
+  joinPolicy          CommunityJoinPolicy @default(OPEN)
+  status              CommunityStatus     @default(DRAFT)
+  coverMediaId        String?
+  coverMedia          Media?              @relation("CommunityCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  memberships    CommunityMembership[]
+  posts          CommunityPost[]
+  verifications  CommunityVerificationRequest[]
+
+  @@index([regionId])
+  @@index([status])
+}
+
+model CommunityMembership {
+  id          String                   @id @default(cuid())
+  communityId String
+  community   Community                @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  memberId    String
+  member      Member                   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  role        CommunityMembershipRole  @default(MEMBER)
+  state       CommunityMembershipState @default(ACTIVE)
+  banReason   String?                  @db.Text
+  bannedAt    DateTime?
+  createdAt   DateTime                 @default(now())
+  updatedAt   DateTime                 @updatedAt
+
+  @@unique([communityId, memberId])
+  @@index([communityId])
+  @@index([memberId])
+}
+
+model CommunityPost {
+  id                   String                        @id @default(cuid())
+  communityId          String
+  community            Community                     @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  authorMemberId       String
+  author               Member                        @relation(fields: [authorMemberId], references: [id], onDelete: Cascade)
+  kind                 CommunityPostKind
+  body                 String                        @db.Text
+  moderationStatus     CommunityPostModerationStatus @default(PENDING)
+  pinned               Boolean                       @default(false)
+  moderatedAt          DateTime?
+  moderatedByAdminId   String?
+  moderatedBy          Admin?                        @relation("CommunityPostModerator", fields: [moderatedByAdminId], references: [id], onDelete: SetNull)
+  rejectionReason      String?                       @db.Text
+  createdAt            DateTime                      @default(now())
+  updatedAt            DateTime                      @updatedAt
+
+  reports CommunityPostReport[]
+
+  @@index([communityId, createdAt])
+  @@index([communityId, moderationStatus])
+  @@index([authorMemberId])
+}
+
+model CommunityPostReport {
+  id               String                    @id @default(cuid())
+  postId           String
+  post             CommunityPost             @relation(fields: [postId], references: [id], onDelete: Cascade)
+  reporterMemberId String
+  reporter         Member                    @relation(fields: [reporterMemberId], references: [id], onDelete: Cascade)
+  reason           String                    @db.VarChar(120)
+  details          String?                   @db.Text
+  status           CommunityPostReportStatus @default(OPEN)
+  reviewedAt       DateTime?
+  createdAt        DateTime                  @default(now())
+
+  @@index([postId])
+  @@index([status])
+}
+
+model CommunityVerificationRequest {
+  id               String                    @id @default(cuid())
+  communityId      String
+  community        Community                 @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  memberId         String
+  member           Member                    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  status           CommunityVerificationStatus @default(SUBMITTED)
+  documentMediaIds Json
+  reviewNotes      String?                   @db.Text
+  reviewedAt       DateTime?
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
+
+  @@index([communityId, status])
+  @@index([memberId])
+}
+
+model MemberNotification {
+  id        String    @id @default(cuid())
+  memberId  String
+  member    Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  type      String
+  payload   Json
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([memberId, readAt])
 }

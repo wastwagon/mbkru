@@ -8,7 +8,23 @@
 2. Match **build-time** `NEXT_PUBLIC_PLATFORM_PHASE` to what you are allowed to show in production (`1` → marketing + admin; `2` → + Voice + members + promises; `3` → + report card flagship).
 3. **Demo data:** `SEED_ACCOUNTABILITY_DEMO=1 npx prisma db seed` (fictional MPs/promises/report card year **2099**). **Pilot members:** `SEED_MEMBER_DEMO=1` (see [`.env.example`](../.env.example)) — two fictional **`Member`** rows for **`/login`**. **Real data:** verified CSV via **`POST /api/admin/parliament-members/import`** + admin promises/report card.
 
-**Companion docs:** [`PHASES_2_3_IMPLEMENTATION.md`](./PHASES_2_3_IMPLEMENTATION.md) · [`ARCHITECTURE.md`](./ARCHITECTURE.md) · [`PHASE1_SCOPE.md`](../PHASE1_SCOPE.md) · [`ROADMAP_2028_ELECTION.md`](../ROADMAP_2028_ELECTION.md)
+**Companion docs:** [`PHASES_2_3_IMPLEMENTATION.md`](./PHASES_2_3_IMPLEMENTATION.md) · [`ARCHITECTURE.md`](./ARCHITECTURE.md) · [`PHASE1_SCOPE.md`](../PHASE1_SCOPE.md) · [`ROADMAP_2028_ELECTION.md`](../ROADMAP_2028_ELECTION.md) · [`PLATFORM_EXPANSION_PLAN.md`](./PLATFORM_EXPANSION_PLAN.md) · **[`FULL_PLATFORM_IMPLEMENTATION_PLAN.md`](./FULL_PLATFORM_IMPLEMENTATION_PLAN.md)** (full-scope build order, schema, APIs, UI — workstreams A–O)
+
+---
+
+## Phase 4+ — Full platform implementation (no MVP trim)
+
+**Goal:** Ship the **complete** expansion: manifesto registry + government/opposition promise filters, data reconciliation tooling, **`/whistleblowing`** + analytics, and **full communities** (verification, moderation, search, notifications, admin). **Execution order:** workstreams **A→O** in [`FULL_PLATFORM_IMPLEMENTATION_PLAN.md`](./FULL_PLATFORM_IMPLEMENTATION_PLAN.md).
+
+| Status | Task |
+|--------|------|
+| [ ] | **A** Legal/comms: citation policy, whistleblowing copy, community terms |
+| [ ] | **B–D** Manifesto schema + admin + public `/government-commitments` |
+| [ ] | **E** Constituency seed + parliament reconcile tooling |
+| [ ] | **F–M** Communities: Prisma, APIs, public UI, admin UI, FTS, notifications |
+| [ ] | **N** Whistleblowing page + citizen-report aggregates (admin) |
+| [ ] | **O** Tests, security checklist, runbooks |
+| [ ] | Partner onboarding (200+ communities) runs **after** software DoD — not a code MVP gate |
 
 ---
 
@@ -45,9 +61,9 @@
 | [x] | **Vitest:** partner JSON routes — `/api/mps`, `/api/promises`, `/api/report-card/[year]` (mocks) |
 | [x] | **Vitest:** **`POST /api/admin/login`** — rate limit, credentials, cookie (`route.test.ts`) |
 | [ ] | **Tracker leads:** operational email “pilot open” or ESP export ([`SPRINT_BACKLOG`](./SPRINT_BACKLOG.md) Sprint 4) |
-| [ ] | **Situational:** playbooks / SLA fields (schema + admin) — *if product wants beyond MVP* |
-| [ ] | **Stretch:** SMS or second-channel notifications |
-| [ ] | **Stretch:** offline / retry queue for report submit (mobile charter) |
+| [x] | **Situational / ops:** `slaDueAt`, `operationsPlaybookKey`, `staffNotes` on `CitizenReport` + admin detail form + SLA overdue hint on queue |
+| [x] | **SMS (optional):** `SMS_PROVIDER=log|twilio` + `sendReportStatusSms` on status change; `submitterPhone` on `CitizenReport` + Voice form E.164; prefers member profile phone when signed in |
+| [x] | **Offline drafts (MVP):** text-only queue in `localStorage` on network / retryable HTTP errors; restore + Turnstile on submit (`VoiceReportForm`, `src/lib/client/report-submit-queue.ts`) |
 
 ---
 

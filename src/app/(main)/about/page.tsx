@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AboutPlatformLinks } from "@/components/about/AboutPlatformLinks";
 import { Badge } from "@/components/ui/Badge";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { images, pillarImages, leadershipPlaceholders, registrationPlaceholder, advisoryPlaceholders, heroContent } from "@/lib/placeholders";
+import { images, pillarImages, heroContent } from "@/lib/placeholders";
 
 export const metadata: Metadata = {
   title: "About",
@@ -317,79 +317,47 @@ export default async function AboutPage() {
             </div>
           </div>
 
-          {/* Registration status — placeholder */}
           <div className="mt-8 rounded-xl border-2 border-[var(--primary)]/20 bg-[var(--muted)] p-4 sm:p-5">
             <h2 className="font-display text-lg font-bold text-[var(--foreground)] sm:text-xl">
               Registration Status
             </h2>
             <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-              {registrationPlaceholder.status} — {registrationPlaceholder.number}. Regulated by {registrationPlaceholder.regulator}. Registered {registrationPlaceholder.date}.
+              Formal registration details are being finalised. The registration number will be listed here when issued,
+              under the applicable Ghanaian regulator (for example Registrar General or Department of Social Welfare).
+              Effective date to be confirmed.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Section 6b: Leadership / Team */}
       <section className="section-spacing section-full bg-[var(--section-light-cream)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <Badge variant="primary">Our Team</Badge>
             <h2 className="mt-3 font-display text-xl font-bold text-[var(--foreground)] sm:text-2xl lg:text-3xl">
               Leadership
             </h2>
             <p className="mx-auto mt-2 max-w-2xl text-[var(--muted-foreground)]">
-              The people behind MBKRU&apos;s mission for citizen voice and accountability.
+              Public names, roles, and bios will be published when the roster is confirmed. We do not display stand-in
+              profiles.
             </p>
           </div>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {leadershipPlaceholders.map((person) => (
-              <div
-                key={person.role}
-                className="overflow-hidden rounded-xl border border-[var(--border)] bg-white shadow-[var(--shadow-card)] transition-all duration-300 hover:shadow-[var(--shadow-card-hover)]"
-              >
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <Image
-                    src={person.image}
-                    alt={`Photo of ${person.name}`}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
-                </div>
-                <div className="p-4 sm:p-5">
-                  <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">{person.name}</h3>
-                  <p className="mt-1 text-sm font-medium text-[var(--primary)]">{person.role}</p>
-                  <p className="mt-3 text-sm text-[var(--muted-foreground)]">{person.bio}</p>
-                </div>
-              </div>
-            ))}
+          <div className="mt-8 rounded-2xl border border-dashed border-[var(--border)] bg-white/80 px-6 py-12 text-center text-sm text-[var(--muted-foreground)]">
+            No leadership listings published yet.
           </div>
         </div>
       </section>
 
-      {/* Section 6c: Advisory / Endorsements */}
       <section className="section-spacing section-full bg-[var(--section-light)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="font-display text-xl font-bold text-[var(--foreground)] sm:text-2xl">
               Advisory & Endorsements
             </h2>
-            <p className="mx-auto mt-2 max-w-2xl text-[var(--muted-foreground)]">
-              Voices in support of MBKRU&apos;s mission.
+            <p className="mx-auto mt-4 text-left text-[var(--muted-foreground)] leading-relaxed">
+              Formal endorsements and advisory quotes will appear here only when relationships are confirmed. We do not
+              show sample quotations or placeholder attributions.
             </p>
-          </div>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2">
-            {advisoryPlaceholders.map((item, i) => (
-              <blockquote
-                key={i}
-                className="rounded-xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-card)] sm:p-6"
-              >
-                <p className="font-logo text-lg italic leading-relaxed text-[var(--foreground)]">
-                  &ldquo;{item.quote}&rdquo;
-                </p>
-                <footer className="mt-4 text-sm font-semibold text-[var(--primary)]">— {item.author}</footer>
-              </blockquote>
-            ))}
           </div>
         </div>
       </section>

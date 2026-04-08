@@ -11,12 +11,27 @@
 | Method | Path | Phase gate | Purpose |
 |--------|------|------------|---------|
 | `GET` | `/api/mps` | `NEXT_PUBLIC_PLATFORM_PHASE` ≥ 2 + `parliamentTrackerData` | Active MP/minister roster (summary + promise counts) |
-| `GET` | `/api/promises` | Same | Campaign promises; optional `?memberSlug=` filter |
+| `GET` | `/api/promises` | Same | Campaign promises; see **§1.1** for query filters |
 | `GET` | `/api/report-card/[year]` | Phase ≥ 3 + `accountabilityScorecards` | Published People’s Report Card cycle (404 if unpublished / missing) |
 | `GET` | `/api/export/mps-csv` | Same gates as `/api/mps` | **CSV** roster (`slug`, `name`, `role`, `party`, `constituency_name`, `promise_count`); UTF-8 BOM for Excel; rate-limited like JSON |
 | `GET` | `/api/export/promises-csv` | Same gates as `/api/promises` | **CSV** promises (full export, no 50-row JSON cap); optional `?memberSlug=`; UTF-8 BOM; separate rate bucket `promises-export-csv` |
 
 **Health:** `GET /api/health` includes `accountability.parliamentJson` and `accountability.reportCardJson` flags for build-time capability checks (not a data export).
+
+### 1.1 `GET /api/promises` query parameters
+
+| Parameter | Example | Effect |
+|-----------|---------|--------|
+| `memberSlug` | `?memberSlug=jane-doe` | Promises for that active MP (slug, lowercased) |
+| `partySlug` | `?partySlug=ndc` | Filter by `partySlug` on the promise row |
+| `electionCycle` | `?electionCycle=2024` | Filter by election cycle tag |
+| `governmentOnly` | `?governmentOnly=true` or `1` | Only rows with `isGovernmentProgramme` |
+| `policySector` | `?policySector=FISCAL` | One of: `FISCAL`, `GOVERNANCE`, `HEALTH`, `EDUCATION`, `INFRASTRUCTURE`, `ENERGY`, `AGRICULTURE`, `SOCIAL`, `OTHER` |
+| `status` | `?status=IN_PROGRESS` | One of: `TRACKING`, `IN_PROGRESS`, `FULFILLED`, `BROKEN`, `DEFERRED` |
+
+JSON responses are capped (50 rows by default, 100 when `memberSlug` is set); use **`GET /api/export/promises-csv`** for full exports with the same filters (`policy_sector` and other columns included).
+
+**Public HTML:** `/promises/browse` on the site mirrors these filters for end users.
 
 ---
 

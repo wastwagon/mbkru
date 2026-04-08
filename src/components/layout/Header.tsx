@@ -8,7 +8,12 @@ import { Logo } from "@/components/ui/Logo";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { useMemberMe } from "@/hooks/useMemberMe";
 
-type NavItem = { href: string; label: string };
+type NavItem = {
+  href: string;
+  label: string;
+  /** When set, highlight for any path starting with this prefix (e.g. all `/promises/*` routes). */
+  activeWhenPathStartsWith?: string;
+};
 
 function UserMenuIcon({ className }: { className?: string }) {
   return (
@@ -232,11 +237,25 @@ function buildMainNav(phase: ReturnType<typeof getPublicPlatformPhase>): NavItem
     { href: "/situational-alerts", label: "Engagement" },
     { href: "/parliament-tracker", label: "Accountability" },
   ];
+  if (platformFeatures.parliamentTrackerData(phase)) {
+    items.push({ href: "/government-commitments", label: "Commitments" });
+    items.push({
+      href: "/promises/browse",
+      label: "Promises",
+      activeWhenPathStartsWith: "/promises",
+    });
+  }
+  if (platformFeatures.communities(phase)) {
+    items.push({ href: "/communities", label: "Communities" });
+  }
   if (platformFeatures.legalEmpowermentDesk(phase)) {
     items.push({ href: "/legal-empowerment", label: "Legal" });
   }
   if (platformFeatures.townHallDirectory(phase)) {
     items.push({ href: "/town-halls", label: "Forums" });
+  }
+  if (platformFeatures.whistleblowerGuidance(phase)) {
+    items.push({ href: "/whistleblowing", label: "Whistleblowing" });
   }
   items.push({ href: "/news", label: "News" }, { href: "/diaspora", label: "Diaspora" });
   return items;
@@ -277,7 +296,10 @@ export function Header() {
         {/* Desktop nav — standalone menu items */}
         <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-center lg:gap-8">
           {navStructure.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive =
+              item.activeWhenPathStartsWith != null
+                ? pathname.startsWith(item.activeWhenPathStartsWith)
+                : pathname === item.href;
             return (
               <Link
                 key={item.href}
@@ -345,18 +367,24 @@ export function Header() {
             className="overflow-hidden border-t border-[var(--border)] bg-white lg:hidden"
           >
             <div className="space-y-1 px-4 py-4">
-              {navStructure.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex min-h-[44px] items-center rounded-xl px-4 py-3 text-base font-medium transition-all hover:bg-[var(--muted)] ${
-                    pathname === item.href ? "font-semibold text-[var(--primary)]" : "text-[var(--foreground)]"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {navStructure.map((item) => {
+                const isActive =
+                  item.activeWhenPathStartsWith != null
+                    ? pathname.startsWith(item.activeWhenPathStartsWith)
+                    : pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex min-h-[44px] items-center rounded-xl px-4 py-3 text-base font-medium transition-all hover:bg-[var(--muted)] ${
+                      isActive ? "font-semibold text-[var(--primary)]" : "text-[var(--foreground)]"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
               {showMemberAuth ? (
                 <MemberAuthNav
                   isHomeHero={false}

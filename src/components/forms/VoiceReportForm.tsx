@@ -7,6 +7,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
+import {
+  enqueueReportDraft,
+  isRetryableReportSubmitResponse,
+  loadReportQueue,
+  type QueuedReportPayload,
+  type ReportQueueItem,
+  removeReportQueueItem,
+} from "@/lib/client/report-submit-queue";
 import { nearestRegionSlug } from "@/lib/geo/ghana-region-centroids";
 
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
@@ -33,6 +41,19 @@ const ALL_KINDS = [
 
 const inputClass =
   "mt-1 block w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20";
+
+type LocalDraftResult = "saved" | "not_saved" | "storage_full";
+
+function formatDraftSavedAt(ts: number): string {
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(new Date(ts));
+  } catch {
+    return new Date(ts).toISOString();
+  }
+}
 
 export type VoiceReportFormProps = {
   regions: RegionOption[];
@@ -68,6 +89,7 @@ export function VoiceReportForm({
   const [category, setCategory] = useState("");
   const [regionId, setRegionId] = useState("");
   const [submitterEmail, setSubmitterEmail] = useState("");
+  const [submitterPhone, setSubmitterPhone] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [loading, setLoading] = useState(false);
@@ -76,8 +98,15 @@ export function VoiceReportForm({
   const [uploadNote, setUploadNote] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [mapSectionOpen, setMapSectionOpen] = useState(false);
+  const [queueItems, setQueueItems] = useState<ReportQueueItem[]>([]);
+  const [localDraftNotice, setLocalDraftNotice] = useState<string | null>(null);
+  const [onlineBanner, setOnlineBanner] = useState(false);
   const turnstileRef = useRef<TurnstileInstance>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const syncQueue = useCallback(() => {
+    setQueueItems(loadReportQueue());
+  }, []);
 
   useEffect(() => {
     if (lockKind && defaultKind) setKind(defaultKind);
@@ -105,6 +134,95 @@ export function VoiceReportForm({
       .then((d: { member?: unknown }) => setHasMember(Boolean(d.member)))
       .catch(() => setHasMember(false));
   }, []);
+
+  useEffect(() => {
+    syncQueue();
+    const onOnline = () => setOnlineBanner(true);
+    window.addEventListener("online", onOnline);
+    return () => window.removeEventListener("online", onOnline);
+  }, [syncQueue]);
+
+  useEffect(() => {
+    if (!onlineBanner) return;
+    const t = window.setTimeout(() => setOnlineBanner(false), 10_000);
+    return () => window.clearTimeout(t);
+  }, [onlineBanner]);
+
+  const visibleQueueItems =
+    lockKind && defaultKind
+      ? queueItems.filter((item) => item.payload.kind === defaultKind)
+      : queueItems;
+
+  function buildQueuePayload(): QueuedReportPayload {
+    const lat = latitude.trim() === "" ? undefined : Number(latitude);
+    const lng = longitude.trim() === "" ? undefined : Number(longitude);
+    const base: QueuedReportPayload = {
+      kind: kind as QueuedReportPayload["kind"],
+      title: title.trim(),
+      body: body.trim(),
+      category: category.trim() || undefined,
+      regionId: regionId || undefined,
+      submitterEmail: submitterEmail.trim() || undefined,
+      submitterPhone: submitterPhone.trim() || undefined,
+    };
+    if (lat !== undefined && lng !== undefined && !Number.isNaN(lat) && !Number.isNaN(lng)) {
+      base.latitude = lat;
+      base.longitude = lng;
+    }
+    return base;
+  }
+
+  function applyPayloadToForm(p: QueuedReportPayload) {
+    setKind(p.kind);
+    setTitle(p.title);
+    setBody(p.body);
+    setCategory(p.category ?? "");
+    setRegionId(p.regionId ?? "");
+    setSubmitterEmail(p.submitterEmail ?? "");
+    setSubmitterPhone(p.submitterPhone ?? "");
+    if (p.latitude != null && p.longitude != null) {
+      setLatitude(String(p.latitude));
+      setLongitude(String(p.longitude));
+    } else {
+      setLatitude("");
+      setLongitude("");
+    }
+  }
+
+  function clearFormFieldsAfterQueue() {
+    setTitle("");
+    setBody("");
+    setCategory("");
+    setRegionId("");
+    setSubmitterEmail("");
+    setSubmitterPhone("");
+    setLatitude("");
+    setLongitude("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    setTurnstileToken(null);
+    turnstileRef.current?.reset();
+  }
+
+  function trySaveDraftLocally(): LocalDraftResult {
+    const fileList = fileInputRef.current?.files ? Array.from(fileInputRef.current.files) : [];
+    if (fileList.length > 0) return "not_saved";
+    try {
+      enqueueReportDraft(buildQueuePayload());
+      syncQueue();
+      clearFormFieldsAfterQueue();
+      setLocalDraftNotice(
+        "Your report text is saved on this device. When you’re back online, open Pending drafts below, tap Restore, complete the security check, and submit.",
+      );
+      return "saved";
+    } catch (e) {
+      if (e instanceof Error && e.message === "STORAGE_FULL") {
+        setError("This browser’s storage is full — we couldn’t keep a draft. Free some space and try again.");
+        return "storage_full";
+      }
+      setError("Could not save a draft on this device.");
+      return "not_saved";
+    }
+  }
 
   function validateAttachmentList(list: File[]): string | null {
     if (list.length > MAX_ATTACH_FILES) {
@@ -143,6 +261,21 @@ export function VoiceReportForm({
       return;
     }
 
+    if (!hasMember) {
+      const em = submitterEmail.trim();
+      const ph = submitterPhone.trim();
+      if (!em && !ph) {
+        setError("Provide an email or an E.164 phone number (e.g. +233201234567) for status updates.");
+        setLoading(false);
+        return;
+      }
+      if (ph && !/^\+[1-9]\d{1,14}$/.test(ph)) {
+        setError("Phone must be in international format (E.164), including country code with +.");
+        setLoading(false);
+        return;
+      }
+    }
+
     const lat = latitude.trim() === "" ? undefined : Number(latitude);
     const lng = longitude.trim() === "" ? undefined : Number(longitude);
     if (
@@ -170,6 +303,10 @@ export function VoiceReportForm({
       submitterEmail: submitterEmail.trim() || undefined,
       turnstileToken: turnstileToken ?? undefined,
     };
+    if (!hasMember) {
+      const ph = submitterPhone.trim();
+      if (ph) payload.submitterPhone = ph;
+    }
     if (lat !== undefined && lng !== undefined) {
       payload.latitude = lat;
       payload.longitude = lng;
@@ -189,12 +326,32 @@ export function VoiceReportForm({
         attachmentUploadToken?: string;
       };
       if (!res.ok) {
-        setError(data.error ?? "Submission failed.");
+        if (fileList.length === 0 && isRetryableReportSubmitResponse(res.status)) {
+          const draft = trySaveDraftLocally();
+          if (draft === "saved") {
+            setError(null);
+            return;
+          }
+          if (draft === "storage_full") {
+            turnstileRef.current?.reset();
+            setTurnstileToken(null);
+            return;
+          }
+        }
+        if (fileList.length > 0 && isRetryableReportSubmitResponse(res.status)) {
+          setError(
+            data.error ??
+              "We couldn’t reach the server. Connect and try again, or remove attachments to save your text on this device for later.",
+          );
+        } else {
+          setError(data.error ?? "Submission failed.");
+        }
         turnstileRef.current?.reset();
         setTurnstileToken(null);
         return;
       }
       if (data.trackingCode) setTrackingCode(data.trackingCode);
+      syncQueue();
 
       if (fileList.length > 0 && data.id) {
         const fd = new FormData();
@@ -232,13 +389,24 @@ export function VoiceReportForm({
       setCategory("");
       setRegionId("");
       setSubmitterEmail("");
+      setSubmitterPhone("");
       setLatitude("");
       setLongitude("");
       if (fileInputRef.current) fileInputRef.current.value = "";
       setTurnstileToken(null);
       turnstileRef.current?.reset();
     } catch {
-      setError("Something went wrong. Please try again.");
+      if (fileList.length === 0) {
+        const draft = trySaveDraftLocally();
+        if (draft === "saved") {
+          setError(null);
+        }
+        // not_saved / storage_full: trySaveDraftLocally already set a specific error
+      } else {
+        setError(
+          "Connection problem. Your attachments can’t be stored offline. Connect and try again, or remove files and submit text only so we can save a draft on this device.",
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -246,6 +414,94 @@ export function VoiceReportForm({
 
   return (
     <form onSubmit={onSubmit} className="mx-auto max-w-2xl space-y-5">
+      {onlineBanner ? (
+        <p
+          className="rounded-xl border border-[var(--primary)]/30 bg-[var(--primary)]/10 px-4 py-3 text-sm text-[var(--foreground)]"
+          role="status"
+        >
+          You appear to be back online. Finish a pending draft below, then complete the security check and submit.
+        </p>
+      ) : null}
+
+      {localDraftNotice ? (
+        <div
+          className="flex flex-col gap-2 rounded-xl border border-[var(--primary)]/25 bg-[var(--section-light)] px-4 py-3 text-sm text-[var(--foreground)] sm:flex-row sm:items-center sm:justify-between"
+          role="status"
+        >
+          <span>{localDraftNotice}</span>
+          <button
+            type="button"
+            className="shrink-0 text-sm font-medium text-[var(--primary)] underline"
+            onClick={() => setLocalDraftNotice(null)}
+          >
+            Dismiss
+          </button>
+        </div>
+      ) : null}
+
+      {lockKind && queueItems.length > visibleQueueItems.length ? (
+        <p className="text-xs text-[var(--muted-foreground)]">
+          You have other saved drafts on this device for different report types. Open{" "}
+          <Link href="/citizens-voice/submit" className="font-medium text-[var(--primary)] underline">
+            Citizens Voice submit
+          </Link>{" "}
+          to restore them.
+        </p>
+      ) : null}
+
+      {visibleQueueItems.length > 0 ? (
+        <div
+          className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 shadow-sm"
+          aria-label="Pending drafts on this device"
+        >
+          <p className="text-sm font-semibold text-[var(--foreground)]">Pending drafts (this device)</p>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            Restored drafts still need the security check before submit. Attachments are not stored offline.
+          </p>
+          <ul className="mt-3 space-y-3">
+            {visibleQueueItems.map((item) => (
+              <li
+                key={item.id}
+                className="flex flex-col gap-2 rounded-lg border border-[var(--border)] bg-[var(--section-light)]/40 px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-[var(--foreground)]">{item.payload.title}</p>
+                  <p className="text-xs text-[var(--muted-foreground)]">
+                    {ALL_KINDS.find((k) => k.value === item.payload.kind)?.label ?? item.payload.kind}
+                    {" · "}
+                    {formatDraftSavedAt(item.createdAt)}
+                  </p>
+                </div>
+                <div className="flex shrink-0 gap-2">
+                  <button
+                    type="button"
+                    className="rounded-lg border border-[var(--border)] bg-white px-3 py-1.5 text-xs font-medium text-[var(--foreground)]"
+                    onClick={() => {
+                      applyPayloadToForm(item.payload);
+                      removeReportQueueItem(item.id);
+                      syncQueue();
+                      setLocalDraftNotice(null);
+                    }}
+                  >
+                    Restore
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-800"
+                    onClick={() => {
+                      removeReportQueueItem(item.id);
+                      syncQueue();
+                    }}
+                  >
+                    Discard
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
       {trackingCode ? (
         <div
           className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-green-900"
@@ -440,24 +696,47 @@ export function VoiceReportForm({
       ) : null}
 
       {!hasMember ? (
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-[var(--foreground)]">
-            Your email (for status updates)
-          </label>
-          <input
-            id="email"
-            type="email"
-            required={!hasMember}
-            value={submitterEmail}
-            onChange={(e) => setSubmitterEmail(e.target.value)}
-            className={inputClass}
-            autoComplete="email"
-          />
-        </div>
+        <fieldset className="space-y-4 rounded-xl border border-[var(--border)] bg-white/50 px-4 py-4">
+          <legend className="px-1 text-sm font-medium text-[var(--foreground)]">
+            How we reach you <span className="font-normal text-[var(--muted-foreground)]">(email or phone)</span>
+          </legend>
+          <p className="text-xs text-[var(--muted-foreground)]">
+            Provide <strong className="text-[var(--foreground)]">at least one</strong>. For SMS alerts when enabled by
+            MBKRU, use international format with + and country code (E.164).
+          </p>
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-[var(--foreground)]">
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={submitterEmail}
+              onChange={(e) => setSubmitterEmail(e.target.value)}
+              className={inputClass}
+              autoComplete="email"
+            />
+          </div>
+          <div>
+            <label htmlFor="submitter-phone" className="block text-sm font-medium text-[var(--foreground)]">
+              Mobile (optional)
+            </label>
+            <input
+              id="submitter-phone"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              placeholder="+233201234567"
+              value={submitterPhone}
+              onChange={(e) => setSubmitterPhone(e.target.value)}
+              className={`${inputClass} font-mono text-sm`}
+            />
+          </div>
+        </fieldset>
       ) : (
         <p className="text-sm text-[var(--muted-foreground)]">
-          Signed in — we&apos;ll use your account email for updates. You can still add an alternate email in your
-          profile later.
+          Signed in — we&apos;ll use your account email for updates. If your profile has an E.164 mobile, SMS alerts may
+          be sent when the organisation enables them.
         </p>
       )}
 

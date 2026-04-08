@@ -48,7 +48,7 @@ export default async function ParliamentTrackerPage() {
       icon: accountabilityStepIcons.promises,
       title: "Campaign Promise Tracking",
       description: "Real-time tracking of campaign promises versus delivery. Hold elected officials to their word.",
-      href: showPromises ? "/promises" : undefined,
+      href: showPromises ? "/promises/browse" : undefined,
       badge: showPromises ? ("Live" as const) : undefined,
     },
     {
@@ -165,9 +165,14 @@ export default async function ParliamentTrackerPage() {
                   Methodology
                 </Link>
                 {showPromises ? (
-                  <Link href="/promises" className="font-medium text-[var(--primary)] hover:underline">
-                    Browse campaign promises
-                  </Link>
+                  <>
+                    <Link href="/promises" className="font-medium text-[var(--primary)] hover:underline">
+                      Promises by MP
+                    </Link>
+                    <Link href="/promises/browse" className="font-medium text-[var(--primary)] hover:underline">
+                      Browse &amp; filter
+                    </Link>
+                  </>
                 ) : null}
                 {showReportCard ? (
                   <Link href="/report-card" className="font-medium text-[var(--primary)] hover:underline">

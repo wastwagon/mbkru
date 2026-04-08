@@ -11,6 +11,8 @@ Civic Accountability & Citizens Engagement Platform for Ghana.
 - **Ops & CSV import:** [`docs/OPS_RUNBOOK.md`](docs/OPS_RUNBOOK.md) · [`docs/CSV_IMPORT_RUNBOOK.md`](docs/CSV_IMPORT_RUNBOOK.md) · **Public data sources (MPs, constituencies, manifestos):** [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md)
 - **Security & observability:** [`docs/SECURITY_CHECKLIST.md`](docs/SECURITY_CHECKLIST.md) · [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md)
 - **Full write-up:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — Phase 1 vs 2 vs 3 boundaries, Postgres + built-in admin, Docker build args, extension checklist.
+- **Vision expansion (data, manifestos, Queen Mothers communities, backlog):** [`docs/PLATFORM_EXPANSION_PLAN.md`](docs/PLATFORM_EXPANSION_PLAN.md)  
+- **Full implementation plan (schema, APIs, UI, workstreams A–O, no MVP trim):** [`docs/FULL_PLATFORM_IMPLEMENTATION_PLAN.md`](docs/FULL_PLATFORM_IMPLEMENTATION_PLAN.md)
 - **Phase 1 completion & recovery:** [`docs/PHASE1_STATUS.md`](docs/PHASE1_STATUS.md) — verified against scope, how to run/restore the project.
 - **Phase 1 product scope:** [`PHASE1_SCOPE.md`](PHASE1_SCOPE.md)
 - **Business roadmap (2028 election):** [`ROADMAP_2028_ELECTION.md`](ROADMAP_2028_ELECTION.md)
@@ -69,7 +71,7 @@ Copy `.env.example` to `.env.local` (or `.env` for Docker Compose) and fill in. 
 | Variable | Description |
 |----------|-------------|
 | `NEXT_PUBLIC_SITE_URL` | Canonical site URL (sitemap, OG, `metadataBase`) |
-| `NEXT_PUBLIC_PLATFORM_PHASE` | `1` (Phase 1) — use `2`/`3` when those phases launch |
+| `NEXT_PUBLIC_PLATFORM_PHASE` | `3` in `.env.example` / Docker defaults (full platform); use `1` for marketing-only (rebuild after change) |
 | `DATABASE_URL` | PostgreSQL connection string (Prisma) |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | First admin account; `prisma db seed` upserts this user |
 | `ADMIN_SESSION_SECRET` | Secret for signing the admin session cookie (≥32 characters in production) |
@@ -198,7 +200,7 @@ docker run -p 1100:3000 mbkru-website
    - Domain: Add your domain (e.g. mbkruadvocates.org) for SSL
 5. **Environment variables** — Add in Coolify (build + runtime as needed):
    - `NEXT_PUBLIC_SITE_URL` = https://yourdomain.com
-   - `NEXT_PUBLIC_PLATFORM_PHASE` = `1` for marketing-only, or **`2`** / **`3`** when you want **`/login`**, **`/register`**, **`/account`**, and Voice APIs live (**must be set at build time** — rebuild after changing it).
+   - `NEXT_PUBLIC_PLATFORM_PHASE` = **`3`** for the full platform (default in `.env.example` / Docker), or **`1`** for marketing-only only (**must be set at build time** — rebuild after changing it). Use **`2`** if you want Voice + members without report-card flagship.
    - `DATABASE_URL` (Postgres service on the same stack or managed DB)
    - `ADMIN_SESSION_SECRET` (long random string)
    - `ADMIN_EMAIL` / `ADMIN_PASSWORD` (then run seed once, or run seed in a deploy hook)

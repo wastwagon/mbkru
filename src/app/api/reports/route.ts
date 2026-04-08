@@ -34,11 +34,18 @@ export async function POST(request: Request) {
 
     const member = await getMemberSession();
 
-    if (!member && !(data.submitterEmail?.trim())) {
-      return NextResponse.json(
-        { error: "Provide submitterEmail or sign in so we can reach you with updates." },
-        { status: 400 },
-      );
+    if (!member) {
+      const hasEmail = Boolean(data.submitterEmail?.trim());
+      const hasPhone = Boolean(data.submitterPhone?.trim());
+      if (!hasEmail && !hasPhone) {
+        return NextResponse.json(
+          {
+            error:
+              "Provide an email or E.164 phone number (+country…), or sign in so we can reach you with updates.",
+          },
+          { status: 400 },
+        );
+      }
     }
 
     if (data.regionId) {
@@ -75,6 +82,7 @@ export async function POST(request: Request) {
         kind: data.kind,
         memberId: member?.memberId ?? null,
         submitterEmail: data.submitterEmail?.trim().toLowerCase() ?? null,
+        submitterPhone: data.submitterPhone?.trim() ?? null,
         title: data.title,
         body: data.body,
         category: data.category?.trim() || null,

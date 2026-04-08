@@ -14,6 +14,8 @@ module.exports = {
         "http://localhost:3000/about",
         "http://localhost:3000/contact",
         "http://localhost:3000/news",
+        "http://localhost:3000/methodology",
+        "http://localhost:3000/citizens-voice",
       ],
       startServerCommand: "npm run start -- -p 3000",
       startServerReadyPattern: "Local:",

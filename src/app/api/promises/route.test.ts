@@ -40,9 +40,46 @@ describe("GET /api/promises", () => {
     expect(res.status).toBe(404);
   });
 
-  it("passes normalized memberSlug to cache loader", async () => {
+  const emptyFilters = {
+    memberSlug: "",
+    partySlug: "",
+    electionCycle: "",
+    governmentOnly: false,
+    policySector: "",
+    status: "",
+  };
+
+  it("passes normalized filters to cache loader", async () => {
     await GET(new Request("https://example.com/api/promises?memberSlug=Jane-Doe"));
-    expect(getCachedPromisesApiRows).toHaveBeenCalledWith("jane-doe");
+    expect(getCachedPromisesApiRows).toHaveBeenCalledWith({
+      ...emptyFilters,
+      memberSlug: "jane-doe",
+    });
+  });
+
+  it("parses governmentOnly and party filters", async () => {
+    await GET(
+      new Request(
+        "https://example.com/api/promises?partySlug=NDC&electionCycle=2024&governmentOnly=true",
+      ),
+    );
+    expect(getCachedPromisesApiRows).toHaveBeenCalledWith({
+      memberSlug: "",
+      partySlug: "ndc",
+      electionCycle: "2024",
+      governmentOnly: true,
+      policySector: "",
+      status: "",
+    });
+  });
+
+  it("parses policySector and status", async () => {
+    await GET(new Request("https://example.com/api/promises?policySector=fiscal&status=in_progress"));
+    expect(getCachedPromisesApiRows).toHaveBeenCalledWith({
+      ...emptyFilters,
+      policySector: "FISCAL",
+      status: "IN_PROGRESS",
+    });
   });
 
   it("returns promises array and cache header", async () => {
@@ -52,9 +89,18 @@ describe("GET /api/promises", () => {
         title: "Demo",
         description: null,
         sourceLabel: "seed",
+        sourceUrl: null,
         sourceDate: null,
+        verificationNotes: null,
         status: "TRACKING",
         updatedAt: "2026-03-28T00:00:00.000Z",
+        electionCycle: null,
+        partySlug: null,
+        manifestoDocumentId: null,
+        manifestoPageRef: null,
+        isGovernmentProgramme: false,
+        policySector: null,
+        manifesto: null,
         member: { name: "A", slug: "a", role: "MP", party: null },
       },
     ]);

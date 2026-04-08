@@ -46,6 +46,10 @@ export default async function AccountPage() {
     select: { email: true, displayName: true, createdAt: true },
   });
 
+  const unreadNotifications = await prisma.memberNotification.count({
+    where: { memberId: session.memberId, readAt: null },
+  });
+
   let totalReports = 0;
   let activeReports = 0;
   let resolvedReports = 0;
@@ -190,6 +194,37 @@ export default async function AccountPage() {
             </Link>
           </div>
         ) : null}
+      </section>
+
+      <section className="mt-10" aria-labelledby="inbox-heading">
+        <h2 id="inbox-heading" className="font-display text-lg font-semibold text-[var(--foreground)]">
+          Inbox
+        </h2>
+        <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+          Community approvals, post status, and moderator alerts.
+        </p>
+        <Link href="/account/notifications" className={`${tileClass} mt-5 max-w-md`}>
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--primary)]/15 to-[var(--accent)]/10 text-[var(--primary)]">
+            <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+              <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+          <span className="mt-4 flex flex-wrap items-center gap-2 font-display text-base font-semibold text-[var(--foreground)]">
+            Notifications
+            {unreadNotifications > 0 ? (
+              <span className="rounded-full bg-[var(--primary)] px-2 py-0.5 text-[11px] font-bold text-white">
+                {unreadNotifications} new
+              </span>
+            ) : null}
+          </span>
+          <span className="mt-1 flex-1 text-xs leading-relaxed text-[var(--muted-foreground)]">
+            Mark items read when you&apos;ve seen them. Same list is available via the API for apps.
+          </span>
+          <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)]">
+            Open inbox
+            <ChevronIcon className="transition-transform group-hover:translate-x-0.5" />
+          </span>
+        </Link>
       </section>
 
       {showPromises || showReportCard || showLegal || showTownHalls ? (

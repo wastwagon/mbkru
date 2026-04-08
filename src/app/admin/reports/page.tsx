@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import type { CitizenReportKind } from "@prisma/client";
 
+import { isCitizenReportSlaOverdue } from "@/lib/admin/report-operations-datetime";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
 
@@ -70,7 +71,9 @@ export default async function AdminReportsPage({ searchParams }: Props) {
         {reports.length === 0 ? (
           <li className="p-6 text-sm text-[var(--muted-foreground)]">No reports yet.</li>
         ) : (
-          reports.map((r) => (
+          reports.map((r) => {
+            const slaOverdue = isCitizenReportSlaOverdue(r.slaDueAt, r.status);
+            return (
             <li key={r.id} className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <p className="font-semibold text-[var(--foreground)] line-clamp-1">{r.title}</p>
@@ -78,6 +81,9 @@ export default async function AdminReportsPage({ searchParams }: Props) {
                   <span className="font-mono">{r.trackingCode}</span> · {r.kind.replace(/_/g, " ")} ·{" "}
                   <span className="text-[var(--primary)]">{r.status.replace(/_/g, " ")}</span>
                   {r.region ? ` · ${r.region.name}` : ""}
+                  {slaOverdue ? (
+                    <span className="ml-1 font-semibold text-amber-800">· SLA overdue</span>
+                  ) : null}
                 </p>
                 <p className="text-xs text-[var(--muted-foreground)]">
                   {r.createdAt.toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
@@ -90,7 +96,8 @@ export default async function AdminReportsPage({ searchParams }: Props) {
                 Review
               </Link>
             </li>
-          ))
+            );
+          })
         )}
       </ul>
 

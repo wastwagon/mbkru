@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { images, partnerLogoPlaceholders } from "@/lib/placeholders";
+import { images } from "@/lib/placeholders";
 
 export const metadata: Metadata = {
   title: "Partners & Supporters",
@@ -52,23 +52,15 @@ export default function PartnersPage() {
             </div>
           </div>
 
-          {/* Partner logos grid — placeholder */}
           <div className="mt-12">
             <h2 className="font-display text-xl font-bold text-[var(--foreground)]">
               Our Partners & Supporters
             </h2>
             <p className="mt-2 text-[var(--muted-foreground)]">
-              Organizations and institutions supporting our mission. Logos to be added.
+              Confirmed partners and logos will be listed here. We do not display placeholder organisation names.
             </p>
-            <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
-              {partnerLogoPlaceholders.map((partner) => (
-                <div
-                  key={partner.name}
-                  className="flex min-h-[100px] items-center justify-center rounded-xl border-2 border-dashed border-[var(--border)] bg-white p-6 text-center transition-colors hover:border-[var(--primary)]/30"
-                >
-                  <span className="text-sm font-medium text-[var(--muted-foreground)]">{partner.name}</span>
-                </div>
-              ))}
+            <div className="mt-6 rounded-2xl border border-dashed border-[var(--border)] bg-white px-6 py-14 text-center text-sm text-[var(--muted-foreground)]">
+              No partner listings published yet.
             </div>
           </div>
 

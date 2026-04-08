@@ -216,6 +216,36 @@ async function seedAccountabilityDemo() {
   });
   const bySlug = Object.fromEntries(members.map((x) => [x.slug, x.id]));
 
+  /** Public PDF URL (2024 campaign manifesto host). MBKRU stores the link only — we do not scrape or mirror the file. */
+  const NDC_2024_MANIFESTO_URL =
+    "https://manifesto.johnmahama.org/files/shares/2024%20Manifesto_Abridged.pdf";
+
+  let ndcManifesto = await prisma.manifestoDocument.findFirst({
+    where: { partySlug: "ndc", electionCycle: "2024" },
+  });
+  if (!ndcManifesto) {
+    ndcManifesto = await prisma.manifestoDocument.create({
+      data: {
+        title: "NDC 2024 — Resetting Ghana (manifesto PDF)",
+        partySlug: "ndc",
+        electionCycle: "2024",
+        sourceUrl: NDC_2024_MANIFESTO_URL,
+        notes:
+          "Seed: PDF on 2024 campaign manifesto site. Confirm against any canonical NDC publication; update in admin if hosting changes.",
+      },
+    });
+  } else {
+    ndcManifesto = await prisma.manifestoDocument.update({
+      where: { id: ndcManifesto.id },
+      data: {
+        title: "NDC 2024 — Resetting Ghana (manifesto PDF)",
+        sourceUrl: NDC_2024_MANIFESTO_URL,
+        notes:
+          "Seed: PDF on 2024 campaign manifesto site. Confirm against any canonical NDC publication; update in admin if hosting changes.",
+      },
+    });
+  }
+
   await prisma.campaignPromise.deleteMany({
     where: { memberId: { in: members.map((x) => x.id) } },
   });
@@ -226,11 +256,27 @@ async function seedAccountabilityDemo() {
       title: "Publish quarterly constituency spending summary (demo)",
       sourceLabel: "2026 demo manifesto excerpt",
       status: "IN_PROGRESS",
+      policySector: "GOVERNANCE",
     },
     {
       memberSlug: DEMO_MP_SLUGS[0],
       title: "Youth skills hub pilot in two districts (demo)",
       sourceLabel: "Town hall commitment (fictional)",
+      status: "TRACKING",
+      policySector: "EDUCATION",
+    },
+    {
+      memberSlug: DEMO_MP_SLUGS[1],
+      title: "24-hour economy — productivity & jobs (illustrative NDC 2024 theme)",
+      description:
+        "Seed row: theme widely discussed for NDC 2024. Editors should confirm exact manifesto wording and page in the linked PDF before production use.",
+      sourceLabel: "NDC 2024 manifesto (Resetting Ghana)",
+      sourceUrl: NDC_2024_MANIFESTO_URL,
+      manifestoDocumentId: ndcManifesto.id,
+      partySlug: "ndc",
+      electionCycle: "2024",
+      policySector: "FISCAL",
+      isGovernmentProgramme: true,
       status: "TRACKING",
     },
     {
@@ -238,12 +284,14 @@ async function seedAccountabilityDemo() {
       title: "Road safety signage on Demo Highway (fictional)",
       sourceLabel: "Press statement (demo)",
       status: "TRACKING",
+      policySector: "INFRASTRUCTURE",
     },
     {
       memberSlug: DEMO_MP_SLUGS[2],
       title: "Primary health outreach visits (demo)",
       sourceLabel: "Campaign pledge (fictional)",
       status: "FULFILLED",
+      policySector: "HEALTH",
     },
   ];
 
@@ -254,8 +302,17 @@ async function seedAccountabilityDemo() {
       data: {
         memberId: mid,
         title: p.title,
+        description: p.description ?? null,
         sourceLabel: p.sourceLabel,
-        status: p.status,
+        sourceUrl: p.sourceUrl ?? null,
+        sourceDate: p.sourceDate ? new Date(p.sourceDate) : null,
+        status: p.status ?? "TRACKING",
+        manifestoDocumentId: p.manifestoDocumentId ?? null,
+        manifestoPageRef: p.manifestoPageRef ?? null,
+        partySlug: p.partySlug ?? null,
+        electionCycle: p.electionCycle ?? null,
+        isGovernmentProgramme: Boolean(p.isGovernmentProgramme),
+        policySector: p.policySector ?? null,
       },
     });
   }
@@ -303,7 +360,8 @@ async function seedAccountabilityDemo() {
   }
 
   console.log(
-    "Accountability demo seeded: constituencies=2, MPs=3, promises=4, report card year=" + DEMO_REPORT_CARD_YEAR,
+    "Accountability demo seeded: constituencies=2, MPs=3, NDC 2024 manifesto row, promises=5, report card year=" +
+      DEMO_REPORT_CARD_YEAR,
   );
 }
 

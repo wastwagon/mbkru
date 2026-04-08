@@ -146,15 +146,15 @@ Use `NEXT_PUBLIC_PLATFORM_PHASE` at build time plus optional `PLATFORM_PHASE` on
 
 ### Phase 2 (engineering) — still open / stretch
 
-- [ ] **SMS** or second-channel notifications (if product requires beyond email).
-- [ ] **Offline / retry queue** for flaky mobile networks (charter §3.1).
+- [x] **SMS (optional):** `SMS_PROVIDER=log|twilio`, Twilio REST via `fetch`, status-change texts; `submitterPhone` + member `phone` (E.164).
+- [x] **Offline draft queue (MVP)** — text-only payloads in `localStorage` on failed fetch or retryable HTTP statuses; user restores into the form and completes Turnstile before submit (attachments not queued).
 
 ### Phase 3 (engineering) — shipped in codebase
 
 - [x] Parliament CSV import + admin roster (**`/admin/parliament`**).
 - [x] Promise tracker UI + admin CRUD + **`GET /api/mps`**, **`GET /api/promises`** + tagged cache / `Cache-Control`.
 - [x] People’s Report Card: cycles, publish/unpublish, entries, public **`/report-card`**, **`GET /api/report-card/[year]`**, **`/methodology`**.
-- [x] **Election window (MVP):** form + track disclaimers, OPS notes; deeper **playbooks / SLA fields** remain operational design.
+- [x] **Election window (MVP):** form + track disclaimers, OPS notes; **playbooks / SLA (admin):** `slaDueAt`, `operationsPlaybookKey`, `staffNotes` on `CitizenReport` with overdue hints on the admin queue.
 - [x] **Partner JSON** surface (rate-limited, cached); **written embed terms + versioning** still with comms / legal.
 
 ### Phase 3 — pillar routes (flags in `platform.ts`)

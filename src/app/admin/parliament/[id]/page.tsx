@@ -3,10 +3,12 @@ import { notFound } from "next/navigation";
 
 import {
   createCampaignPromiseAction,
+  updateCampaignPromiseEvidenceAction,
   updateCampaignPromiseStatusAction,
 } from "@/app/admin/parliament/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { POLICY_SECTOR_LABELS, POLICY_SECTOR_VALUES } from "@/lib/promise-policy-sectors";
 
 import type { PromiseStatus } from "@prisma/client";
 
@@ -24,13 +26,22 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
   await requireAdminSession();
   const { id } = await params;
 
-  const member = await prisma.parliamentMember.findUnique({
-    where: { id },
-    include: {
-      constituency: true,
-      promises: { orderBy: { updatedAt: "desc" } },
-    },
-  });
+  const [member, manifestos] = await Promise.all([
+    prisma.parliamentMember.findUnique({
+      where: { id },
+      include: {
+        constituency: true,
+        promises: {
+          orderBy: { updatedAt: "desc" },
+          include: { manifestoDocument: { select: { id: true, title: true, sourceUrl: true } } },
+        },
+      },
+    }),
+    prisma.manifestoDocument.findMany({
+      orderBy: [{ electionCycle: "desc" }, { partySlug: "asc" }, { title: "asc" }],
+      select: { id: true, title: true, partySlug: true, electionCycle: true },
+    }),
+  ]);
 
   if (!member) notFound();
 
@@ -123,6 +134,35 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
             />
           </div>
           <div>
+            <label htmlFor="sourceUrl" className="block text-xs font-medium text-[var(--foreground)]">
+              Primary source URL <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+            </label>
+            <input
+              id="sourceUrl"
+              name="sourceUrl"
+              type="url"
+              inputMode="url"
+              placeholder="https://…"
+              maxLength={2000}
+              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            />
+            <p className="mt-1 text-[11px] text-[var(--muted-foreground)]">
+              Public “Source” button; if empty, the linked manifesto document URL is used when set.
+            </p>
+          </div>
+          <div>
+            <label htmlFor="verificationNotes" className="block text-xs font-medium text-[var(--foreground)]">
+              Verification & impact notes <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+            </label>
+            <textarea
+              id="verificationNotes"
+              name="verificationNotes"
+              rows={4}
+              maxLength={50000}
+              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
             <label htmlFor="status" className="block text-xs font-medium text-[var(--foreground)]">
               Status
             </label>
@@ -138,6 +178,92 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                 </option>
               ))}
             </select>
+          </div>
+          <div>
+            <label htmlFor="policySector" className="block text-xs font-medium text-[var(--foreground)]">
+              Policy category <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+            </label>
+            <select
+              id="policySector"
+              name="policySector"
+              defaultValue=""
+              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm sm:max-w-xs"
+            >
+              <option value="">— None —</option>
+              {POLICY_SECTOR_VALUES.map((v) => (
+                <option key={v} value={v}>
+                  {POLICY_SECTOR_LABELS[v]}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <label htmlFor="partySlug" className="block text-xs font-medium text-[var(--foreground)]">
+                Party slug <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              </label>
+              <input
+                id="partySlug"
+                name="partySlug"
+                maxLength={120}
+                placeholder="e.g. ndc"
+                className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label htmlFor="electionCycle" className="block text-xs font-medium text-[var(--foreground)]">
+                Election cycle <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              </label>
+              <input
+                id="electionCycle"
+                name="electionCycle"
+                maxLength={100}
+                placeholder="e.g. 2024"
+                className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+          <div>
+            <label htmlFor="manifestoDocumentId" className="block text-xs font-medium text-[var(--foreground)]">
+              Manifesto document <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+            </label>
+            <select
+              id="manifestoDocumentId"
+              name="manifestoDocumentId"
+              defaultValue=""
+              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            >
+              <option value="">— None —</option>
+              {manifestos.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.title} ({m.partySlug} · {m.electionCycle})
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="manifestoPageRef" className="block text-xs font-medium text-[var(--foreground)]">
+              Manifesto page ref <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+            </label>
+            <input
+              id="manifestoPageRef"
+              name="manifestoPageRef"
+              maxLength={200}
+              placeholder="e.g. p. 42, section 3"
+              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              id="isGovernmentProgramme"
+              name="isGovernmentProgramme"
+              type="checkbox"
+              value="on"
+              className="h-4 w-4 rounded border-[var(--border)]"
+            />
+            <label htmlFor="isGovernmentProgramme" className="text-sm text-[var(--foreground)]">
+              Mark as government programme / executive commitment
+            </label>
           </div>
           <button
             type="submit"
@@ -168,6 +294,33 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                     ? ` · ${p.sourceDate.toLocaleDateString("en-GB", { dateStyle: "medium" })}`
                     : ""}
                 </p>
+                <div className="mt-2 flex flex-wrap gap-2 text-xs">
+                  {p.isGovernmentProgramme ? (
+                    <span className="rounded-full bg-[var(--section-light)] px-2 py-0.5 font-medium text-[var(--foreground)]">
+                      Government programme
+                    </span>
+                  ) : null}
+                  {p.partySlug ? (
+                    <span className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--muted-foreground)]">
+                      Party: {p.partySlug}
+                    </span>
+                  ) : null}
+                  {p.electionCycle ? (
+                    <span className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--muted-foreground)]">
+                      Cycle: {p.electionCycle}
+                    </span>
+                  ) : null}
+                  {p.manifestoDocument ? (
+                    <span className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--muted-foreground)]">
+                      Manifesto: {p.manifestoDocument.title}
+                    </span>
+                  ) : null}
+                  {p.manifestoPageRef ? (
+                    <span className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--muted-foreground)]">
+                      Ref: {p.manifestoPageRef}
+                    </span>
+                  ) : null}
+                </div>
                 <form action={updateCampaignPromiseStatusAction} className="mt-3 flex flex-wrap items-end gap-2">
                   <input type="hidden" name="promiseId" value={p.id} />
                   <input type="hidden" name="memberId" value={member.id} />
@@ -191,6 +344,75 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                     className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-2 text-sm font-medium hover:bg-[var(--muted)]"
                   >
                     Update status
+                  </button>
+                </form>
+                <form action={updateCampaignPromiseEvidenceAction} className="mt-4 space-y-2 border-t border-[var(--border)] pt-4">
+                  <input type="hidden" name="promiseId" value={p.id} />
+                  <input type="hidden" name="memberId" value={member.id} />
+                  <p className="text-xs font-semibold text-[var(--foreground)]">Source & verification (public)</p>
+                  <div>
+                    <label htmlFor={`src-label-${p.id}`} className="block text-[11px] font-medium text-[var(--foreground)]">
+                      Source label
+                    </label>
+                    <input
+                      id={`src-label-${p.id}`}
+                      name="sourceLabel"
+                      required
+                      maxLength={200}
+                      defaultValue={p.sourceLabel}
+                      className="mt-1 w-full rounded-lg border border-[var(--border)] px-2 py-1.5 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor={`src-url-${p.id}`} className="block text-[11px] font-medium text-[var(--foreground)]">
+                      Primary source URL
+                    </label>
+                    <input
+                      id={`src-url-${p.id}`}
+                      name="sourceUrl"
+                      type="url"
+                      defaultValue={p.sourceUrl ?? ""}
+                      placeholder="https://…"
+                      maxLength={2000}
+                      className="mt-1 w-full rounded-lg border border-[var(--border)] px-2 py-1.5 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor={`ver-${p.id}`} className="block text-[11px] font-medium text-[var(--foreground)]">
+                      Verification & impact notes
+                    </label>
+                    <textarea
+                      id={`ver-${p.id}`}
+                      name="verificationNotes"
+                      rows={3}
+                      maxLength={50000}
+                      defaultValue={p.verificationNotes ?? ""}
+                      className="mt-1 w-full rounded-lg border border-[var(--border)] px-2 py-1.5 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor={`pol-${p.id}`} className="block text-[11px] font-medium text-[var(--foreground)]">
+                      Policy category
+                    </label>
+                    <select
+                      id={`pol-${p.id}`}
+                      name="policySector"
+                      defaultValue={p.policySector ?? ""}
+                      className="mt-1 w-full rounded-lg border border-[var(--border)] px-2 py-1.5 text-sm"
+                    >
+                      <option value="">— None —</option>
+                      {POLICY_SECTOR_VALUES.map((v) => (
+                        <option key={v} value={v}>
+                          {POLICY_SECTOR_LABELS[v]}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <button
+                    type="submit"
+                    className="rounded-lg border border-[var(--border)] bg-white px-3 py-1.5 text-xs font-medium hover:bg-[var(--section-light)]"
+                  >
+                    Save source & verification
                   </button>
                 </form>
               </li>

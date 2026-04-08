@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { parsePromisesApiFilters } from "@/lib/promises-api-filters";
 import {
   accountabilityPublicCacheControl,
   getCachedPromisesExportCsvRows,
@@ -17,7 +18,7 @@ function csvCell(value: string | number | null | undefined): string {
 const CSV_BOM = "\uFEFF";
 
 /**
- * Campaign promises as CSV (full set; optional `memberSlug` like `GET /api/promises`).
+ * Campaign promises as CSV (full set; same query params as `GET /api/promises`: `memberSlug`, `partySlug`, `electionCycle`, `governmentOnly`).
  * Same phase gate and rate limits as JSON; UTF-8 BOM for Excel.
  */
 export async function GET(request: Request) {
@@ -33,12 +34,11 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
-  const { searchParams } = new URL(request.url);
-  const memberSlug = searchParams.get("memberSlug")?.trim().toLowerCase() ?? "";
+  const filters = parsePromisesApiFilters(new URL(request.url));
 
-  const rows = await getCachedPromisesExportCsvRows(memberSlug);
+  const rows = await getCachedPromisesExportCsvRows(filters);
   const header =
-    "id,title,description,source_label,source_date,status,updated_at,member_name,member_slug,member_role,member_party";
+    "id,title,description,source_label,source_url,source_date,verification_notes,status,policy_sector,updated_at,election_cycle,party_slug,manifesto_document_id,manifesto_page_ref,is_government_programme,manifesto_title,manifesto_source_url,member_name,member_slug,member_role,member_party";
   const lines = [
     header,
     ...rows.map((r) =>
@@ -47,9 +47,19 @@ export async function GET(request: Request) {
         csvCell(r.title),
         csvCell(r.description),
         csvCell(r.sourceLabel),
+        csvCell(r.sourceUrl),
         csvCell(r.sourceDate),
+        csvCell(r.verificationNotes),
         csvCell(r.status),
+        csvCell(r.policySector),
         csvCell(r.updatedAt),
+        csvCell(r.electionCycle),
+        csvCell(r.partySlug),
+        csvCell(r.manifestoDocumentId),
+        csvCell(r.manifestoPageRef),
+        csvCell(r.isGovernmentProgramme ? "true" : "false"),
+        csvCell(r.manifestoTitle),
+        csvCell(r.manifestoSourceUrl),
         csvCell(r.member?.name),
         csvCell(r.member?.slug),
         csvCell(r.member?.role),

@@ -37,7 +37,8 @@ jobs:
           DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
           NEXT_TELEMETRY_DISABLED: "1"
           NEXT_PUBLIC_SITE_URL: https://example.com
-          NEXT_PUBLIC_PLATFORM_PHASE: "1"
+          NEXT_PUBLIC_PLATFORM_PHASE: "3"
+          MEMBER_SESSION_SECRET: ci-member-session-secret-must-be-32-chars-min
         run: npm run build
 
       - name: Lighthouse CI
@@ -46,5 +47,6 @@ jobs:
           DATABASE_URL: ""
           NEXT_TELEMETRY_DISABLED: "1"
           NEXT_PUBLIC_SITE_URL: http://localhost:3000
-          NEXT_PUBLIC_PLATFORM_PHASE: "1"
+          NEXT_PUBLIC_PLATFORM_PHASE: "3"
+          MEMBER_SESSION_SECRET: ci-member-session-secret-must-be-32-chars-min
         run: npx --yes @lhci/cli@0.14.0 autorun --config=./lighthouserc.cjs

@@ -11,6 +11,9 @@ describe("platformFeatures", () => {
     expect(platformFeatures.legalEmpowermentDesk(1)).toBe(false);
     expect(platformFeatures.townHallDirectory(1)).toBe(false);
     expect(platformFeatures.electionObservatory(1)).toBe(false);
+    expect(platformFeatures.communities(1)).toBe(false);
+    expect(platformFeatures.manifestoRegistry(1)).toBe(false);
+    expect(platformFeatures.whistleblowerGuidance(1)).toBe(false);
   });
 
   it("phase 2: voice and parliament JSON, not scorecard flagship", () => {
@@ -18,6 +21,9 @@ describe("platformFeatures", () => {
     expect(platformFeatures.parliamentTrackerData(2)).toBe(true);
     expect(platformFeatures.accountabilityScorecards(2)).toBe(false);
     expect(platformFeatures.legalEmpowermentDesk(2)).toBe(true);
+    expect(platformFeatures.communities(2)).toBe(true);
+    expect(platformFeatures.manifestoRegistry(2)).toBe(true);
+    expect(platformFeatures.whistleblowerGuidance(2)).toBe(true);
   });
 
   it("phase 3: all accountability surfaces", () => {

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+import { PromiseEvidenceCard } from "@/components/accountability/PromiseEvidenceCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { getCachedPromisesMemberPublic } from "@/lib/server/accountability-cache";
@@ -10,10 +11,6 @@ import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
 export const dynamic = "force-dynamic";
 
 type Props = { params: Promise<{ slug: string }> };
-
-function statusLabel(s: string): string {
-  return s.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -51,28 +48,26 @@ export default async function PromisesByMemberPage({ params }: Props) {
 
           <ul className="mt-8 space-y-6">
             {member.promises.map((p) => (
-              <li
-                key={p.id}
-                className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">{p.title}</h2>
-                  <span className="rounded-full bg-[var(--primary)]/10 px-3 py-1 text-xs font-medium text-[var(--primary)]">
-                    {statusLabel(p.status)}
-                  </span>
-                </div>
-                {p.description ? (
-                  <p className="mt-3 whitespace-pre-wrap text-sm text-[var(--muted-foreground)]">
-                    {p.description}
-                  </p>
-                ) : null}
-                <p className="mt-3 text-xs text-[var(--muted-foreground)]">
-                  <span className="font-medium text-[var(--foreground)]">Source:</span> {p.sourceLabel}
-                  {p.sourceDate
-                    ? ` · ${p.sourceDate.toLocaleDateString("en-GB", { dateStyle: "medium" })}`
-                    : ""}
-                </p>
-                <p className="mt-2 text-[11px] text-[var(--muted-foreground)]">
+              <li key={p.id} className="space-y-2">
+                <PromiseEvidenceCard
+                  title={p.title}
+                  description={p.description}
+                  status={p.status}
+                  sourceLabel={p.sourceLabel}
+                  sourceDate={p.sourceDate}
+                  sourceUrl={p.sourceUrl}
+                  verificationNotes={p.verificationNotes}
+                  policySector={p.policySector}
+                  manifestoDocument={
+                    p.manifestoDocument
+                      ? {
+                          title: p.manifestoDocument.title,
+                          sourceUrl: p.manifestoDocument.sourceUrl,
+                        }
+                      : null
+                  }
+                />
+                <p className="px-1 text-[11px] text-[var(--muted-foreground)]">
                   Updated {p.updatedAt.toLocaleDateString("en-GB", { dateStyle: "medium" })}
                 </p>
               </li>

@@ -18,8 +18,24 @@ export const createReportBodySchema = z
     latitude: z.number().gte(-90).lte(90).optional(),
     longitude: z.number().gte(-180).lte(180).optional(),
     submitterEmail: z.string().trim().email().max(320).optional(),
+    /** International format (E.164), e.g. +233201234567 */
+    submitterPhone: z
+      .string()
+      .trim()
+      .max(18)
+      .optional()
+      .transform((s) => (s && s.length > 0 ? s : undefined)),
   })
-  .merge(turnstileField);
+  .merge(turnstileField)
+  .superRefine((data, ctx) => {
+    if (data.submitterPhone && !/^\+[1-9]\d{1,14}$/.test(data.submitterPhone)) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Use international phone format (E.164), e.g. +233201234567",
+        path: ["submitterPhone"],
+      });
+    }
+  });
 
 export type CreateReportBody = z.infer<typeof createReportBodySchema>;
 

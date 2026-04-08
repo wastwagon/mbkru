@@ -28,6 +28,14 @@ export default async function PromisesIndexPage() {
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm text-[var(--muted-foreground)]">
+            <Link href="/promises/browse" className="text-[var(--primary)] hover:underline">
+              Browse all
+            </Link>
+            {" · "}
+            <Link href="/government-commitments" className="text-[var(--primary)] hover:underline">
+              Government commitments
+            </Link>
+            {" · "}
             <Link href="/methodology" className="text-[var(--primary)] hover:underline">
               Accountability methodology
             </Link>

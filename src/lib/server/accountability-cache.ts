@@ -1,8 +1,10 @@
 import "server-only";
 
+import type { Prisma, PromiseStatus } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 
 import { ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC } from "@/lib/accountability-http";
+import type { PromisesApiFilters } from "@/lib/promises-api-filters";
 import {
   MPS_ROSTER_TAG,
   PROMISES_INDEX_TAG,
@@ -83,13 +85,18 @@ export async function getCachedPromisesMemberPublic(slug: string) {
         where: { slug, active: true },
         include: {
           constituency: true,
-          promises: { orderBy: { updatedAt: "desc" } },
+          promises: {
+            orderBy: { updatedAt: "desc" },
+            include: {
+              manifestoDocument: { select: { title: true, sourceUrl: true } },
+            },
+          },
         },
       });
       if (!member || member.promises.length === 0) return null;
       return member;
     },
-    ["promises-member-v1", slug],
+    ["promises-member-v2", slug],
     { tags: [PROMISES_INDEX_TAG, promisesMemberTag(slug)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
 }
@@ -136,25 +143,52 @@ export async function getCachedPublishedReportCardYear(year: number) {
   )();
 }
 
+export type { PromisesApiFilters } from "@/lib/promises-api-filters";
+
+function serializePromisesApiFilters(f: PromisesApiFilters): string {
+  return [
+    f.memberSlug,
+    f.partySlug,
+    f.electionCycle,
+    f.governmentOnly ? "1" : "0",
+    f.policySector,
+    f.status,
+  ].join("|");
+}
+
+function buildPromisesWhere(filters: PromisesApiFilters): Prisma.CampaignPromiseWhereInput {
+  const memberIs: Prisma.ParliamentMemberWhereInput = { active: true };
+  if (filters.memberSlug) memberIs.slug = filters.memberSlug;
+
+  const where: Prisma.CampaignPromiseWhereInput = {
+    memberId: { not: null },
+    member: { is: memberIs },
+  };
+  if (filters.partySlug) where.partySlug = filters.partySlug;
+  if (filters.electionCycle) where.electionCycle = filters.electionCycle;
+  if (filters.governmentOnly) where.isGovernmentProgramme = true;
+  if (filters.policySector) where.policySector = filters.policySector;
+  if (filters.status) where.status = filters.status as PromiseStatus;
+  return where;
+}
+
 /** JSON-safe rows for GET /api/promises (serializable for cache). */
-export async function getCachedPromisesApiRows(memberSlug: string) {
+export async function getCachedPromisesApiRows(filters: PromisesApiFilters) {
+  const key = serializePromisesApiFilters(filters);
+  const memberSlug = filters.memberSlug;
+
   return unstable_cache(
     async () => {
       const items = await prisma.campaignPromise.findMany({
-        where: {
-          memberId: { not: null },
-          member: {
-            is: {
-              active: true,
-              ...(memberSlug ? { slug: memberSlug } : {}),
-            },
-          },
-        },
+        where: buildPromisesWhere(filters),
         take: memberSlug ? 100 : 50,
         orderBy: { updatedAt: "desc" },
         include: {
           member: {
             select: { name: true, slug: true, role: true, party: true, active: true },
+          },
+          manifestoDocument: {
+            select: { id: true, title: true, partySlug: true, electionCycle: true, sourceUrl: true },
           },
         },
       });
@@ -164,9 +198,26 @@ export async function getCachedPromisesApiRows(memberSlug: string) {
         title: p.title,
         description: p.description,
         sourceLabel: p.sourceLabel,
+        sourceUrl: p.sourceUrl,
         sourceDate: p.sourceDate?.toISOString() ?? null,
+        verificationNotes: p.verificationNotes,
         status: p.status,
         updatedAt: p.updatedAt.toISOString(),
+        electionCycle: p.electionCycle,
+        partySlug: p.partySlug,
+        manifestoDocumentId: p.manifestoDocumentId,
+        manifestoPageRef: p.manifestoPageRef,
+        isGovernmentProgramme: p.isGovernmentProgramme,
+        policySector: p.policySector,
+        manifesto: p.manifestoDocument
+          ? {
+              id: p.manifestoDocument.id,
+              title: p.manifestoDocument.title,
+              partySlug: p.manifestoDocument.partySlug,
+              electionCycle: p.manifestoDocument.electionCycle,
+              sourceUrl: p.manifestoDocument.sourceUrl,
+            }
+          : null,
         member: p.member
           ? {
               name: p.member.name,
@@ -177,7 +228,7 @@ export async function getCachedPromisesApiRows(memberSlug: string) {
           : null,
       }));
     },
-    ["api-promises-v1", memberSlug || "__all__"],
+    ["api-promises-v4", key],
     {
       tags: memberSlug
         ? [PROMISES_INDEX_TAG, promisesMemberTag(memberSlug)]
@@ -188,23 +239,21 @@ export async function getCachedPromisesApiRows(memberSlug: string) {
 }
 
 /** Full promise rows for CSV export (no row cap; same filters as JSON API). */
-export async function getCachedPromisesExportCsvRows(memberSlug: string) {
+export async function getCachedPromisesExportCsvRows(filters: PromisesApiFilters) {
+  const key = serializePromisesApiFilters(filters);
+  const memberSlug = filters.memberSlug;
+
   return unstable_cache(
     async () => {
       const items = await prisma.campaignPromise.findMany({
-        where: {
-          memberId: { not: null },
-          member: {
-            is: {
-              active: true,
-              ...(memberSlug ? { slug: memberSlug } : {}),
-            },
-          },
-        },
+        where: buildPromisesWhere(filters),
         orderBy: { updatedAt: "desc" },
         include: {
           member: {
             select: { name: true, slug: true, role: true, party: true, active: true },
+          },
+          manifestoDocument: {
+            select: { id: true, title: true, sourceUrl: true },
           },
         },
       });
@@ -214,9 +263,19 @@ export async function getCachedPromisesExportCsvRows(memberSlug: string) {
         title: p.title,
         description: p.description,
         sourceLabel: p.sourceLabel,
+        sourceUrl: p.sourceUrl,
         sourceDate: p.sourceDate?.toISOString() ?? null,
+        verificationNotes: p.verificationNotes,
         status: p.status,
         updatedAt: p.updatedAt.toISOString(),
+        electionCycle: p.electionCycle,
+        partySlug: p.partySlug,
+        manifestoDocumentId: p.manifestoDocumentId,
+        manifestoPageRef: p.manifestoPageRef,
+        isGovernmentProgramme: p.isGovernmentProgramme,
+        policySector: p.policySector,
+        manifestoTitle: p.manifestoDocument?.title ?? null,
+        manifestoSourceUrl: p.manifestoDocument?.sourceUrl ?? null,
         member: p.member
           ? {
               name: p.member.name,
@@ -227,7 +286,7 @@ export async function getCachedPromisesExportCsvRows(memberSlug: string) {
           : null,
       }));
     },
-    ["api-promises-csv-export-v1", memberSlug || "__all__"],
+    ["api-promises-csv-export-v4", key],
     {
       tags: memberSlug
         ? [PROMISES_INDEX_TAG, promisesMemberTag(memberSlug)]

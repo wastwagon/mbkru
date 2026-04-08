@@ -17,3 +17,11 @@ export function isLegalEmpowermentPageEnabled(): boolean {
 export function isTownHallDirectoryPageEnabled(): boolean {
   return platformFeatures.townHallDirectory(getServerPlatformPhase());
 }
+
+export function isCommunitiesBrowseEnabled(): boolean {
+  return platformFeatures.communities(getServerPlatformPhase());
+}
+
+export function isWhistleblowerGuidancePageEnabled(): boolean {
+  return platformFeatures.whistleblowerGuidance(getServerPlatformPhase());
+}

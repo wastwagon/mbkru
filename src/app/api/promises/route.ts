@@ -2,10 +2,8 @@ import { NextResponse } from "next/server";
 
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
-import {
-  accountabilityPublicCacheControl,
-  getCachedPromisesApiRows,
-} from "@/lib/server/accountability-cache";
+import { parsePromisesApiFilters } from "@/lib/promises-api-filters";
+import { accountabilityPublicCacheControl, getCachedPromisesApiRows } from "@/lib/server/accountability-cache";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 
 /** Public read-only campaign promises (Phase 2+ accountability pilot). */
@@ -22,10 +20,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
-  const { searchParams } = new URL(request.url);
-  const memberSlug = searchParams.get("memberSlug")?.trim().toLowerCase() ?? "";
+  const filters = parsePromisesApiFilters(new URL(request.url));
 
-  const body = await getCachedPromisesApiRows(memberSlug);
+  const body = await getCachedPromisesApiRows(filters);
 
   return NextResponse.json(
     { promises: body },

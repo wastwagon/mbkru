@@ -110,12 +110,78 @@ export default async function AdminHomePage() {
         </li>
         <li>
           <Link
+            href="/admin/analytics/citizen-reports"
+            className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
+          >
+            <span className="font-semibold text-[var(--foreground)]">Citizen report analytics</span>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              Aggregate counts by kind, status, region, and month (no personal data).
+            </p>
+          </Link>
+        </li>
+        <li>
+          <Link
             href="/admin/parliament"
             className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
           >
             <span className="font-semibold text-[var(--foreground)]">Parliament &amp; promises</span>
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
               CSV import for MPs/ministers and campaign promise records.
+            </p>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/admin/manifestos"
+            className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
+          >
+            <span className="font-semibold text-[var(--foreground)]">Manifesto registry</span>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              Register party manifestos for promise sourcing and public API.
+            </p>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/admin/communities"
+            className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
+          >
+            <span className="font-semibold text-[var(--foreground)]">Communities</span>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              Create communities, approve joins, and moderate posts.
+            </p>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/admin/communities/moderation"
+            className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
+          >
+            <span className="font-semibold text-[var(--foreground)]">Community post moderation</span>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              All pending community posts in one queue (publish or reject).
+            </p>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/admin/community-reports"
+            className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
+          >
+            <span className="font-semibold text-[var(--foreground)]">Community reports queue</span>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              Review community post reports across all groups from one queue.
+            </p>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/admin/community-verifications"
+            className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
+          >
+            <span className="font-semibold text-[var(--foreground)]">Community verifications</span>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              Approve or reject Queen Mother / traditional authority verification requests.
             </p>
           </Link>
         </li>

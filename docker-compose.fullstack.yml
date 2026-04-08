@@ -11,14 +11,14 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:1100}
-        NEXT_PUBLIC_PLATFORM_PHASE: ${NEXT_PUBLIC_PLATFORM_PHASE:-1}
+        NEXT_PUBLIC_PLATFORM_PHASE: ${NEXT_PUBLIC_PLATFORM_PHASE:-3}
     container_name: mbkru-website
     ports:
       - "${HOST_PORT:-1100}:3000"
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL:-http://localhost:1100}
-      - NEXT_PUBLIC_PLATFORM_PHASE=${NEXT_PUBLIC_PLATFORM_PHASE:-1}
+      - NEXT_PUBLIC_PLATFORM_PHASE=${NEXT_PUBLIC_PLATFORM_PHASE:-3}
       - DATABASE_URL=${DATABASE_URL:-postgresql://mbkru:mbkru_dev@postgres:5432/mbkru}
       - REDIS_URL=${REDIS_URL:-redis://redis:6379}
       - ADMIN_EMAIL=${ADMIN_EMAIL}

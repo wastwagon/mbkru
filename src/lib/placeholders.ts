@@ -196,56 +196,6 @@ export const newsPlaceholders = [
 ] as const;
 
 /**
- * Leadership / team — placeholder for About page
- */
-export const leadershipPlaceholders = [
-  {
-    name: "To be announced",
-    role: "Founder / National Coordinator",
-    bio: "Leadership bios will be published when the public team roster is confirmed.",
-    image: images.leadership,
-  },
-  {
-    name: "To be announced",
-    role: "Deputy Coordinator",
-    bio: "Leadership bios will be published when the public team roster is confirmed.",
-    image: images.community,
-  },
-  {
-    name: "To be announced",
-    role: "Legal & Governance Advisor",
-    bio: "Leadership bios will be published when the public team roster is confirmed.",
-    image: images.legal,
-  },
-] as const;
-
-/**
- * NGO registration — placeholder
- */
-export const registrationPlaceholder = {
-  status: "Formal registration details are being finalised",
-  number: "Registration number will be listed here when issued",
-  regulator: "As applicable under Ghanaian law (e.g. Registrar General / Department of Social Welfare)",
-  date: "To be confirmed",
-} as const;
-
-/**
- * Advisory / endorsements — placeholder quotes
- */
-export const advisoryPlaceholders = [
-  {
-    quote:
-      "Endorsements and advisory quotes from partners will appear here as relationships are formalised.",
-    author: "—",
-  },
-  {
-    quote:
-      "Additional voices from civil society, governance experts, and diaspora partners will be shared as MBKRU grows.",
-    author: "—",
-  },
-] as const;
-
-/**
  * FAQ — placeholder for Resources / FAQ page
  */
 export const faqPlaceholders = [
@@ -392,15 +342,6 @@ export const ghanaRegionsData = [
   { name: "Western North", capital: "Sefwi Wiawso", population: 880921, areaKm2: 10079, districts: 9, constituencies: 9, regionalMinister: "Hon. Mr. Wilbert Petty Brentum", keySectors: "Cocoa, Timber, Mining", pillarFocus: ["B", "C", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "New region (2019). Cocoa & timber. Regional Public Forum planned. Accountability focus." },
   { name: "North East", capital: "Nalerigu", population: 658946, areaKm2: 9070, districts: 6, constituencies: 6, regionalMinister: "Hon. Mr. Ibrahim Tia", keySectors: "Agriculture, Shea", pillarFocus: ["B", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "New region (2019). Northern outreach. Engagement planned. SDG 1 focus." },
   { name: "Savannah", capital: "Damongo", population: 653266, areaKm2: 34790, districts: 7, constituencies: 7, regionalMinister: "Hon. Mr. Salisu Be-Awuribe", keySectors: "Agriculture, Livestock, Shea", pillarFocus: ["B", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "New region (2019). Largest by area. Savannah zone accountability. People's Report Card expansion." },
-] as const;
-
-/**
- * Partner logos — placeholder (use image URLs or "Coming soon" text)
- */
-export const partnerLogoPlaceholders = [
-  { name: "[Partner 1]", logo: null, href: "#" },
-  { name: "[Partner 2]", logo: null, href: "#" },
-  { name: "[Partner 3]", logo: null, href: "#" },
 ] as const;
 
 /**
