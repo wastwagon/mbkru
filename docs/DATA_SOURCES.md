@@ -29,7 +29,7 @@ The importer **does not** create `Constituency` rows. You need **`slug`** values
 | **[Electoral Commission of Ghana](https://ec.gov.gh/)** | **Authority** for boundary and constituency changes; use for **sign-off**, not necessarily machine export. |
 | **[233/ec (GitHub)](https://github.com/233/ec)** | Polling-station–level CSVs by region (e.g. `data/Ashanti.csv`). Columns are **region / area / …** — useful for **geography**, but **not** a drop-in substitute for parliamentary `Constituency` rows without editorial mapping. |
 
-**Workflow:** Build a **constituency master list** (name → `slug` → `regionId`), load via migration/seed/SQL once, then import MPs.
+**Workflow:** Build a **constituency master list** (name → `slug` → `region`), load via **`POST /api/admin/constituencies/import`** (CSV: `name,slug,region_slug,code`), migration, or seed — then **dry-run** `POST /api/admin/parliament-members/reconcile` before **`POST /api/admin/parliament-members/import`**. See [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md).
 
 ---
 

@@ -18,6 +18,9 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: mbkru-postgres
+    ports:
+      # High host port avoids clashing with local Postgres on 5432 and other tools on 5433.
+      - "${POSTGRES_HOST_PORT:-55432}:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-mbkru}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mbkru_dev}

@@ -6,7 +6,7 @@
 
 1. Finish **ops, legal, and data governance** before scaling public intake or publishing accountability claims.
 2. Match **build-time** `NEXT_PUBLIC_PLATFORM_PHASE` to what you are allowed to show in production (`1` → marketing + admin; `2` → + Voice + members + promises; `3` → + report card flagship).
-3. **Demo data:** `SEED_ACCOUNTABILITY_DEMO=1 npx prisma db seed` (fictional MPs/promises/report card year **2099**). **Pilot members:** `SEED_MEMBER_DEMO=1` (see [`.env.example`](../.env.example)) — two fictional **`Member`** rows for **`/login`**. **Real data:** verified CSV via **`POST /api/admin/parliament-members/import`** + admin promises/report card.
+3. **Demo data:** `SEED_ACCOUNTABILITY_DEMO=1 npx prisma db seed` (fictional MPs/promises/report card year **2099**). **Pilot members:** `SEED_MEMBER_DEMO=1` (see [`.env.example`](../.env.example)) — two fictional **`Member`** rows for **`/login`**. **Real data:** constituency master via **`POST /api/admin/constituencies/import`**, dry-run **`POST /api/admin/parliament-members/reconcile`**, then MP CSV **`POST /api/admin/parliament-members/import`** — see [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md); admin promises/report card.
 
 **Companion docs:** [`PHASES_2_3_IMPLEMENTATION.md`](./PHASES_2_3_IMPLEMENTATION.md) · [`ARCHITECTURE.md`](./ARCHITECTURE.md) · [`PHASE1_SCOPE.md`](../PHASE1_SCOPE.md) · [`ROADMAP_2028_ELECTION.md`](../ROADMAP_2028_ELECTION.md) · [`PLATFORM_EXPANSION_PLAN.md`](./PLATFORM_EXPANSION_PLAN.md) · **[`FULL_PLATFORM_IMPLEMENTATION_PLAN.md`](./FULL_PLATFORM_IMPLEMENTATION_PLAN.md)** (full-scope build order, schema, APIs, UI — workstreams A–O)
 
@@ -20,7 +20,7 @@
 |--------|------|
 | [ ] | **A** Legal/comms: citation policy, whistleblowing copy, community terms |
 | [ ] | **B–D** Manifesto schema + admin + public `/government-commitments` |
-| [ ] | **E** Constituency seed + parliament reconcile tooling |
+| [x] | **E** Constituency CSV import + MP dry-run reconcile APIs + runbook; EC-aligned bulk constituency file is editorial/ops |
 | [ ] | **F–M** Communities: Prisma, APIs, public UI, admin UI, FTS, notifications |
 | [ ] | **N** Whistleblowing page + citizen-report aggregates (admin) |
 | [ ] | **O** Tests, security checklist, runbooks |

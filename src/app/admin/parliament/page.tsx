@@ -3,7 +3,9 @@ import Link from "next/link";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
 
+import { ConstituencyCsvImport } from "./ConstituencyCsvImport";
 import { ParliamentCsvImport } from "./ParliamentCsvImport";
+import { ParliamentCsvReconcile } from "./ParliamentCsvReconcile";
 
 export default async function AdminParliamentPage() {
   await requireAdminSession();
@@ -26,7 +28,9 @@ export default async function AdminParliamentPage() {
         <code className="rounded bg-[var(--section-light)] px-1 text-xs">GET /api/promises</code>.
       </p>
 
-      <div className="mt-8">
+      <div className="mt-8 space-y-6">
+        <ConstituencyCsvImport />
+        <ParliamentCsvReconcile />
         <ParliamentCsvImport />
       </div>
 

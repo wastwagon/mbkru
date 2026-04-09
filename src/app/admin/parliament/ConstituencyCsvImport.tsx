@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export function ParliamentCsvImport() {
+export function ConstituencyCsvImport() {
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -15,7 +15,7 @@ export function ParliamentCsvImport() {
     const form = e.currentTarget;
     const fd = new FormData(form);
     try {
-      const res = await fetch("/api/admin/parliament-members/import", {
+      const res = await fetch("/api/admin/constituencies/import", {
         method: "POST",
         body: fd,
         credentials: "include",
@@ -33,7 +33,7 @@ export function ParliamentCsvImport() {
         return;
       }
       const parts = [
-        `Created ${data.created ?? 0}, updated ${data.updated ?? 0}.`,
+        `Constituencies: created ${data.created ?? 0}, updated ${data.updated ?? 0}.`,
         (data.skipped ?? 0) > 0 ? `Skipped ${data.skipped} row(s).` : "",
         ...(data.errors?.length ? data.errors : []),
       ].filter(Boolean);
@@ -49,23 +49,24 @@ export function ParliamentCsvImport() {
 
   return (
     <div className="rounded-2xl border border-[var(--border)] bg-white p-5">
-      <h2 className="text-sm font-semibold text-[var(--foreground)]">Import CSV</h2>
+      <h2 className="text-sm font-semibold text-[var(--foreground)]">Import constituencies (CSV)</h2>
       <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-        Header row (exact):{" "}
+        Load EC-aligned constituency master rows before MP import. Header:{" "}
         <code className="rounded bg-[var(--section-light)] px-1 py-0.5 text-[11px]">
-          name,slug,role,party,constituency_slug,active
+          name,slug,region_slug,code
         </code>
-        . Empty party/constituency allowed.{" "}
-        <code className="rounded bg-[var(--section-light)] px-1 py-0.5 text-[11px]">active</code>{" "}
-        true/false. Constituency must match an existing slug in the database.
+        . <code className="rounded bg-[var(--section-light)] px-1 py-0.5 text-[11px]">region_slug</code> must match
+        a seeded region (e.g. <code className="text-[11px]">greater-accra</code>).{" "}
+        <code className="rounded bg-[var(--section-light)] px-1 py-0.5 text-[11px]">code</code> may be empty.
+        Example: <code className="text-[11px]">prisma/data/constituencies.example.csv</code>.
       </p>
       <form onSubmit={onSubmit} className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end">
         <div className="min-w-0 flex-1">
-          <label htmlFor="parliament-csv" className="sr-only">
-            CSV file
+          <label htmlFor="constituency-csv" className="sr-only">
+            Constituency CSV file
           </label>
           <input
-            id="parliament-csv"
+            id="constituency-csv"
             name="file"
             type="file"
             accept=".csv,text/csv"
@@ -77,9 +78,9 @@ export function ParliamentCsvImport() {
         <button
           type="submit"
           disabled={loading}
-          className="rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[var(--primary-dark)] disabled:opacity-60"
+          className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-5 py-2.5 text-sm font-semibold text-[var(--foreground)] hover:bg-[var(--muted)] disabled:opacity-60"
         >
-          {loading ? "Importing…" : "Upload"}
+          {loading ? "Importing…" : "Upload constituencies"}
         </button>
       </form>
       {message ? (

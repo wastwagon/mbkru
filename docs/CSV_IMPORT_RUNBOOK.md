@@ -1,8 +1,14 @@
 # Parliament roster CSV import — operator runbook
 
-**Where:** Admin **`/admin/parliament`** → upload CSV → **`POST /api/admin/parliament-members/import`**.
+**Where:** Admin **`/admin/parliament`** — **constituency** CSV (if needed), **dry-run reconcile**, then **MP import**.
 
-**Code:** Parser in `src/lib/parliament-csv-parse.ts` (tests: `parliament-csv-parse.test.ts`); server re-export in `src/lib/server/parliament-csv.ts`.
+| Action | Endpoint |
+|--------|----------|
+| Upsert constituencies | **`POST /api/admin/constituencies/import`** (multipart `file`) |
+| Compare CSV vs DB (no writes) | **`POST /api/admin/parliament-members/reconcile`** |
+| Apply MP roster | **`POST /api/admin/parliament-members/import`** |
+
+**Code:** MP parser in `src/lib/parliament-csv-parse.ts` (tests: `parliament-csv-parse.test.ts`); server re-export in `src/lib/server/parliament-csv.ts`. Constituency parser: `src/lib/constituency-csv-parse.ts`. Reconcile logic: `src/lib/parliament-reconcile.ts`.
 
 **Real-world roster sources & manifesto rights:** [`docs/DATA_SOURCES.md`](./DATA_SOURCES.md). **JSON → CSV:** `npm run data:members-csv -- path/to/members.json > import.csv`
 
@@ -10,13 +16,23 @@
 
 ## 1. Prerequisites
 
-1. **`Constituency` rows must already exist** in Postgres with **`slug`** values matching the CSV. The importer does **not** create constituencies; unknown `constituency_slug` values produce **row errors** and skip that row.
-2. **Regions** are seeded by default (`prisma/seed.mjs`). Add constituencies via migration, admin tooling, or direct SQL/Prisma as your process allows.
-3. **Local demo:** `SEED_ACCOUNTABILITY_DEMO=1 npx prisma db seed` creates fictional constituencies (`demo-constituency-accra-north`, `demo-constituency-kumasi-east`) and demo MPs — useful for UI tests without real electoral data.
+1. **`Constituency` rows must already exist** in Postgres with **`slug`** values matching the MP CSV. Unknown `constituency_slug` values produce **row errors** on import/reconcile.
+2. **Regions** are seeded by default (`prisma/seed.mjs`). Load constituencies with **`POST /api/admin/constituencies/import`** (see §2), a migration, or SQL.
+3. **Local demo:** `SEED_ACCOUNTABILITY_DEMO=1 npx prisma db seed` creates fictional constituencies and demo MPs — useful for UI tests without real electoral data.
+4. **Example constituency file:** `prisma/data/constituencies.example.csv` (format only; extend with your EC-aligned master list).
 
 ---
 
-## 2. CSV format
+## 2. Constituency CSV format
+
+- **Header (exact):** `name,slug,region_slug,code`
+- **`region_slug`:** must match `Region.slug` (e.g. `greater-accra`, `ashanti`).
+- **`code`:** optional EC/reference code; may be empty.
+- **Max size:** 2 MB.
+
+---
+
+## 3. MP roster CSV format
 
 - **Encoding:** UTF-8.
 - **Max size:** **2 MB** (see import route).
@@ -37,17 +53,19 @@ name,slug,role,party,constituency_slug,active
 
 ---
 
-## 3. Dry-run workflow (recommended)
+## 4. Dry-run workflow (recommended)
 
 1. Copy **production** or **staging** schema to a **local** or **throwaway** database (never experiment on prod).
-2. Ensure constituencies are loaded for the slugs you will use.
-3. Import a **small CSV** (2–3 rows) and confirm **`/admin/parliament`**, **`/promises`**, and **`GET /api/mps`** look correct.
-4. Fix header/row errors from the JSON response (`error` or per-row messages).
-5. Repeat on **staging** with a full file; then schedule **production** import during a low-traffic window.
+2. **Import constituencies** first if slugs are missing (or use demo seed).
+3. Upload the same MP file you plan to import to **Dry-run reconcile** on **`/admin/parliament`**. Review `wouldCreate`, `wouldUpdate`, `inDatabaseNotInCsv`, and `rowErrors` in the JSON (unknown constituencies, duplicate slugs in file).
+4. **Import** a small MP CSV (2–3 rows) and confirm **`/admin/parliament`**, **`/promises`**, and **`GET /api/mps`**.
+5. Fix header/row errors from JSON responses; repeat on **staging** with a full file; then **production** during a low-traffic window.
+
+**Reconciliation cadence:** After each bulk roster refresh (e.g. quarterly vs parliament.gh), run reconcile against the new export before applying import.
 
 ---
 
-## 4. After import
+## 5. After import
 
 - **Cache:** Import already calls **`revalidateTag`** for roster and promise-related tags; public pages should update within TTL even without redeploy.
 - **Accuracy:** Parliament data is **your editorial responsibility**; align with legal/comms before publishing claims.
