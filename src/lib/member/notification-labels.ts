@@ -28,6 +28,18 @@ export function memberNotificationSummary(type: string, payload: unknown): strin
       return `Your verification was approved in “${String(p.communityName ?? "a community")}”.`;
     case "community_verification_rejected":
       return `Your verification was not approved in “${String(p.communityName ?? "a community")}”.`;
+    case "citizen_report_admin_reply": {
+      const code = String(p.trackingCode ?? "").trim();
+      return code
+        ? `MBKRU added a note to your report ${code}.`
+        : "MBKRU added a note to one of your reports.";
+    }
+    case "citizen_report_admin_reply_visible_again": {
+      const code = String(p.trackingCode ?? "").trim();
+      return code
+        ? `A team note on your report ${code} is visible again (My reports / Track a report).`
+        : "A team note on one of your reports is visible again.";
+    }
     default:
       return type;
   }
@@ -35,6 +47,12 @@ export function memberNotificationSummary(type: string, payload: unknown): strin
 
 export function memberNotificationHref(type: string, payload: unknown): string | null {
   if (type === "identity_verification_updated") return "/account";
+  if (type === "citizen_report_admin_reply" || type === "citizen_report_admin_reply_visible_again") {
+    const p = payload as Record<string, unknown>;
+    const rid = p.reportId;
+    if (typeof rid === "string" && rid.trim()) return `/account/reports/${rid}`;
+    return "/account/reports";
+  }
   const p = payload as Record<string, unknown>;
   const slug = p.communitySlug;
   if (typeof slug !== "string" || !slug.trim()) return null;
@@ -43,5 +61,8 @@ export function memberNotificationHref(type: string, payload: unknown): string |
 
 export function memberNotificationLinkLabel(type: string): string {
   if (type === "identity_verification_updated") return "View account";
+  if (type === "citizen_report_admin_reply" || type === "citizen_report_admin_reply_visible_again") {
+    return "View report";
+  }
   return "Open community";
 }

@@ -6,7 +6,10 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { images } from "@/lib/site-content";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
-import { isPublicVoiceStatisticsEnabled } from "@/lib/reports/accountability-pages";
+import {
+  isCivicPetitionsAndPublicCausesEnabled,
+  isPublicVoiceStatisticsEnabled,
+} from "@/lib/reports/accountability-pages";
 
 export const metadata: Metadata = {
   title: "Digital Platform — MBKRU Voice",
@@ -49,6 +52,7 @@ const keyBenefits = [
 export default async function CitizensVoicePage() {
   const voiceOn = isCitizensVoiceEnabled();
   const showStats = isPublicVoiceStatisticsEnabled();
+  const civicEngagement = isCivicPetitionsAndPublicCausesEnabled();
 
   return (
     <div>
@@ -175,6 +179,22 @@ export default async function CitizensVoicePage() {
                 >
                   Public statistics
                 </Link>
+              ) : null}
+              {civicEngagement ? (
+                <>
+                  <Link
+                    href="/petitions"
+                    className="inline-flex rounded-xl border-2 border-white/40 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
+                  >
+                    Petitions
+                  </Link>
+                  <Link
+                    href="/citizens-voice/causes"
+                    className="inline-flex rounded-xl border-2 border-white/40 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
+                  >
+                    Public causes
+                  </Link>
+                </>
               ) : null}
             </div>
           </div>

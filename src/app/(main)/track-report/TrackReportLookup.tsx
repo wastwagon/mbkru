@@ -7,12 +7,21 @@ import { Button } from "@/components/ui/Button";
 const inputClass =
   "mt-1 block w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 font-mono uppercase tracking-wide text-[var(--foreground)] focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20";
 
+type AdminReplyPayload = {
+  id: string;
+  body: string;
+  createdAt: string;
+};
+
 type StatusPayload = {
   trackingCode: string;
   kind: string;
   status: string;
   createdAt: string;
   updatedAt: string;
+  visibleTeamNoteCount?: number;
+  lastVisibleTeamNoteAt?: string | null;
+  adminReplies?: AdminReplyPayload[];
 };
 
 function Inner() {
@@ -83,6 +92,41 @@ function Inner() {
           <p className="mt-1 text-xs text-[var(--muted-foreground)]">
             Last updated {new Date(result.updatedAt).toLocaleString("en-GB")}
           </p>
+          {(result.visibleTeamNoteCount ?? result.adminReplies?.length ?? 0) > 0 ? (
+            <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+              <span className="font-medium text-[var(--foreground)]">
+                {result.visibleTeamNoteCount ?? result.adminReplies?.length ?? 0} team note
+                {(result.visibleTeamNoteCount ?? result.adminReplies?.length ?? 0) === 1 ? "" : "s"}
+              </span>
+              {result.lastVisibleTeamNoteAt ? (
+                <>
+                  {" "}
+                  · Latest{" "}
+                  {new Date(result.lastVisibleTeamNoteAt).toLocaleString("en-GB", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  })}
+                </>
+              ) : null}
+            </p>
+          ) : null}
+          {result.adminReplies && result.adminReplies.length > 0 ? (
+            <div className="mt-4 border-t border-[var(--border)] pt-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                Notes from MBKRU
+              </p>
+              <ul className="mt-2 space-y-3">
+                {result.adminReplies.map((r) => (
+                  <li key={r.id}>
+                    <p className="text-xs text-[var(--muted-foreground)]">
+                      {new Date(r.createdAt).toLocaleString("en-GB")}
+                    </p>
+                    <p className="mt-1 whitespace-pre-wrap text-sm text-[var(--foreground)]">{r.body}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
       ) : null}
       <Button type="submit" disabled={loading}>

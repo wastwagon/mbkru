@@ -38,4 +38,21 @@ describe("notification-labels", () => {
     expect(memberNotificationLinkLabel("identity_verification_updated")).toBe("View account");
     expect(memberNotificationLinkLabel("community_join_approved")).toBe("Open community");
   });
+
+  it("summarizes citizen report admin reply", () => {
+    expect(
+      memberNotificationSummary("citizen_report_admin_reply", { trackingCode: "ABC123" }),
+    ).toContain("ABC123");
+    expect(memberNotificationHref("citizen_report_admin_reply", { reportId: "rid1" })).toBe("/account/reports/rid1");
+    expect(memberNotificationLinkLabel("citizen_report_admin_reply")).toBe("View report");
+  });
+
+  it("summarizes visible-again admin reply notification", () => {
+    expect(
+      memberNotificationSummary("citizen_report_admin_reply_visible_again", { trackingCode: "T1" }),
+    ).toContain("visible again");
+    expect(
+      memberNotificationHref("citizen_report_admin_reply_visible_again", { reportId: "r2" }),
+    ).toBe("/account/reports/r2");
+  });
 });

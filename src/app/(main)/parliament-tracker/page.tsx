@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { PromiseTrackerStatsStrip } from "@/components/accountability/PromiseTrackerStatsStrip";
 import { TrackerSignupForm } from "@/components/forms/TrackerSignupForm";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
+import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { images } from "@/lib/site-content";
 import { isPromisesBrowseEnabled, isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
+import { getCachedMpsPublicRoster } from "@/lib/server/accountability-cache";
+import { getPromiseTrackerStats } from "@/lib/server/promise-tracker-stats";
 
 export const metadata: Metadata = {
   title: "Accountability & Electoral Watch",
@@ -34,6 +38,11 @@ const accountabilityStepIcons = {
 export default async function ParliamentTrackerPage() {
   const showPromises = isPromisesBrowseEnabled();
   const showReportCard = isReportCardPublicEnabled();
+
+  const dbReady = isDatabaseConfigured();
+  const [trackerStats, mpRoster] = dbReady
+    ? await Promise.all([getPromiseTrackerStats("all"), getCachedMpsPublicRoster()])
+    : [null, [] as Awaited<ReturnType<typeof getCachedMpsPublicRoster>>];
 
   const accountabilityTools = [
     {
@@ -67,6 +76,72 @@ export default async function ParliamentTrackerPage() {
         title="Accountability & Electoral Watch"
         description="Accountability & Electoral Watch — People's Report Cards, campaign tracking, and Accountability Scorecards."
       />
+
+      {dbReady && trackerStats ? (
+        <section className="section-spacing section-full bg-[var(--section-light)] pb-10">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <PromiseTrackerStatsStrip
+              stats={trackerStats}
+              subtitle="Use Browse promises for live filters; roster below lists every active MP in the database (including zero-promise rows)."
+            />
+            <div className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6">
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <h2 className="font-display text-lg font-bold text-[var(--foreground)]">Parliamentary roster</h2>
+                  <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+                    {mpRoster.length} active MP{mpRoster.length === 1 ? "" : "s"} in catalogue. Open promise pages or the{" "}
+                    <Link href="/api/mps" className="text-[var(--primary)] hover:underline">
+                      JSON roster
+                    </Link>
+                    .
+                  </p>
+                </div>
+                {showPromises ? (
+                  <Link
+                    href="/promises"
+                    className="text-sm font-medium text-[var(--primary)] hover:underline"
+                  >
+                    Promises by MP →
+                  </Link>
+                ) : null}
+              </div>
+              {mpRoster.length === 0 ? (
+                <p className="mt-6 text-sm text-[var(--muted-foreground)]">
+                  No parliament members loaded yet. Run seed with bundled MP JSON or import via admin.
+                </p>
+              ) : (
+                <ul className="mt-6 max-h-[min(28rem,55vh)] divide-y divide-[var(--border)] overflow-y-auto rounded-xl border border-[var(--border)]">
+                  {mpRoster.map((m) => (
+                    <li key={m.slug} className="flex flex-wrap items-baseline justify-between gap-2 px-3 py-2.5 text-sm hover:bg-[var(--section-light)]/50">
+                      <div className="min-w-0">
+                        {showPromises && m.promiseCount > 0 ? (
+                          <Link
+                            href={`/promises/${encodeURIComponent(m.slug)}`}
+                            className="font-medium text-[var(--primary)] hover:underline"
+                          >
+                            {m.name}
+                          </Link>
+                        ) : (
+                          <span className="font-medium text-[var(--foreground)]">{m.name}</span>
+                        )}
+                        <span className="text-[var(--muted-foreground)]">
+                          {" "}
+                          · {m.role}
+                          {m.party ? ` · ${m.party}` : ""}
+                          {m.constituencyName ? ` · ${m.constituencyName}` : ""}
+                        </span>
+                      </div>
+                      <span className="shrink-0 tabular-nums text-xs text-[var(--muted-foreground)]">
+                        {m.promiseCount} promise{m.promiseCount === 1 ? "" : "s"}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       {/* Hero section — full-width with hero image */}
       <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-white">

@@ -6,9 +6,23 @@ import { redirect } from "next/navigation";
 import { parseUtcDatetimeLocalInput } from "@/lib/admin/report-operations-datetime";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { logCitizenReportAdminReplyAudit } from "@/lib/server/citizen-report-admin-reply-audit";
+import {
+  sendReportAdminReplyEmail,
+  sendReportAdminReplyVisibleAgainEmail,
+} from "@/lib/server/send-report-admin-reply-email";
+import { createMemberNotification } from "@/lib/server/member-notifications";
 import { sendReportStatusNotification } from "@/lib/server/send-report-status-email";
-import { sendReportStatusSms } from "@/lib/server/send-report-status-sms";
-import { operationsPlaybookKeyField, staffNotesField } from "@/lib/validation/admin-reports";
+import {
+  sendReportAdminReplySms,
+  sendReportAdminReplyVisibleAgainSms,
+  sendReportStatusSms,
+} from "@/lib/server/send-report-status-sms";
+import {
+  adminReplyToSubmitterField,
+  operationsPlaybookKeyField,
+  staffNotesField,
+} from "@/lib/validation/admin-reports";
 import type { CitizenReportStatus } from "@prisma/client";
 
 const STATUSES: CitizenReportStatus[] = [
@@ -137,4 +151,279 @@ export async function updateCitizenReportOperationsAction(formData: FormData) {
   revalidatePath("/admin/reports");
   revalidatePath(`/admin/reports/${id}`);
   redirect(`/admin/reports/${id}?saved=ops`);
+}
+
+export async function addCitizenReportAdminReplyAction(formData: FormData) {
+  const adminSession = await requireAdminSession();
+
+  const id = formData.get("reportId");
+  if (typeof id !== "string" || !id) {
+    redirect("/admin/reports?error=invalid");
+  }
+
+  const bodyParsed = adminReplyToSubmitterField.safeParse(formData.get("body"));
+  if (!bodyParsed.success) {
+    redirect(`/admin/reports/${id}?error=reply_invalid`);
+  }
+
+  const sendEmail = formData.get("notifyEmail") === "on";
+  const sendSms = formData.get("notifySms") === "on";
+
+  const report = await prisma.citizenReport.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      trackingCode: true,
+      kind: true,
+      memberId: true,
+      submitterEmail: true,
+      submitterPhone: true,
+      member: { select: { email: true, phone: true } },
+    },
+  });
+  if (!report) {
+    redirect("/admin/reports?error=notfound");
+  }
+
+  const created = await prisma.citizenReportAdminReply.create({
+    data: {
+      reportId: report.id,
+      adminId: adminSession.adminId,
+      body: bodyParsed.data,
+    },
+    select: { id: true },
+  });
+
+  await logCitizenReportAdminReplyAudit({
+    replyId: created.id,
+    reportId: report.id,
+    adminId: adminSession.adminId,
+    action: "REPLY_POSTED",
+    details: { visibleToSubmitter: true },
+  });
+
+  if (report.memberId) {
+    await createMemberNotification(report.memberId, "citizen_report_admin_reply", {
+      trackingCode: report.trackingCode,
+      reportId: report.id,
+    });
+  }
+
+  if (sendEmail) {
+    const to = report.submitterEmail ?? report.member?.email;
+    if (to) {
+      await sendReportAdminReplyEmail({
+        to,
+        trackingCode: report.trackingCode,
+        kind: report.kind,
+        replyBody: bodyParsed.data,
+      });
+    }
+  }
+
+  if (sendSms) {
+    const memberPhone = report.member?.phone?.trim();
+    const submitterPhone = report.submitterPhone?.trim();
+    const smsTo = memberPhone?.startsWith("+")
+      ? memberPhone
+      : submitterPhone?.startsWith("+")
+        ? submitterPhone
+        : undefined;
+    if (smsTo) {
+      await sendReportAdminReplySms({
+        to: smsTo,
+        trackingCode: report.trackingCode,
+        kind: report.kind,
+      });
+    }
+  }
+
+  revalidatePath("/admin/reports");
+  revalidatePath(`/admin/reports/${id}`);
+  revalidatePath("/account/reports");
+  revalidatePath(`/account/reports/${id}`);
+  redirect(`/admin/reports/${id}?saved=reply`);
+}
+
+export async function updateCitizenReportAdminReplyAction(formData: FormData) {
+  const adminSession = await requireAdminSession();
+
+  const reportId = formData.get("reportId");
+  const replyId = formData.get("replyId");
+  if (typeof reportId !== "string" || !reportId || typeof replyId !== "string" || !replyId) {
+    redirect("/admin/reports?error=invalid");
+  }
+
+  const bodyParsed = adminReplyToSubmitterField.safeParse(formData.get("body"));
+  if (!bodyParsed.success) {
+    redirect(`/admin/reports/${reportId}?error=reply_invalid`);
+  }
+
+  const sendEmail = formData.get("notifyEmail") === "on";
+  const sendSms = formData.get("notifySms") === "on";
+
+  const row = await prisma.citizenReportAdminReply.findFirst({
+    where: { id: replyId, reportId },
+    select: { id: true },
+  });
+  if (!row) {
+    redirect("/admin/reports?error=notfound");
+  }
+
+  await prisma.citizenReportAdminReply.update({
+    where: { id: replyId },
+    data: { body: bodyParsed.data, editedByAdminId: adminSession.adminId },
+  });
+
+  await logCitizenReportAdminReplyAudit({
+    replyId,
+    reportId,
+    adminId: adminSession.adminId,
+    action: "REPLY_EDITED",
+    details: { bodyLength: bodyParsed.data.length },
+  });
+
+  if (sendEmail || sendSms) {
+    const report = await prisma.citizenReport.findUnique({
+      where: { id: reportId },
+      select: {
+        trackingCode: true,
+        kind: true,
+        submitterEmail: true,
+        submitterPhone: true,
+        member: { select: { email: true, phone: true } },
+      },
+    });
+    if (report) {
+      if (sendEmail) {
+        const to = report.submitterEmail ?? report.member?.email;
+        if (to) {
+          await sendReportAdminReplyEmail({
+            to,
+            trackingCode: report.trackingCode,
+            kind: report.kind,
+            replyBody: bodyParsed.data,
+            isUpdate: true,
+          });
+        }
+      }
+      if (sendSms) {
+        const memberPhone = report.member?.phone?.trim();
+        const submitterPhone = report.submitterPhone?.trim();
+        const smsTo = memberPhone?.startsWith("+")
+          ? memberPhone
+          : submitterPhone?.startsWith("+")
+            ? submitterPhone
+            : undefined;
+        if (smsTo) {
+          await sendReportAdminReplySms({
+            to: smsTo,
+            trackingCode: report.trackingCode,
+            kind: report.kind,
+            isUpdate: true,
+          });
+        }
+      }
+    }
+  }
+
+  revalidatePath("/admin/reports");
+  revalidatePath(`/admin/reports/${reportId}`);
+  revalidatePath("/account/reports");
+  revalidatePath(`/account/reports/${reportId}`);
+  redirect(`/admin/reports/${reportId}?saved=reply_edit`);
+}
+
+export async function setCitizenReportAdminReplyVisibilityAction(formData: FormData) {
+  const adminSession = await requireAdminSession();
+
+  const reportId = formData.get("reportId");
+  const replyId = formData.get("replyId");
+  const visibleRaw = formData.get("visible");
+  if (typeof reportId !== "string" || !reportId || typeof replyId !== "string" || !replyId) {
+    redirect("/admin/reports?error=invalid");
+  }
+  if (visibleRaw !== "0" && visibleRaw !== "1") {
+    redirect(`/admin/reports/${reportId}?error=invalid`);
+  }
+  const visibleToSubmitter = visibleRaw === "1";
+  const notifyUnhideEmail = formData.get("notifyUnhideEmail") === "on";
+  const notifyUnhideSms = formData.get("notifyUnhideSms") === "on";
+
+  const row = await prisma.citizenReportAdminReply.findFirst({
+    where: { id: replyId, reportId },
+    select: { id: true, visibleToSubmitter: true },
+  });
+  if (!row) {
+    redirect("/admin/reports?error=notfound");
+  }
+
+  const wasVisible = row.visibleToSubmitter;
+
+  await prisma.citizenReportAdminReply.update({
+    where: { id: replyId },
+    data: { visibleToSubmitter },
+  });
+
+  await logCitizenReportAdminReplyAudit({
+    replyId,
+    reportId,
+    adminId: adminSession.adminId,
+    action: "REPLY_VISIBILITY",
+    details: { from: wasVisible, to: visibleToSubmitter },
+  });
+
+  if (visibleToSubmitter && !wasVisible) {
+    const report = await prisma.citizenReport.findUnique({
+      where: { id: reportId },
+      select: {
+        memberId: true,
+        trackingCode: true,
+        kind: true,
+        submitterEmail: true,
+        submitterPhone: true,
+        member: { select: { email: true, phone: true } },
+      },
+    });
+    if (report?.memberId) {
+      await createMemberNotification(report.memberId, "citizen_report_admin_reply_visible_again", {
+        trackingCode: report.trackingCode,
+        reportId,
+      });
+    }
+
+    if (notifyUnhideEmail && report) {
+      const to = report.submitterEmail ?? report.member?.email;
+      if (to) {
+        await sendReportAdminReplyVisibleAgainEmail({
+          to,
+          trackingCode: report.trackingCode,
+          kind: report.kind,
+        });
+      }
+    }
+
+    if (notifyUnhideSms && report) {
+      const memberPhone = report.member?.phone?.trim();
+      const submitterPhone = report.submitterPhone?.trim();
+      const smsTo = memberPhone?.startsWith("+")
+        ? memberPhone
+        : submitterPhone?.startsWith("+")
+          ? submitterPhone
+          : undefined;
+      if (smsTo) {
+        await sendReportAdminReplyVisibleAgainSms({
+          to: smsTo,
+          trackingCode: report.trackingCode,
+          kind: report.kind,
+        });
+      }
+    }
+  }
+
+  revalidatePath("/admin/reports");
+  revalidatePath(`/admin/reports/${reportId}`);
+  revalidatePath("/account/reports");
+  revalidatePath(`/account/reports/${reportId}`);
+  redirect(`/admin/reports/${reportId}?saved=reply_visibility`);
 }

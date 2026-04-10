@@ -2,10 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+import { PromiseTrackerStatsStrip } from "@/components/accountability/PromiseTrackerStatsStrip";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { getCachedPublishedReportCardCycles } from "@/lib/server/accountability-cache";
 import { isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
+import { getPromiseTrackerStats } from "@/lib/server/promise-tracker-stats";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +19,10 @@ export const metadata: Metadata = {
 export default async function ReportCardIndexPage() {
   if (!isReportCardPublicEnabled() || !isDatabaseConfigured()) notFound();
 
-  const cycles = await getCachedPublishedReportCardCycles();
+  const [cycles, trackerStats] = await Promise.all([
+    getCachedPublishedReportCardCycles(),
+    getPromiseTrackerStats("all"),
+  ]);
 
   return (
     <div>
@@ -35,7 +40,16 @@ export default async function ReportCardIndexPage() {
             <Link href="/promises" className="text-[var(--primary)] hover:underline">
               Campaign promises
             </Link>
+            {" · "}
+            <Link href="/parliament-tracker" className="text-[var(--primary)] hover:underline">
+              Accountability hub
+            </Link>
           </p>
+
+          <PromiseTrackerStatsStrip
+            stats={trackerStats}
+            subtitle="Cross-links promises, MPs, and published scorecard rows — same aggregates as the promise browser."
+          />
 
           {cycles.length === 0 ? (
             <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">

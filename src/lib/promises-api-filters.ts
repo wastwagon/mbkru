@@ -18,7 +18,11 @@ export type PromisesApiFilters = {
   policySector: string;
   /** Empty string = all statuses. */
   status: string;
+  /** Title/description contains (case-insensitive); capped length for API safety. */
+  q: string;
 };
+
+const MAX_Q_LEN = 120;
 
 export function parsePromisesApiFilters(url: URL): PromisesApiFilters {
   const sp = url.searchParams;
@@ -32,6 +36,9 @@ export function parsePromisesApiFilters(url: URL): PromisesApiFilters {
   const sectorRaw = sp.get("policySector")?.trim().toUpperCase() ?? "";
   const policySector = isPolicySectorValue(sectorRaw) ? sectorRaw : "";
 
+  const qRaw = sp.get("q")?.trim() ?? "";
+  const q = qRaw.length > MAX_Q_LEN ? qRaw.slice(0, MAX_Q_LEN) : qRaw;
+
   return {
     memberSlug: sp.get("memberSlug")?.trim().toLowerCase() ?? "",
     partySlug: sp.get("partySlug")?.trim().toLowerCase() ?? "",
@@ -39,5 +46,6 @@ export function parsePromisesApiFilters(url: URL): PromisesApiFilters {
     governmentOnly,
     policySector,
     status,
+    q,
   };
 }

@@ -38,6 +38,14 @@ function buildMainNav(phase: ReturnType<typeof getPublicPlatformPhase>): NavEntr
     { href: "/citizens-voice", label: "Voice" },
     { href: "/situational-alerts", label: "Engagement" },
   ];
+  if (platformFeatures.citizensVoicePlatform(phase)) {
+    participate.push({ href: "/petitions", label: "Petitions", activeWhenPathStartsWith: "/petitions" });
+    participate.push({
+      href: "/citizens-voice/causes",
+      label: "Public causes",
+      activeWhenPathStartsWith: "/citizens-voice/causes",
+    });
+  }
   if (platformFeatures.citizensVoicePlatform(phase) && platformFeatures.publicVoiceStatistics(phase)) {
     participate.push({ href: "/transparency", label: "Voice stats" });
   }

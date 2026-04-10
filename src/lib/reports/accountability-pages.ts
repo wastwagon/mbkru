@@ -29,3 +29,8 @@ export function isCommunitiesBrowseEnabled(): boolean {
 export function isWhistleblowerGuidancePageEnabled(): boolean {
   return platformFeatures.whistleblowerGuidance(getServerPlatformPhase());
 }
+
+/** Petitions + public Voice “cause” threads (Phase 2+ Voice pillar). */
+export function isCivicPetitionsAndPublicCausesEnabled(): boolean {
+  return platformFeatures.citizensVoicePlatform(getServerPlatformPhase());
+}

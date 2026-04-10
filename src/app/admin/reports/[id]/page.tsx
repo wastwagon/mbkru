@@ -2,6 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import {
+  hidePublicCauseCommentAction,
+  updatePublicCauseThreadAction,
+} from "@/app/admin/reports/public-cause-actions";
+import {
+  addCitizenReportAdminReplyAction,
+  setCitizenReportAdminReplyVisibilityAction,
+  updateCitizenReportAdminReplyAction,
   updateCitizenReportOperationsAction,
   updateCitizenReportStatusAction,
 } from "@/app/admin/reports/actions";
@@ -39,12 +46,34 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
       constituency: true,
       member: { select: { id: true, email: true, displayName: true, phone: true } },
       attachments: { orderBy: { createdAt: "asc" } },
+      publicCauseComments: {
+        orderBy: { createdAt: "desc" },
+        take: 50,
+        include: { member: { select: { email: true, displayName: true } } },
+      },
+      adminReplies: {
+        orderBy: { createdAt: "asc" },
+        include: {
+          admin: { select: { email: true } },
+          editedBy: { select: { email: true } },
+        },
+      },
     },
   });
 
   if (!report) notFound();
 
+  const replyAuditLogs = await prisma.citizenReportAdminReplyAuditLog.findMany({
+    where: { reportId: report.id },
+    orderBy: { createdAt: "desc" },
+    take: 80,
+    include: { admin: { select: { email: true } } },
+  });
+
   const slaOverdue = isCitizenReportSlaOverdue(report.slaDueAt, report.status);
+  const smsEligible = Boolean(
+    report.submitterPhone?.trim().startsWith("+") || report.member?.phone?.trim().startsWith("+"),
+  );
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
@@ -58,11 +87,72 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
           Operations fields saved.
         </p>
       ) : null}
+      {sp.saved === "cause" ? (
+        <p className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900" role="status">
+          Public cause settings saved.
+        </p>
+      ) : null}
+      {sp.saved === "comment" ? (
+        <p className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900" role="status">
+          Comment updated.
+        </p>
+      ) : null}
+      {sp.saved === "reply" ? (
+        <p className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900" role="status">
+          Submitter-visible note posted.
+        </p>
+      ) : null}
+      {sp.saved === "reply_edit" ? (
+        <p className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900" role="status">
+          Note updated.
+        </p>
+      ) : null}
+      {sp.saved === "reply_visibility" ? (
+        <p className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900" role="status">
+          Note visibility saved.
+        </p>
+      ) : null}
+      {sp.error === "reply_invalid" ? (
+        <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
+          Enter a non-empty message for the team note (max 12,000 characters).
+        </p>
+      ) : null}
+      {sp.error === "cause_invalid" ? (
+        <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
+          Check slug (lowercase, hyphens), title, and summary length for the public cause.
+        </p>
+      ) : null}
+      {sp.error === "cause_slug_clash" ? (
+        <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
+          That public URL slug is already used on another report.
+        </p>
+      ) : null}
 
       <p className="text-sm text-[var(--muted-foreground)]">
         <Link href="/admin/reports" className="text-[var(--primary)] hover:underline">
           ← All reports
         </Link>
+        {report.publicCauseOpenedAt != null || (report.publicCauseSlug?.trim() ?? "").length > 0 ? (
+          <>
+            {" · "}
+            <Link href="/admin/public-causes" className="text-[var(--primary)] hover:underline">
+              Public causes queue
+            </Link>
+            {report.publicCauseOpenedAt != null && report.publicCauseSlug?.trim() ? (
+              <>
+                {" · "}
+                <Link
+                  href={`/citizens-voice/causes/${encodeURIComponent(report.publicCauseSlug.trim())}`}
+                  className="text-[var(--primary)] hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Live page
+                </Link>
+              </>
+            ) : null}
+          </>
+        ) : null}
       </p>
 
       <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)] line-clamp-2">
@@ -180,6 +270,221 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
         </pre>
       </div>
 
+      <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">Submitter-visible notes</h2>
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          Shown to the reporter on <strong className="text-[var(--foreground)]">My reports</strong> (signed-in) and on{" "}
+          <strong className="text-[var(--foreground)]">Track a report</strong> when they enter this tracking code. You
+          can edit wording, or hide a note from the submitter without deleting it. This is not the same as internal
+          staff notes below — do not paste the private narrative here.
+        </p>
+        {report.adminReplies.length > 0 ? (
+          <ul className="mt-4 space-y-6 border-t border-[var(--border)] pt-4">
+            {report.adminReplies.map((r) => {
+              const edited = r.updatedAt.getTime() !== r.createdAt.getTime();
+              return (
+                <li
+                  key={r.id}
+                  className={`rounded-xl border p-4 text-sm ${
+                    r.visibleToSubmitter ? "border-[var(--border)]" : "border-amber-300 bg-amber-50/40"
+                  }`}
+                >
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--muted-foreground)]">
+                    <span>{r.createdAt.toISOString().slice(0, 16)} UTC</span>
+                    {edited ? (
+                      <span className="rounded bg-[var(--muted)]/30 px-1.5 py-0.5">edited</span>
+                    ) : null}
+                    {!r.visibleToSubmitter ? (
+                      <span className="rounded bg-amber-200/80 px-1.5 py-0.5 font-medium text-amber-950">
+                        Hidden from submitter
+                      </span>
+                    ) : null}
+                    {r.admin?.email ? (
+                      <span className="font-mono text-[var(--foreground)]">{r.admin.email}</span>
+                    ) : (
+                      <span>(admin record removed)</span>
+                    )}
+                  </div>
+                  {r.editedBy?.email ? (
+                    <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                      Last edited by <span className="font-mono text-[var(--foreground)]">{r.editedBy.email}</span>
+                    </p>
+                  ) : null}
+                  <form action={updateCitizenReportAdminReplyAction} className="mt-3 space-y-2">
+                    <input type="hidden" name="reportId" value={report.id} />
+                    <input type="hidden" name="replyId" value={r.id} />
+                    <textarea
+                      name="body"
+                      rows={4}
+                      maxLength={12000}
+                      required
+                      defaultValue={r.body}
+                      className="w-full rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm"
+                    />
+                    <label className="flex items-start gap-2 text-xs text-[var(--foreground)]">
+                      <input type="checkbox" name="notifyEmail" className="mt-0.5 h-4 w-4 rounded border-[var(--border)]" />
+                      <span>
+                        Email the submitter this updated text (<code className="text-[10px]">RESEND_API_KEY</code>)
+                      </span>
+                    </label>
+                    {smsEligible ? (
+                      <label className="flex items-start gap-2 text-xs text-[var(--foreground)]">
+                        <input type="checkbox" name="notifySms" className="mt-0.5 h-4 w-4 rounded border-[var(--border)]" />
+                        <span>
+                          SMS a short “updated note” alert (<code className="text-[10px]">SMS_PROVIDER</code>)
+                        </span>
+                      </label>
+                    ) : null}
+                    <button
+                      type="submit"
+                      className="rounded-lg border border-[var(--border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--foreground)] hover:bg-[var(--muted)]/15"
+                    >
+                      Save changes
+                    </button>
+                  </form>
+                  <form action={setCitizenReportAdminReplyVisibilityAction} className="mt-3 space-y-2">
+                    <input type="hidden" name="reportId" value={report.id} />
+                    <input type="hidden" name="replyId" value={r.id} />
+                    <input type="hidden" name="visible" value={r.visibleToSubmitter ? "0" : "1"} />
+                    {!r.visibleToSubmitter ? (
+                      <>
+                        <label className="flex items-start gap-2 text-xs text-[var(--foreground)]">
+                          <input
+                            type="checkbox"
+                            name="notifyUnhideEmail"
+                            className="mt-0.5 h-4 w-4 rounded border-[var(--border)]"
+                          />
+                          <span>
+                            Email the submitter that a note is visible again (
+                            <code className="text-[10px]">RESEND_API_KEY</code>)
+                          </span>
+                        </label>
+                        {smsEligible ? (
+                          <label className="flex items-start gap-2 text-xs text-[var(--foreground)]">
+                            <input
+                              type="checkbox"
+                              name="notifyUnhideSms"
+                              className="mt-0.5 h-4 w-4 rounded border-[var(--border)]"
+                            />
+                            <span>
+                              SMS a short alert (<code className="text-[10px]">SMS_PROVIDER</code>)
+                            </span>
+                          </label>
+                        ) : null}
+                        {report.memberId ? (
+                          <p className="text-xs text-[var(--muted-foreground)]">
+                            Signed-in members also get an in-app notification when you show the note again.
+                          </p>
+                        ) : null}
+                      </>
+                    ) : null}
+                    <button
+                      type="submit"
+                      className="block text-xs font-medium text-[var(--primary)] hover:underline"
+                    >
+                      {r.visibleToSubmitter ? "Hide from submitter (track + account)" : "Show to submitter again"}
+                    </button>
+                  </form>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p className="mt-4 text-sm text-[var(--muted-foreground)]">No notes yet.</p>
+        )}
+        <form action={addCitizenReportAdminReplyAction} className="mt-6 border-t border-[var(--border)] pt-5">
+          <input type="hidden" name="reportId" value={report.id} />
+          <label htmlFor="adminReplyBody" className="block text-sm font-medium text-[var(--foreground)]">
+            Add note
+          </label>
+          <textarea
+            id="adminReplyBody"
+            name="body"
+            rows={5}
+            maxLength={12000}
+            required
+            placeholder="Short update the submitter can safely read…"
+            className="mt-2 w-full rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm"
+          />
+          <label className="mt-3 flex items-start gap-2 text-sm text-[var(--foreground)]">
+            <input type="checkbox" name="notifyEmail" className="mt-1 h-4 w-4 rounded border-[var(--border)]" />
+            <span>
+              Also email this note to the submitter address on file (needs{" "}
+              <code className="text-xs">RESEND_API_KEY</code>).
+            </span>
+          </label>
+          {smsEligible ? (
+            <label className="mt-2 flex items-start gap-2 text-sm text-[var(--foreground)]">
+              <input type="checkbox" name="notifySms" className="mt-1 h-4 w-4 rounded border-[var(--border)]" />
+              <span>
+                Also SMS a short alert (E.164 number on file; needs{" "}
+                <code className="text-xs">SMS_PROVIDER</code>).
+              </span>
+            </label>
+          ) : (
+            <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+              SMS alert requires a valid E.164 number on the member profile or submitter phone field.
+            </p>
+          )}
+          {report.memberId ? (
+            <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+              Signed-in members also receive an in-app notification automatically.
+            </p>
+          ) : null}
+          <button
+            type="submit"
+            className="mt-4 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
+          >
+            Post note
+          </button>
+        </form>
+      </div>
+
+      <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">Team note audit trail</h2>
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          Append-only log of posts, edits, and visibility changes (no full message bodies stored here).
+        </p>
+        {replyAuditLogs.length === 0 ? (
+          <p className="mt-4 text-sm text-[var(--muted-foreground)]">No audit entries yet.</p>
+        ) : (
+          <ul className="mt-4 max-h-80 space-y-2 overflow-y-auto text-xs">
+            {replyAuditLogs.map((log) => {
+              const label =
+                log.action === "REPLY_POSTED"
+                  ? "Posted"
+                  : log.action === "REPLY_EDITED"
+                    ? "Edited"
+                    : log.action === "REPLY_VISIBILITY"
+                      ? "Visibility"
+                      : log.action;
+              return (
+                <li
+                  key={log.id}
+                  className="rounded-lg border border-[var(--border)] bg-[var(--section-light)]/30 px-3 py-2 font-mono text-[11px] text-[var(--muted-foreground)]"
+                >
+                  <span className="text-[var(--foreground)]">{label}</span>
+                  {" · "}
+                  {log.createdAt.toISOString().slice(0, 19)}Z · reply{" "}
+                  <span className="text-[var(--foreground)]">{log.replyId.slice(0, 8)}…</span>
+                  {log.admin?.email ? (
+                    <>
+                      {" · "}
+                      <span className="text-[var(--foreground)]">{log.admin.email}</span>
+                    </>
+                  ) : null}
+                  {log.details != null ? (
+                    <span className="mt-1 block whitespace-pre-wrap break-all text-[10px] opacity-90">
+                      {JSON.stringify(log.details)}
+                    </span>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+
       {report.attachments.length > 0 ? (
         <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
           <h2 className="text-sm font-semibold text-[var(--foreground)]">Attachments</h2>
@@ -214,6 +519,116 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
                 </li>
               );
             })}
+          </ul>
+        </div>
+      ) : null}
+
+      <form
+        action={updatePublicCauseThreadAction}
+        className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5"
+      >
+        <input type="hidden" name="id" value={report.id} />
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">Public cause thread</h2>
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          Publishes a <strong className="text-[var(--foreground)]">sanitized summary only</strong> at{" "}
+          <code className="text-xs">/citizens-voice/causes/[slug]</code>. Never copy-paste the full private narrative
+          here. Use a short headline and a vetted public summary. Members can support and comment on the public page.
+        </p>
+        <div className="mt-4 space-y-4">
+          <div>
+            <label htmlFor="publicCauseSlug" className="block text-sm font-medium text-[var(--foreground)]">
+              URL slug
+            </label>
+            <input
+              id="publicCauseSlug"
+              name="publicCauseSlug"
+              type="text"
+              defaultValue={report.publicCauseSlug ?? ""}
+              placeholder="e.g. market-access-road"
+              className="mt-1 w-full rounded-xl border border-[var(--border)] px-4 py-2.5 font-mono text-sm"
+            />
+          </div>
+          <div>
+            <label htmlFor="publicCauseTitle" className="block text-sm font-medium text-[var(--foreground)]">
+              Public headline
+            </label>
+            <input
+              id="publicCauseTitle"
+              name="publicCauseTitle"
+              type="text"
+              maxLength={240}
+              defaultValue={report.publicCauseTitle ?? ""}
+              className="mt-1 w-full rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm"
+            />
+          </div>
+          <div>
+            <label htmlFor="publicCauseSummary" className="block text-sm font-medium text-[var(--foreground)]">
+              Public summary (shown on site)
+            </label>
+            <textarea
+              id="publicCauseSummary"
+              name="publicCauseSummary"
+              rows={8}
+              maxLength={12000}
+              defaultValue={report.publicCauseSummary ?? ""}
+              className="mt-1 w-full rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm"
+            />
+          </div>
+          <label className="flex items-center gap-2 text-sm text-[var(--foreground)]">
+            <input
+              type="checkbox"
+              name="publish"
+              defaultChecked={Boolean(report.publicCauseOpenedAt)}
+              className="h-4 w-4 rounded border-[var(--border)]"
+            />
+            Publish (sets open timestamp the first time)
+          </label>
+          <label className="flex items-center gap-2 text-sm text-[var(--foreground)]">
+            <input
+              type="checkbox"
+              name="close"
+              defaultChecked={report.publicCauseClosed}
+              className="h-4 w-4 rounded border-[var(--border)]"
+            />
+            Close thread (read-only on public page)
+          </label>
+          <label className="flex items-center gap-2 text-sm text-amber-900">
+            <input type="checkbox" name="unpublish" className="h-4 w-4 rounded border-[var(--border)]" />
+            Remove public cause entirely (clears slug, summary, and comments remain in DB but hidden from public)
+          </label>
+        </div>
+        <button
+          type="submit"
+          className="mt-5 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
+        >
+          Save public cause
+        </button>
+      </form>
+
+      {report.publicCauseComments.length > 0 ? (
+        <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
+          <h2 className="text-sm font-semibold text-[var(--foreground)]">Public cause comments</h2>
+          <ul className="mt-4 space-y-4">
+            {report.publicCauseComments.map((c) => (
+              <li key={c.id} className="border-b border-[var(--border)] pb-4 text-sm last:border-0">
+                <p className="text-xs text-[var(--muted-foreground)]">
+                  {c.member.displayName ?? c.member.email} · {c.status} · {c.createdAt.toISOString().slice(0, 16)}
+                </p>
+                <p className="mt-2 whitespace-pre-wrap text-[var(--foreground)]">{c.body}</p>
+                {c.status === "VISIBLE" ? (
+                  <form action={hidePublicCauseCommentAction} className="mt-2">
+                    <input type="hidden" name="commentId" value={c.id} />
+                    <input type="hidden" name="reportId" value={report.id} />
+                    <button
+                      type="submit"
+                      className="text-xs font-medium text-red-700 hover:underline"
+                    >
+                      Hide comment
+                    </button>
+                  </form>
+                ) : null}
+              </li>
+            ))}
           </ul>
         </div>
       ) : null}

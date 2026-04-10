@@ -1,6 +1,11 @@
 import "server-only";
 
-import { buildReportStatusSmsBody, reportKindLabel } from "@/lib/report-status-text";
+import {
+  buildReportAdminReplySmsBody,
+  buildReportAdminReplyVisibleAgainSmsBody,
+  buildReportStatusSmsBody,
+  reportKindLabel,
+} from "@/lib/report-status-text";
 import type { CitizenReportKind, CitizenReportStatus } from "@prisma/client";
 
 export type SmsSendMode = "skipped" | "sent" | "failed";
@@ -92,6 +97,77 @@ export async function sendReportStatusSms(params: {
 
   if (provider === "log") {
     console.info("[report-status-sms] log provider →", maskPhone(to), body);
+    return { mode: "sent" };
+  }
+
+  return sendViaTwilio(to, body);
+}
+
+/** Optional SMS when staff posts a team note (`SMS_PROVIDER=log` or `twilio`). */
+export async function sendReportAdminReplySms(params: {
+  to: string;
+  trackingCode: string;
+  kind: CitizenReportKind;
+  isUpdate?: boolean;
+}): Promise<SendResult> {
+  const provider = getProvider();
+  const to = params.to.trim();
+  if (!to.startsWith("+")) {
+    console.warn("[report-admin-reply-sms] reject non-E.164 to", maskPhone(to));
+    return { mode: "failed", detail: "phone_not_e164" };
+  }
+
+  const body = buildReportAdminReplySmsBody({
+    kind: params.kind,
+    trackingCode: params.trackingCode,
+    isUpdate: params.isUpdate,
+  });
+
+  if (provider === "none") {
+    console.info(
+      "[report-admin-reply-sms] SMS_PROVIDER unset — skip SMS to",
+      maskPhone(to),
+      `(${reportKindLabel(params.kind)})`,
+    );
+    return { mode: "skipped" };
+  }
+
+  if (provider === "log") {
+    console.info("[report-admin-reply-sms] log provider →", maskPhone(to), body);
+    return { mode: "sent" };
+  }
+
+  return sendViaTwilio(to, body);
+}
+
+export async function sendReportAdminReplyVisibleAgainSms(params: {
+  to: string;
+  trackingCode: string;
+  kind: CitizenReportKind;
+}): Promise<SendResult> {
+  const provider = getProvider();
+  const to = params.to.trim();
+  if (!to.startsWith("+")) {
+    console.warn("[report-admin-reply-visible-sms] reject non-E.164 to", maskPhone(to));
+    return { mode: "failed", detail: "phone_not_e164" };
+  }
+
+  const body = buildReportAdminReplyVisibleAgainSmsBody({
+    kind: params.kind,
+    trackingCode: params.trackingCode,
+  });
+
+  if (provider === "none") {
+    console.info(
+      "[report-admin-reply-visible-sms] SMS_PROVIDER unset — skip SMS to",
+      maskPhone(to),
+      `(${reportKindLabel(params.kind)})`,
+    );
+    return { mode: "skipped" };
+  }
+
+  if (provider === "log") {
+    console.info("[report-admin-reply-visible-sms] log provider →", maskPhone(to), body);
     return { mode: "sent" };
   }
 

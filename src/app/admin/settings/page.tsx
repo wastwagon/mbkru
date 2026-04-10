@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { DatabaseMaintenancePanel } from "@/app/admin/settings/DatabaseMaintenancePanel";
+import { PetitionPendingCleanupPanel } from "@/app/admin/settings/PetitionPendingCleanupPanel";
 import { requireAdminSession } from "@/lib/admin/require-session";
 
 export default async function AdminSettingsPage() {
@@ -24,6 +25,8 @@ export default async function AdminSettingsPage() {
       </div>
 
       <DatabaseMaintenancePanel />
+
+      <PetitionPendingCleanupPanel />
 
       <p className="mt-8 text-center text-xs text-[var(--muted-foreground)]">
         Only signed-in admins can run these commands. Keep production{" "}

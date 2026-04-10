@@ -33,6 +33,13 @@ export default async function AdminReportsPage({ searchParams }: Props) {
     orderBy: { createdAt: "desc" },
     include: {
       region: { select: { name: true } },
+      adminReplies: {
+        where: { visibleToSubmitter: true },
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: { createdAt: true },
+      },
+      _count: { select: { adminReplies: true } },
     },
     take: 200,
   });
@@ -41,7 +48,8 @@ export default async function AdminReportsPage({ searchParams }: Props) {
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">Citizen reports</h1>
       <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-        Triage by kind or open a row to change status. Email notifications use Resend when configured.
+        Triage by kind or open a row for status, staff notes, and audit. Status and team-note emails use Resend when
+        configured.
       </p>
 
       <div className="mt-6 flex flex-wrap gap-2" role="tablist" aria-label="Filter by report kind">
@@ -88,6 +96,24 @@ export default async function AdminReportsPage({ searchParams }: Props) {
                 <p className="text-xs text-[var(--muted-foreground)]">
                   {r.createdAt.toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
                 </p>
+                {r._count.adminReplies > 0 ? (
+                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                    <span className="font-medium text-[var(--foreground)]">{r._count.adminReplies}</span> staff note
+                    {r._count.adminReplies === 1 ? "" : "s"}
+                    {r.adminReplies[0]?.createdAt ? (
+                      <>
+                        {" "}
+                        · Latest to submitter{" "}
+                        {r.adminReplies[0].createdAt.toLocaleString("en-GB", {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        })}
+                      </>
+                    ) : (
+                      <span className="text-amber-800"> · all hidden from submitter</span>
+                    )}
+                  </p>
+                ) : null}
               </div>
               <Link
                 href={`/admin/reports/${r.id}`}

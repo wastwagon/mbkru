@@ -39,6 +39,9 @@ const PATH_BREADCRUMBS: Record<string, string> = {
   "/login": "Sign in",
   "/register": "Register",
   "/citizens-voice/submit": "Submit a report",
+  "/citizens-voice/causes": "Public causes",
+  "/petitions": "Petitions",
+  "/petitions/new": "Start a petition",
   "/situational-alerts/submit": "Submit engagement",
 };
 
@@ -79,6 +82,45 @@ function buildBreadcrumbs(pathname: string, currentLabel?: string): BreadcrumbIt
       href: "/citizens-voice",
     });
     items.push({ label: PATH_BREADCRUMBS["/citizens-voice/submit"] ?? "Submit a report" });
+    return items;
+  }
+
+  if (segments[0] === "citizens-voice" && segments[1] === "causes" && segments.length === 2) {
+    items.push({
+      label: PATH_BREADCRUMBS["/citizens-voice"] ?? "Voice",
+      href: "/citizens-voice",
+    });
+    items.push({ label: PATH_BREADCRUMBS["/citizens-voice/causes"] ?? "Public causes" });
+    return items;
+  }
+
+  if (segments[0] === "citizens-voice" && segments[1] === "causes" && segments.length > 2 && currentLabel) {
+    items.push({
+      label: PATH_BREADCRUMBS["/citizens-voice"] ?? "Voice",
+      href: "/citizens-voice",
+    });
+    items.push({
+      label: PATH_BREADCRUMBS["/citizens-voice/causes"] ?? "Public causes",
+      href: "/citizens-voice/causes",
+    });
+    items.push({ label: currentLabel });
+    return items;
+  }
+
+  if (segments[0] === "petitions" && segments.length === 1) {
+    items.push({ label: PATH_BREADCRUMBS["/petitions"] ?? "Petitions" });
+    return items;
+  }
+
+  if (segments[0] === "petitions" && segments[1] === "new") {
+    items.push({ label: PATH_BREADCRUMBS["/petitions"] ?? "Petitions", href: "/petitions" });
+    items.push({ label: PATH_BREADCRUMBS["/petitions/new"] ?? "Start a petition" });
+    return items;
+  }
+
+  if (segments[0] === "petitions" && segments.length > 1 && segments[1] !== "new" && currentLabel) {
+    items.push({ label: PATH_BREADCRUMBS["/petitions"] ?? "Petitions", href: "/petitions" });
+    items.push({ label: currentLabel });
     return items;
   }
 

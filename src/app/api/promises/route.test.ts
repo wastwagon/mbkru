@@ -47,6 +47,7 @@ describe("GET /api/promises", () => {
     governmentOnly: false,
     policySector: "",
     status: "",
+    q: "",
   };
 
   it("passes normalized filters to cache loader", async () => {
@@ -64,12 +65,10 @@ describe("GET /api/promises", () => {
       ),
     );
     expect(getCachedPromisesApiRows).toHaveBeenCalledWith({
-      memberSlug: "",
+      ...emptyFilters,
       partySlug: "ndc",
       electionCycle: "2024",
       governmentOnly: true,
-      policySector: "",
-      status: "",
     });
   });
 
@@ -79,6 +78,14 @@ describe("GET /api/promises", () => {
       ...emptyFilters,
       policySector: "FISCAL",
       status: "IN_PROGRESS",
+    });
+  });
+
+  it("parses search q (trimmed, capped)", async () => {
+    await GET(new Request("https://example.com/api/promises?q=  health  "));
+    expect(getCachedPromisesApiRows).toHaveBeenCalledWith({
+      ...emptyFilters,
+      q: "health",
     });
   });
 

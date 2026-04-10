@@ -9,11 +9,14 @@ datasource db {
 
 /// Single admin account for now (expand to AdminRole / many admins later).
 model Admin {
-  id                      String          @id @default(cuid())
-  email                   String          @unique
-  password                String
-  createdAt               DateTime        @default(now())
-  moderatedCommunityPosts CommunityPost[] @relation("CommunityPostModerator")
+  id                                String                        @id @default(cuid())
+  email                             String                        @unique
+  password                          String
+  createdAt                         DateTime                      @default(now())
+  moderatedCommunityPosts           CommunityPost[]               @relation("CommunityPostModerator")
+  authoredCitizenReportAdminReplies CitizenReportAdminReply[]     @relation("CitizenReportAdminReplyAuthor")
+  editedCitizenReportAdminReplies   CitizenReportAdminReply[]     @relation("CitizenReportAdminReplyEditor")
+  citizenReportAdminReplyAuditLogs  CitizenReportAdminReplyAuditLog[]
 }
 
 /// Reusable images for posts (and future resources).
@@ -97,6 +100,17 @@ enum PromiseStatus {
   DEFERRED
 }
 
+enum PetitionStatus {
+  OPEN
+  CLOSED
+  ARCHIVED
+}
+
+enum PublicCauseCommentStatus {
+  VISIBLE
+  HIDDEN
+}
+
 /// Ghana 16 regions — seeded in prisma/seed.mjs
 model Region {
   id             String          @id @default(cuid())
@@ -108,6 +122,7 @@ model Region {
   constituencies Constituency[]
   communities    Community[]
   townHallEvents TownHallEvent[]
+  petitions      Petition[]
 }
 
 /// Physical programme rows (town halls / forums / constituency debates). Seeded from roadmap + regional plan; operators replace with confirmed dates.
@@ -197,6 +212,10 @@ model Member {
   communityPostReports   CommunityPostReport[]
   verificationRequests   CommunityVerificationRequest[]
   memberNotifications    MemberNotification[]
+  petitionsAuthored      Petition[]                 @relation("PetitionAuthor")
+  petitionSignatures     PetitionSignature[]
+  publicCauseComments    CitizenReportPublicComment[]
+  publicCauseSupports    CitizenReportSupport[]
 
   @@index([regionId])
   @@index([identityVerificationStatus])
@@ -223,13 +242,145 @@ model CitizenReport {
   slaDueAt              DateTime?
   operationsPlaybookKey String?
   staffNotes            String?                 @db.Text
+  /// Staff-approved public thread: sanitized title/summary only (original body stays private).
+  publicCauseSlug       String?                 @unique @db.VarChar(120)
+  publicCauseTitle      String?                 @db.VarChar(240)
+  publicCauseSummary    String?                 @db.Text
+  publicCauseOpenedAt   DateTime?
+  publicCauseClosed     Boolean                 @default(false)
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
   attachments           CitizenReportAttachment[]
+  publicCauseComments   CitizenReportPublicComment[]
+  publicCauseSupports   CitizenReportSupport[]
+  adminReplies               CitizenReportAdminReply[]
+  adminReplyAuditLogs        CitizenReportAdminReplyAuditLog[]
 
   @@index([kind, status])
   @@index([memberId])
   @@index([slaDueAt])
+  @@index([publicCauseOpenedAt])
+}
+
+/// Staff message visible to the submitter (signed-in member page + optional email + public track-by-code).
+model CitizenReportAdminReply {
+  id                   String        @id @default(cuid())
+  reportId             String
+  report               CitizenReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  adminId              String?
+  admin                Admin?        @relation("CitizenReportAdminReplyAuthor", fields: [adminId], references: [id], onDelete: SetNull)
+  /// Set when an admin saves an edit to `body` (original author remains `adminId`).
+  editedByAdminId      String?
+  editedBy             Admin?        @relation("CitizenReportAdminReplyEditor", fields: [editedByAdminId], references: [id], onDelete: SetNull)
+  body                 String        @db.Text
+  /// When false, hidden from My reports and Track a report (admin still sees full history).
+  visibleToSubmitter   Boolean       @default(true)
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  @@index([reportId, createdAt])
+  @@index([editedByAdminId])
+  auditLogs CitizenReportAdminReplyAuditLog[]
+}
+
+/// Append-only admin actions on submitter-visible notes (post, edit, visibility).
+model CitizenReportAdminReplyAuditLog {
+  id        String                  @id @default(cuid())
+  replyId   String
+  reply     CitizenReportAdminReply @relation(fields: [replyId], references: [id], onDelete: Cascade)
+  reportId  String
+  report    CitizenReport           @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  adminId   String?
+  admin     Admin?                  @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  /// REPLY_POSTED | REPLY_EDITED | REPLY_VISIBILITY
+  action    String                  @db.VarChar(32)
+  details   Json?
+  createdAt DateTime                @default(now())
+
+  @@index([reportId, createdAt])
+  @@index([replyId, createdAt])
+}
+
+model CitizenReportPublicComment {
+  id        String                   @id @default(cuid())
+  reportId  String
+  report    CitizenReport            @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  memberId  String
+  member    Member                   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  body      String                   @db.VarChar(2000)
+  status    PublicCauseCommentStatus @default(VISIBLE)
+  createdAt DateTime                 @default(now())
+
+  @@index([reportId, createdAt])
+  @@index([memberId])
+}
+
+model CitizenReportSupport {
+  reportId  String
+  report    CitizenReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  memberId  String
+  member    Member        @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+
+  @@id([reportId, memberId])
+  @@index([reportId])
+}
+
+model Petition {
+  id               String         @id @default(cuid())
+  slug             String         @unique @db.VarChar(140)
+  title            String         @db.VarChar(280)
+  summary          String?        @db.VarChar(500)
+  body             String         @db.Text
+  targetSignatures Int?
+  regionId         String?
+  region           Region?        @relation(fields: [regionId], references: [id], onDelete: SetNull)
+  authorMemberId   String
+  author           Member         @relation("PetitionAuthor", fields: [authorMemberId], references: [id], onDelete: Restrict)
+  status           PetitionStatus @default(OPEN)
+  signatures       PetitionSignature[]
+  pendingSignatures PetitionSignaturePending[]
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@index([status, createdAt])
+  @@index([authorMemberId])
+}
+
+/// Guest signature not counted until email confirmation (see PETITION_VERIFY_GUEST_SIGNATURES).
+model PetitionSignaturePending {
+  id              String   @id @default(cuid())
+  petitionId      String
+  petition        Petition @relation(fields: [petitionId], references: [id], onDelete: Cascade)
+  signerEmail     String   @db.VarChar(254)
+  signerName      String?  @db.VarChar(120)
+  consentShowName Boolean  @default(false)
+  consentUpdates  Boolean  @default(false)
+  /// SHA-256 hex of the secret token sent by email (raw token is never stored).
+  tokenHash       String   @unique @db.VarChar(64)
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+
+  @@unique([petitionId, signerEmail])
+  @@index([petitionId])
+  @@index([expiresAt])
+}
+
+model PetitionSignature {
+  id              String   @id @default(cuid())
+  petitionId      String
+  petition        Petition @relation(fields: [petitionId], references: [id], onDelete: Cascade)
+  memberId        String?
+  member          Member?  @relation(fields: [memberId], references: [id], onDelete: SetNull)
+  signerEmail     String   @db.VarChar(254)
+  signerName      String?  @db.VarChar(120)
+  consentShowName Boolean  @default(false)
+  consentUpdates  Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  @@unique([petitionId, signerEmail])
+  @@index([petitionId])
+  @@index([memberId])
 }
 
 model CitizenReportAttachment {

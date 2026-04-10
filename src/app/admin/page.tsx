@@ -10,13 +10,14 @@ export default async function AdminHomePage() {
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
 
-  const [reportsTotal, reportsQueue, contactsWeek, leadsTotal] = await Promise.all([
+  const [reportsTotal, reportsQueue, contactsWeek, leadsTotal, petitionsOpen] = await Promise.all([
     prisma.citizenReport.count(),
     prisma.citizenReport.count({
       where: { status: { in: ["RECEIVED", "UNDER_REVIEW"] } },
     }),
     prisma.contactSubmission.count({ where: { createdAt: { gte: weekAgo } } }),
     prisma.leadCapture.count(),
+    prisma.petition.count({ where: { status: "OPEN" } }),
   ]);
 
   return (
@@ -38,7 +39,7 @@ export default async function AdminHomePage() {
         </form>
       </div>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <Link
           href="/admin/reports"
           className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition hover:border-[var(--primary)]/35"
@@ -48,6 +49,14 @@ export default async function AdminHomePage() {
           <p className="mt-2 text-sm text-[var(--primary)]">
             {reportsQueue} in queue <span className="text-[var(--muted-foreground)]">→ triage</span>
           </p>
+        </Link>
+        <Link
+          href="/admin/petitions"
+          className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition hover:border-[var(--primary)]/35"
+        >
+          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Open petitions</p>
+          <p className="mt-1 font-display text-3xl font-bold tabular-nums text-[var(--foreground)]">{petitionsOpen}</p>
+          <p className="mt-2 text-sm text-[var(--muted-foreground)]">Close, archive, or reopen</p>
         </Link>
         <Link
           href="/admin/contact-submissions"
@@ -116,6 +125,39 @@ export default async function AdminHomePage() {
             <span className="font-semibold text-[var(--foreground)]">Citizen report analytics</span>
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
               Aggregate counts by kind, status, region, and month (no personal data).
+            </p>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/admin/petitions"
+            className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
+          >
+            <span className="font-semibold text-[var(--foreground)]">Petitions</span>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              Moderate member petitions — close signatures, archive from the site, or reopen.
+            </p>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/admin/analytics/petition-pending"
+            className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
+          >
+            <span className="font-semibold text-[var(--foreground)]">Petition pending analytics</span>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              Guest verification queue: active vs expired pending, creation windows, by petition.
+            </p>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/admin/public-causes"
+            className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
+          >
+            <span className="font-semibold text-[var(--foreground)]">Public causes</span>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              Queue of Voice reports with public threads — draft, live, and closed.
             </p>
           </Link>
         </li>

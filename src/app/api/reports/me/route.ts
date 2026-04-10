@@ -32,14 +32,33 @@ export async function GET() {
       title: true,
       createdAt: true,
       updatedAt: true,
+      _count: {
+        select: {
+          adminReplies: {
+            where: { visibleToSubmitter: true },
+          },
+        },
+      },
+      adminReplies: {
+        where: { visibleToSubmitter: true },
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: { createdAt: true },
+      },
     },
   });
 
   return NextResponse.json({
     reports: reports.map((r) => ({
-      ...r,
+      id: r.id,
+      trackingCode: r.trackingCode,
+      kind: r.kind,
+      status: r.status,
+      title: r.title,
       createdAt: r.createdAt.toISOString(),
       updatedAt: r.updatedAt.toISOString(),
+      adminReplyCount: r._count.adminReplies,
+      lastVisibleTeamNoteAt: r.adminReplies[0]?.createdAt.toISOString() ?? null,
     })),
   });
 }

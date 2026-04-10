@@ -153,6 +153,7 @@ function serializePromisesApiFilters(f: PromisesApiFilters): string {
     f.governmentOnly ? "1" : "0",
     f.policySector,
     f.status,
+    f.q,
   ].join("|");
 }
 
@@ -160,10 +161,21 @@ function buildPromisesWhere(filters: PromisesApiFilters): Prisma.CampaignPromise
   const memberIs: Prisma.ParliamentMemberWhereInput = { active: true };
   if (filters.memberSlug) memberIs.slug = filters.memberSlug;
 
-  const where: Prisma.CampaignPromiseWhereInput = {
-    memberId: { not: null },
-    member: { is: memberIs },
-  };
+  const q = filters.q.trim();
+  const clauses: Prisma.CampaignPromiseWhereInput[] = [
+    { memberId: { not: null } },
+    { member: { is: memberIs } },
+  ];
+  if (q) {
+    clauses.push({
+      OR: [
+        { title: { contains: q, mode: "insensitive" } },
+        { description: { contains: q, mode: "insensitive" } },
+      ],
+    });
+  }
+
+  const where: Prisma.CampaignPromiseWhereInput = { AND: clauses };
   if (filters.partySlug) where.partySlug = filters.partySlug;
   if (filters.electionCycle) where.electionCycle = filters.electionCycle;
   if (filters.governmentOnly) where.isGovernmentProgramme = true;
@@ -172,63 +184,70 @@ function buildPromisesWhere(filters: PromisesApiFilters): Prisma.CampaignPromise
   return where;
 }
 
+async function loadPromisesApiRows(filters: PromisesApiFilters) {
+  const memberSlug = filters.memberSlug;
+  const items = await prisma.campaignPromise.findMany({
+    where: buildPromisesWhere(filters),
+    take: memberSlug ? 100 : 75,
+    orderBy: { updatedAt: "desc" },
+    include: {
+      member: {
+        select: { name: true, slug: true, role: true, party: true, active: true },
+      },
+      manifestoDocument: {
+        select: { id: true, title: true, partySlug: true, electionCycle: true, sourceUrl: true },
+      },
+    },
+  });
+
+  return items.map((p) => ({
+    id: p.id,
+    title: p.title,
+    description: p.description,
+    sourceLabel: p.sourceLabel,
+    sourceUrl: p.sourceUrl,
+    sourceDate: p.sourceDate?.toISOString() ?? null,
+    verificationNotes: p.verificationNotes,
+    status: p.status,
+    updatedAt: p.updatedAt.toISOString(),
+    electionCycle: p.electionCycle,
+    partySlug: p.partySlug,
+    manifestoDocumentId: p.manifestoDocumentId,
+    manifestoPageRef: p.manifestoPageRef,
+    isGovernmentProgramme: p.isGovernmentProgramme,
+    policySector: p.policySector,
+    manifesto: p.manifestoDocument
+      ? {
+          id: p.manifestoDocument.id,
+          title: p.manifestoDocument.title,
+          partySlug: p.manifestoDocument.partySlug,
+          electionCycle: p.manifestoDocument.electionCycle,
+          sourceUrl: p.manifestoDocument.sourceUrl,
+        }
+      : null,
+    member: p.member
+      ? {
+          name: p.member.name,
+          slug: p.member.slug,
+          role: p.member.role,
+          party: p.member.party,
+        }
+      : null,
+  }));
+}
+
 /** JSON-safe rows for GET /api/promises (serializable for cache). */
 export async function getCachedPromisesApiRows(filters: PromisesApiFilters) {
+  if (filters.q.trim()) {
+    return loadPromisesApiRows(filters);
+  }
+
   const key = serializePromisesApiFilters(filters);
   const memberSlug = filters.memberSlug;
 
   return unstable_cache(
-    async () => {
-      const items = await prisma.campaignPromise.findMany({
-        where: buildPromisesWhere(filters),
-        take: memberSlug ? 100 : 50,
-        orderBy: { updatedAt: "desc" },
-        include: {
-          member: {
-            select: { name: true, slug: true, role: true, party: true, active: true },
-          },
-          manifestoDocument: {
-            select: { id: true, title: true, partySlug: true, electionCycle: true, sourceUrl: true },
-          },
-        },
-      });
-
-      return items.map((p) => ({
-        id: p.id,
-        title: p.title,
-        description: p.description,
-        sourceLabel: p.sourceLabel,
-        sourceUrl: p.sourceUrl,
-        sourceDate: p.sourceDate?.toISOString() ?? null,
-        verificationNotes: p.verificationNotes,
-        status: p.status,
-        updatedAt: p.updatedAt.toISOString(),
-        electionCycle: p.electionCycle,
-        partySlug: p.partySlug,
-        manifestoDocumentId: p.manifestoDocumentId,
-        manifestoPageRef: p.manifestoPageRef,
-        isGovernmentProgramme: p.isGovernmentProgramme,
-        policySector: p.policySector,
-        manifesto: p.manifestoDocument
-          ? {
-              id: p.manifestoDocument.id,
-              title: p.manifestoDocument.title,
-              partySlug: p.manifestoDocument.partySlug,
-              electionCycle: p.manifestoDocument.electionCycle,
-              sourceUrl: p.manifestoDocument.sourceUrl,
-            }
-          : null,
-        member: p.member
-          ? {
-              name: p.member.name,
-              slug: p.member.slug,
-              role: p.member.role,
-              party: p.member.party,
-            }
-          : null,
-      }));
-    },
-    ["api-promises-v4", key],
+    async () => loadPromisesApiRows(filters),
+    ["api-promises-v5", key],
     {
       tags: memberSlug
         ? [PROMISES_INDEX_TAG, promisesMemberTag(memberSlug)]
@@ -238,27 +257,21 @@ export async function getCachedPromisesApiRows(filters: PromisesApiFilters) {
   )();
 }
 
-/** Full promise rows for CSV export (no row cap; same filters as JSON API). */
-export async function getCachedPromisesExportCsvRows(filters: PromisesApiFilters) {
-  const key = serializePromisesApiFilters(filters);
-  const memberSlug = filters.memberSlug;
+async function loadPromisesCsvRows(filters: PromisesApiFilters) {
+  const items = await prisma.campaignPromise.findMany({
+    where: buildPromisesWhere(filters),
+    orderBy: { updatedAt: "desc" },
+    include: {
+      member: {
+        select: { name: true, slug: true, role: true, party: true, active: true },
+      },
+      manifestoDocument: {
+        select: { id: true, title: true, sourceUrl: true },
+      },
+    },
+  });
 
-  return unstable_cache(
-    async () => {
-      const items = await prisma.campaignPromise.findMany({
-        where: buildPromisesWhere(filters),
-        orderBy: { updatedAt: "desc" },
-        include: {
-          member: {
-            select: { name: true, slug: true, role: true, party: true, active: true },
-          },
-          manifestoDocument: {
-            select: { id: true, title: true, sourceUrl: true },
-          },
-        },
-      });
-
-      return items.map((p) => ({
+  return items.map((p) => ({
         id: p.id,
         title: p.title,
         description: p.description,
@@ -285,8 +298,20 @@ export async function getCachedPromisesExportCsvRows(filters: PromisesApiFilters
             }
           : null,
       }));
-    },
-    ["api-promises-csv-export-v4", key],
+}
+
+/** Full promise rows for CSV export (no row cap; same filters as JSON API). */
+export async function getCachedPromisesExportCsvRows(filters: PromisesApiFilters) {
+  if (filters.q.trim()) {
+    return loadPromisesCsvRows(filters);
+  }
+
+  const key = serializePromisesApiFilters(filters);
+  const memberSlug = filters.memberSlug;
+
+  return unstable_cache(
+    async () => loadPromisesCsvRows(filters),
+    ["api-promises-csv-export-v5", key],
     {
       tags: memberSlug
         ? [PROMISES_INDEX_TAG, promisesMemberTag(memberSlug)]

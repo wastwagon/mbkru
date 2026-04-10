@@ -6,6 +6,7 @@ import { FooterMemberAuth } from "@/components/layout/FooterMemberAuth";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { content, heroContent, footerGalleryAlts, footerGalleryImages } from "@/lib/site-content";
 import {
+  isCivicPetitionsAndPublicCausesEnabled,
   isLegalEmpowermentPageEnabled,
   isPromisesBrowseEnabled,
   isReportCardPublicEnabled,
@@ -40,6 +41,10 @@ export async function Footer() {
       { href: "/citizens-voice/submit", label: "Submit a report" },
       { href: "/track-report", label: "Track a report" },
     );
+  }
+  if (isCivicPetitionsAndPublicCausesEnabled()) {
+    platformLinks.push({ href: "/petitions", label: "Petitions" });
+    platformLinks.push({ href: "/citizens-voice/causes", label: "Public causes" });
   }
   platformLinks.push(
     { href: "/situational-alerts", label: "Engagement" },

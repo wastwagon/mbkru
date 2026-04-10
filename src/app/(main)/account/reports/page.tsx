@@ -21,6 +21,19 @@ export default async function AccountReportsPage() {
       kind: true,
       status: true,
       createdAt: true,
+      _count: {
+        select: {
+          adminReplies: {
+            where: { visibleToSubmitter: true },
+          },
+        },
+      },
+      adminReplies: {
+        where: { visibleToSubmitter: true },
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: { createdAt: true },
+      },
     },
   });
 
@@ -50,11 +63,34 @@ export default async function AccountReportsPage() {
                 {r.status.replace(/_/g, " ")}
               </p>
               <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-                {r.createdAt.toLocaleDateString("en-GB", { dateStyle: "medium" })}
+                Submitted {r.createdAt.toLocaleDateString("en-GB", { dateStyle: "medium" })}
+                {r.adminReplies[0]?.createdAt ? (
+                  <>
+                    {" "}
+                    · Latest team note{" "}
+                    {r.adminReplies[0].createdAt.toLocaleString("en-GB", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })}
+                  </>
+                ) : null}
               </p>
-              <Link href={`/track-report?code=${r.trackingCode}`} className="mt-2 inline-block text-sm text-[var(--primary)] hover:underline">
-                Check public status
-              </Link>
+              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+                <Link href={`/account/reports/${r.id}`} className="text-[var(--primary)] hover:underline">
+                  View report
+                  {r._count.adminReplies > 0 ? (
+                    <span className="ml-1 tabular-nums text-[var(--muted-foreground)]">
+                      ({r._count.adminReplies} note{r._count.adminReplies === 1 ? "" : "s"})
+                    </span>
+                  ) : null}
+                </Link>
+                <Link
+                  href={`/track-report?code=${encodeURIComponent(r.trackingCode)}`}
+                  className="text-[var(--primary)] hover:underline"
+                >
+                  Track by code
+                </Link>
+              </div>
             </li>
           ))
         )}

@@ -6,6 +6,7 @@
  * Town hall / forum / constituency debate programme: `TownHallEvent` after bundled constituencies (see `prisma/data/TOWN_HALL_SEED_SOURCES.txt`). Opt out: `SEED_TOWN_HALL_PROGRAMME=0`.
  * Opt out: `SEED_COMMUNITIES_DEMO=0`. Pilot posts need `SEED_MEMBER_DEMO=1`.
  * Optional admin fixtures (Voice + attachment, situational/election rows, contact, verification queue): `SEED_ENGAGEMENT_DEMOS=1` or `SEED_VOICE_DEMO=1`. Internal origin is noted in `CitizenReport.staffNotes` / contact message footer where applicable.
+ * With `SEED_ENGAGEMENT_DEMOS=1`, also seeds **10 demo members** (`demo.cohort01@mbkru.local` … `demo.cohort10@mbkru.local`), member-linked Voice/Situational/Election reports (incl. whistleblow-tagged Voice), community memberships/posts, **petitions** (with **signatures** from other cohort members), a **public cause** thread (**supports** + **comments**), extra **community reply** posts, sample **notifications**, and lead captures — password: `SEED_DEMO_COHORT_PASSWORD` or `SEED_MEMBER_PASSWORD` or default `DemoCohort!change-2026`.
  * @see package.json prisma.seed
  */
 import { readFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
@@ -1116,6 +1117,506 @@ async function seedEngagementDemos() {
   );
 }
 
+/**
+ * Petitions, public-cause supports/comments, follow-up community posts, and in-app notifications for the demo cohort.
+ * Idempotent (fixed slugs, tracking codes, and bodies). `community` may be null if no Community rows exist.
+ */
+async function seedDashboardDemoCohortActivityExtensions(members, community) {
+  const staff = "prisma seed — seedDashboardDemoCohortActivityExtensions (SEED_ENGAGEMENT_DEMOS=1). Safe to archive.";
+
+  const causeReport = await prisma.citizenReport.upsert({
+    where: { trackingCode: "MBKRU-DEMO-COHORT-CAUSE-PUBLIC-1" },
+    create: {
+      trackingCode: "MBKRU-DEMO-COHORT-CAUSE-PUBLIC-1",
+      kind: "VOICE",
+      memberId: members[2].id,
+      title: "Street lighting — public cause (seed)",
+      body:
+        "Fixture narrative for admin triage only. The public thread below uses a short summary; supports and comments exercise the citizens-voice causes UX.",
+      category: "Infrastructure",
+      status: "UNDER_REVIEW",
+      regionId: members[2].regionId,
+      staffNotes: staff,
+      publicCauseSlug: "seed-demo-neighbourhood-lighting",
+      publicCauseTitle: "Safer evening walkways — lighting request",
+      publicCauseSummary:
+        "Residents are asking for a published schedule for lamp repairs on the main walking route. Seed data for public causes — not a live case.",
+      publicCauseOpenedAt: new Date("2026-03-15T12:00:00.000Z"),
+      publicCauseClosed: false,
+    },
+    update: {
+      memberId: members[2].id,
+      title: "Street lighting — public cause (seed)",
+      body:
+        "Fixture narrative for admin triage only. The public thread below uses a short summary; supports and comments exercise the citizens-voice causes UX.",
+      category: "Infrastructure",
+      status: "UNDER_REVIEW",
+      regionId: members[2].regionId,
+      staffNotes: staff,
+      publicCauseSlug: "seed-demo-neighbourhood-lighting",
+      publicCauseTitle: "Safer evening walkways — lighting request",
+      publicCauseSummary:
+        "Residents are asking for a published schedule for lamp repairs on the main walking route. Seed data for public causes — not a live case.",
+      publicCauseOpenedAt: new Date("2026-03-15T12:00:00.000Z"),
+      publicCauseClosed: false,
+    },
+  });
+
+  const supportIndices = [3, 4, 5, 6, 8];
+  for (const idx of supportIndices) {
+    await prisma.citizenReportSupport.upsert({
+      where: {
+        reportId_memberId: { reportId: causeReport.id, memberId: members[idx].id },
+      },
+      create: { reportId: causeReport.id, memberId: members[idx].id },
+      update: {},
+    });
+  }
+
+  const causeComments = [
+    { memberIndex: 7, body: "Thanks for raising this — we need a clear timeline from the assembly." },
+    { memberIndex: 0, body: "Following. Please post any official response here when it arrives." },
+    { memberIndex: 9, body: "Happy to help gather photos for a council packet if that helps." },
+  ];
+  for (const c of causeComments) {
+    const exists = await prisma.citizenReportPublicComment.findFirst({
+      where: {
+        reportId: causeReport.id,
+        memberId: members[c.memberIndex].id,
+        body: c.body,
+      },
+    });
+    if (!exists) {
+      await prisma.citizenReportPublicComment.create({
+        data: {
+          reportId: causeReport.id,
+          memberId: members[c.memberIndex].id,
+          body: c.body,
+          status: "VISIBLE",
+        },
+      });
+    }
+  }
+  console.log("Demo cohort: public cause + supports + comments ensured (tracking MBKRU-DEMO-COHORT-CAUSE-PUBLIC-1).");
+
+  const petitionStreet = await prisma.petition.upsert({
+    where: { slug: "mbkru-seed-cohort-petition-street-safety" },
+    create: {
+      slug: "mbkru-seed-cohort-petition-street-safety",
+      title: "Publish ward-level street lighting repair schedules (seed)",
+      summary: "Demo petition: cohort member 1 asks for transparent schedules; other members sign.",
+      body: [
+        "## Seed petition",
+        "",
+        "This petition was created by **prisma db seed** for UI and moderation testing. It is not a live campaign.",
+        "",
+        "We ask for published, ward-level schedules for street lighting maintenance so residents can plan safe evening travel.",
+      ].join("\n"),
+      targetSignatures: 500,
+      regionId: members[0].regionId,
+      authorMemberId: members[0].id,
+      status: "OPEN",
+    },
+    update: {
+      title: "Publish ward-level street lighting repair schedules (seed)",
+      summary: "Demo petition: cohort member 1 asks for transparent schedules; other members sign.",
+      body: [
+        "## Seed petition",
+        "",
+        "This petition was created by **prisma db seed** for UI and moderation testing. It is not a live campaign.",
+        "",
+        "We ask for published, ward-level schedules for street lighting maintenance so residents can plan safe evening travel.",
+      ].join("\n"),
+      targetSignatures: 500,
+      regionId: members[0].regionId,
+      authorMemberId: members[0].id,
+      status: "OPEN",
+    },
+  });
+
+  const petitionYouth = await prisma.petition.upsert({
+    where: { slug: "mbkru-seed-cohort-petition-youth-skills" },
+    create: {
+      slug: "mbkru-seed-cohort-petition-youth-skills",
+      title: "Pilot youth skills clinics — transparency on venues (seed)",
+      summary: "Second demo petition by cohort member 2; cross-signatures from others.",
+      body: [
+        "## Seed petition",
+        "",
+        "Fixture data: requests clarity on how pilot skills clinics choose venues and publish outcomes.",
+      ].join("\n"),
+      targetSignatures: 200,
+      regionId: members[1].regionId,
+      authorMemberId: members[1].id,
+      status: "OPEN",
+    },
+    update: {
+      title: "Pilot youth skills clinics — transparency on venues (seed)",
+      summary: "Second demo petition by cohort member 2; cross-signatures from others.",
+      body: [
+        "## Seed petition",
+        "",
+        "Fixture data: requests clarity on how pilot skills clinics choose venues and publish outcomes.",
+      ].join("\n"),
+      targetSignatures: 200,
+      regionId: members[1].regionId,
+      authorMemberId: members[1].id,
+      status: "OPEN",
+    },
+  });
+
+  const streetSignerIndices = [1, 2, 3, 4, 5, 7];
+  for (const idx of streetSignerIndices) {
+    const mem = members[idx];
+    await prisma.petitionSignature.upsert({
+      where: {
+        petitionId_signerEmail: { petitionId: petitionStreet.id, signerEmail: mem.email },
+      },
+      create: {
+        petitionId: petitionStreet.id,
+        memberId: mem.id,
+        signerEmail: mem.email,
+        signerName: mem.displayName ?? undefined,
+        consentShowName: true,
+        consentUpdates: idx % 2 === 0,
+      },
+      update: {},
+    });
+  }
+
+  const youthSignerIndices = [0, 2, 3, 4, 6, 8];
+  for (const idx of youthSignerIndices) {
+    const mem = members[idx];
+    await prisma.petitionSignature.upsert({
+      where: {
+        petitionId_signerEmail: { petitionId: petitionYouth.id, signerEmail: mem.email },
+      },
+      create: {
+        petitionId: petitionYouth.id,
+        memberId: mem.id,
+        signerEmail: mem.email,
+        signerName: mem.displayName ?? undefined,
+        consentShowName: idx % 3 !== 0,
+        consentUpdates: false,
+      },
+      update: {},
+    });
+  }
+  console.log("Demo cohort: petitions + cross-member signatures ensured (2 open petitions).");
+
+  if (community) {
+    const replyBodies = [
+      {
+        authorIdx: 4,
+        body: "Re: clean-up day — I can bring tools Saturday if we confirm the venue with the chief’s office.",
+        kind: "GENERAL",
+      },
+      {
+        authorIdx: 5,
+        body: "Following the hall thread: has anyone heard back from the secretary on meeting minutes?",
+        kind: "GENERAL",
+      },
+    ];
+    for (const r of replyBodies) {
+      const exists = await prisma.communityPost.findFirst({
+        where: {
+          communityId: community.id,
+          authorMemberId: members[r.authorIdx].id,
+          body: r.body,
+        },
+      });
+      if (!exists) {
+        await prisma.communityPost.create({
+          data: {
+            communityId: community.id,
+            authorMemberId: members[r.authorIdx].id,
+            kind: r.kind,
+            body: r.body,
+            moderationStatus: "PUBLISHED",
+          },
+        });
+      }
+    }
+    console.log("Demo cohort: follow-up community posts ensured.");
+
+    const joinNotif = await prisma.memberNotification.findFirst({
+      where: { memberId: members[3].id, type: "community_join_approved" },
+    });
+    if (!joinNotif) {
+      await prisma.memberNotification.create({
+        data: {
+          memberId: members[3].id,
+          type: "community_join_approved",
+          payload: { communitySlug: community.slug, communityName: community.name },
+        },
+      });
+    }
+
+    const firstPostByM0 = await prisma.communityPost.findFirst({
+      where: { communityId: community.id, authorMemberId: members[0].id },
+      orderBy: { createdAt: "asc" },
+    });
+    if (firstPostByM0) {
+      const pubNotif = await prisma.memberNotification.findFirst({
+        where: { memberId: members[0].id, type: "community_post_published" },
+      });
+      if (!pubNotif) {
+        await prisma.memberNotification.create({
+          data: {
+            memberId: members[0].id,
+            type: "community_post_published",
+            payload: { postId: firstPostByM0.id, communitySlug: community.slug },
+          },
+        });
+      }
+    }
+    console.log("Demo cohort: sample in-app notifications ensured (when applicable).");
+  } else {
+    console.log("Demo cohort: no community — skipped reply posts + notifications.");
+  }
+
+  const adminForReply = await prisma.admin.findFirst({ orderBy: { createdAt: "asc" } });
+  const seedReplyReport = await prisma.citizenReport.findUnique({
+    where: { trackingCode: "MBKRU-DEMO-COHORT-V-3" },
+    select: { id: true },
+  });
+  if (adminForReply && seedReplyReport) {
+    const hasReply = await prisma.citizenReportAdminReply.findFirst({
+      where: { reportId: seedReplyReport.id },
+    });
+    if (!hasReply) {
+      await prisma.citizenReportAdminReply.create({
+        data: {
+          reportId: seedReplyReport.id,
+          adminId: adminForReply.id,
+          body:
+            "Thank you for this Voice report (seed data). This is a sample team note visible on “My reports” and Track a report — not a real triage outcome.",
+        },
+      });
+      console.log("Demo cohort: sample admin reply on MBKRU-DEMO-COHORT-V-3");
+    }
+  }
+}
+
+/**
+ * Ten demo Member accounts plus linked reports (all CitizenReportKind values), community join/activity, and lead rows.
+ * Idempotent via fixed emails and tracking codes. Requires regions; communities optional (skipped if none ACTIVE).
+ */
+async function seedDashboardDemoCohort() {
+  const plain =
+    (process.env.SEED_DEMO_COHORT_PASSWORD || process.env.SEED_MEMBER_PASSWORD || "DemoCohort!change-2026").trim();
+  const password = await bcrypt.hash(plain, 12);
+  const regions = await prisma.region.findMany({ orderBy: { sortOrder: "asc" } });
+  const regionAt = (i) => regions[i % Math.max(regions.length, 1)]?.id ?? null;
+
+  const emails = Array.from({ length: 10 }, (_, i) => `demo.cohort${String(i + 1).padStart(2, "0")}@mbkru.local`);
+  const members = [];
+  for (let i = 0; i < emails.length; i++) {
+    const email = emails[i];
+    const m = await prisma.member.upsert({
+      where: { email },
+      create: {
+        email,
+        password,
+        displayName: `Demo cohort member ${i + 1}`,
+        regionId: regionAt(i),
+      },
+      update: {
+        password,
+        displayName: `Demo cohort member ${i + 1}`,
+        regionId: regionAt(i),
+      },
+    });
+    members.push(m);
+  }
+  console.log("Demo cohort: 10 members upserted (", emails[0], "…", emails[9], "). Password from env or default — rotate for production.");
+
+  const reportFixtures = [
+    {
+      code: "MBKRU-DEMO-COHORT-WB-1",
+      memberIndex: 0,
+      kind: "VOICE",
+      title: "Governance concern — procurement documentation",
+      body: "Request for clarity on how a public tender was evaluated. Submitted as a Voice report with whistleblow-style governance language for admin triage testing only.",
+      category: "Whistleblow (Voice)",
+      status: "UNDER_REVIEW",
+    },
+    {
+      code: "MBKRU-DEMO-COHORT-WB-2",
+      memberIndex: 1,
+      kind: "VOICE",
+      title: "Anonymous-style tip follow-up (seed)",
+      body: "Second seed Voice row tagged for governance review workflows. Not a verified allegation — fixture data.",
+      category: "Whistleblow (Voice)",
+      status: "RECEIVED",
+    },
+    {
+      code: "MBKRU-DEMO-COHORT-V-3",
+      memberIndex: 2,
+      kind: "VOICE",
+      title: "Street drainage — neighbourhood update",
+      body: "Routine Voice casework example: standing water after rain and request for inspection.",
+      category: "Infrastructure",
+      status: "RECEIVED",
+    },
+    {
+      code: "MBKRU-DEMO-COHORT-S-1",
+      memberIndex: 3,
+      kind: "SITUATIONAL_ALERT",
+      title: "Market access — temporary barrier",
+      body: "Situational note: temporary barrier affecting foot traffic. Asks for official notice or timeline.",
+      category: "Community activity",
+      status: "RECEIVED",
+    },
+    {
+      code: "MBKRU-DEMO-COHORT-S-2",
+      memberIndex: 4,
+      kind: "SITUATIONAL_ALERT",
+      title: "Festival week — crowd routing",
+      body: "Community activity observation during a local event; requests better signage from organisers.",
+      category: "Community activity",
+      status: "UNDER_REVIEW",
+    },
+    {
+      code: "MBKRU-DEMO-COHORT-E-1",
+      memberIndex: 5,
+      kind: "ELECTION_OBSERVATION",
+      title: "Early voting — accessibility",
+      body: "Election observation seed: queue moved quickly; asks whether accessibility ramps are marked consistently.",
+      category: "Accessibility",
+      status: "RECEIVED",
+    },
+    {
+      code: "MBKRU-DEMO-COHORT-E-2",
+      memberIndex: 6,
+      kind: "ELECTION_OBSERVATION",
+      title: "Party agent presence (seed)",
+      body: "Fixture observation only — not accredited mission data.",
+      category: "Party agents",
+      status: "UNDER_REVIEW",
+    },
+    {
+      code: "MBKRU-DEMO-COHORT-V-4",
+      memberIndex: 7,
+      kind: "VOICE",
+      title: "Health outreach — scheduling",
+      body: "Voice report asking for published schedule for a mobile clinic visit.",
+      category: "Health",
+      status: "CLOSED",
+    },
+    {
+      code: "MBKRU-DEMO-COHORT-S-3",
+      memberIndex: 8,
+      kind: "SITUATIONAL_ALERT",
+      title: "Flood-prone road segment",
+      body: "Situational alert seed: standing water after moderate rain; no injury reported.",
+      category: "Weather / roads",
+      status: "RECEIVED",
+    },
+    {
+      code: "MBKRU-DEMO-COHORT-E-3",
+      memberIndex: 9,
+      kind: "ELECTION_OBSERVATION",
+      title: "Counting centre — observer distance",
+      body: "Election observation seed: distance between observers and tables — procedural question only.",
+      category: "Observation",
+      status: "RECEIVED",
+    },
+  ];
+
+  for (const r of reportFixtures) {
+    const mem = members[r.memberIndex];
+    const regionId = mem.regionId;
+    await prisma.citizenReport.upsert({
+      where: { trackingCode: r.code },
+      create: {
+        trackingCode: r.code,
+        kind: r.kind,
+        memberId: mem.id,
+        title: r.title,
+        body: r.body,
+        category: r.category,
+        status: r.status,
+        regionId,
+        staffNotes: "prisma seed — seedDashboardDemoCohort (SEED_ENGAGEMENT_DEMOS=1). Safe to archive.",
+      },
+      update: {
+        kind: r.kind,
+        memberId: mem.id,
+        title: r.title,
+        body: r.body,
+        category: r.category,
+        status: r.status,
+        regionId,
+        staffNotes: "prisma seed — seedDashboardDemoCohort (SEED_ENGAGEMENT_DEMOS=1). Safe to archive.",
+      },
+    });
+  }
+  console.log("Demo cohort: citizen reports upserted:", reportFixtures.length);
+
+  const community =
+    (await prisma.community.findFirst({ where: { status: "ACTIVE" }, orderBy: { slug: "asc" } })) ??
+    (await prisma.community.findFirst({ orderBy: { slug: "asc" } }));
+  if (community) {
+    for (let i = 0; i < members.length; i++) {
+      const mem = members[i];
+      const state = i % 4 === 3 ? "PENDING_JOIN" : "ACTIVE";
+      await prisma.communityMembership.upsert({
+        where: { communityId_memberId: { communityId: community.id, memberId: mem.id } },
+        create: {
+          communityId: community.id,
+          memberId: mem.id,
+          role: i === 0 ? "MODERATOR" : "MEMBER",
+          state,
+        },
+        update: {
+          role: i === 0 ? "MODERATOR" : "MEMBER",
+          state,
+        },
+      });
+    }
+    const bodies = [
+      "Seed post: community hall clean-up day proposed for next quarter — seeking volunteers.",
+      "Seed post: traditional council meeting minutes request (public information only).",
+      "Seed concern: youth programme funding visibility.",
+    ];
+    for (let b = 0; b < bodies.length; b++) {
+      const author = members[b % members.length];
+      const exists = await prisma.communityPost.findFirst({
+        where: { communityId: community.id, authorMemberId: author.id, body: bodies[b] },
+      });
+      if (!exists) {
+        await prisma.communityPost.create({
+          data: {
+            communityId: community.id,
+            authorMemberId: author.id,
+            kind: b === 0 ? "ANNOUNCEMENT" : b === 1 ? "GENERAL" : "CONCERN",
+            body: bodies[b],
+            moderationStatus: "PUBLISHED",
+            pinned: b === 0,
+          },
+        });
+      }
+    }
+    console.log("Demo cohort: community memberships + sample posts ensured for", community.slug);
+  } else {
+    console.log("Demo cohort: no Community rows — skipped memberships/posts.");
+  }
+
+  const sources = ["NEWSLETTER", "PARLIAMENT_TRACKER", "EARLY_ACCESS"];
+  for (let i = 0; i < members.length; i++) {
+    const src = sources[i % sources.length];
+    await prisma.leadCapture.upsert({
+      where: { email_source: { email: members[i].email, source: src } },
+      create: { email: members[i].email, source: src },
+      update: {},
+    });
+  }
+  console.log("Demo cohort: lead capture rows upserted (mixed sources).");
+
+  await seedDashboardDemoCohortActivityExtensions(members, community ?? null);
+}
+
 async function main() {
   console.log("MBKRU prisma seed: starting…");
   for (let i = 0; i < REGIONS_SEED.length; i++) {
@@ -1216,6 +1717,9 @@ async function main() {
 
   if (process.env.SEED_VOICE_DEMO === "1" || process.env.SEED_ENGAGEMENT_DEMOS === "1") {
     await seedEngagementDemos();
+  }
+  if (process.env.SEED_ENGAGEMENT_DEMOS === "1") {
+    await seedDashboardDemoCohort();
   }
 
   console.log("MBKRU prisma seed: finished OK.");

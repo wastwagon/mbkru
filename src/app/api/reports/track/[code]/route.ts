@@ -34,6 +34,11 @@ export async function GET(request: Request, { params }: Props) {
       status: true,
       createdAt: true,
       updatedAt: true,
+      adminReplies: {
+        where: { visibleToSubmitter: true },
+        orderBy: { createdAt: "asc" },
+        select: { id: true, body: true, createdAt: true },
+      },
     },
   });
 
@@ -41,11 +46,22 @@ export async function GET(request: Request, { params }: Props) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
+  const notes = row.adminReplies;
+  const lastNote = notes.at(-1);
+  const lastVisibleTeamNoteAt = lastNote ? lastNote.createdAt.toISOString() : null;
+
   return NextResponse.json({
     trackingCode: row.trackingCode,
     kind: row.kind,
     status: row.status,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
+    visibleTeamNoteCount: notes.length,
+    lastVisibleTeamNoteAt,
+    adminReplies: notes.map((r) => ({
+      id: r.id,
+      body: r.body,
+      createdAt: r.createdAt.toISOString(),
+    })),
   });
 }

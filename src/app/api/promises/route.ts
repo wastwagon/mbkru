@@ -24,8 +24,12 @@ export async function GET(request: Request) {
 
   const body = await getCachedPromisesApiRows(filters);
 
+  const cacheControl = filters.q.trim()
+    ? "private, no-store, max-age=0"
+    : accountabilityPublicCacheControl();
+
   return NextResponse.json(
     { promises: body },
-    { headers: { "Cache-Control": accountabilityPublicCacheControl() } },
+    { headers: { "Cache-Control": cacheControl } },
   );
 }
