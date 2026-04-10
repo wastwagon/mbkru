@@ -54,11 +54,16 @@ COPY --from=builder /app/.next/static ./.next/static
 RUN rm -rf /app/node_modules/.prisma /app/node_modules/@prisma /app/node_modules/prisma
 
 COPY --from=builder /app/prisma ./prisma
+# Required for `prisma db seed` — seed command lives in prisma.config.ts (not package.json).
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
+
+# prisma.config.ts imports dotenv (devDependency in package.json — present in deps stage).
+COPY --from=deps /app/node_modules/dotenv ./node_modules/dotenv
 
 # @prisma/config / prisma CLI — hoisted siblings must come from `deps`, not `builder`
 # (Next build can remove them from builder’s node_modules).
@@ -91,7 +96,7 @@ RUN cd /app && node -e "require('effect'); require('@prisma/config');"
 
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 RUN chmod +x /app/docker-entrypoint.sh \
-  && chown -R nextjs:nodejs /app/prisma /app/node_modules
+  && chown -R nextjs:nodejs /app/prisma /app/prisma.config.ts /app/node_modules
 
 USER nextjs
 EXPOSE 3000
