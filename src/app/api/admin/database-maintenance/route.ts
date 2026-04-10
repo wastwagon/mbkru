@@ -1,6 +1,13 @@
+import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 import { getAdminSession } from "@/lib/admin/session";
+import {
+  MPS_ROSTER_TAG,
+  PROMISES_INDEX_TAG,
+  REPORT_CARD_INDEX_TAG,
+  reportCardYearTag,
+} from "@/lib/accountability-tags";
 import {
   type PrismaMaintenanceAction,
   runPrismaMaintenance,
@@ -52,6 +59,23 @@ export async function POST(request: Request) {
 
   const { steps } = await runPrismaMaintenance(action);
   const allOk = steps.every((s) => s.ok);
+
+  const seedStep = steps.find((s) => s.command.includes("db seed"));
+  if (seedStep?.ok) {
+    try {
+      revalidateTag(PROMISES_INDEX_TAG);
+      revalidateTag(REPORT_CARD_INDEX_TAG);
+      revalidateTag(MPS_ROSTER_TAG);
+      revalidateTag(reportCardYearTag(2026));
+      revalidatePath("/promises");
+      revalidatePath("/promises/browse");
+      revalidatePath("/report-card");
+      revalidatePath("/communities");
+      revalidatePath("/government-commitments");
+    } catch (e) {
+      console.error("[database-maintenance] revalidate after seed:", e);
+    }
+  }
 
   return NextResponse.json(
     {

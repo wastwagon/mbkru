@@ -114,16 +114,23 @@ export function DatabaseMaintenancePanel() {
         >
           <p className="font-mono text-xs font-semibold">{step.command}</p>
           <p className="mt-1 text-xs opacity-80">{step.ok ? "Success" : "Failed"}</p>
-          {step.stdout ? (
-            <pre className="mt-3 max-h-64 overflow-auto whitespace-pre-wrap break-words rounded-lg bg-black/5 p-3 text-xs">
-              {trimOutput(step.stdout)}
-            </pre>
-          ) : null}
-          {step.stderr ? (
-            <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap break-words rounded-lg bg-black/10 p-3 text-xs">
-              {trimOutput(step.stderr)}
-            </pre>
-          ) : null}
+          {(() => {
+            const combined = [step.stdout, step.stderr].filter((s) => s.trim()).join("\n");
+            return combined ? (
+              <pre className="mt-3 max-h-64 overflow-auto whitespace-pre-wrap break-words rounded-lg bg-black/5 p-3 text-xs">
+                {trimOutput(combined)}
+              </pre>
+            ) : (
+              <p className="mt-3 text-xs text-[var(--muted-foreground)]">
+                No output captured from the CLI (Prisma may log only in container stdout). Check Coolify → Logs
+                for the app container. If public pages stay empty after a successful seed, confirm environment
+                variables <code className="rounded bg-black/5 px-1">SEED_ACCOUNTABILITY_DEMO</code> and{" "}
+                <code className="rounded bg-black/5 px-1">SEED_COMMUNITIES_DEMO</code> are{" "}
+                <strong>not</strong> set to <code className="rounded bg-black/5 px-1">0</code> — those flags skip
+                starter promises, report-card pilot, and community listings.
+              </p>
+            );
+          })()}
         </div>
       ))}
     </div>

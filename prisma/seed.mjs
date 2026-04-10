@@ -1117,6 +1117,7 @@ async function seedEngagementDemos() {
 }
 
 async function main() {
+  console.log("MBKRU prisma seed: starting…");
   for (let i = 0; i < REGIONS_SEED.length; i++) {
     const r = REGIONS_SEED[i];
     await prisma.region.upsert({
@@ -1216,6 +1217,8 @@ async function main() {
   if (process.env.SEED_VOICE_DEMO === "1" || process.env.SEED_ENGAGEMENT_DEMOS === "1") {
     await seedEngagementDemos();
   }
+
+  console.log("MBKRU prisma seed: finished OK.");
 }
 
 main()

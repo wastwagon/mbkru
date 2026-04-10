@@ -73,7 +73,11 @@ services:
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - TWILIO_FROM_NUMBER=${TWILIO_FROM_NUMBER}
       # After migrations, docker-entrypoint.sh runs `prisma db seed` unless SKIP_DB_SEED=1.
+      # Default 1 = hydrate public promises, report-card pilot, communities (set to 0 in Coolify only if you want an empty public catalogue).
       - SKIP_DB_SEED=${SKIP_DB_SEED:-}
+      - SEED_ACCOUNTABILITY_DEMO=${SEED_ACCOUNTABILITY_DEMO:-1}
+      - SEED_COMMUNITIES_DEMO=${SEED_COMMUNITIES_DEMO:-1}
+      - SEED_TOWN_HALL_PROGRAMME=${SEED_TOWN_HALL_PROGRAMME:-1}
     depends_on:
       postgres:
         condition: service_healthy
