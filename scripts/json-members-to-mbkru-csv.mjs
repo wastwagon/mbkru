@@ -8,6 +8,8 @@
  *   node scripts/json-members-to-mbkru-csv.mjs mps.json > members.csv
  *   node scripts/json-members-to-mbkru-csv.mjs mps.json --list-constituency-slugs
  *
+ * Checked-in small sample (no ghanamps required): prisma/data/parliament-members.starter.csv
+ *
  * @see docs/DATA_SOURCES.md
  */
 import { readFileSync } from "node:fs";

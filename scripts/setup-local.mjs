@@ -6,7 +6,7 @@
  * 3. Wait for Postgres
  * 4. npm install
  * 5. prisma migrate deploy
- * 6. prisma db seed (always with SEED_ACCOUNTABILITY_DEMO + SEED_MEMBER_DEMO for local dev)
+ * 6. prisma db seed (accountability starter + SEED_MEMBER_DEMO for local dev)
  *
  * Usage: node scripts/setup-local.mjs
  *    or: npm run setup:local
@@ -118,7 +118,7 @@ async function main() {
   console.log("\nPrisma migrate deploy…");
   run("npx prisma migrate deploy", { env: { ...process.env } });
 
-  console.log("\nPrisma db seed (regions, admin, news, accountability demo, pilot members)…");
+  console.log("\nPrisma db seed (regions, admin, news, accountability starter, pilot members)…");
   run("npx prisma db seed", {
     env: {
       ...process.env,

@@ -1,19 +1,100 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { useMemberMe } from "@/hooks/useMemberMe";
 
-type NavItem = {
+type NavLeaf = {
   href: string;
   label: string;
-  /** When set, highlight for any path starting with this prefix (e.g. all `/promises/*` routes). */
+  /** When set, highlight for any path starting with this prefix. */
   activeWhenPathStartsWith?: string;
 };
+
+type NavEntry =
+  | { kind: "link"; leaf: NavLeaf }
+  | { kind: "group"; id: string; label: string; items: NavLeaf[] };
+
+function leafIsActive(pathname: string, leaf: NavLeaf): boolean {
+  if (leaf.activeWhenPathStartsWith != null) return pathname.startsWith(leaf.activeWhenPathStartsWith);
+  return pathname === leaf.href;
+}
+
+function groupIsActive(pathname: string, items: NavLeaf[]): boolean {
+  return items.some((item) => leafIsActive(pathname, item));
+}
+
+function buildMainNav(phase: ReturnType<typeof getPublicPlatformPhase>): NavEntry[] {
+  const entries: NavEntry[] = [
+    { kind: "link", leaf: { href: "/", label: "Home" } },
+    { kind: "link", leaf: { href: "/about", label: "About" } },
+  ];
+
+  const participate: NavLeaf[] = [
+    { href: "/citizens-voice", label: "Voice" },
+    { href: "/situational-alerts", label: "Engagement" },
+  ];
+  if (platformFeatures.communities(phase)) {
+    participate.push({ href: "/communities", label: "Communities" });
+  }
+  entries.push({ kind: "group", id: "participate", label: "Participate", items: participate });
+
+  const accountability: NavLeaf[] = [
+    { href: "/parliament-tracker", label: "Parliament tracker" },
+  ];
+  if (platformFeatures.parliamentTrackerData(phase)) {
+    accountability.push({ href: "/government-commitments", label: "Commitments" });
+    accountability.push({
+      href: "/promises/browse",
+      label: "Promises",
+      activeWhenPathStartsWith: "/promises",
+    });
+  }
+  if (platformFeatures.accountabilityScorecards(phase)) {
+    accountability.push({
+      href: "/report-card",
+      label: "Report card",
+      activeWhenPathStartsWith: "/report-card",
+    });
+  }
+  if (accountability.length === 1) {
+    entries.push({ kind: "link", leaf: accountability[0] });
+  } else {
+    entries.push({ kind: "group", id: "accountability", label: "Accountability", items: accountability });
+  }
+
+  const guidance: NavLeaf[] = [];
+  if (platformFeatures.legalEmpowermentDesk(phase)) {
+    guidance.push({ href: "/legal-empowerment", label: "Legal" });
+  }
+  if (platformFeatures.townHallDirectory(phase)) {
+    guidance.push({ href: "/town-halls", label: "Forums" });
+  }
+  if (platformFeatures.whistleblowerGuidance(phase)) {
+    guidance.push({ href: "/whistleblowing", label: "Whistleblowing" });
+  }
+  if (guidance.length === 1) {
+    entries.push({ kind: "link", leaf: guidance[0] });
+  } else if (guidance.length > 1) {
+    entries.push({ kind: "group", id: "guidance", label: "Guidance", items: guidance });
+  }
+
+  entries.push({
+    kind: "group",
+    id: "updates",
+    label: "News & diaspora",
+    items: [
+      { href: "/news", label: "News", activeWhenPathStartsWith: "/news" },
+      { href: "/diaspora", label: "Diaspora" },
+    ],
+  });
+
+  return entries;
+}
 
 function UserMenuIcon({ className }: { className?: string }) {
   return (
@@ -46,6 +127,9 @@ function ChevronDownIcon({ className, open }: { className?: string; open?: boole
 
 const accountMenuItemClass =
   "flex min-h-[40px] w-full items-center px-4 py-2.5 text-left text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--muted)] focus-visible:bg-[var(--muted)] focus-visible:outline-none";
+
+const dropdownItemClass =
+  "flex min-h-[40px] items-center px-4 py-2.5 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--section-light)] focus-visible:bg-[var(--section-light)] focus-visible:outline-none";
 
 function MemberAuthNav({
   isHomeHero,
@@ -229,45 +313,103 @@ function MemberAuthNav({
   );
 }
 
-function buildMainNav(phase: ReturnType<typeof getPublicPlatformPhase>): NavItem[] {
-  const items: NavItem[] = [
-    { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
-    { href: "/citizens-voice", label: "Voice" },
-    { href: "/situational-alerts", label: "Engagement" },
-    { href: "/parliament-tracker", label: "Accountability" },
-  ];
-  if (platformFeatures.parliamentTrackerData(phase)) {
-    items.push({ href: "/government-commitments", label: "Commitments" });
-    items.push({
-      href: "/promises/browse",
-      label: "Promises",
-      activeWhenPathStartsWith: "/promises",
-    });
+function desktopLinkClass(isHomeHero: boolean, active: boolean): string {
+  if (isHomeHero) {
+    return active
+      ? "text-[var(--accent-gold)] font-semibold"
+      : "text-white/90 hover:text-[var(--accent-gold)]";
   }
-  if (platformFeatures.communities(phase)) {
-    items.push({ href: "/communities", label: "Communities" });
-  }
-  if (platformFeatures.legalEmpowermentDesk(phase)) {
-    items.push({ href: "/legal-empowerment", label: "Legal" });
-  }
-  if (platformFeatures.townHallDirectory(phase)) {
-    items.push({ href: "/town-halls", label: "Forums" });
-  }
-  if (platformFeatures.whistleblowerGuidance(phase)) {
-    items.push({ href: "/whistleblowing", label: "Whistleblowing" });
-  }
-  items.push({ href: "/news", label: "News" }, { href: "/diaspora", label: "Diaspora" });
-  return items;
+  return active ? "text-[var(--primary)] font-semibold" : "text-[var(--foreground)] hover:text-[var(--primary)]";
+}
+
+function DesktopNavDropdown({
+  entry,
+  pathname,
+  isHomeHero,
+  open,
+  onToggle,
+  onClose,
+}: {
+  entry: Extract<NavEntry, { kind: "group" }>;
+  pathname: string;
+  isHomeHero: boolean;
+  open: boolean;
+  onToggle: () => void;
+  onClose: () => void;
+}) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const active = groupIsActive(pathname, entry.items);
+
+  useEffect(() => {
+    if (!open) return;
+    function onDoc(e: MouseEvent) {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) onClose();
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open, onClose]);
+
+  const btnClass = `inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-base font-medium transition-colors touch-manipulation ${desktopLinkClass(isHomeHero, active)}`;
+
+  return (
+    <div className="relative" ref={wrapRef}>
+      <button
+        type="button"
+        className={btnClass}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        aria-controls={`nav-menu-${entry.id}`}
+        id={`nav-trigger-${entry.id}`}
+        onClick={onToggle}
+      >
+        {entry.label}
+        <ChevronDownIcon open={open} className={isHomeHero ? "opacity-90" : ""} />
+      </button>
+      {open ? (
+        <div
+          role="menu"
+          id={`nav-menu-${entry.id}`}
+          aria-labelledby={`nav-trigger-${entry.id}`}
+          className="absolute left-0 top-full z-[60] mt-2 min-w-[min(100vw-2rem,16rem)] max-w-[calc(100vw-2rem)] rounded-xl border border-[var(--border)] bg-white py-1 shadow-[var(--shadow-dropdown)]"
+        >
+          {entry.items.map((item) => {
+            const isItemActive = leafIsActive(pathname, item);
+            return (
+              <Link
+                key={item.href}
+                role="menuitem"
+                href={item.href}
+                className={`${dropdownItemClass} ${isItemActive ? "bg-[var(--section-light)] font-semibold text-[var(--primary)]" : ""}`}
+                onClick={onClose}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
+      ) : null}
+    </div>
+  );
 }
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileExpandedId, setMobileExpandedId] = useState<string | null>(null);
+  const [desktopOpenId, setDesktopOpenId] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const phase = getPublicPlatformPhase();
   const navStructure = buildMainNav(phase);
   const showMemberAuth = platformFeatures.authentication(phase);
+
+  const closeDesktopMenus = useCallback(() => setDesktopOpenId(null), []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 100);
@@ -290,40 +432,43 @@ export function Header() {
       }`}
     >
       <nav className="mx-auto flex max-w-7xl min-h-[60px] items-center justify-between gap-4 overflow-visible px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
-        {/* Logo — premium MBKRU icon + wordmark */}
         <Logo href="/" className="gap-2.5" theme={isHomeHero ? "dark" : "light"} />
 
-        {/* Desktop nav — standalone menu items */}
-        <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-center lg:gap-8">
-          {navStructure.map((item) => {
-            const isActive =
-              item.activeWhenPathStartsWith != null
-                ? pathname.startsWith(item.activeWhenPathStartsWith)
-                : pathname === item.href;
+        <div className="hidden min-w-0 flex-1 items-center justify-center gap-1 xl:gap-2 lg:flex">
+          {navStructure.map((entry) => {
+            if (entry.kind === "link") {
+              const active = leafIsActive(pathname, entry.leaf);
+              return (
+                <Link
+                  key={entry.leaf.href}
+                  href={entry.leaf.href}
+                  className={`shrink-0 whitespace-nowrap rounded-lg px-2 py-1.5 text-sm font-medium transition-colors xl:text-base touch-manipulation ${desktopLinkClass(isHomeHero, active)}`}
+                >
+                  {entry.leaf.label}
+                </Link>
+              );
+            }
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`text-base font-medium transition-colors ${
-                  isHomeHero
-                    ? `hover:text-[var(--accent-gold)] ${isActive ? "text-[var(--accent-gold)] font-semibold" : "text-white/90"}`
-                    : `hover:text-[var(--primary)] ${isActive ? "text-[var(--primary)] font-semibold" : "text-[var(--foreground)]"}`
-                }`}
-              >
-                {item.label}
-              </Link>
+              <DesktopNavDropdown
+                key={entry.id}
+                entry={entry}
+                pathname={pathname}
+                isHomeHero={isHomeHero}
+                open={desktopOpenId === entry.id}
+                onToggle={() => setDesktopOpenId((id) => (id === entry.id ? null : entry.id))}
+                onClose={closeDesktopMenus}
+              />
             );
           })}
         </div>
 
-        {/* Desktop CTA — Get in Touch */}
-        <div className="hidden lg:flex lg:shrink-0 lg:items-center lg:gap-4">
+        <div className="hidden shrink-0 items-center gap-3 lg:flex xl:gap-4">
           {showMemberAuth ? (
             <MemberAuthNav isHomeHero={isHomeHero} pathname={pathname} variant="desktop" />
           ) : null}
           <Link
             href="/contact"
-            className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold shadow-md transition-all duration-[400ms] ease-in-out ${
+            className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold shadow-md transition-all duration-[400ms] ease-in-out xl:px-5 ${
               isHomeHero
                 ? "bg-white text-[var(--section-dark)] hover:bg-white/90 hover:shadow-lg"
                 : "bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] hover:shadow-lg"
@@ -336,10 +481,9 @@ export function Header() {
           </Link>
         </div>
 
-        {/* Mobile menu button */}
         <button
           type="button"
-          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl lg:hidden ${
+          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl lg:hidden touch-manipulation ${
             isHomeHero ? "text-white hover:bg-white/10" : "text-[var(--foreground)] hover:bg-[var(--muted)]"
           }`}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -356,7 +500,6 @@ export function Header() {
         </button>
       </nav>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -366,23 +509,68 @@ export function Header() {
             transition={{ duration: 0.2 }}
             className="overflow-hidden border-t border-[var(--border)] bg-white lg:hidden"
           >
-            <div className="space-y-1 px-4 py-4">
-              {navStructure.map((item) => {
-                const isActive =
-                  item.activeWhenPathStartsWith != null
-                    ? pathname.startsWith(item.activeWhenPathStartsWith)
-                    : pathname === item.href;
+            <div className="max-h-[min(70vh,calc(100dvh-5rem))] space-y-0 overflow-y-auto overscroll-contain px-2 py-3">
+              {navStructure.map((entry) => {
+                if (entry.kind === "link") {
+                  const active = leafIsActive(pathname, entry.leaf);
+                  return (
+                    <Link
+                      key={entry.leaf.href}
+                      href={entry.leaf.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex min-h-[48px] items-center rounded-xl px-4 py-3 text-base font-medium transition-all hover:bg-[var(--muted)] touch-manipulation ${
+                        active ? "font-semibold text-[var(--primary)]" : "text-[var(--foreground)]"
+                      }`}
+                    >
+                      {entry.leaf.label}
+                    </Link>
+                  );
+                }
+                const expanded = mobileExpandedId === entry.id;
+                const gActive = groupIsActive(pathname, entry.items);
                 return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`flex min-h-[44px] items-center rounded-xl px-4 py-3 text-base font-medium transition-all hover:bg-[var(--muted)] ${
-                      isActive ? "font-semibold text-[var(--primary)]" : "text-[var(--foreground)]"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
+                  <div key={entry.id} className="rounded-xl">
+                    <button
+                      type="button"
+                      className={`flex min-h-[48px] w-full items-center justify-between gap-2 rounded-xl px-4 py-3 text-left text-base font-medium transition-all hover:bg-[var(--muted)] touch-manipulation ${
+                        gActive ? "text-[var(--primary)]" : "text-[var(--foreground)]"
+                      }`}
+                      aria-expanded={expanded}
+                      onClick={() => setMobileExpandedId((id) => (id === entry.id ? null : entry.id))}
+                    >
+                      <span className={gActive ? "font-semibold" : ""}>{entry.label}</span>
+                      <ChevronDownIcon open={expanded} />
+                    </button>
+                    <AnimatePresence initial={false}>
+                      {expanded ? (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="space-y-0 border-l-2 border-[var(--border)] pb-2 pl-3 ml-3">
+                            {entry.items.map((item) => {
+                              const active = leafIsActive(pathname, item);
+                              return (
+                                <Link
+                                  key={item.href}
+                                  href={item.href}
+                                  onClick={() => setMobileMenuOpen(false)}
+                                  className={`flex min-h-[44px] items-center rounded-lg px-3 py-2.5 text-[15px] font-medium transition-colors hover:bg-[var(--muted)] touch-manipulation ${
+                                    active ? "font-semibold text-[var(--primary)]" : "text-[var(--foreground)]"
+                                  }`}
+                                >
+                                  {item.label}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </motion.div>
+                      ) : null}
+                    </AnimatePresence>
+                  </div>
                 );
               })}
               {showMemberAuth ? (
@@ -393,11 +581,11 @@ export function Header() {
                   onNavigate={() => setMobileMenuOpen(false)}
                 />
               ) : null}
-              <div className="pt-4">
+              <div className="sticky bottom-0 bg-white pt-3 pb-1">
                 <Link
                   href="/contact"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex min-h-[48px] items-center justify-center rounded-xl bg-[var(--primary)] px-6 font-semibold text-white"
+                  className="flex min-h-[48px] items-center justify-center rounded-xl bg-[var(--primary)] px-6 font-semibold text-white touch-manipulation"
                 >
                   Get in Touch
                 </Link>

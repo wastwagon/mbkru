@@ -37,7 +37,7 @@ Civic Accountability & Citizens Engagement Platform for Ghana.
 
 ### One-command local setup (Docker + DB + seed)
 
-Requires **Docker Desktop** (or Docker Engine + Compose). Creates `.env` from `.env.example` with generated secrets if missing, starts **Postgres** (host port **55432**) and **Redis**, runs migrations and seed (including demo MPs/news and pilot member accounts).
+Requires **Docker Desktop** (or Docker Engine + Compose). Creates `.env` from `.env.example` with generated secrets if missing, starts **Postgres** (host port **55432**) and **Redis**, runs migrations and seed (starter MPs/manifesto-linked promises, news, optional pilot members).
 
 ```bash
 npm run setup:local
@@ -52,7 +52,7 @@ Default admin (when `.env` was created by the script): `admin@example.com` / `De
 npm install
 # Postgres: docker compose up -d postgres redis — use DATABASE_URL with localhost:55432 (see .env.example)
 npx prisma migrate dev
-npx prisma db seed   # admin from ADMIN_EMAIL / ADMIN_PASSWORD; optional: SEED_ACCOUNTABILITY_DEMO=1, SEED_MEMBER_DEMO=1 (see .env.example)
+npx prisma db seed   # admin from ADMIN_EMAIL / ADMIN_PASSWORD; public accountability starter unless SEED_ACCOUNTABILITY_DEMO=0; optional SEED_MEMBER_DEMO=1 (see .env.example)
 npm run dev
 ```
 

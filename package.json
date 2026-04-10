@@ -18,6 +18,10 @@
     "setup:local": "node scripts/setup-local.mjs",
     "import:sanity": "tsx scripts/import-sanity-posts.ts",
     "data:members-csv": "node scripts/json-members-to-mbkru-csv.mjs",
+    "data:merge-csv": "tsx scripts/merge-data-csv.ts",
+    "data:pull-mps": "tsx scripts/pull-mps-from-ghanamps.ts",
+    "data:pull-constituencies": "tsx scripts/fetch-constituencies-from-wikipedia.ts",
+    "data:list-mp-constituency-slugs": "tsx scripts/list-mp-constituency-slugs.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {

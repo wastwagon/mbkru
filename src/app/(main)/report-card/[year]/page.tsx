@@ -81,7 +81,11 @@ export default async function ReportCardYearPage({ params }: Props) {
                       <span className="rounded-full bg-[var(--primary)]/10 px-3 py-1 text-sm font-semibold text-[var(--primary)]">
                         {e.overallScore}
                       </span>
-                    ) : null}
+                    ) : (
+                      <span className="rounded-full bg-[var(--muted)]/25 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                        Score pending
+                      </span>
+                    )}
                   </div>
                   {e.narrative ? (
                     <p className="mt-3 whitespace-pre-wrap text-sm text-[var(--muted-foreground)]">

@@ -4,6 +4,18 @@
 
 **Import path:** Constituencies first → CSV MP import per [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md) → promises and scorecards in **admin** (with `sourceLabel` citations).
 
+### What can be bulk-fetched vs manual (honest scope)
+
+There is **no official** state bulk MP JSON API we can call from CI. **open.africa’s** historic “Members of Parliament Ghana” package had **no file resources** when checked (metadata only, 2012 snapshot). **Manifesto text** is not something we bulk-copy without rights and editorial cites. This repo **can** fetch **constituency names** from Wikipedia’s API and **can** convert **ghanamps** JSON to MP CSV **on your machine**.
+
+| Feature | Safe bulk today? | In this repo |
+|--------|------------------|--------------|
+| **MP roster** | **Yes, locally** via **[ghanamps](https://github.com/yeboahnanaosei/ghanamps)** (`ghanamps members` → JSON). Verify sample rows on [parliament.gh](https://www.parliament.gh/members). | **`npm run data:pull-mps`** → `prisma/data/generated/parliament-members.bulk.csv` (auto-merges [`parliament-members.starter.csv`](../prisma/data/parliament-members.starter.csv)). Or **`MP_JSON_PATH=./mps.json npm run data:pull-mps`** if you saved JSON without the CLI. |
+| **Constituency master** | **Partially** — English Wikipedia’s [list page](https://en.wikipedia.org/wiki/List_of_parliamentary_constituencies_of_Ghana) (CC BY-SA) has machine-readable tables; **not** an EC legal boundary source. | **`npm run data:pull-constituencies`** → `prisma/data/generated/constituencies.wikipedia.csv` (~268 rows when links use `(Ghana parliament constituency)`; a few seats use shorter wikilinks — add manually). Merges [`constituencies.starter.csv`](../prisma/data/constituencies.starter.csv). Cross-check with **`npm run data:list-mp-constituency-slugs -- mps.json`**. |
+| **Campaign promises** | **No** automated full extract (copyright + accuracy). | Themes + PDF links in seed; **you** add cited lines in admin. |
+| **Report card scores** | **No** — editorial methodology. | Pilot cycle (scores **pending**) shows UI; publish real cycles in admin. |
+| **Communities / town halls / alerts** | **No** open national dataset. | Manual / admin. |
+
 ---
 
 ## 1. Members of Parliament (roster)
@@ -16,6 +28,36 @@
 | **[openAFRICA — Members of Parliament Ghana](https://open.africa/dataset/members-of-parliament-ghana)** | Historical dataset | Often **stale** (e.g. pre-2012 snapshots); use only with date checks, not as current roster. |
 
 **This repo:** Run `npm run data:members-csv -- path/to/members.json > import.csv` to convert **ghanamps-style JSON** into the CSV format expected by **`POST /api/admin/parliament-members/import`**. See `scripts/json-members-to-mbkru-csv.mjs`. **Read-only exports (Phase 2+):** `GET /api/export/mps-csv` (roster) and `GET /api/export/promises-csv` (all promises; optional `?memberSlug=`) — same phase gates as JSON APIs; rate-limited per IP.
+
+**Starter seed (`prisma db seed`, unless `SEED_ACCOUNTABILITY_DEMO=0`):** Inserts three widely listed 9th-Parliament examples — **Bryan Acheampong** (Abetifi), **John Dramani Mahama** (Bole Bamboi), **Zanetor Agyeman-Rawlings** (Klottey Korle) — for UI and import testing. **Always verify** names, party, and constituency against **[parliament.gh members](https://www.parliament.gh/members)** after by-elections or roster changes. Promise rows are **manifesto themes** with PDF links; editors replace with page-level citations before comms.
+
+**Checked-in CSVs (same roster, import path):** For hosts that use **`SEED_ACCOUNTABILITY_DEMO=0`**, load the same three constituencies and MPs via admin APIs:
+
+| File | Use |
+|------|-----|
+| [`prisma/data/constituencies.starter.csv`](../prisma/data/constituencies.starter.csv) | `POST /api/admin/constituencies/import` **first** |
+| [`prisma/data/parliament-members.starter.csv`](../prisma/data/parliament-members.starter.csv) | Then `POST /api/admin/parliament-members/import` (optional dry-run reconcile before) |
+
+Vitest **`starter-data-csv.test.ts`** asserts both files stay parse-valid.
+
+**Bulk MP CSV (recommended):** install **ghanamps**, then from the repo root:
+
+```bash
+npm run data:pull-mps
+```
+
+Writes **`prisma/data/generated/parliament-members.bulk.csv`** (not committed — see `prisma/data/generated/.gitignore`). Equivalent manual path: `ghanamps members > mps.json` → `npm run data:members-csv -- mps.json > full.csv` → merge starter if needed (`npm run data:merge-csv -- parliament full.csv`).
+
+**Merge starter into bulk (dedupe by slug):** After generating `full.csv`, ensure the three starter MPs (or starter constituencies) appear even if ghanamps normalisation used different slugs — or simply append any missing starter rows:
+
+```bash
+npx tsx scripts/merge-data-csv.ts parliament full.csv > full-with-starter.csv
+npx tsx scripts/merge-data-csv.ts constituency constituencies.csv > constituencies-with-starter.csv
+```
+
+Logic lives in `src/lib/merge-starter-csv.ts` (Vitest: `merge-starter-csv.test.ts`). Base file column order must match import format; starter rows with a `slug` already in the base file are skipped.
+
+**Note:** CSV import loads **constituencies and MPs only**. Manifesto rows, `CampaignPromise` themes, and the report-card pilot cycle still come from **`prisma db seed`** when the accountability starter runs (default). If you always use **`SEED_ACCOUNTABILITY_DEMO=0`**, add promises and cycles via **admin** or run a one-off seed without that flag to hydrate editorial content, then lock the env for future deploys.
 
 ---
 

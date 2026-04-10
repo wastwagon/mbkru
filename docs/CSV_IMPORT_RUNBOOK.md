@@ -10,7 +10,7 @@
 
 **Code:** MP parser in `src/lib/parliament-csv-parse.ts` (tests: `parliament-csv-parse.test.ts`); server re-export in `src/lib/server/parliament-csv.ts`. Constituency parser: `src/lib/constituency-csv-parse.ts`. Reconcile logic: `src/lib/parliament-reconcile.ts`.
 
-**Real-world roster sources & manifesto rights:** [`docs/DATA_SOURCES.md`](./DATA_SOURCES.md). **JSON → CSV:** `npm run data:members-csv -- path/to/members.json > import.csv`
+**Real-world roster sources & manifesto rights:** [`docs/DATA_SOURCES.md`](./DATA_SOURCES.md). **Bulk constituencies (Wikipedia API):** `npm run data:pull-constituencies` → `prisma/data/generated/constituencies.wikipedia.csv` (CC BY-SA — verify against EC). **Bulk MP file (local ghanamps):** `npm run data:pull-mps` → `prisma/data/generated/parliament-members.bulk.csv`. **JSON → CSV:** `npm run data:members-csv -- path/to/members.json > import.csv`. **Merge starter rows** (dedupe by slug): `npm run data:merge-csv -- parliament import.csv > merged.csv`.
 
 ---
 
@@ -18,7 +18,7 @@
 
 1. **`Constituency` rows must already exist** in Postgres with **`slug`** values matching the MP CSV. Unknown `constituency_slug` values produce **row errors** on import/reconcile.
 2. **Regions** are seeded by default (`prisma/seed.mjs`). Load constituencies with **`POST /api/admin/constituencies/import`** (see §2), a migration, or SQL.
-3. **Local demo:** `SEED_ACCOUNTABILITY_DEMO=1 npx prisma db seed` creates fictional constituencies and demo MPs — useful for UI tests without real electoral data.
+3. **Starter seed:** Default `npx prisma db seed` adds three sample MPs (verify on parliament.gh) and manifesto-linked promise themes. Use **`SEED_ACCOUNTABILITY_DEMO=0`** for CSV-only loads; then import **`prisma/data/constituencies.starter.csv`**, then **`prisma/data/parliament-members.starter.csv`** (same three MPs — see [`DATA_SOURCES.md`](./DATA_SOURCES.md)).
 4. **Example constituency file:** `prisma/data/constituencies.example.csv` (format only; extend with your EC-aligned master list).
 
 ---

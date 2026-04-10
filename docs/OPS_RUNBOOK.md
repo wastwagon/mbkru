@@ -18,11 +18,11 @@ Use before major traffic (e.g. election window) or after infra changes:
 
 ---
 
-## Staging / demo accountability data
+## Starter accountability data (seed)
 
-- Optional fictional MPs, promises, and report card cycle (**year 2099**): set **`SEED_ACCOUNTABILITY_DEMO=1`** when running **`npx prisma db seed`** (see [`.env.example`](../.env.example)). **Do not** rely on this for production narratives — use vetted CSV import for real rosters.
+- **Default:** `prisma db seed` loads a **small public sample**: three MPs (verify on [parliament.gh](https://www.parliament.gh/members)), matching constituencies, **NDC + NPP 2024 manifesto PDF links** (themes only — editors add page-level citations), five `CampaignPromise` rows, and a **report-card pilot cycle** (**scores unset** until methodology sign-off). Opt out with **`SEED_ACCOUNTABILITY_DEMO=0`** (see [`.env.example`](../.env.example)). Full roster: CSV import per [`DATA_SOURCES.md`](./DATA_SOURCES.md).
 - Optional fictional **public members** (Phase 2+ **`/login`** tests): **`SEED_MEMBER_DEMO=1`** with **`SEED_MEMBER_EMAIL`** / **`SEED_MEMBER_PASSWORD`** (see [`.env.example`](../.env.example)). **Never** ship default demo passwords to production pilots without rotation.
-- After demo seed, build with **Phase 2** or **3** as needed to see `/promises` and `/report-card` populated.
+- Build with **Phase 2** or **3** to expose `/promises` and `/report-card`.
 
 ---
 

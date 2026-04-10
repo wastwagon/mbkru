@@ -134,58 +134,87 @@ const POSTS_SEED = [
   },
 ];
 
-/** Fictional accountability dataset for dev/demo UIs — not real MPs or constituencies. */
-const DEMO_MP_SLUGS = ["demo-mp-koomson", "demo-mp-adjei", "demo-mp-owusu"];
-const DEMO_REPORT_CARD_YEAR = 2099;
+/**
+ * Small **public** starter set: real MPs and constituencies (verify on parliament.gh),
+ * manifesto PDF links only (no scraped text), and promise **themes** editors must align to page-level citations.
+ * @see docs/DATA_SOURCES.md
+ */
+const LEGACY_FICTIONAL_MP_SLUGS = ["demo-mp-koomson", "demo-mp-adjei", "demo-mp-owusu"];
+const LEGACY_FICTIONAL_CONSTITUENCY_SLUGS = ["demo-constituency-accra-north", "demo-constituency-kumasi-east"];
 
-async function seedAccountabilityDemo() {
-  const accra = await prisma.region.findUnique({ where: { slug: "greater-accra" } });
-  const ashanti = await prisma.region.findUnique({ where: { slug: "ashanti" } });
-  if (!accra || !ashanti) {
-    console.warn("seedAccountabilityDemo: regions missing — run base seed first.");
+const STARTER_MP_SLUGS = ["bryan-acheampong", "john-dramani-mahama", "zanetor-agyeman-rawlings"];
+/** Pilot cycle for report-card UI — scores null until MBKRU publishes a reviewed cycle. */
+const REPORT_CARD_PILOT_YEAR = 2026;
+
+const NDC_2024_MANIFESTO_URL =
+  "https://manifesto.johnmahama.org/files/shares/2024%20Manifesto_Abridged.pdf";
+/** Mirror commonly linked for 2024 NPP programme; verify against party canonical host if URL drifts. */
+const NPP_2024_MANIFESTO_URL = "https://npp-usa.org/wp-content/uploads/2024/08/2024_NPP_Manifesto_Full.pdf";
+
+async function removeLegacyFictionalAccountabilityRows() {
+  const legacyMembers = await prisma.parliamentMember.findMany({
+    where: { slug: { in: LEGACY_FICTIONAL_MP_SLUGS } },
+    select: { id: true },
+  });
+  const legacyIds = legacyMembers.map((m) => m.id);
+  if (legacyIds.length > 0) {
+    await prisma.campaignPromise.deleteMany({ where: { memberId: { in: legacyIds } } });
+    await prisma.parliamentMember.deleteMany({ where: { id: { in: legacyIds } } });
+  }
+  await prisma.constituency.deleteMany({
+    where: { slug: { in: LEGACY_FICTIONAL_CONSTITUENCY_SLUGS } },
+  });
+  await prisma.reportCardCycle.deleteMany({ where: { year: 2099 } });
+}
+
+async function seedAccountabilityPublicSample() {
+  const eastern = await prisma.region.findUnique({ where: { slug: "eastern" } });
+  const savannah = await prisma.region.findUnique({ where: { slug: "savannah" } });
+  const greaterAccra = await prisma.region.findUnique({ where: { slug: "greater-accra" } });
+  if (!eastern || !savannah || !greaterAccra) {
+    console.warn("seedAccountabilityPublicSample: required regions missing — run base region seed first.");
     return;
   }
 
-  const c1 = await prisma.constituency.upsert({
-    where: { slug: "demo-constituency-accra-north" },
-    create: {
-      name: "Demo Constituency — Accra North (fictional)",
-      slug: "demo-constituency-accra-north",
-      regionId: accra.id,
-    },
-    update: { name: "Demo Constituency — Accra North (fictional)", regionId: accra.id },
+  await removeLegacyFictionalAccountabilityRows();
+
+  const cAbetifi = await prisma.constituency.upsert({
+    where: { slug: "abetifi" },
+    create: { name: "Abetifi", slug: "abetifi", regionId: eastern.id },
+    update: { name: "Abetifi", regionId: eastern.id },
   });
-  const c2 = await prisma.constituency.upsert({
-    where: { slug: "demo-constituency-kumasi-east" },
-    create: {
-      name: "Demo Constituency — Kumasi East (fictional)",
-      slug: "demo-constituency-kumasi-east",
-      regionId: ashanti.id,
-    },
-    update: { name: "Demo Constituency — Kumasi East (fictional)", regionId: ashanti.id },
+  const cBole = await prisma.constituency.upsert({
+    where: { slug: "bole-bamboi" },
+    create: { name: "Bole Bamboi", slug: "bole-bamboi", regionId: savannah.id },
+    update: { name: "Bole Bamboi", regionId: savannah.id },
+  });
+  const cKlottey = await prisma.constituency.upsert({
+    where: { slug: "klottey-korle" },
+    create: { name: "Klottey Korle", slug: "klottey-korle", regionId: greaterAccra.id },
+    update: { name: "Klottey Korle", regionId: greaterAccra.id },
   });
 
   const mps = [
     {
-      slug: DEMO_MP_SLUGS[0],
-      name: "Dr. Ama Koomson (demo)",
+      slug: STARTER_MP_SLUGS[0],
+      name: "Bryan Acheampong",
       role: "MP",
-      party: "Independent (demo)",
-      constituencyId: c1.id,
+      party: "NPP",
+      constituencyId: cAbetifi.id,
     },
     {
-      slug: DEMO_MP_SLUGS[1],
-      name: "Kwesi Adjei (demo)",
+      slug: STARTER_MP_SLUGS[1],
+      name: "John Dramani Mahama",
       role: "MP",
-      party: "Demo Party A",
-      constituencyId: c1.id,
+      party: "NDC",
+      constituencyId: cBole.id,
     },
     {
-      slug: DEMO_MP_SLUGS[2],
-      name: "Yaa Owusu (demo)",
+      slug: STARTER_MP_SLUGS[2],
+      name: "Zanetor Agyeman-Rawlings",
       role: "MP",
-      party: "Demo Party B",
-      constituencyId: c2.id,
+      party: "NDC",
+      constituencyId: cKlottey.id,
     },
   ];
 
@@ -211,14 +240,10 @@ async function seedAccountabilityDemo() {
   }
 
   const members = await prisma.parliamentMember.findMany({
-    where: { slug: { in: DEMO_MP_SLUGS } },
+    where: { slug: { in: STARTER_MP_SLUGS } },
     select: { id: true, slug: true },
   });
   const bySlug = Object.fromEntries(members.map((x) => [x.slug, x.id]));
-
-  /** Public PDF URL (2024 campaign manifesto host). MBKRU stores the link only — we do not scrape or mirror the file. */
-  const NDC_2024_MANIFESTO_URL =
-    "https://manifesto.johnmahama.org/files/shares/2024%20Manifesto_Abridged.pdf";
 
   let ndcManifesto = await prisma.manifestoDocument.findFirst({
     where: { partySlug: "ndc", electionCycle: "2024" },
@@ -231,7 +256,7 @@ async function seedAccountabilityDemo() {
         electionCycle: "2024",
         sourceUrl: NDC_2024_MANIFESTO_URL,
         notes:
-          "Seed: PDF on 2024 campaign manifesto site. Confirm against any canonical NDC publication; update in admin if hosting changes.",
+          "Public PDF on 2024 campaign site. Editors: confirm wording and page refs against the party’s canonical publication.",
       },
     });
   } else {
@@ -241,7 +266,33 @@ async function seedAccountabilityDemo() {
         title: "NDC 2024 — Resetting Ghana (manifesto PDF)",
         sourceUrl: NDC_2024_MANIFESTO_URL,
         notes:
-          "Seed: PDF on 2024 campaign manifesto site. Confirm against any canonical NDC publication; update in admin if hosting changes.",
+          "Public PDF on 2024 campaign site. Editors: confirm wording and page refs against the party’s canonical publication.",
+      },
+    });
+  }
+
+  let nppManifesto = await prisma.manifestoDocument.findFirst({
+    where: { partySlug: "npp", electionCycle: "2024" },
+  });
+  if (!nppManifesto) {
+    nppManifesto = await prisma.manifestoDocument.create({
+      data: {
+        title: "NPP 2024 — manifesto (PDF)",
+        partySlug: "npp",
+        electionCycle: "2024",
+        sourceUrl: NPP_2024_MANIFESTO_URL,
+        notes:
+          "Commonly linked full PDF (e.g. NPP USA chapter host). Cross-check with newpatrioticparty.org or official campaign materials if the URL changes.",
+      },
+    });
+  } else {
+    nppManifesto = await prisma.manifestoDocument.update({
+      where: { id: nppManifesto.id },
+      data: {
+        title: "NPP 2024 — manifesto (PDF)",
+        sourceUrl: NPP_2024_MANIFESTO_URL,
+        notes:
+          "Commonly linked full PDF (e.g. NPP USA chapter host). Cross-check with newpatrioticparty.org or official campaign materials if the URL changes.",
       },
     });
   }
@@ -252,25 +303,11 @@ async function seedAccountabilityDemo() {
 
   const promiseRows = [
     {
-      memberSlug: DEMO_MP_SLUGS[0],
-      title: "Publish quarterly constituency spending summary (demo)",
-      sourceLabel: "2026 demo manifesto excerpt",
-      status: "IN_PROGRESS",
-      policySector: "GOVERNANCE",
-    },
-    {
-      memberSlug: DEMO_MP_SLUGS[0],
-      title: "Youth skills hub pilot in two districts (demo)",
-      sourceLabel: "Town hall commitment (fictional)",
-      status: "TRACKING",
-      policySector: "EDUCATION",
-    },
-    {
-      memberSlug: DEMO_MP_SLUGS[1],
-      title: "24-hour economy — productivity & jobs (illustrative NDC 2024 theme)",
+      memberSlug: STARTER_MP_SLUGS[1],
+      title: "24-hour economy — productivity and jobs (NDC 2024 programme theme)",
       description:
-        "Seed row: theme widely discussed for NDC 2024. Editors should confirm exact manifesto wording and page in the linked PDF before production use.",
-      sourceLabel: "NDC 2024 manifesto (Resetting Ghana)",
+        "Theme summarised from public NDC 2024 materials. Editors: map this row to exact manifesto wording and page/section in the linked PDF.",
+      sourceLabel: "NDC 2024 manifesto (Resetting Ghana) — verify page reference",
       sourceUrl: NDC_2024_MANIFESTO_URL,
       manifestoDocumentId: ndcManifesto.id,
       partySlug: "ndc",
@@ -280,18 +317,59 @@ async function seedAccountabilityDemo() {
       status: "TRACKING",
     },
     {
-      memberSlug: DEMO_MP_SLUGS[1],
-      title: "Road safety signage on Demo Highway (fictional)",
-      sourceLabel: "Press statement (demo)",
+      memberSlug: STARTER_MP_SLUGS[1],
+      title: "Health access and NHIS sustainability (NDC 2024 theme)",
+      description:
+        "High-level theme for editorial follow-up against the abridged/full NDC 2024 manifesto.",
+      sourceLabel: "NDC 2024 manifesto — verify section in PDF",
+      sourceUrl: NDC_2024_MANIFESTO_URL,
+      manifestoDocumentId: ndcManifesto.id,
+      partySlug: "ndc",
+      electionCycle: "2024",
+      policySector: "HEALTH",
+      isGovernmentProgramme: true,
       status: "TRACKING",
-      policySector: "INFRASTRUCTURE",
     },
     {
-      memberSlug: DEMO_MP_SLUGS[2],
-      title: "Primary health outreach visits (demo)",
-      sourceLabel: "Campaign pledge (fictional)",
-      status: "FULFILLED",
-      policySector: "HEALTH",
+      memberSlug: STARTER_MP_SLUGS[2],
+      title: "Social protection and support for vulnerable groups (NDC 2024 theme)",
+      description:
+        "Editors: confirm exact pledge language and citation in the official NDC 2024 document.",
+      sourceLabel: "NDC 2024 manifesto — verify in PDF",
+      sourceUrl: NDC_2024_MANIFESTO_URL,
+      manifestoDocumentId: ndcManifesto.id,
+      partySlug: "ndc",
+      electionCycle: "2024",
+      policySector: "GOVERNANCE",
+      isGovernmentProgramme: true,
+      status: "TRACKING",
+    },
+    {
+      memberSlug: STARTER_MP_SLUGS[0],
+      title: "Jobs and business growth (NPP 2024 manifesto theme)",
+      description:
+        "Theme aligned to public NPP 2024 programme framing. Editors: tie to exact manifesto section/page.",
+      sourceLabel: "NPP 2024 manifesto PDF — verify page reference",
+      sourceUrl: NPP_2024_MANIFESTO_URL,
+      manifestoDocumentId: nppManifesto.id,
+      partySlug: "npp",
+      electionCycle: "2024",
+      policySector: "FISCAL",
+      isGovernmentProgramme: false,
+      status: "TRACKING",
+    },
+    {
+      memberSlug: STARTER_MP_SLUGS[0],
+      title: "Digital transformation and service delivery (NPP 2024 theme)",
+      description: "Editors: confirm wording against the linked NPP 2024 PDF.",
+      sourceLabel: "NPP 2024 manifesto PDF — verify section",
+      sourceUrl: NPP_2024_MANIFESTO_URL,
+      manifestoDocumentId: nppManifesto.id,
+      partySlug: "npp",
+      electionCycle: "2024",
+      policySector: "GOVERNANCE",
+      isGovernmentProgramme: false,
+      status: "IN_PROGRESS",
     },
   ];
 
@@ -318,50 +396,50 @@ async function seedAccountabilityDemo() {
   }
 
   const cycle = await prisma.reportCardCycle.upsert({
-    where: { year: DEMO_REPORT_CARD_YEAR },
+    where: { year: REPORT_CARD_PILOT_YEAR },
     create: {
-      year: DEMO_REPORT_CARD_YEAR,
-      label: `Demo People’s Report Card ${DEMO_REPORT_CARD_YEAR} (seed — not for publication)`,
+      year: REPORT_CARD_PILOT_YEAR,
+      label: "People's Report Card — pilot (layout & workflow)",
       publishedAt: new Date(),
-      methodology:
-        "This cycle exists only for local/staging UI tests. Replace with real methodology before any public launch.",
+      methodology: [
+        "This cycle demonstrates the published report-card layout. Roster: verify sitting MPs at https://www.parliament.gh/members .",
+        "Overall scores are intentionally unset until MBKRU completes evidence review and publishes methodology-aligned metrics (see /methodology).",
+        "MP examples in seed: Bryan Acheampong (Abetifi), John Dramani Mahama (Bole Bamboi), Zanetor Agyeman-Rawlings (Klottey Korle) — confirm party and constituency against parliament.gh after by-elections or roster changes.",
+      ].join("\n\n"),
     },
     update: {
-      label: `Demo People’s Report Card ${DEMO_REPORT_CARD_YEAR} (seed — not for publication)`,
+      label: "People's Report Card — pilot (layout & workflow)",
       publishedAt: new Date(),
+      methodology: [
+        "This cycle demonstrates the published report-card layout. Roster: verify sitting MPs at https://www.parliament.gh/members .",
+        "Overall scores are intentionally unset until MBKRU completes evidence review and publishes methodology-aligned metrics (see /methodology).",
+        "MP examples in seed: Bryan Acheampong (Abetifi), John Dramani Mahama (Bole Bamboi), Zanetor Agyeman-Rawlings (Klottey Korle) — confirm party and constituency against parliament.gh after by-elections or roster changes.",
+      ].join("\n\n"),
     },
   });
 
   await prisma.scorecardEntry.deleteMany({ where: { cycleId: cycle.id } });
 
-  const id0 = bySlug[DEMO_MP_SLUGS[0]];
-  const id1 = bySlug[DEMO_MP_SLUGS[1]];
-  if (id0) {
+  const pendingNarrative =
+    "Layout preview: no published score yet — MBKRU will populate narratives and metrics after methodology sign-off and evidence review.";
+
+  for (const slug of STARTER_MP_SLUGS) {
+    const mid = bySlug[slug];
+    if (!mid) continue;
     await prisma.scorecardEntry.create({
       data: {
         cycleId: cycle.id,
-        memberId: id0,
-        narrative: "Demo narrative: strong committee attendance in sample period (fictional).",
-        overallScore: 72.5,
-        metrics: { oversight: 7, accessibility: 8, transparency: 6 },
-      },
-    });
-  }
-  if (id1) {
-    await prisma.scorecardEntry.create({
-      data: {
-        cycleId: cycle.id,
-        memberId: id1,
-        narrative: "Demo narrative: mixed follow-through on written questions (fictional).",
-        overallScore: 64.0,
-        metrics: { oversight: 6, accessibility: 7, transparency: 6 },
+        memberId: mid,
+        narrative: pendingNarrative,
+        overallScore: null,
+        metrics: null,
       },
     });
   }
 
   console.log(
-    "Accountability demo seeded: constituencies=2, MPs=3, NDC 2024 manifesto row, promises=5, report card year=" +
-      DEMO_REPORT_CARD_YEAR,
+    "Public accountability sample seeded: constituencies=3, MPs=3 (verify on parliament.gh), NDC+NPP 2024 manifesto links, promises=5, report-card pilot year=" +
+      REPORT_CARD_PILOT_YEAR,
   );
 }
 
@@ -454,8 +532,14 @@ async function main() {
   }
   console.log("Posts seeded:", POSTS_SEED.length);
 
-  if (process.env.SEED_ACCOUNTABILITY_DEMO === "1") {
-    await seedAccountabilityDemo();
+  const skipAccountabilityStarter =
+    process.env.SEED_ACCOUNTABILITY_DEMO === "0" || process.env.SEED_ACCOUNTABILITY_DEMO === "false";
+  if (skipAccountabilityStarter) {
+    console.log(
+      "SEED_ACCOUNTABILITY_DEMO=0 — skipping public accountability starter (MPs, manifesto-linked promises, report card pilot).",
+    );
+  } else {
+    await seedAccountabilityPublicSample();
   }
 
   if (process.env.SEED_MEMBER_DEMO === "1") {
