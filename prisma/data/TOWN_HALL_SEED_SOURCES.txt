@@ -1,0 +1,18 @@
+Town hall / regional forum / constituency debate programme rows (TownHallEvent)
+
+These seed rows are programme placeholders aligned with the public roadmap, not confirmed events.
+
+Kinds (Prisma enum ProgrammeEventKind):
+- TOWN_HALL — regional listening sessions
+- REGIONAL_FORUM — e.g. broadcast forums row
+- CONSTITUENCY_DEBATE — toward pre-election debates (roadmap: 275 constituencies by Q3 2028)
+
+Primary references (edit dates in Admin → Town halls & forums):
+- ROADMAP_2028_ELECTION.md — Phase 2 quarters (Q2–Q4 2026) and Q3 2028 debates.
+- src/lib/site-content.ts — programmeRoadmap and regional modal copy (ghanaRegionsData).
+
+Constituency debate examples require constituencies in DB (bundled JSON or starter accountability seed) before prisma db seed runs the debate upserts.
+
+Operational truth: Electoral Commission, partner venues, and MBKRU News posts supersede seed text when dates are fixed.
+
+Regenerate: prisma db seed (skipped when SEED_TOWN_HALL_PROGRAMME=0).

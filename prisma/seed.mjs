@@ -3,6 +3,7 @@
  * Constituencies: `prisma/data/constituencies.seed.json` — `npm run data:refresh-constituencies-seed`.
  * Full MP roster: `prisma/data/parliament-members.seed.json` (bundled; Wikipedia 2024 list). Regenerate: `npm run data:refresh-members-seed-wikipedia`.
  * Traditional-area communities: `prisma/data/communities.seed.json` (public-source citations in descriptions).
+ * Town hall / forum / constituency debate programme: `TownHallEvent` after bundled constituencies (see `prisma/data/TOWN_HALL_SEED_SOURCES.txt`). Opt out: `SEED_TOWN_HALL_PROGRAMME=0`.
  * Opt out: `SEED_COMMUNITIES_DEMO=0`. Pilot posts need `SEED_MEMBER_DEMO=1`.
  * Optional admin fixtures (Voice + attachment, situational/election rows, contact, verification queue): `SEED_ENGAGEMENT_DEMOS=1` or `SEED_VOICE_DEMO=1`. Internal origin is noted in `CitizenReport.staffNotes` / contact message footer where applicable.
  * @see package.json prisma.seed
@@ -553,6 +554,203 @@ async function seedParliamentMembersFromBundledJson() {
   );
 }
 
+const TOWN_HALL_PROGRAMME_CITATION =
+  "Programme placeholders aligned with ROADMAP_2028_ELECTION.md and website programmeRoadmap (Q2–Q4 2026). Not confirmed events — see prisma/data/TOWN_HALL_SEED_SOURCES.txt.";
+
+/** Roadmap-aligned programme rows for /town-halls (dates TBC until partners confirm). */
+async function seedTownHallProgrammeFromRoadmap() {
+  const rows = [
+    {
+      slug: "pilot-town-hall-greater-accra-q2-2026",
+      kind: "TOWN_HALL",
+      title: "Town Hall pilot — Greater Accra",
+      summary:
+        "First regional listening session under the physical engagement pillar. Date, venue, and registration will be announced on News when partners confirm.",
+      regionSlug: "greater-accra",
+      programmeQuarter: "Q2 2026",
+      sortOrder: 10,
+    },
+    {
+      slug: "town-hall-ashanti-q3-2026",
+      kind: "TOWN_HALL",
+      title: "Town Hall — Ashanti Region",
+      summary: "Planned regional session after the Greater Accra pilot (national rollout roadmap).",
+      regionSlug: "ashanti",
+      programmeQuarter: "Q3 2026",
+      sortOrder: 20,
+    },
+    {
+      slug: "town-hall-western-q3-2026",
+      kind: "TOWN_HALL",
+      title: "Town Hall — Western Region",
+      summary: "Planned regional session (oil & gas and coastal accountability themes).",
+      regionSlug: "western",
+      programmeQuarter: "Q3 2026",
+      sortOrder: 30,
+    },
+    {
+      slug: "town-hall-central-q3-2026",
+      kind: "TOWN_HALL",
+      title: "Town Hall — Central Region",
+      summary: "Planned regional session (tourism and fisheries themes).",
+      regionSlug: "central",
+      programmeQuarter: "Q3 2026",
+      sortOrder: 40,
+    },
+    {
+      slug: "town-hall-eastern-q4-2026",
+      kind: "TOWN_HALL",
+      title: "Town Hall — Eastern Region",
+      summary: "Planned regional session (agriculture and cocoa themes).",
+      regionSlug: "eastern",
+      programmeQuarter: "Q4 2026",
+      sortOrder: 50,
+    },
+    {
+      slug: "town-hall-volta-q4-2026",
+      kind: "TOWN_HALL",
+      title: "Town Hall — Volta Region",
+      summary: "Planned regional session.",
+      regionSlug: "volta",
+      programmeQuarter: "Q4 2026",
+      sortOrder: 60,
+    },
+    {
+      slug: "town-hall-northern-q4-2026",
+      kind: "TOWN_HALL",
+      title: "Town Hall — Northern Region",
+      summary: "Planned regional session (Northern hub / Tamale).",
+      regionSlug: "northern",
+      programmeQuarter: "Q4 2026",
+      sortOrder: 70,
+    },
+    {
+      slug: "town-hall-bono-q4-2026",
+      kind: "TOWN_HALL",
+      title: "Town Hall — Bono Region",
+      summary: "Planned regional session (Sunyani hub).",
+      regionSlug: "bono",
+      programmeQuarter: "Q4 2026",
+      sortOrder: 80,
+    },
+    {
+      slug: "regional-public-forums-broadcast-2026",
+      kind: "REGIONAL_FORUM",
+      title: "Regional Public Forums (broadcast)",
+      summary:
+        "Partner radio, TV, and streaming where agreed — programme design from roadmap Q3–Q4 2026 national rollout. No single venue; follow News for each forum.",
+      regionSlug: null,
+      programmeQuarter: "Q3–Q4 2026",
+      sortOrder: 90,
+    },
+  ];
+
+  let n = 0;
+  for (const row of rows) {
+    let regionId = null;
+    if (row.regionSlug) {
+      const reg = await prisma.region.findUnique({ where: { slug: row.regionSlug } });
+      if (!reg) {
+        console.warn(`Town hall seed: unknown region "${row.regionSlug}" for ${row.slug} — skipping.`);
+        continue;
+      }
+      regionId = reg.id;
+    }
+    await prisma.townHallEvent.upsert({
+      where: { slug: row.slug },
+      create: {
+        slug: row.slug,
+        kind: row.kind,
+        title: row.title,
+        summary: row.summary,
+        regionId,
+        programmeQuarter: row.programmeQuarter,
+        status: "TBC",
+        sourceCitation: TOWN_HALL_PROGRAMME_CITATION,
+        sortOrder: row.sortOrder,
+      },
+      update: {
+        kind: row.kind,
+        title: row.title,
+        summary: row.summary,
+        regionId,
+        programmeQuarter: row.programmeQuarter,
+        sourceCitation: TOWN_HALL_PROGRAMME_CITATION,
+        sortOrder: row.sortOrder,
+      },
+    });
+    n++;
+  }
+  console.log("Town hall programme rows seeded:", n, "(see prisma/data/TOWN_HALL_SEED_SOURCES.txt).");
+}
+
+const CONSTITUENCY_DEBATE_CITATION =
+  "Examples toward ROADMAP_2028_ELECTION.md Q3 2028 (pre-election debates, 275 constituencies). Not scheduled events — see prisma/data/TOWN_HALL_SEED_SOURCES.txt.";
+
+/** Sample constituency debate programme rows (requires constituencies in DB — runs after bundled constituency JSON). */
+async function seedConstituencyDebateProgrammeRows() {
+  const samples = [
+    {
+      slug: "debate-klottey-korle-programme-2028",
+      constituencySlug: "klottey-korle",
+      title: "Constituency debate — Klottey Korle (programme placeholder)",
+      summary:
+        "Illustrative row for accountability debate planning. Date, venue, and moderators TBC; follow News when MBKRU confirms a schedule.",
+      programmeQuarter: "Q3 2028",
+      sortOrder: 200,
+    },
+    {
+      slug: "debate-abetifi-programme-2028",
+      constituencySlug: "abetifi",
+      title: "Constituency debate — Abetifi (programme placeholder)",
+      summary:
+        "Illustrative rural constituency row for the same national debate framework. Operational expansion requires partner and EC coordination.",
+      programmeQuarter: "Q3 2028",
+      sortOrder: 210,
+    },
+  ];
+
+  let n = 0;
+  for (const s of samples) {
+    const c = await prisma.constituency.findUnique({ where: { slug: s.constituencySlug } });
+    if (!c) {
+      console.warn(
+        `Constituency debate seed: no constituency "${s.constituencySlug}" — run constituencies JSON or starter accountability seed.`,
+      );
+      continue;
+    }
+    await prisma.townHallEvent.upsert({
+      where: { slug: s.slug },
+      create: {
+        slug: s.slug,
+        kind: "CONSTITUENCY_DEBATE",
+        title: s.title,
+        summary: s.summary,
+        regionId: c.regionId,
+        constituencyId: c.id,
+        programmeQuarter: s.programmeQuarter,
+        status: "TBC",
+        sourceCitation: CONSTITUENCY_DEBATE_CITATION,
+        sortOrder: s.sortOrder,
+      },
+      update: {
+        kind: "CONSTITUENCY_DEBATE",
+        title: s.title,
+        summary: s.summary,
+        regionId: c.regionId,
+        constituencyId: c.id,
+        programmeQuarter: s.programmeQuarter,
+        sourceCitation: CONSTITUENCY_DEBATE_CITATION,
+        sortOrder: s.sortOrder,
+      },
+    });
+    n++;
+  }
+  if (n > 0) {
+    console.log("Constituency debate programme placeholders seeded:", n);
+  }
+}
+
 /** Development-only Member logins for /login and role workflows — rotate passwords before any production pilot. */
 async function seedMemberDemo() {
   const accra = await prisma.region.findUnique({ where: { slug: "greater-accra" } });
@@ -935,6 +1133,15 @@ async function main() {
     console.log("SEED_CONSTITUENCIES_JSON=0 — skipping prisma/data/constituencies.seed.json.");
   } else {
     await seedConstituenciesFromBundledJson();
+  }
+
+  const skipTownHallProgramme =
+    process.env.SEED_TOWN_HALL_PROGRAMME === "0" || process.env.SEED_TOWN_HALL_PROGRAMME === "false";
+  if (skipTownHallProgramme) {
+    console.log("SEED_TOWN_HALL_PROGRAMME=0 — skipping TownHallEvent programme seed.");
+  } else {
+    await seedTownHallProgrammeFromRoadmap();
+    await seedConstituencyDebateProgrammeRows();
   }
 
   const skipMembersJson =

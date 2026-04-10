@@ -232,7 +232,8 @@ export const faqContent = [
   },
   {
     question: "How do I report an issue or file a complaint?",
-    answer: "Once our MBKRU Voice digital platform (Pillar A) is launched, you will be able to register, create an account, and file geo-tagged complaints through your personal dashboard. For now, use our contact form to reach out.",
+    answer:
+      "On deployments running Phase 2 or higher, register at /register, sign in, and use MBKRU Voice from your account or /citizens-voice/submit. On Phase 1 marketing sites, use the contact form or join early access on the Citizens Voice page.",
   },
   {
     question: "Is MBKRU affiliated with any political party?",
@@ -248,7 +249,8 @@ export const faqContent = [
   },
   {
     question: "When will the MBKRU Voice platform be available?",
-    answer: "We are building capacity and seeking partnerships to launch the digital platform. Sign up for early access on our Citizens Voice page to be notified when registration opens.",
+    answer:
+      "Full Voice features are available when the site is built with Phase 2+ (self-serve registration at /register). On Phase 1-only deployments, sign up for early access on the Citizens Voice page.",
   },
 ] as const;
 

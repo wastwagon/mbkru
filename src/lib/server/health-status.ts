@@ -80,7 +80,7 @@ export async function getHealthStatus(): Promise<HealthPayload> {
 
   const accountability = {
     parliamentJson: platformFeatures.parliamentTrackerData(phase),
-    reportCardJson: platformFeatures.accountabilityScorecards(phase),
+    reportCardJson: platformFeatures.publicReportCard(phase),
   };
 
   return {

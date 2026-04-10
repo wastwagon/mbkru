@@ -4,6 +4,7 @@ import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import {
   isLegalEmpowermentPageEnabled,
   isPromisesBrowseEnabled,
+  isPublicVoiceStatisticsEnabled,
   isReportCardPublicEnabled,
   isTownHallDirectoryPageEnabled,
 } from "@/lib/reports/accountability-pages";
@@ -26,7 +27,6 @@ export async function AboutPlatformLinks() {
 
   const voice = platformFeatures.citizensVoicePlatform(phase);
   const parliament = platformFeatures.parliamentTrackerData(phase);
-  const scorecards = platformFeatures.accountabilityScorecards(phase);
 
   return (
     <section className="border-b border-[var(--primary)]/15 bg-gradient-to-r from-[var(--primary)]/[0.06] to-[var(--accent-gold)]/[0.06] py-5">
@@ -46,6 +46,11 @@ export async function AboutPlatformLinks() {
               <Link href="/track-report" className={pill}>
                 Track a report
               </Link>
+              {isPublicVoiceStatisticsEnabled() ? (
+                <Link href="/transparency" className={pill}>
+                  Voice statistics
+                </Link>
+              ) : null}
             </>
           ) : null}
           {parliament && isPromisesBrowseEnabled() ? (
@@ -53,7 +58,7 @@ export async function AboutPlatformLinks() {
               Campaign promises
             </Link>
           ) : null}
-          {scorecards && isReportCardPublicEnabled() ? (
+          {isReportCardPublicEnabled() ? (
             <Link href="/report-card" className={pill}>
               Report card
             </Link>
@@ -67,9 +72,14 @@ export async function AboutPlatformLinks() {
             </Link>
           ) : null}
           {isTownHallDirectoryPageEnabled() ? (
-            <Link href="/town-halls" className={pill}>
-              Forums
-            </Link>
+            <>
+              <Link href="/town-halls" className={pill}>
+                Forums
+              </Link>
+              <Link href="/debates" className={pill}>
+                Debates
+              </Link>
+            </>
           ) : null}
         </div>
       </div>

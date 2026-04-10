@@ -107,6 +107,48 @@ model Region {
   reports        CitizenReport[]
   constituencies Constituency[]
   communities    Community[]
+  townHallEvents TownHallEvent[]
+}
+
+/// Physical programme rows (town halls / forums / constituency debates). Seeded from roadmap + regional plan; operators replace with confirmed dates.
+enum TownHallEventStatus {
+  TBC
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum ProgrammeEventKind {
+  TOWN_HALL
+  REGIONAL_FORUM
+  CONSTITUENCY_DEBATE
+}
+
+model TownHallEvent {
+  id               String               @id @default(cuid())
+  slug             String               @unique
+  title            String
+  summary          String?              @db.Text
+  kind             ProgrammeEventKind   @default(TOWN_HALL)
+  regionId         String?
+  region           Region?              @relation(fields: [regionId], references: [id], onDelete: SetNull)
+  constituencyId   String?
+  constituency     Constituency?        @relation(fields: [constituencyId], references: [id], onDelete: SetNull)
+  programmeQuarter String?
+  startsAt         DateTime?
+  endsAt           DateTime?
+  venueLine        String?
+  status           TownHallEventStatus  @default(TBC)
+  infoUrl          String?              @db.Text
+  sourceCitation   String?              @db.Text
+  sortOrder        Int                  @default(0)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  @@index([regionId])
+  @@index([constituencyId])
+  @@index([kind])
+  @@index([status, sortOrder])
 }
 
 model Constituency {
@@ -117,24 +159,38 @@ model Constituency {
   regionId String
   region   Region   @relation(fields: [regionId], references: [id], onDelete: Cascade)
 
-  members   ParliamentMember[]
-  reports   CitizenReport[]
+  members        ParliamentMember[]
+  reports        CitizenReport[]
+  townHallEvents TownHallEvent[]
 
   @@index([regionId])
 }
 
+/// Staff-reviewed civic identity (not Ghana Card upload in MVP — status + notes only).
+enum MemberIdentityVerificationStatus {
+  UNVERIFIED
+  PENDING_REVIEW
+  VERIFIED
+  REJECTED
+}
+
 /// Public registered user (MBKRU Voice) — separate from Admin
 model Member {
-  id          String   @id @default(cuid())
-  email       String   @unique
-  password    String
-  displayName String?
-  phone       String?
-  regionId    String?
-  region      Region?  @relation(fields: [regionId], references: [id], onDelete: SetNull)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  reports     CitizenReport[]
+  id                             String                           @id @default(cuid())
+  email                          String                           @unique
+  password                       String
+  displayName                    String?
+  phone                          String?
+  regionId                       String?
+  region                         Region?                          @relation(fields: [regionId], references: [id], onDelete: SetNull)
+  identityVerificationStatus     MemberIdentityVerificationStatus @default(UNVERIFIED)
+  identityVerificationNote       String?                          @db.Text
+  identityVerifiedAt             DateTime?
+  identityReviewRequestedAt      DateTime?
+  identityReviewRequestMessage   String?                          @db.VarChar(2000)
+  createdAt                      DateTime                         @default(now())
+  updatedAt                      DateTime                         @updatedAt
+  reports                        CitizenReport[]
 
   communityMemberships   CommunityMembership[]
   communityPosts         CommunityPost[]
@@ -143,6 +199,7 @@ model Member {
   memberNotifications    MemberNotification[]
 
   @@index([regionId])
+  @@index([identityVerificationStatus])
 }
 
 model CitizenReport {

@@ -6,6 +6,7 @@ import {
 } from "@/app/(main)/account/notifications/actions";
 import {
   memberNotificationHref,
+  memberNotificationLinkLabel,
   memberNotificationSummary,
 } from "@/lib/member/notification-labels";
 import { prisma } from "@/lib/db/prisma";
@@ -43,7 +44,7 @@ export default async function AccountNotificationsPage() {
           </p>
           <h1 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)]">Notifications</h1>
           <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-            Updates from communities and moderation. Unread: {unreadCount}.
+            Verification updates, community activity, and moderation. Unread: {unreadCount}.
           </p>
         </div>
         {unreadCount > 0 ? (
@@ -83,7 +84,7 @@ export default async function AccountNotificationsPage() {
                     {href ? (
                       <p className="mt-2">
                         <Link href={href} className="text-sm font-medium text-[var(--primary)] hover:underline">
-                          Open community
+                          {memberNotificationLinkLabel(n.type)}
                         </Link>
                       </p>
                     ) : null}

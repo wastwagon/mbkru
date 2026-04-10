@@ -7,7 +7,11 @@ export function isPromisesBrowseEnabled(): boolean {
 }
 
 export function isReportCardPublicEnabled(): boolean {
-  return platformFeatures.accountabilityScorecards(getServerPlatformPhase());
+  return platformFeatures.publicReportCard(getServerPlatformPhase());
+}
+
+export function isPublicVoiceStatisticsEnabled(): boolean {
+  return platformFeatures.publicVoiceStatistics(getServerPlatformPhase());
 }
 
 export function isLegalEmpowermentPageEnabled(): boolean {

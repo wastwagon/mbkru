@@ -101,8 +101,8 @@ New / planned tables (see `prisma/schema.prisma`):
 | `CitizenReportAttachment` | 2 | Evidence files |
 | `ParliamentMember` | 2–3 | MPs, ministers, regional ministers |
 | `CampaignPromise` | 2–3 | Promise tracking |
-| `ReportCardCycle` | 3 | People’s Report Card annual cycle |
-| `ScorecardEntry` | 3 | Per-official scores + narrative + flexible `metrics` JSON until methodology stabilises |
+| `ReportCardCycle` | 2–3 | People’s Report Card annual cycle (public when published + `publicReportCard` flag) |
+| `ScorecardEntry` | 2–3 | Per-official scores + narrative + flexible `metrics` JSON until methodology stabilises |
 
 `ScorecardEntry.metrics` holds dimensional scores while you align with TI/IPU-inspired frameworks; normalize into relational tables later if needed.
 

@@ -11,9 +11,9 @@ import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 
 type Props = { params: Promise<{ year: string }> };
 
-/** Published cycle JSON for partners / embeds (Phase 3). */
+/** Published cycle JSON for partners / embeds (Phase 2+ when `publicReportCard` is on). */
 export async function GET(request: Request, { params }: Props) {
-  if (!platformFeatures.accountabilityScorecards(getServerPlatformPhase())) {
+  if (!platformFeatures.publicReportCard(getServerPlatformPhase())) {
     return NextResponse.json({ error: "Not available" }, { status: 404 });
   }
 

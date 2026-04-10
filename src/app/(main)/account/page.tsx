@@ -10,6 +10,11 @@ import {
   isReportCardPublicEnabled,
   isTownHallDirectoryPageEnabled,
 } from "@/lib/reports/accountability-pages";
+import {
+  memberIdentityStatusDescription,
+  memberIdentityStatusLabel,
+} from "@/lib/member-identity-labels";
+import { requestIdentityReviewAction } from "./actions";
 import { SignOutButton } from "./SignOutButton";
 
 function ChevronIcon({ className }: { className?: string }) {
@@ -43,7 +48,14 @@ export default async function AccountPage() {
 
   const member = await prisma.member.findUnique({
     where: { id: session.memberId },
-    select: { email: true, displayName: true, createdAt: true },
+    select: {
+      email: true,
+      displayName: true,
+      createdAt: true,
+      identityVerificationStatus: true,
+      identityVerifiedAt: true,
+      identityReviewRequestedAt: true,
+    },
   });
 
   const unreadNotifications = await prisma.memberNotification.count({
@@ -123,6 +135,58 @@ export default async function AccountPage() {
         ) : null}
       </div>
 
+      {member ? (
+        <section
+          className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--section-light)]/50 p-4 sm:p-5"
+          aria-labelledby="identity-heading"
+        >
+          <h2 id="identity-heading" className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+            Membership verification
+          </h2>
+          <p className="mt-2 text-sm font-semibold text-[var(--foreground)]">
+            {memberIdentityStatusLabel(member.identityVerificationStatus)}
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-[var(--muted-foreground)]">
+            {memberIdentityStatusDescription(member.identityVerificationStatus)}
+          </p>
+          {member.identityVerificationStatus === "VERIFIED" && member.identityVerifiedAt ? (
+            <p className="mt-2 text-[11px] text-[var(--muted-foreground)]">
+              Confirmed {member.identityVerifiedAt.toLocaleDateString("en-GB", { dateStyle: "medium" })}
+            </p>
+          ) : null}
+          {member.identityVerificationStatus === "PENDING_REVIEW" && member.identityReviewRequestedAt ? (
+            <p className="mt-2 text-[11px] text-[var(--muted-foreground)]">
+              Review requested{" "}
+              {member.identityReviewRequestedAt.toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
+            </p>
+          ) : null}
+          {member.identityVerificationStatus === "UNVERIFIED" || member.identityVerificationStatus === "REJECTED" ? (
+            <form action={requestIdentityReviewAction} className="mt-4 space-y-3 border-t border-[var(--border)] pt-4">
+              <p className="text-xs text-[var(--muted-foreground)]">
+                Ask our team to review your membership for programme eligibility (optional message).
+              </p>
+              <label htmlFor="identity-review-message" className="sr-only">
+                Optional message for reviewers
+              </label>
+              <textarea
+                id="identity-review-message"
+                name="message"
+                rows={3}
+                maxLength={2000}
+                placeholder="Optional context for staff (max 2000 characters)"
+                className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--foreground)]"
+              />
+              <button
+                type="submit"
+                className="rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
+              >
+                Request verification review
+              </button>
+            </form>
+          ) : null}
+        </section>
+      ) : null}
+
       {voiceOn ? (
         <AccountStatGrid
           totalReports={totalReports}
@@ -201,7 +265,7 @@ export default async function AccountPage() {
           Inbox
         </h2>
         <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-          Community approvals, post status, and moderator alerts.
+          Verification changes, community approvals, post status, and moderator alerts.
         </p>
         <Link href="/account/notifications" className={`${tileClass} mt-5 max-w-md`}>
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--primary)]/15 to-[var(--accent)]/10 text-[var(--primary)]">

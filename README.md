@@ -113,7 +113,7 @@ On container start, `docker-entrypoint.sh` runs **`prisma migrate deploy`** and 
 1. Set `DATABASE_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET` in `.env.local`.
 2. Run `npx prisma migrate dev` (or `migrate deploy` in production).
 3. Run `npx prisma db seed` once to create or update the admin password hash.
-4. Sign in at **`/admin/login`**. Manage **posts** (public news), **Parliament & promises** (CSV import, promises per MP), **Report card** (publish cycles + scorecard entries), **Lead capture**, **Citizen reports**, and **Media**; pick a featured image per post from the library.
+4. Sign in at **`/admin/login`**. Manage **posts** (public news), **Parliament & promises** (CSV import, promises per MP), **Members** (identity verification status for Voice accounts), **Town halls & forums** (programme rows for **`/town-halls`** and **`/debates`**), **Report card** (publish cycles + scorecard entries), **Lead capture**, **Citizen reports**, and **Media**; pick a featured image per post from the library.
 
 Additional admin accounts can be added later (e.g. new `Admin` rows + the same auth flow, or a small “invite admin” UI in Phase 2).
 
@@ -211,7 +211,7 @@ docker run -p 1100:3000 mbkru-website
    - Domain: Add your domain (e.g. mbkruadvocates.org) for SSL
 5. **Environment variables** — Add in Coolify (build + runtime as needed):
    - `NEXT_PUBLIC_SITE_URL` = https://yourdomain.com
-   - `NEXT_PUBLIC_PLATFORM_PHASE` = **`3`** for the full platform (default in `.env.example` / Docker), or **`1`** for marketing-only only (**must be set at build time** — rebuild after changing it). Use **`2`** if you want Voice + members without report-card flagship.
+   - `NEXT_PUBLIC_PLATFORM_PHASE` = **`3`** for the full platform (default in `.env.example` / Docker), or **`1`** for marketing-only only (**must be set at build time** — rebuild after changing it). Use **`2`** for Voice + members + public report card + transparency stats without Phase 3 election-observation extras.
    - `DATABASE_URL` (Postgres service on the same stack or managed DB)
    - `ADMIN_SESSION_SECRET` (long random string)
    - `ADMIN_EMAIL` / `ADMIN_PASSWORD` (then run seed once, or run seed in a deploy hook)
@@ -235,7 +235,8 @@ Coolify handles SSL (Let's Encrypt), restarts, and zero-downtime deploys automat
 - **HTTP security headers** — Set in `next.config.ts`: `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and **HSTS** when `NEXT_PUBLIC_SITE_URL` uses `https://`.
 - **Rate limiting** — `POST` handlers for contact, newsletter, early access, tracker signup, **auth**, and **report submit / track** limit requests per IP; **GET** accountability JSON (`/api/mps`, `/api/promises`, phase 3 `/api/report-card/[year]`) and **`GET /api/export/mps-csv`** / **`GET /api/export/promises-csv`** use the same helper per IP (separate bucket keys per route). Shared via **Redis** when `REDIS_URL` is set; otherwise in-memory for single-instance/dev.
 - **Phase 2+ (`NEXT_PUBLIC_PLATFORM_PHASE` ≥ 2 at build)** — Public **member** auth (`/login`, `/register`, `/account`), **MBKRU Voice** `POST /api/reports` (optional **Turnstile** when `TURNSTILE_SECRET_KEY` is set), **attachments** `POST /api/reports/[id]/attachments`, **track** `GET /api/reports/track/[code]`, **`GET /api/mps`** (active roster JSON), **`GET /api/export/mps-csv`** (roster CSV), **`GET /api/export/promises-csv`** (promises CSV; full list), **`GET /api/promises`**, **`/promises`** (browse campaign promises), **`/citizens-voice/submit`**, **`/track-report`**, **`/methodology`**, admin **Citizen reports**, **Parliament & promises** (CSV import). Requires **`MEMBER_SESSION_SECRET`** for member APIs; optional **`REPORT_ATTACHMENT_HMAC_SECRET`** (≥32 chars) enables anonymous attachment uploads via a short-lived token after submit.
-- **Phase 3 (`NEXT_PUBLIC_PLATFORM_PHASE` ≥ 3 at build)** — **`/report-card`**, **`/report-card/[year]`**, **`GET /api/report-card/[year]`**; admin **Report card** at **`/admin/report-card`**. Publishes only cycles with a **published** timestamp.
+- **Phase 2+ (`NEXT_PUBLIC_PLATFORM_PHASE` ≥ 2)** — **`/report-card`**, **`/report-card/[year]`**, **`GET /api/report-card/[year]`** (published cycles only); **`/transparency`** (aggregate Voice statistics). Admin **Report card** at **`/admin/report-card`**.
+- **Phase 3 (`NEXT_PUBLIC_PLATFORM_PHASE` ≥ 3 at build)** — Election observation flows and reserved flagship flags; same public report-card routes remain available as in Phase 2.
 - **Input validation** — Zod schemas in `src/lib/validation/public-forms.ts`.
 - **CI** — `.github/workflows/ci.yml` runs `npm ci`, `lint`, and `build` on push/PR to `main` or `master`.
 

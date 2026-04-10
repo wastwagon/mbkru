@@ -6,7 +6,7 @@ const dbConfigured = { value: true };
 vi.mock("@/config/platform", () => ({
   getServerPlatformPhase: () => platformPhase.value,
   platformFeatures: {
-    accountabilityScorecards: (p: number) => p >= 3,
+    publicReportCard: (p: number) => p >= 2,
   },
 }));
 
@@ -38,8 +38,8 @@ describe("GET /api/report-card/[year]", () => {
     vi.mocked(getCachedReportCardApiPayload).mockReset();
   });
 
-  it("returns 404 when scorecards feature is off", async () => {
-    platformPhase.value = 2;
+  it("returns 404 when public report card is off (Phase 1)", async () => {
+    platformPhase.value = 1;
     const res = await GET(new Request("https://example.com/api/report-card/2028"), ctx("2028"));
     expect(res.status).toBe(404);
   });

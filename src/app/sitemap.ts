@@ -6,6 +6,7 @@ import {
   isCommunitiesBrowseEnabled,
   isLegalEmpowermentPageEnabled,
   isPromisesBrowseEnabled,
+  isPublicVoiceStatisticsEnabled,
   isReportCardPublicEnabled,
   isTownHallDirectoryPageEnabled,
   isWhistleblowerGuidancePageEnabled,
@@ -32,9 +33,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
   if (isReportCardPublicEnabled()) routes.push("/report-card");
   if (isLegalEmpowermentPageEnabled()) routes.push("/legal-empowerment");
-  if (isTownHallDirectoryPageEnabled()) routes.push("/town-halls");
+  if (isTownHallDirectoryPageEnabled()) {
+    routes.push("/town-halls", "/debates");
+  }
   if (isCitizensVoiceEnabled()) {
     routes.push("/citizens-voice/submit", "/track-report");
+  }
+  if (isPublicVoiceStatisticsEnabled()) {
+    routes.push("/transparency");
   }
   if (isCommunitiesBrowseEnabled()) routes.push("/communities");
   if (isWhistleblowerGuidancePageEnabled()) routes.push("/whistleblowing");

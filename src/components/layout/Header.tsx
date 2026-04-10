@@ -38,6 +38,9 @@ function buildMainNav(phase: ReturnType<typeof getPublicPlatformPhase>): NavEntr
     { href: "/citizens-voice", label: "Voice" },
     { href: "/situational-alerts", label: "Engagement" },
   ];
+  if (platformFeatures.citizensVoicePlatform(phase) && platformFeatures.publicVoiceStatistics(phase)) {
+    participate.push({ href: "/transparency", label: "Voice stats" });
+  }
   if (platformFeatures.communities(phase)) {
     participate.push({ href: "/communities", label: "Communities" });
   }
@@ -54,7 +57,7 @@ function buildMainNav(phase: ReturnType<typeof getPublicPlatformPhase>): NavEntr
       activeWhenPathStartsWith: "/promises",
     });
   }
-  if (platformFeatures.accountabilityScorecards(phase)) {
+  if (platformFeatures.publicReportCard(phase)) {
     accountability.push({
       href: "/report-card",
       label: "Report card",
@@ -73,6 +76,7 @@ function buildMainNav(phase: ReturnType<typeof getPublicPlatformPhase>): NavEntr
   }
   if (platformFeatures.townHallDirectory(phase)) {
     guidance.push({ href: "/town-halls", label: "Forums" });
+    guidance.push({ href: "/debates", label: "Debates" });
   }
   if (platformFeatures.whistleblowerGuidance(phase)) {
     guidance.push({ href: "/whistleblowing", label: "Whistleblowing" });

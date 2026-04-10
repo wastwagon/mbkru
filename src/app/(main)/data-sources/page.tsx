@@ -75,6 +75,27 @@ const sources: { heading: string; body: ReactNode }[] = [
     ),
   },
   {
+    heading: "Town halls & regional forums (database)",
+    body: (
+      <>
+        The public{" "}
+        <Link href="/town-halls" className="font-medium text-[var(--primary)] underline">
+          Town halls &amp; forums
+        </Link>{" "}
+        page lists <code className="rounded bg-[var(--section-light)] px-1.5 py-0.5 text-[13px]">TownHallEvent</code> rows:
+        roadmap-aligned placeholders from <code className="rounded bg-[var(--section-light)] px-1.5 py-0.5 text-[13px]">prisma db seed</code>{" "}
+        (unless <code className="rounded bg-[var(--section-light)] px-1.5 py-0.5 text-[13px]">SEED_TOWN_HALL_PROGRAMME=0</code>), then
+        edits in <strong className="text-[var(--foreground)]">Admin → Town halls &amp; forums</strong> when dates and venues are confirmed. Citation
+        file in the repo:{" "}
+        <code className="rounded bg-[var(--section-light)] px-1.5 py-0.5 text-[13px]">prisma/data/TOWN_HALL_SEED_SOURCES.txt</code>.         Constituency debate placeholders appear on the public{" "}
+        <Link href="/debates" className="font-medium text-[var(--primary)] underline">
+          Constituency debates
+        </Link>{" "}
+        page. There is no national open API for MBKRU-specific events — operational truth is News posts and partner comms.
+      </>
+    ),
+  },
+  {
     heading: "Traditional-area community spaces (bundled JSON)",
     body: (
       <>

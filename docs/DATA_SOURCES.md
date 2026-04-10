@@ -24,7 +24,8 @@ There is **no official** state bulk MP JSON API we can call from CI. **open.afri
 | **Constituency master** | **Partially** — English Wikipedia’s [list page](https://en.wikipedia.org/wiki/List_of_parliamentary_constituencies_of_Ghana) (CC BY-SA) has machine-readable tables; **not** an EC legal boundary source. | **`npm run data:pull-constituencies`** → `prisma/data/generated/constituencies.wikipedia.csv` (~268 rows when links use `(Ghana parliament constituency)`; a few seats use shorter wikilinks — add manually). Merges [`constituencies.starter.csv`](../prisma/data/constituencies.starter.csv). Cross-check with **`npm run data:list-mp-constituency-slugs -- mps.json`**. |
 | **Campaign promises** | **No** automated full extract (copyright + accuracy). | Themes + PDF links in seed; **you** add cited lines in admin. |
 | **Report card scores** | **No** — editorial methodology. | Pilot cycle (scores **pending**) shows UI; publish real cycles in admin. |
-| **Communities / town halls / alerts** | **No** open national dataset. | Manual / admin. |
+| **Town halls / forums (programme)** | Roadmap-aligned placeholders only. | **`TownHallEvent`** rows from `prisma db seed` (see **`prisma/data/TOWN_HALL_SEED_SOURCES.txt`**). Replace with confirmed events operationally; admin CRUD can be added later. |
+| **Communities / alerts** | **No** single open national dataset for alerts. | Communities: **`communities.seed.json`**; situational intake via Voice forms. |
 
 ---
 

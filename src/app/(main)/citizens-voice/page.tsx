@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { images } from "@/lib/site-content";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
+import { isPublicVoiceStatisticsEnabled } from "@/lib/reports/accountability-pages";
 
 export const metadata: Metadata = {
   title: "Digital Platform — MBKRU Voice",
@@ -21,7 +22,8 @@ const keyBenefits = [
       </svg>
     ),
     title: "Secure Registration",
-    description: "Every Ghanaian citizen (18+) can register with Ghana Card or voter ID. Your data is protected and used only for civic engagement.",
+    description:
+      "Register with email and password today. Stronger identity checks (e.g. Ghana Card reference) may be added as the programme and law allow — your data is used only for civic engagement.",
   },
   {
     icon: (
@@ -46,6 +48,7 @@ const keyBenefits = [
 
 export default async function CitizensVoicePage() {
   const voiceOn = isCitizensVoiceEnabled();
+  const showStats = isPublicVoiceStatisticsEnabled();
 
   return (
     <div>
@@ -87,7 +90,7 @@ export default async function CitizensVoicePage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
-                  <span>Every Ghanaian citizen (18+) can register with Ghana Card or voter ID</span>
+                  <span>Register with email and password; eligibility is Ghanaian citizens 18+ — enhanced ID verification is on the roadmap</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
@@ -99,7 +102,17 @@ export default async function CitizensVoicePage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
-                  <span>Public dashboard showing live statistics: complaints received, resolved, response time by ministry, MDCE, and MP</span>
+                  <span>
+                    Public aggregate statistics (counts by kind, status, and region) on{" "}
+                    {showStats ? (
+                      <Link href="/transparency" className="font-medium text-[var(--primary)] hover:underline">
+                        Voice statistics
+                      </Link>
+                    ) : (
+                      "the transparency page"
+                    )}{" "}
+                    when Phase 2+ is enabled
+                  </span>
                 </li>
               </ul>
             </div>
@@ -155,6 +168,14 @@ export default async function CitizensVoicePage() {
               >
                 Track a report
               </Link>
+              {showStats ? (
+                <Link
+                  href="/transparency"
+                  className="inline-flex rounded-xl border-2 border-white/40 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
+                >
+                  Public statistics
+                </Link>
+              ) : null}
             </div>
           </div>
         </section>

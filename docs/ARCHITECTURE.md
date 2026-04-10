@@ -75,7 +75,8 @@ flowchart TB
 | User registration / login | No | Yes (MVP) | Yes |
 | MBKRU Voice (complaints, geo) | Preview only | **Pilot:** `POST /api/reports`, track API, `/citizens-voice/submit`, admin queue; attachments TBD | Yes |
 | Parliament / minister datasets | Preview only | Pipeline | Scorecards |
-| People’s Report Card / Accountability Scorecards | No | Data collection | **Flagship** |
+| People’s Report Card (public pages + partner JSON) | No | **Yes** (published cycles) | Yes |
+| Pre-election flagship extras | No | Partial | **Reserved** (`accountabilityScorecards` Phase 3) |
 
 Code should **not** implement Phase 2 features behind hidden flags in production Phase 1 builds; use `NEXT_PUBLIC_PLATFORM_PHASE` (and server `PLATFORM_PHASE` if needed) so builds and behavior stay explicit.
 
@@ -113,7 +114,7 @@ Read-only routes for partners and embeds (gated by `platformFeatures` in `src/co
 |------|----------------|
 | `GET /api/mps` | Phase ≥ 2 (`parliamentTrackerData`) — active `ParliamentMember` rows + `promiseCount` |
 | `GET /api/promises` | Phase ≥ 2 — optional `?memberSlug=` filter |
-| `GET /api/report-card/[year]` | Phase ≥ 3 (`accountabilityScorecards`) — published cycle only; **404** uses `private, no-store` |
+| `GET /api/report-card/[year]` | Phase ≥ 2 (`publicReportCard`) — published cycle only; **404** uses `private, no-store` |
 
 Admin **CSV import** and **promise** mutations call **`revalidateTag`** so JSON and HTML stay in sync without waiting for the TTL.
 

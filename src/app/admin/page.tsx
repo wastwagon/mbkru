@@ -187,6 +187,28 @@ export default async function AdminHomePage() {
         </li>
         <li>
           <Link
+            href="/admin/members"
+            className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
+          >
+            <span className="font-semibold text-[var(--foreground)]">Members</span>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              Identity verification status for MBKRU Voice accounts (staff notes stay internal).
+            </p>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/admin/town-halls"
+            className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
+          >
+            <span className="font-semibold text-[var(--foreground)]">Town halls &amp; forums</span>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              Programme rows for forums and constituency debates — dates, venues, citations.
+            </p>
+          </Link>
+        </li>
+        <li>
+          <Link
             href="/admin/report-card"
             className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
           >

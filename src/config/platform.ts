@@ -46,8 +46,17 @@ export const platformFeatures = {
   /** MP / minister data pipelines, scorecards (Phase 2–3) */
   parliamentTrackerData: (phase: PlatformPhase) => phase >= 2,
 
-  /** Heavy analytics / election scorecards (Phase 3) */
+  /**
+   * Published People's Report Card (public HTML + partner JSON). Phase 2+ aligns with roadmap Year 1 publication.
+   * Election-window hardening (observation flows) remains Phase 3 via `electionObservatory`.
+   */
+  publicReportCard: (phase: PlatformPhase) => phase >= 2,
+
+  /** Reserved: pre-election flagship messaging / future scorecard-only gates (Phase 3). */
   accountabilityScorecards: (phase: PlatformPhase) => phase >= 3,
+
+  /** Aggregate, non-identifying MBKRU Voice statistics on the public site. */
+  publicVoiceStatistics: (phase: PlatformPhase) => phase >= 2,
 
   /** Legal empowerment desk content + referrals (Phase 2+) */
   legalEmpowermentDesk: (phase: PlatformPhase) => phase >= 2,

@@ -16,7 +16,8 @@ export function LivePlatformStrip() {
   const phase = getPublicPlatformPhase();
   const voice = platformFeatures.citizensVoicePlatform(phase);
   const parliament = platformFeatures.parliamentTrackerData(phase);
-  const scorecards = platformFeatures.accountabilityScorecards(phase);
+  const publicReportCard = platformFeatures.publicReportCard(phase);
+  const voiceStats = platformFeatures.publicVoiceStatistics(phase);
   const legal = platformFeatures.legalEmpowermentDesk(phase);
   const townHalls = platformFeatures.townHallDirectory(phase);
   const auth = platformFeatures.authentication(phase);
@@ -76,7 +77,12 @@ export function LivePlatformStrip() {
               Campaign promises
             </Link>
           ) : null}
-          {scorecards ? (
+          {voice && voiceStats ? (
+            <Link href="/transparency" className={pill}>
+              Voice statistics
+            </Link>
+          ) : null}
+          {publicReportCard ? (
             <Link href="/report-card" className={pill}>
               People&apos;s Report Card
             </Link>
@@ -90,9 +96,14 @@ export function LivePlatformStrip() {
             </Link>
           ) : null}
           {townHalls ? (
-            <Link href="/town-halls" className={pill}>
-              Forums
-            </Link>
+            <>
+              <Link href="/town-halls" className={pill}>
+                Forums
+              </Link>
+              <Link href="/debates" className={pill}>
+                Debates
+              </Link>
+            </>
           ) : null}
         </div>
       </div>
@@ -111,7 +122,8 @@ export function LivePlatformHeroChips() {
 
   const voice = platformFeatures.citizensVoicePlatform(phase);
   const parliament = platformFeatures.parliamentTrackerData(phase);
-  const scorecards = platformFeatures.accountabilityScorecards(phase);
+  const publicReportCard = platformFeatures.publicReportCard(phase);
+  const voiceStats = platformFeatures.publicVoiceStatistics(phase);
 
   return (
     <div className="mt-3 flex flex-wrap gap-2">
@@ -146,7 +158,7 @@ export function LivePlatformHeroChips() {
           Promises
         </Link>
       ) : null}
-      {scorecards ? (
+      {publicReportCard ? (
         <Link href="/report-card" className={pillDark}>
           Report card
         </Link>
