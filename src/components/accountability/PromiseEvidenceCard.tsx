@@ -28,7 +28,7 @@ function ExternalLinkIcon({ className }: { className?: string }) {
   );
 }
 
-type ManifestoRef = { title: string; sourceUrl: string } | null;
+type ManifestoRef = { title: string; sourceUrl: string | null } | null;
 
 type Props = {
   title: string;
