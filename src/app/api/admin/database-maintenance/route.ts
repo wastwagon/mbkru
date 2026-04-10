@@ -63,10 +63,10 @@ export async function POST(request: Request) {
   const seedStep = steps.find((s) => s.command.includes("db seed"));
   if (seedStep?.ok) {
     try {
-      revalidateTag(PROMISES_INDEX_TAG);
-      revalidateTag(REPORT_CARD_INDEX_TAG);
-      revalidateTag(MPS_ROSTER_TAG);
-      revalidateTag(reportCardYearTag(2026));
+      revalidateTag(PROMISES_INDEX_TAG, "max");
+      revalidateTag(REPORT_CARD_INDEX_TAG, "max");
+      revalidateTag(MPS_ROSTER_TAG, "max");
+      revalidateTag(reportCardYearTag(2026), "max");
       revalidatePath("/promises");
       revalidatePath("/promises/browse");
       revalidatePath("/report-card");
