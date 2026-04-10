@@ -247,7 +247,7 @@ export async function getCachedPromisesApiRows(filters: PromisesApiFilters) {
 
   return unstable_cache(
     async () => loadPromisesApiRows(filters),
-    ["api-promises-v5", key],
+    ["api-promises-v6", key],
     {
       tags: memberSlug
         ? [PROMISES_INDEX_TAG, promisesMemberTag(memberSlug)]
@@ -311,7 +311,7 @@ export async function getCachedPromisesExportCsvRows(filters: PromisesApiFilters
 
   return unstable_cache(
     async () => loadPromisesCsvRows(filters),
-    ["api-promises-csv-export-v5", key],
+    ["api-promises-csv-export-v6", key],
     {
       tags: memberSlug
         ? [PROMISES_INDEX_TAG, promisesMemberTag(memberSlug)]

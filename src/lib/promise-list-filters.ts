@@ -36,3 +36,15 @@ export function parsePromiseListSectorFilter(raw: string | undefined): string | 
 export function parsePromiseListSearchQuery(raw: string | undefined): string {
   return raw?.trim() ?? "";
 }
+
+/** Public promise list: filter by party slug on the promise row (e.g. ndc, npp). */
+export function parsePromiseListPartySlug(raw: string | undefined): "ndc" | "npp" | undefined {
+  const v = raw?.trim().toLowerCase() ?? "";
+  if (v === "ndc" || v === "npp") return v;
+  return undefined;
+}
+
+export function parsePromiseListElectionCycle(raw: string | undefined): string | undefined {
+  const c = raw?.trim() ?? "";
+  return c.length > 0 ? c : undefined;
+}

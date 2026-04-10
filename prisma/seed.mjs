@@ -322,6 +322,48 @@ async function seedAccountabilityPublicSample() {
   const promiseRows = [
     {
       memberSlug: STARTER_MP_SLUGS[1],
+      title: "E-Levy (electronic transactions levy) — operational and revenue track",
+      description:
+        "MBKRU tags this as fulfilled for dashboard demonstration: the e-levy instrument was enacted and collections are in force; editorial team should cite the Finance Act / GRA guidance and NDC 2024 fiscal chapter for exact wording.",
+      sourceLabel: "NDC 2024 manifesto (Resetting Ghana) + post-2024 fiscal implementation — verify citations",
+      sourceUrl: NDC_2024_MANIFESTO_URL,
+      manifestoDocumentId: ndcManifesto.id,
+      partySlug: "ndc",
+      electionCycle: "2024",
+      policySector: "FISCAL",
+      isGovernmentProgramme: true,
+      status: "FULFILLED",
+    },
+    {
+      memberSlug: STARTER_MP_SLUGS[1],
+      title: "Betting, gaming, and sports-revenue compliance (excise / GRA track)",
+      description:
+        "Seeded as fulfilled for sample analytics: Ghana has moved on betting/gaming excise and compliance narratives in public finance debates. Editors: tie to NDC 2024 fiscal pledges and post-budget GRA releases.",
+      sourceLabel: "NDC 2024 manifesto — verify fiscal chapter; cross-check budget statements",
+      sourceUrl: NDC_2024_MANIFESTO_URL,
+      manifestoDocumentId: ndcManifesto.id,
+      partySlug: "ndc",
+      electionCycle: "2024",
+      policySector: "FISCAL",
+      isGovernmentProgramme: true,
+      status: "FULFILLED",
+    },
+    {
+      memberSlug: STARTER_MP_SLUGS[2],
+      title: "Okada / motorcycle transport — licensing and formalisation pathway",
+      description:
+        "Public debate links NDC 2024 transport themes to okada regulation. MBKRU marks in progress while licensing rules and municipal pilots evolve; cite manifesto transport section and L.I. / DVLA updates as they land.",
+      sourceLabel: "NDC 2024 manifesto — transport / jobs chapter (verify PDF)",
+      sourceUrl: NDC_2024_MANIFESTO_URL,
+      manifestoDocumentId: ndcManifesto.id,
+      partySlug: "ndc",
+      electionCycle: "2024",
+      policySector: "SOCIAL",
+      isGovernmentProgramme: true,
+      status: "IN_PROGRESS",
+    },
+    {
+      memberSlug: STARTER_MP_SLUGS[1],
       title: "24-hour economy — productivity and jobs (NDC 2024 programme theme)",
       description:
         "Theme summarised from public NDC 2024 materials. Editors: map this row to exact manifesto wording and page/section in the linked PDF.",
@@ -388,6 +430,20 @@ async function seedAccountabilityPublicSample() {
       policySector: "GOVERNANCE",
       isGovernmentProgramme: false,
       status: "IN_PROGRESS",
+    },
+    {
+      memberSlug: STARTER_MP_SLUGS[0],
+      title: "Revenue assurance and fiscal consolidation transparency (executive programme)",
+      description:
+        "Cross-party executive-track sample so government-commitments filters can include NPP 2024 rows. Editors: align with NPP 2024 fiscal chapter and post-budget transparency instruments.",
+      sourceLabel: "NPP 2024 manifesto PDF — verify fiscal chapter",
+      sourceUrl: NPP_2024_MANIFESTO_URL,
+      manifestoDocumentId: nppManifesto.id,
+      partySlug: "npp",
+      electionCycle: "2024",
+      policySector: "FISCAL",
+      isGovernmentProgramme: true,
+      status: "TRACKING",
     },
   ];
 
@@ -456,7 +512,7 @@ async function seedAccountabilityPublicSample() {
   }
 
   console.log(
-    "Public accountability sample seeded: MPs=3 (verify on parliament.gh), NDC+NPP 2024 manifesto links, promises=5, report-card pilot year=" +
+    "Public accountability sample seeded: MPs=3 (verify on parliament.gh), NDC+NPP 2024 manifesto links, promises=9, report-card pilot year=" +
       REPORT_CARD_PILOT_YEAR,
   );
 }

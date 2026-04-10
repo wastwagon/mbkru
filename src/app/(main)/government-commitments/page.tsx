@@ -8,6 +8,8 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { parsePromisesApiFilters } from "@/lib/promises-api-filters";
 import {
+  parsePromiseListElectionCycle,
+  parsePromiseListPartySlug,
   parsePromiseListSearchQuery,
   parsePromiseListSectorFilter,
   parsePromiseListStatusFilter,
@@ -24,16 +26,28 @@ export const metadata: Metadata = {
     "Campaign promises tagged as government programmes or executive commitments — tracked alongside MP and minister pledges.",
 };
 
-type Props = { searchParams: Promise<{ sector?: string; status?: string; q?: string }> };
+type Props = {
+  searchParams: Promise<{ sector?: string; status?: string; q?: string; partySlug?: string; electionCycle?: string }>;
+};
 
-function buildApiUrl(sp: { sector?: string; status?: string; q?: string }): URL {
+function buildApiUrl(sp: {
+  sector?: string;
+  status?: string;
+  q?: string;
+  partySlug?: string;
+  electionCycle?: string;
+}): URL {
   const u = new URL("http://local/");
   const q = parsePromiseListSearchQuery(sp.q);
   const sector = parsePromiseListSectorFilter(sp.sector);
   const status = parsePromiseListStatusFilter(sp.status);
+  const party = parsePromiseListPartySlug(sp.partySlug);
+  const cycle = parsePromiseListElectionCycle(sp.electionCycle);
   if (q) u.searchParams.set("q", q);
   if (sector) u.searchParams.set("policySector", sector);
   if (status) u.searchParams.set("status", status);
+  if (party) u.searchParams.set("partySlug", party);
+  if (cycle) u.searchParams.set("electionCycle", cycle);
   u.searchParams.set("governmentOnly", "true");
   return u;
 }
@@ -45,6 +59,8 @@ export default async function GovernmentCommitmentsPage({ searchParams }: Props)
   const sectorFilter = parsePromiseListSectorFilter(sp.sector);
   const statusFilter = parsePromiseListStatusFilter(sp.status);
   const q = parsePromiseListSearchQuery(sp.q);
+  const partySlug = parsePromiseListPartySlug(sp.partySlug);
+  const electionCycle = parsePromiseListElectionCycle(sp.electionCycle);
 
   const filters = parsePromisesApiFilters(buildApiUrl(sp));
   const initialRows = await getCachedPromisesApiRows(filters);
@@ -57,7 +73,7 @@ export default async function GovernmentCommitmentsPage({ searchParams }: Props)
         description="Pledges we tag as government programmes or executive-track commitments. Each item remains sourced and status-tracked like other campaign promises — not a legal finding."
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm text-[var(--muted-foreground)]">
             <Link href="/promises" className="text-[var(--primary)] hover:underline">
               By MP
@@ -85,6 +101,8 @@ export default async function GovernmentCommitmentsPage({ searchParams }: Props)
             initialSector={sectorFilter}
             initialStatus={statusFilter}
             initialGovernmentOnly
+            initialPartySlug={partySlug}
+            initialElectionCycle={electionCycle}
             csvExportHref="/api/export/promises-csv"
           />
         </div>

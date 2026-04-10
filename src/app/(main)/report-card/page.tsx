@@ -31,7 +31,7 @@ export default async function ReportCardIndexPage() {
         description="Published cycles only. Scores and narratives are explanatory — not legal or electoral findings. See methodology for our approach."
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm text-[var(--muted-foreground)]">
             <Link href="/methodology" className="text-[var(--primary)] hover:underline">
               Methodology

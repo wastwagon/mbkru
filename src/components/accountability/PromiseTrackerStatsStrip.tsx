@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import type { PromiseTrackerStats } from "@/lib/server/promise-tracker-stats";
 
@@ -13,6 +14,30 @@ function pct(part: number, whole: number): number {
   return Math.round((part / whole) * 1000) / 10;
 }
 
+function KpiCard({
+  label,
+  children,
+  accent,
+}: {
+  label: string;
+  children: ReactNode;
+  accent?: "default" | "emerald";
+}) {
+  const ring =
+    accent === "emerald"
+      ? "ring-1 ring-emerald-200/80 shadow-emerald-500/10"
+      : "ring-1 ring-slate-200/90 shadow-slate-900/5";
+  return (
+    <div
+      className={`rounded-2xl bg-white p-4 shadow-md ${ring} sm:p-5`}
+      style={{ boxShadow: "0 4px 24px rgba(15, 23, 42, 0.06)" }}
+    >
+      <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">{label}</p>
+      <div className="mt-2 text-slate-900">{children}</div>
+    </div>
+  );
+}
+
 export function PromiseTrackerStatsStrip({ stats, subtitle }: Props) {
   const { byStatus, totalPromises } = stats;
   const met = byStatus.FULFILLED ?? 0;
@@ -22,113 +47,122 @@ export function PromiseTrackerStatsStrip({ stats, subtitle }: Props) {
   const barTotal = Math.max(1, met + inProgress + broken + tracking);
 
   return (
-    <div className="mt-8 space-y-4">
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--foreground)] px-4 py-4 text-white shadow-md sm:px-6 sm:py-5">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-white/70">Tracker snapshot</p>
-            <p className="mt-1 text-sm text-white/85">
+    <div className="mt-8 w-full space-y-5">
+      <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-4 py-6 text-white shadow-xl ring-1 ring-slate-700/60 sm:px-6 sm:py-8 lg:px-8">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="max-w-2xl">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-sky-200/90">Tracker snapshot</p>
+            <p className="mt-2 text-base font-medium leading-snug text-slate-100 sm:text-lg">
               {stats.scope === "government"
                 ? "Government-programme commitments in the public catalogue."
                 : "Live counts from the campaign-promise database (not macro-economic statistics)."}
             </p>
           </div>
-          <span className="rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-200">
+          <span className="shrink-0 rounded-full bg-emerald-400/15 px-3.5 py-1.5 text-xs font-semibold text-emerald-100 ring-1 ring-emerald-400/30">
             Data live
           </span>
         </div>
-        <dl className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-5">
-          <div className="rounded-xl bg-white/10 px-3 py-2.5">
-            <dt className="text-[10px] font-medium uppercase tracking-wide text-white/60">
-              {stats.scope === "government" ? "Gov commitments" : "Promises tracked"}
-            </dt>
-            <dd className="mt-1 font-display text-2xl font-bold tabular-nums">{stats.totalPromises}</dd>
-          </div>
+
+        <dl
+          className={`mt-6 grid grid-cols-2 gap-3 ${stats.scope === "all" ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}
+        >
+          <KpiCard label={stats.scope === "government" ? "Gov commitments" : "Promises tracked"}>
+            <p className="font-display text-3xl font-bold tabular-nums tracking-tight sm:text-4xl">
+              {stats.totalPromises}
+            </p>
+          </KpiCard>
           {stats.scope === "all" ? (
-            <div className="rounded-xl bg-white/10 px-3 py-2.5">
-              <dt className="text-[10px] font-medium uppercase tracking-wide text-white/60">Gov-tagged</dt>
-              <dd className="mt-1 font-display text-2xl font-bold tabular-nums">{stats.governmentPromises}</dd>
-            </div>
+            <KpiCard label="Gov-tagged" accent="emerald">
+              <p className="font-display text-3xl font-bold tabular-nums tracking-tight text-emerald-950 sm:text-4xl">
+                {stats.governmentPromises}
+              </p>
+            </KpiCard>
           ) : null}
-          <div className="rounded-xl bg-white/10 px-3 py-2.5">
-            <dt className="text-[10px] font-medium uppercase tracking-wide text-white/60">MPs w/ promises</dt>
-            <dd className="mt-1 font-display text-2xl font-bold tabular-nums">
+          <KpiCard label="MPs w/ promises">
+            <p className="font-display text-3xl font-bold tabular-nums tracking-tight sm:text-4xl">
               {stats.mpsWithPromises}
-              <span className="ml-1 text-sm font-normal text-white/60">/ {stats.activeMpsTotal}</span>
-            </dd>
-          </div>
-          <div className="rounded-xl bg-white/10 px-3 py-2.5">
-            <dt className="text-[10px] font-medium uppercase tracking-wide text-white/60">Report card cycles</dt>
-            <dd className="mt-1 font-display text-2xl font-bold tabular-nums">{stats.publishedReportCardCycles}</dd>
-          </div>
-          <div className="rounded-xl bg-white/10 px-3 py-2.5">
-            <dt className="text-[10px] font-medium uppercase tracking-wide text-white/60">Scorecard rows</dt>
-            <dd className="mt-1 font-display text-2xl font-bold tabular-nums">{stats.reportCardEntriesPublished}</dd>
-          </div>
+              <span className="ml-1.5 text-lg font-semibold text-slate-500 sm:text-xl">/ {stats.activeMpsTotal}</span>
+            </p>
+            <p className="mt-1 text-xs font-medium text-slate-500">Active MPs in catalogue</p>
+          </KpiCard>
+          <KpiCard label="Report card cycles">
+            <p className="font-display text-3xl font-bold tabular-nums tracking-tight sm:text-4xl">
+              {stats.publishedReportCardCycles}
+            </p>
+          </KpiCard>
+          <KpiCard label="Scorecard rows">
+            <p className="font-display text-3xl font-bold tabular-nums tracking-tight sm:text-4xl">
+              {stats.reportCardEntriesPublished}
+            </p>
+          </KpiCard>
         </dl>
       </div>
 
       {totalPromises > 0 ? (
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-5">
+        <div className="rounded-3xl border border-slate-200/90 bg-white p-5 shadow-sm sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-sm font-semibold text-[var(--foreground)]">Commitment status mix</p>
-            <p className="text-xs text-[var(--muted-foreground)]">{totalPromises} in this view</p>
+            <p className="text-base font-bold text-slate-900">Commitment status mix</p>
+            <p className="text-sm font-medium text-slate-500">{totalPromises} in this view</p>
           </div>
-          <div className="mt-3 flex h-3 w-full overflow-hidden rounded-full bg-[var(--section-light)]">
+          <div className="mt-4 flex h-4 w-full overflow-hidden rounded-full bg-slate-100 ring-1 ring-slate-200/80">
             <span
-              className="h-full bg-emerald-500"
+              className="h-full bg-emerald-500 transition-[width] duration-500"
               style={{ width: `${pct(met, barTotal)}%` }}
               title={`Fulfilled: ${met}`}
             />
             <span
-              className="h-full bg-sky-500"
+              className="h-full bg-sky-500 transition-[width] duration-500"
               style={{ width: `${pct(inProgress, barTotal)}%` }}
               title={`In progress: ${inProgress}`}
             />
             <span
-              className="h-full bg-rose-500"
+              className="h-full bg-rose-500 transition-[width] duration-500"
               style={{ width: `${pct(broken, barTotal)}%` }}
               title={`Broken: ${broken}`}
             />
             <span
-              className="h-full bg-slate-300"
+              className="h-full bg-slate-300 transition-[width] duration-500"
               style={{ width: `${pct(tracking, barTotal)}%` }}
               title={`Tracking / deferred: ${tracking}`}
             />
           </div>
-          <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--muted-foreground)]">
-            <li>
-              <span className="mr-1 inline-block h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
-              Fulfilled {met}
+          <ul className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-slate-700">
+            <li className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-emerald-500" aria-hidden />
+              Fulfilled <span className="tabular-nums text-slate-900">{met}</span>
             </li>
-            <li>
-              <span className="mr-1 inline-block h-2 w-2 rounded-full bg-sky-500" aria-hidden />
-              In progress {inProgress}
+            <li className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-sky-500" aria-hidden />
+              In progress <span className="tabular-nums text-slate-900">{inProgress}</span>
             </li>
-            <li>
-              <span className="mr-1 inline-block h-2 w-2 rounded-full bg-rose-500" aria-hidden />
-              Broken {broken}
+            <li className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-rose-500" aria-hidden />
+              Broken <span className="tabular-nums text-slate-900">{broken}</span>
             </li>
-            <li>
-              <span className="mr-1 inline-block h-2 w-2 rounded-full bg-slate-300" aria-hidden />
-              Tracking / deferred {tracking}
+            <li className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-slate-300" aria-hidden />
+              Tracking / deferred <span className="tabular-nums text-slate-900">{tracking}</span>
             </li>
           </ul>
         </div>
       ) : null}
 
-      {subtitle ? <p className="text-center text-xs text-[var(--muted-foreground)]">{subtitle}</p> : null}
+      {subtitle ? (
+        <p className="text-center text-sm leading-relaxed text-slate-600">{subtitle}</p>
+      ) : null}
 
-      <p className="text-center text-xs text-[var(--muted-foreground)]">
-        <strong className="text-[var(--foreground)]">JSON API</strong> — read-only{" "}
-        <Link href="/api/promises" className="text-[var(--primary)] hover:underline">
+      <p className="text-center text-sm leading-relaxed text-slate-600">
+        <strong className="font-semibold text-slate-900">JSON API</strong> — read-only{" "}
+        <Link href="/api/promises" className="font-medium text-sky-700 underline decoration-sky-700/30 underline-offset-2 hover:text-sky-900">
           GET /api/promises
         </Link>{" "}
         returns the same rows the live search uses (filters:{" "}
-        <code className="rounded bg-[var(--section-light)] px-1">q</code>,{" "}
-        <code className="rounded bg-[var(--section-light)] px-1">policySector</code>,{" "}
-        <code className="rounded bg-[var(--section-light)] px-1">status</code>,{" "}
-        <code className="rounded bg-[var(--section-light)] px-1">governmentOnly</code>
+        <code className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-mono text-slate-800">q</code>,{" "}
+        <code className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-mono text-slate-800">policySector</code>,{" "}
+        <code className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-mono text-slate-800">status</code>,{" "}
+        <code className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-mono text-slate-800">governmentOnly</code>,{" "}
+        <code className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-mono text-slate-800">partySlug</code>,{" "}
+        <code className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-mono text-slate-800">electionCycle</code>
         ). Rate-limited for public use.
       </p>
     </div>

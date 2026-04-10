@@ -45,11 +45,32 @@ type Props = {
   initialSector: string | undefined;
   initialStatus: string | undefined;
   initialGovernmentOnly: boolean;
+  initialPartySlug?: "ndc" | "npp";
+  initialElectionCycle?: string;
   /** Base path for CSV export query mirroring filters */
   csvExportHref: string;
 };
 
 const DEBOUNCE_MS = 380;
+
+const MANIFESTO_CYCLE = "2024";
+
+function catalogueValueFromState(
+  govLocked: boolean,
+  governmentOnly: boolean,
+  party: string,
+  cycle: string,
+): string {
+  if (govLocked) {
+    if (party === "ndc" && cycle === MANIFESTO_CYCLE) return "ndc2024";
+    if (party === "npp" && cycle === MANIFESTO_CYCLE) return "npp2024";
+    return "all";
+  }
+  if (governmentOnly && !party) return "gov";
+  if (party === "ndc" && cycle === MANIFESTO_CYCLE) return "ndc2024";
+  if (party === "npp" && cycle === MANIFESTO_CYCLE) return "npp2024";
+  return "all";
+}
 
 export function PromisesBrowseLive({
   mode,
@@ -58,20 +79,25 @@ export function PromisesBrowseLive({
   initialSector,
   initialStatus,
   initialGovernmentOnly,
+  initialPartySlug,
+  initialElectionCycle,
   csvExportHref,
 }: Props) {
   const [rows, setRows] = useState<PublicPromiseApiRow[]>(initialRows);
   const [q, setQ] = useState(initialQ);
   const [sector, setSector] = useState(initialSector ?? "");
   const [status, setStatus] = useState(initialStatus ?? "");
+  const govLocked = mode === "government";
   const [governmentOnly, setGovernmentOnly] = useState(
-    mode === "government" ? true : initialGovernmentOnly,
+    govLocked ? true : initialGovernmentOnly,
+  );
+  const [partyFilter, setPartyFilter] = useState(initialPartySlug ?? "");
+  const [cycleFilter, setCycleFilter] = useState(
+    initialPartySlug && initialElectionCycle ? initialElectionCycle : initialPartySlug ? MANIFESTO_CYCLE : "",
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const govLocked = mode === "government";
 
   const buildParams = useCallback(() => {
     const p = new URLSearchParams();
@@ -79,9 +105,11 @@ export function PromisesBrowseLive({
     if (qt) p.set("q", qt);
     if (sector) p.set("policySector", sector);
     if (status) p.set("status", status);
+    if (partyFilter) p.set("partySlug", partyFilter);
+    if (cycleFilter) p.set("electionCycle", cycleFilter);
     if (govLocked || governmentOnly) p.set("governmentOnly", "true");
     return p;
-  }, [q, sector, status, governmentOnly, govLocked]);
+  }, [q, sector, status, governmentOnly, govLocked, partyFilter, cycleFilter]);
 
   const runFetch = useCallback(async () => {
     setLoading(true);
@@ -124,7 +152,7 @@ export function PromisesBrowseLive({
       return;
     }
     scheduleFetch();
-  }, [q, sector, status, governmentOnly, scheduleFetch]);
+  }, [q, sector, status, governmentOnly, partyFilter, cycleFilter, scheduleFetch]);
 
   const csvHref = useMemo(() => {
     const p = buildParams();
@@ -132,14 +160,49 @@ export function PromisesBrowseLive({
   }, [buildParams, csvExportHref]);
 
   const hasActiveFilters = Boolean(
-    q.trim() || sector || status || (!govLocked && governmentOnly),
+    q.trim() || sector || status || (!govLocked && governmentOnly) || partyFilter || cycleFilter,
   );
 
   const clearHref = mode === "government" ? "/government-commitments" : "/promises/browse";
 
+  const catalogueSelectValue = catalogueValueFromState(govLocked, governmentOnly, partyFilter, cycleFilter);
+
+  const onCatalogueChange = (v: string) => {
+    if (govLocked) {
+      if (v === "all") {
+        setPartyFilter("");
+        setCycleFilter("");
+      } else if (v === "ndc2024") {
+        setPartyFilter("ndc");
+        setCycleFilter(MANIFESTO_CYCLE);
+      } else if (v === "npp2024") {
+        setPartyFilter("npp");
+        setCycleFilter(MANIFESTO_CYCLE);
+      }
+      return;
+    }
+    if (v === "all") {
+      setGovernmentOnly(false);
+      setPartyFilter("");
+      setCycleFilter("");
+    } else if (v === "gov") {
+      setGovernmentOnly(true);
+      setPartyFilter("");
+      setCycleFilter("");
+    } else if (v === "ndc2024") {
+      setGovernmentOnly(false);
+      setPartyFilter("ndc");
+      setCycleFilter(MANIFESTO_CYCLE);
+    } else if (v === "npp2024") {
+      setGovernmentOnly(false);
+      setPartyFilter("npp");
+      setCycleFilter(MANIFESTO_CYCLE);
+    }
+  };
+
   return (
     <>
-      <div className="mt-8 flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-end">
+      <div className="mt-8 flex flex-col gap-4 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-end">
         <div className="min-w-0 flex-1 sm:max-w-xs">
           <label htmlFor="live-q" className="block text-xs font-medium text-[var(--foreground)]">
             Search <span className="font-normal text-[var(--muted-foreground)]">(live)</span>
@@ -154,9 +217,42 @@ export function PromisesBrowseLive({
             autoComplete="off"
           />
         </div>
-        <div className="sm:w-44">
+
+        <div className="w-full min-w-[min(100%,14rem)] sm:w-56 lg:w-64">
+          <label htmlFor="live-catalogue" className="block text-xs font-medium text-[var(--foreground)]">
+            Catalogue & manifesto
+          </label>
+          <select
+            id="live-catalogue"
+            value={catalogueSelectValue}
+            onChange={(e) => onCatalogueChange(e.target.value)}
+            className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+          >
+            {govLocked ? (
+              <>
+                <option value="all">All government commitments</option>
+                <option value="ndc2024">NDC 2024 (manifesto-linked)</option>
+                <option value="npp2024">NPP 2024 (manifesto-linked)</option>
+              </>
+            ) : (
+              <>
+                <option value="all">All tracked promises</option>
+                <option value="gov">Government programme only</option>
+                <option value="ndc2024">NDC 2024 (manifesto-linked)</option>
+                <option value="npp2024">NPP 2024 (manifesto-linked)</option>
+              </>
+            )}
+          </select>
+          <p className="mt-1 text-[11px] leading-snug text-[var(--muted-foreground)]">
+            {govLocked
+              ? "Still scoped to executive / programme-tagged rows; narrow by party manifesto."
+              : "Combine with category and status below. NDC/NPP options match 2024 cycle rows in the database."}
+          </p>
+        </div>
+
+        <div className="sm:w-48">
           <label htmlFor="live-sector" className="block text-xs font-medium text-[var(--foreground)]">
-            Category
+            Category (policy)
           </label>
           <select
             id="live-sector"
@@ -172,7 +268,7 @@ export function PromisesBrowseLive({
             ))}
           </select>
         </div>
-        <div className="sm:w-40">
+        <div className="sm:w-44">
           <label htmlFor="live-status" className="block text-xs font-medium text-[var(--foreground)]">
             Status
           </label>
@@ -190,20 +286,7 @@ export function PromisesBrowseLive({
             ))}
           </select>
         </div>
-        {!govLocked ? (
-          <div className="flex items-center gap-2 pb-2 sm:pb-0">
-            <input
-              id="live-gov"
-              type="checkbox"
-              checked={governmentOnly}
-              onChange={(e) => setGovernmentOnly(e.target.checked)}
-              className="h-4 w-4 rounded border-[var(--border)]"
-            />
-            <label htmlFor="live-gov" className="text-sm text-[var(--foreground)]">
-              Government programme only
-            </label>
-          </div>
-        ) : null}
+
         <div className="flex flex-wrap items-center gap-2 pb-1">
           {loading ? (
             <span className="text-xs text-[var(--muted-foreground)]">Updating…</span>
