@@ -95,8 +95,10 @@ COPY --from=deps /app/node_modules/tinyexec ./node_modules/tinyexec
 RUN cd /app && node -e "require('effect'); require('@prisma/config');"
 
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
-RUN chmod +x /app/docker-entrypoint.sh \
-  && chown -R nextjs:nodejs /app/prisma /app/prisma.config.ts /app/node_modules
+# Standalone omits `.next/cache`; Next image optimizer writes there at runtime as user `nextjs`.
+RUN mkdir -p /app/.next/cache \
+  && chmod +x /app/docker-entrypoint.sh \
+  && chown -R nextjs:nodejs /app/prisma /app/prisma.config.ts /app/node_modules /app/.next
 
 USER nextjs
 EXPOSE 3000
