@@ -72,6 +72,8 @@ services:
       - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - TWILIO_FROM_NUMBER=${TWILIO_FROM_NUMBER}
+      # After migrations, docker-entrypoint.sh runs `prisma db seed` unless SKIP_DB_SEED=1.
+      - SKIP_DB_SEED=${SKIP_DB_SEED:-}
     depends_on:
       postgres:
         condition: service_healthy

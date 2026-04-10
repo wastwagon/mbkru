@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+import { MetricsDisplay } from "@/components/accountability/MetricsDisplay";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { getCachedPublishedReportCardYear } from "@/lib/server/accountability-cache";
@@ -93,9 +94,14 @@ export default async function ReportCardYearPage({ params }: Props) {
                     </p>
                   ) : null}
                   {e.metrics != null ? (
-                    <pre className="mt-3 max-h-40 overflow-auto rounded-lg bg-[var(--section-light)] p-3 text-[11px] text-[var(--muted-foreground)]">
-                      {JSON.stringify(e.metrics, null, 2)}
-                    </pre>
+                    <div className="mt-3 rounded-lg border border-[var(--border)] bg-[var(--section-light)]/60 p-3">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                        Metrics
+                      </p>
+                      <div className="mt-2">
+                        <MetricsDisplay value={e.metrics} />
+                      </div>
+                    </div>
                   ) : null}
                   {e.member._count.promises > 0 ? (
                     <p className="mt-3 text-xs">

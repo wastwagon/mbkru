@@ -1,7 +1,8 @@
 # Full stack: Next.js app + Postgres + Redis (three services).
 # Local: copy .env.example to .env, set ADMIN_* and ADMIN_SESSION_SECRET, then:
 #   docker compose -f docker-compose.fullstack.yml up --build
-# First admin: docker compose exec mbkru-web npx prisma db seed
+# On each start, docker-entrypoint.sh runs migrate deploy + prisma db seed (unless SKIP_DB_SEED=1).
+# Manual retry: Admin → Settings → Database, or: docker compose exec mbkru-web node /app/node_modules/prisma/build/index.js db seed
 # Coolify: add as Docker Compose resource; set env vars in the UI (do not commit secrets).
 
 services:
@@ -24,6 +25,7 @@ services:
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - ADMIN_SESSION_SECRET=${ADMIN_SESSION_SECRET}
+      - SKIP_DB_SEED=${SKIP_DB_SEED:-}
     volumes:
       - mbkru_uploads:/app/public/uploads
     depends_on:

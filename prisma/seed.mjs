@@ -1,9 +1,16 @@
 /**
  * DB seed — runs in production Docker without tsx (`node prisma/seed.mjs`).
+ * Constituencies: `prisma/data/constituencies.seed.json` — `npm run data:refresh-constituencies-seed`.
+ * Optional full MP roster: `prisma/data/parliament-members.seed.json` — `npm run data:refresh-members-seed`.
  * @see package.json prisma.seed
  */
+import { readFileSync, existsSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const prisma = new PrismaClient();
 
@@ -438,8 +445,102 @@ async function seedAccountabilityPublicSample() {
   }
 
   console.log(
-    "Public accountability sample seeded: constituencies=3, MPs=3 (verify on parliament.gh), NDC+NPP 2024 manifesto links, promises=5, report-card pilot year=" +
+    "Public accountability sample seeded: MPs=3 (verify on parliament.gh), NDC+NPP 2024 manifesto links, promises=5, report-card pilot year=" +
       REPORT_CARD_PILOT_YEAR,
+  );
+}
+
+/** Upsert all rows from `prisma/data/constituencies.seed.json` (bundled; no admin CSV step). */
+async function seedConstituenciesFromBundledJson() {
+  const jsonPath = join(__dirname, "data", "constituencies.seed.json");
+  if (!existsSync(jsonPath)) {
+    console.warn("constituencies.seed.json missing — skipping bulk constituencies.");
+    return;
+  }
+  let rows;
+  try {
+    rows = JSON.parse(readFileSync(jsonPath, "utf8"));
+  } catch (e) {
+    console.error("constituencies.seed.json parse error:", e.message);
+    return;
+  }
+  if (!Array.isArray(rows)) return;
+  let upserted = 0;
+  let skippedRegion = 0;
+  for (const r of rows) {
+    if (!r?.slug || !r?.name || !r?.region_slug) continue;
+    const region = await prisma.region.findUnique({ where: { slug: r.region_slug } });
+    if (!region) {
+      skippedRegion++;
+      continue;
+    }
+    await prisma.constituency.upsert({
+      where: { slug: r.slug },
+      create: { name: r.name, slug: r.slug, regionId: region.id },
+      update: { name: r.name, regionId: region.id },
+    });
+    upserted++;
+  }
+  console.log(
+    `Constituencies from bundled JSON: ${upserted} upserted` +
+      (skippedRegion ? ` (${skippedRegion} rows skipped — unknown region_slug)` : "") +
+      ".",
+  );
+}
+
+/**
+ * Optional full MP roster: `prisma/data/parliament-members.seed.json`
+ * Generate: `npm run data:refresh-members-seed` (or `node scripts/json-to-parliament-members-seed.mjs <mps.json>`).
+ */
+async function seedParliamentMembersFromBundledJson() {
+  const jsonPath = join(__dirname, "data", "parliament-members.seed.json");
+  if (!existsSync(jsonPath)) return;
+  let rows;
+  try {
+    rows = JSON.parse(readFileSync(jsonPath, "utf8"));
+  } catch (e) {
+    console.error("parliament-members.seed.json parse error:", e.message);
+    return;
+  }
+  if (!Array.isArray(rows) || rows.length === 0) return;
+  let upserted = 0;
+  let skipped = 0;
+  for (const r of rows) {
+    if (!r?.slug || !r?.name || !r?.role) continue;
+    const cSlug = r.constituency_slug?.trim?.() || null;
+    let constituencyId = null;
+    if (cSlug) {
+      const c = await prisma.constituency.findUnique({ where: { slug: cSlug } });
+      if (!c) {
+        skipped++;
+        continue;
+      }
+      constituencyId = c.id;
+    }
+    await prisma.parliamentMember.upsert({
+      where: { slug: r.slug },
+      create: {
+        name: r.name,
+        slug: r.slug,
+        role: r.role,
+        party: r.party?.trim?.() || null,
+        constituencyId,
+        active: r.active !== false,
+      },
+      update: {
+        name: r.name,
+        role: r.role,
+        party: r.party?.trim?.() || null,
+        constituencyId,
+        active: r.active !== false,
+      },
+    });
+    upserted++;
+  }
+  console.log(
+    `Parliament members from bundled JSON: ${upserted} upserted` +
+      (skipped ? ` (${skipped} skipped — constituency_slug not in DB)` : "") +
+      ".",
   );
 }
 
@@ -497,6 +598,22 @@ async function main() {
     });
   }
   console.log("Regions seeded:", REGIONS_SEED.length);
+
+  const skipConstituencyJson =
+    process.env.SEED_CONSTITUENCIES_JSON === "0" || process.env.SEED_CONSTITUENCIES_JSON === "false";
+  if (skipConstituencyJson) {
+    console.log("SEED_CONSTITUENCIES_JSON=0 — skipping prisma/data/constituencies.seed.json.");
+  } else {
+    await seedConstituenciesFromBundledJson();
+  }
+
+  const skipMembersJson =
+    process.env.SEED_PARLIAMENT_MEMBERS_JSON === "0" || process.env.SEED_PARLIAMENT_MEMBERS_JSON === "false";
+  if (skipMembersJson) {
+    console.log("SEED_PARLIAMENT_MEMBERS_JSON=0 — skipping prisma/data/parliament-members.seed.json.");
+  } else {
+    await seedParliamentMembersFromBundledJson();
+  }
 
   const email = process.env.ADMIN_EMAIL;
   const plain = process.env.ADMIN_PASSWORD;

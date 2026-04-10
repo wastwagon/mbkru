@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { upsertScorecardEntryAction } from "@/app/admin/report-card/actions";
+import { MetricsDisplay } from "@/components/accountability/MetricsDisplay";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
 
@@ -48,7 +49,8 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
       <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Add or update entry</h2>
         <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-          Same member + cycle updates the existing row. Metrics must be valid JSON object or array (optional).
+          Same member + cycle updates the existing row. Metrics are stored as JSON in the database but shown as
+          readable fields on the public report card.
         </p>
         <form action={upsertScorecardEntryAction} className="mt-4 space-y-3">
           <input type="hidden" name="cycleId" value={cycle.id} />
@@ -96,7 +98,7 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
           </div>
           <div>
             <label htmlFor="metrics" className="block text-xs font-medium">
-              Metrics JSON <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              Metrics <span className="font-normal text-[var(--muted-foreground)]">(optional JSON object)</span>
             </label>
             <textarea
               id="metrics"
@@ -131,9 +133,12 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
                   <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--muted-foreground)]">{e.narrative}</p>
                 ) : null}
                 {e.metrics != null ? (
-                  <pre className="mt-2 max-h-32 overflow-auto rounded-lg bg-[var(--section-light)] p-2 text-[11px]">
-                    {JSON.stringify(e.metrics, null, 2)}
-                  </pre>
+                  <div className="mt-2 rounded-lg border border-[var(--border)] bg-[var(--section-light)]/60 p-3">
+                    <p className="text-xs font-medium text-[var(--muted-foreground)]">Metrics</p>
+                    <div className="mt-2">
+                      <MetricsDisplay value={e.metrics} />
+                    </div>
+                  </div>
                 ) : null}
               </li>
             ))}

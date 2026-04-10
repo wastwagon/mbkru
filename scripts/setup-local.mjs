@@ -8,8 +8,7 @@
  * 5. prisma migrate deploy
  * 6. prisma db seed (accountability starter + SEED_MEMBER_DEMO for local dev)
  *
- * Usage: node scripts/setup-local.mjs
- *    or: npm run setup:local
+ * Usage: npm run setup:local  ·  Windows CMD: scripts\\setup-local.cmd
  */
 import { execSync, spawnSync } from "node:child_process";
 import crypto from "node:crypto";

@@ -2,33 +2,20 @@
 
 import { useState } from "react";
 
-type ReconcileResponse = {
-  ok?: boolean;
-  error?: string;
-  summary?: {
-    csvRowsTotal: number;
-    csvRowsValid: number;
-    wouldCreate: number;
-    wouldUpdate: number;
-    unchanged: number;
-    inDatabaseNotInCsv: number;
-  };
-  rowErrors?: string[];
-  wouldCreate?: unknown[];
-  wouldUpdate?: unknown[];
-  unchangedSlugs?: string[];
-  inDatabaseNotInCsv?: unknown[];
-};
+import { ParliamentReconcileResults } from "./ParliamentReconcileResults";
+import type { ParliamentReconcileResult } from "@/lib/parliament-reconcile";
+
+type ReconcileResponse = { ok?: boolean; error?: string } & Partial<ParliamentReconcileResult>;
 
 export function ParliamentCsvReconcile() {
   const [message, setMessage] = useState<string | null>(null);
-  const [rawJson, setRawJson] = useState<string | null>(null);
+  const [result, setResult] = useState<ParliamentReconcileResult | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMessage(null);
-    setRawJson(null);
+    setResult(null);
     setLoading(true);
     const form = e.currentTarget;
     const fd = new FormData(form);
@@ -43,24 +30,19 @@ export function ParliamentCsvReconcile() {
         setMessage(data.error ?? "Reconcile failed.");
         return;
       }
-      const s = data.summary;
-      if (s) {
-        setMessage(
-          [
-            `CSV rows: ${s.csvRowsTotal} (${s.csvRowsValid} valid for diff).`,
-            `Would create: ${s.wouldCreate}; would update: ${s.wouldUpdate}; unchanged: ${s.unchanged}.`,
-            `In DB but not in CSV: ${s.inDatabaseNotInCsv} (review for retired MPs or file scope).`,
-            (data.rowErrors?.length ?? 0) > 0
-              ? `Row errors: ${data.rowErrors!.length} (see details below).`
-              : "",
-          ]
-            .filter(Boolean)
-            .join(" "),
-        );
+      if (data.summary && Array.isArray(data.rowErrors) && Array.isArray(data.wouldCreate) && Array.isArray(data.wouldUpdate)) {
+        setResult({
+          summary: data.summary,
+          rowErrors: data.rowErrors,
+          wouldCreate: data.wouldCreate,
+          wouldUpdate: data.wouldUpdate,
+          unchangedSlugs: data.unchangedSlugs ?? [],
+          inDatabaseNotInCsv: data.inDatabaseNotInCsv ?? [],
+        });
+        setMessage("Dry-run complete — review the summary below.");
       } else {
-        setMessage("OK");
+        setMessage("OK — unexpected response shape.");
       }
-      setRawJson(JSON.stringify(data, null, 2));
     } catch {
       setMessage("Network error.");
     } finally {
@@ -104,14 +86,7 @@ export function ParliamentCsvReconcile() {
           {message}
         </p>
       ) : null}
-      {rawJson ? (
-        <details className="mt-4">
-          <summary className="cursor-pointer text-xs font-medium text-[var(--primary)]">Full JSON response</summary>
-          <pre className="mt-2 max-h-80 overflow-auto rounded-lg bg-[var(--section-dark)] p-3 text-[11px] text-white/90">
-            {rawJson}
-          </pre>
-        </details>
-      ) : null}
+      {result ? <ParliamentReconcileResults {...result} /> : null}
     </div>
   );
 }
