@@ -1,7 +1,7 @@
 # Index2 (Business Consulting 01) — Safe Implementation Plan
 
 ## Overview
-Port the **index2** layout and structure into MBKRU homepage while **keeping all MBKRU content**. No Bootstrap/Sass—use Tailwind only. No template images—use existing Unsplash or placeholders.
+Port the **index2** layout and structure into MBKRU homepage while **keeping all MBKRU content**. No Bootstrap/Sass—use Tailwind only. No template images—use existing Unsplash URLs from `src/lib/site-content.ts`.
 
 ---
 
@@ -29,7 +29,7 @@ Port the **index2** layout and structure into MBKRU homepage while **keeping all
 1. **Backup** — Current `page.tsx` preserved in git / copy
 2. **Hero** — Light background, split: left (headline, tagline, CTA), right (image)
 3. **About** — Image + mission text
-4. **Services/Pillars** — 3 cards (or 6 if we add D, E placeholders)
+4. **Services/Pillars** — 3 cards (or 5 if we surface pillars D and E from `site-content` pillar map)
 5. **Objectives** — Company1-style or Client2-style
 6. **Counter** — Reintroduce stats bar (5, 16, 100%, SDG 1)
 7. **Pillar cards** — Casestudy1-style image cards

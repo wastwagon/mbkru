@@ -24,7 +24,7 @@ Civic Accountability & Citizens Engagement Platform for Ghana.
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
 - **Animations:** Framer Motion
-- **Content:** PostgreSQL + Prisma; built-in admin at `/admin` (posts + shared media library)
+- **Content:** PostgreSQL + Prisma; built-in admin at `/admin` (posts + shared media library). Site-wide marketing copy, illustrative image URLs, programme roadmap, and FAQ live in `src/lib/site-content.ts`.
 - **Forms:** React Hook Form + Zod
 - **Deployment:** **Docker / Coolify (recommended)** — `output: "standalone"` in `next.config.ts`. Vercel is possible with a managed Postgres URL and the same env vars.
 

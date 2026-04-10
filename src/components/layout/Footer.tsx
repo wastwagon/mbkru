@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Logo } from "@/components/ui/Logo";
 import { FooterMemberAuth } from "@/components/layout/FooterMemberAuth";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
-import { content, heroContent, footerGalleryAlts, footerGalleryImages } from "@/lib/placeholders";
+import { content, heroContent, footerGalleryAlts, footerGalleryImages } from "@/lib/site-content";
 import {
   isLegalEmpowermentPageEnabled,
   isPromisesBrowseEnabled,
@@ -20,6 +20,7 @@ const footerLinks = {
     { href: "/diaspora", label: "Diaspora (17th Region)" },
     { href: "/resources", label: "Resources" },
     { href: "/faq", label: "FAQ" },
+    { href: "/data-sources", label: "Data sources" },
     { href: "/partners", label: "Partners & Supporters" },
   ],
   legal: [

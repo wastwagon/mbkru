@@ -1,10 +1,13 @@
 /**
  * DB seed — runs in production Docker without tsx (`node prisma/seed.mjs`).
  * Constituencies: `prisma/data/constituencies.seed.json` — `npm run data:refresh-constituencies-seed`.
- * Optional full MP roster: `prisma/data/parliament-members.seed.json` — `npm run data:refresh-members-seed`.
+ * Full MP roster: `prisma/data/parliament-members.seed.json` (bundled; Wikipedia 2024 list). Regenerate: `npm run data:refresh-members-seed-wikipedia`.
+ * Traditional-area communities: `prisma/data/communities.seed.json` (public-source citations in descriptions).
+ * Opt out: `SEED_COMMUNITIES_DEMO=0`. Pilot posts need `SEED_MEMBER_DEMO=1`.
+ * Optional admin fixtures (Voice + attachment, situational/election rows, contact, verification queue): `SEED_ENGAGEMENT_DEMOS=1` or `SEED_VOICE_DEMO=1`. Internal origin is noted in `CitizenReport.staffNotes` / contact message footer where applicable.
  * @see package.json prisma.seed
  */
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PrismaClient } from "@prisma/client";
@@ -13,6 +16,12 @@ import bcrypt from "bcryptjs";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const prisma = new PrismaClient();
+
+/** 1×1 PNG written to public/uploads when engagement seed runs (attachment + verification file workflows). */
+const SEED_DEMO_PNG = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+  "base64",
+);
 
 const REGIONS_SEED = [
   { name: "Greater Accra", slug: "greater-accra" },
@@ -33,7 +42,7 @@ const REGIONS_SEED = [
   { name: "Savannah", slug: "savannah" },
 ];
 
-/** Starter news — same slugs as `newsPlaceholders` in `src/lib/placeholders.ts` (CMS replaces static fallback). */
+/** Starter news — same slugs as `starterNewsArticles` in `src/lib/site-content.ts` (CMS replaces static fallback). */
 const POSTS_SEED = [
   {
     slug: "mbkru-website-launch",
@@ -544,7 +553,7 @@ async function seedParliamentMembersFromBundledJson() {
   );
 }
 
-/** Fictional public Member rows for /login and Voice testing — not for production identity. */
+/** Development-only Member logins for /login and role workflows — rotate passwords before any production pilot. */
 async function seedMemberDemo() {
   const accra = await prisma.region.findUnique({ where: { slug: "greater-accra" } });
   const users = [
@@ -585,6 +594,327 @@ async function seedMemberDemo() {
   }
   console.warn(
     "SEED_MEMBER_DEMO: change passwords before any real pilot — credentials are in env or defaults above.",
+  );
+}
+
+/** Real-world-themed communities (citations in JSON descriptions). Upsert by slug. */
+async function seedCommunitiesFromBundledJson() {
+  const jsonPath = join(__dirname, "data", "communities.seed.json");
+  if (!existsSync(jsonPath)) {
+    console.warn("communities.seed.json missing — skipping community seed.");
+    return;
+  }
+  let rows;
+  try {
+    rows = JSON.parse(readFileSync(jsonPath, "utf8"));
+  } catch (e) {
+    console.error("communities.seed.json parse error:", e.message);
+    return;
+  }
+  if (!Array.isArray(rows)) return;
+  let n = 0;
+  for (const r of rows) {
+    if (!r?.slug || !r?.name || !r?.description) continue;
+    const region = r.region_slug ? await prisma.region.findUnique({ where: { slug: r.region_slug } }) : null;
+    if (r.region_slug && !region) {
+      console.warn(`Community "${r.slug}": unknown region_slug "${r.region_slug}" — skipping.`);
+      continue;
+    }
+    await prisma.community.upsert({
+      where: { slug: r.slug },
+      create: {
+        slug: r.slug,
+        name: r.name,
+        description: r.description,
+        regionId: region?.id ?? null,
+        traditionalAreaName: r.traditionalAreaName?.trim?.() || null,
+        joinPolicy: r.joinPolicy || "OPEN",
+        visibility: r.visibility || "PUBLIC",
+        status: r.status || "ACTIVE",
+      },
+      update: {
+        name: r.name,
+        description: r.description,
+        regionId: region?.id ?? null,
+        traditionalAreaName: r.traditionalAreaName?.trim?.() || null,
+        joinPolicy: r.joinPolicy || "OPEN",
+        visibility: r.visibility || "PUBLIC",
+        status: r.status || "ACTIVE",
+      },
+    });
+    n++;
+  }
+  console.log(`Communities from bundled JSON: ${n} upserted.`);
+}
+
+/**
+ * Memberships + published posts so /communities and threads work.
+ * Uses development Member accounts only; not palace-verified traditional authority.
+ */
+async function seedCommunityPilotInteractions() {
+  const email1 = (process.env.SEED_MEMBER_EMAIL || "pilot.member@mbkru.local").trim().toLowerCase();
+  const email2 = (process.env.SEED_MEMBER_2_EMAIL || "pilot.two@mbkru.local").trim().toLowerCase();
+  const m1 = await prisma.member.findUnique({ where: { email: email1 } });
+  const m2 = await prisma.member.findUnique({ where: { email: email2 } });
+  if (!m1 || !m2) {
+    console.log("Community pilot interactions skipped — pilot members not found (set SEED_MEMBER_DEMO=1).");
+    return;
+  }
+
+  const aj = await prisma.community.findUnique({ where: { slug: "ajumako-traditional-council" } });
+  const su = await prisma.community.findUnique({ where: { slug: "sunyani-traditional-council" } });
+  if (!aj || !su) {
+    console.log("Community pilot interactions skipped — seeded communities missing.");
+    return;
+  }
+
+  await prisma.communityMembership.upsert({
+    where: { communityId_memberId: { communityId: aj.id, memberId: m1.id } },
+    create: { communityId: aj.id, memberId: m1.id, role: "QUEEN_MOTHER_VERIFIED", state: "ACTIVE" },
+    update: { role: "QUEEN_MOTHER_VERIFIED", state: "ACTIVE" },
+  });
+  await prisma.communityMembership.upsert({
+    where: { communityId_memberId: { communityId: aj.id, memberId: m2.id } },
+    create: { communityId: aj.id, memberId: m2.id, role: "MEMBER", state: "ACTIVE" },
+    update: { role: "MEMBER", state: "ACTIVE" },
+  });
+  await prisma.communityMembership.upsert({
+    where: { communityId_memberId: { communityId: su.id, memberId: m1.id } },
+    create: { communityId: su.id, memberId: m1.id, role: "MEMBER", state: "ACTIVE" },
+    update: { role: "MEMBER", state: "ACTIVE" },
+  });
+  await prisma.communityMembership.upsert({
+    where: { communityId_memberId: { communityId: su.id, memberId: m2.id } },
+    create: { communityId: su.id, memberId: m2.id, role: "MODERATOR", state: "ACTIVE" },
+    update: { role: "MODERATOR", state: "ACTIVE" },
+  });
+
+  const annBody =
+    "Welcome. This space covers civic themes linked to Ajumako Traditional Area (Central Region). " +
+    "The Ajumako Traditional Council publishes a Queen Mothers listing on its public website.\n\n" +
+    "Source: Ajumako Traditional Council — Queen Mothers page, https://efuajumakotcouncil.com/?page=queens\n\n" +
+    "MBKRU is independent and does not speak for the Council. Confirm facts with official channels.";
+  const modBody =
+    "Discussion for themes related to Sunyani Traditional Area (Bono Region). " +
+    "University of Energy and Natural Resources (UENR) has published items on Sunyani Traditional Council leadership.\n\n" +
+    "Reference: https://uenr.edu.gh/ (site search: Sunyani Traditional Council)\n\n" +
+    "Confirm electoral and boundary matters with the Electoral Commission and the Council.";
+
+  const legacyAj = await prisma.communityPost.findFirst({
+    where: { communityId: aj.id, body: { startsWith: "[MBKRU seed demo | aj-ann]" } },
+  });
+  if (legacyAj) {
+    await prisma.communityPost.update({ where: { id: legacyAj.id }, data: { body: annBody } });
+  } else if (
+    !(await prisma.communityPost.findFirst({
+      where: { communityId: aj.id, authorMemberId: m1.id, kind: "ANNOUNCEMENT", pinned: true },
+    }))
+  ) {
+    await prisma.communityPost.create({
+      data: {
+        communityId: aj.id,
+        authorMemberId: m1.id,
+        kind: "ANNOUNCEMENT",
+        body: annBody,
+        moderationStatus: "PUBLISHED",
+        pinned: true,
+      },
+    });
+  }
+
+  const legacySu = await prisma.communityPost.findFirst({
+    where: { communityId: su.id, body: { startsWith: "[MBKRU seed demo | su-mod]" } },
+  });
+  if (legacySu) {
+    await prisma.communityPost.update({ where: { id: legacySu.id }, data: { body: modBody } });
+  } else if (
+    !(await prisma.communityPost.findFirst({
+      where: { communityId: su.id, authorMemberId: m2.id, kind: "GENERAL" },
+    }))
+  ) {
+    await prisma.communityPost.create({
+      data: {
+        communityId: su.id,
+        authorMemberId: m2.id,
+        kind: "GENERAL",
+        body: modBody,
+        moderationStatus: "PUBLISHED",
+        pinned: false,
+      },
+    });
+  }
+
+  console.log("Community pilot interactions: memberships + sourced posts ensured.");
+}
+
+/**
+ * Optional admin/workflow fixtures: Voice (+ file), situational & election rows, contact row, verification queue.
+ * Public-facing report bodies are written as generic casework language; internal origin is recorded in staffNotes where available.
+ * Requires communities + second pilot member for verification queue when those seeds run.
+ */
+async function seedEngagementDemos() {
+  const uploadRoot = join(__dirname, "..", "public", "uploads");
+  mkdirSync(uploadRoot, { recursive: true });
+  const verifyName = "mbkru-seed-verification-doc.png";
+  const voiceName = "mbkru-seed-voice-attachment.png";
+  writeFileSync(join(uploadRoot, verifyName), SEED_DEMO_PNG);
+  writeFileSync(join(uploadRoot, voiceName), SEED_DEMO_PNG);
+
+  const pathVerify = `/uploads/${verifyName}`;
+  const pathVoice = `/uploads/${voiceName}`;
+
+  let mediaVerify = await prisma.media.findFirst({ where: { storagePath: pathVerify } });
+  if (!mediaVerify) {
+    mediaVerify = await prisma.media.create({
+      data: {
+        filename: "verification-sample.png",
+        storagePath: pathVerify,
+        mimeType: "image/png",
+        alt: "Sample verification document (PNG)",
+      },
+    });
+  }
+
+  let mediaVoice = await prisma.media.findFirst({ where: { storagePath: pathVoice } });
+  if (!mediaVoice) {
+    mediaVoice = await prisma.media.create({
+      data: {
+        filename: "report-attachment-sample.png",
+        storagePath: pathVoice,
+        mimeType: "image/png",
+        alt: "Sample report attachment (PNG)",
+      },
+    });
+  }
+
+  const accra = await prisma.region.findUnique({ where: { slug: "greater-accra" } });
+  const northern = await prisma.region.findUnique({ where: { slug: "northern" } });
+  const volta = await prisma.region.findUnique({ where: { slug: "volta" } });
+
+  const voiceReport = await prisma.citizenReport.upsert({
+    where: { trackingCode: "MBKRU-SEED-VOICE-1" },
+    create: {
+      trackingCode: "MBKRU-SEED-VOICE-1",
+      kind: "VOICE",
+      title: "Street lighting — market vicinity (Greater Accra)",
+      body: "Concern about inadequate street lighting affecting pedestrian safety near a busy trading area after dark. Requesting assessment and a repair timeline from the responsible authority.",
+      category: "Infrastructure",
+      status: "UNDER_REVIEW",
+      regionId: accra?.id ?? null,
+      staffNotes:
+        "Created by prisma db seed (SEED_ENGAGEMENT_DEMOS or SEED_VOICE_DEMO). Tracking MBKRU-SEED-VOICE-1. Archive when replacing with live submissions.",
+    },
+    update: {
+      kind: "VOICE",
+      title: "Street lighting — market vicinity (Greater Accra)",
+      body: "Concern about inadequate street lighting affecting pedestrian safety near a busy trading area after dark. Requesting assessment and a repair timeline from the responsible authority.",
+      category: "Infrastructure",
+      status: "UNDER_REVIEW",
+      regionId: accra?.id ?? null,
+      staffNotes:
+        "Created by prisma db seed (SEED_ENGAGEMENT_DEMOS or SEED_VOICE_DEMO). Tracking MBKRU-SEED-VOICE-1. Archive when replacing with live submissions.",
+    },
+  });
+
+  const attCount = await prisma.citizenReportAttachment.count({ where: { reportId: voiceReport.id } });
+  if (attCount === 0) {
+    await prisma.citizenReportAttachment.create({
+      data: {
+        reportId: voiceReport.id,
+        path: pathVoice,
+        mimeType: "image/png",
+      },
+    });
+  }
+
+  await prisma.citizenReport.upsert({
+    where: { trackingCode: "MBKRU-SEED-SITUATIONAL-1" },
+    create: {
+      trackingCode: "MBKRU-SEED-SITUATIONAL-1",
+      kind: "SITUATIONAL_ALERT",
+      title: "Road access — extended closure",
+      body: "Note of a prolonged road closure affecting access to a market area. Requesting official diversion routes and an estimated reopening date.",
+      category: "Transport",
+      status: "RECEIVED",
+      regionId: northern?.id ?? null,
+      staffNotes:
+        "Created by prisma db seed. Tracking MBKRU-SEED-SITUATIONAL-1. Verify before external relay — not corroborated.",
+    },
+    update: {
+      kind: "SITUATIONAL_ALERT",
+      title: "Road access — extended closure",
+      body: "Note of a prolonged road closure affecting access to a market area. Requesting official diversion routes and an estimated reopening date.",
+      category: "Transport",
+      status: "RECEIVED",
+      regionId: northern?.id ?? null,
+      staffNotes:
+        "Created by prisma db seed. Tracking MBKRU-SEED-SITUATIONAL-1. Verify before external relay — not corroborated.",
+    },
+  });
+
+  await prisma.citizenReport.upsert({
+    where: { trackingCode: "MBKRU-SEED-ELECTION-1" },
+    create: {
+      trackingCode: "MBKRU-SEED-ELECTION-1",
+      kind: "ELECTION_OBSERVATION",
+      title: "Polling day — queue and wait times",
+      body: "Observation of queue length and waiting times at a polling location. No allegation of irregularity is recorded in this note.",
+      category: "Queues",
+      status: "UNDER_REVIEW",
+      regionId: volta?.id ?? null,
+      staffNotes:
+        "Created by prisma db seed. Tracking MBKRU-SEED-ELECTION-1. Not from an accredited observation mission — archive or replace for production.",
+    },
+    update: {
+      kind: "ELECTION_OBSERVATION",
+      title: "Polling day — queue and wait times",
+      body: "Observation of queue length and waiting times at a polling location. No allegation of irregularity is recorded in this note.",
+      category: "Queues",
+      status: "UNDER_REVIEW",
+      regionId: volta?.id ?? null,
+      staffNotes:
+        "Created by prisma db seed. Tracking MBKRU-SEED-ELECTION-1. Not from an accredited observation mission — archive or replace for production.",
+    },
+  });
+
+  const contactDup = await prisma.contactSubmission.findFirst({
+    where: { email: "mbkru.seed.contact@example.com" },
+  });
+  if (!contactDup) {
+    await prisma.contactSubmission.create({
+      data: {
+        name: "MBKRU deployment",
+        email: "mbkru.seed.contact@example.com",
+        subject: "Partnership — regional forum",
+        message:
+          "We would like to explore co-hosting a regional listening session with MBKRU.\n\n" +
+          "— This entry was created by prisma db seed for inbox workflow testing; archive if not required.",
+        enquiryType: "Partnership",
+      },
+    });
+  }
+
+  const email2 = (process.env.SEED_MEMBER_2_EMAIL || "pilot.two@mbkru.local").trim().toLowerCase();
+  const m2 = await prisma.member.findUnique({ where: { email: email2 } });
+  const su = await prisma.community.findUnique({ where: { slug: "sunyani-traditional-council" } });
+  if (m2 && su) {
+    const pending = await prisma.communityVerificationRequest.findFirst({
+      where: { memberId: m2.id, communityId: su.id, status: "SUBMITTED" },
+    });
+    if (!pending) {
+      await prisma.communityVerificationRequest.create({
+        data: {
+          communityId: su.id,
+          memberId: m2.id,
+          status: "SUBMITTED",
+          documentMediaIds: [mediaVerify.id],
+        },
+      });
+    }
+  }
+
+  console.log(
+    "Engagement fixtures: Voice (+attachment), situational & election reports, contact row, verification queue (when pilot member + Sunyani community exist).",
   );
 }
 
@@ -661,6 +991,23 @@ async function main() {
 
   if (process.env.SEED_MEMBER_DEMO === "1") {
     await seedMemberDemo();
+  }
+
+  const skipCommunitiesDemo =
+    process.env.SEED_COMMUNITIES_DEMO === "0" || process.env.SEED_COMMUNITIES_DEMO === "false";
+  if (skipCommunitiesDemo) {
+    console.log("SEED_COMMUNITIES_DEMO=0 — skipping communities.seed.json and pilot community posts.");
+  } else {
+    await seedCommunitiesFromBundledJson();
+    if (process.env.SEED_MEMBER_DEMO === "1") {
+      await seedCommunityPilotInteractions();
+    } else {
+      console.log("SEED_MEMBER_DEMO unset — communities seeded without pilot memberships/posts.");
+    }
+  }
+
+  if (process.env.SEED_VOICE_DEMO === "1" || process.env.SEED_ENGAGEMENT_DEMOS === "1") {
+    await seedEngagementDemos();
   }
 }
 

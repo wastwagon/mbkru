@@ -296,9 +296,9 @@
 | Gap | Fix |
 |-----|-----|
 | "Advocates" in metadata/some copy | Align with "MBKRU" only where appropriate |
-| Phone placeholder "+233 XX XXX XXXX" | Replace with real number or remove |
-| Footer "Office details to be added" | Complete or remove |
-| Social links "#" | Add real URLs |
+| TopBar phone | Set `NEXT_PUBLIC_CONTACT_PHONE` when a public line is ready (otherwise hidden) |
+| Walk-in address / hours | Refine `content.officeDetails` in `site-content.ts` when the desk opens |
+| Social links `#` | Replace with real URLs in `content.social` |
 
 ### Accessibility
 | Gap | Fix |
@@ -326,7 +326,7 @@
 ### P1 — High ✅ DONE
 4. [x] **Hero pillar cards** — Icon + title only (unchanged; already minimal)
 5. [x] **Reduce hero elements** — Eyebrow shortened to "MBKRU"; motto moved below subhead
-6. [ ] **Ghana-specific imagery** — Deferred; using placeholders
+6. [ ] **Ghana-specific imagery** — Deferred; illustrative Unsplash URLs in `src/lib/site-content.ts` until custom photography
 
 ### P2 — Medium ✅ DONE
 7. [x] **Editorial layout** — Asymmetric grid (55/45) on About section
@@ -347,11 +347,11 @@
 - [x] Hero H1 oversized (text-5xl to text-7xl)
 - [x] Hero elements reduced (≤5 distinct)
 - [x] Pillar cards simplified (icon + title)
-- [ ] Ghana-specific hero image (placeholder for now)
+- [ ] Ghana-specific hero image (illustrative Unsplash in `site-content` for now)
 - [x] At least one editorial/asymmetric section
 - [x] Simple data viz — 16 Regions grid (RegionsViz component)
 - [x] TopBar + Header + Hero seamless
-- [ ] All placeholder content replaced
+- [ ] All marketing copy verified and imagery swapped from illustrative to final assets
 - [ ] Accessibility audit passed
 
 ---

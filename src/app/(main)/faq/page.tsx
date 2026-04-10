@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { faqPlaceholders } from "@/lib/placeholders";
+import { faqContent } from "@/lib/site-content";
 
 export const metadata: Metadata = {
   title: "Frequently Asked Questions",
@@ -19,7 +19,7 @@ export default function FAQPage() {
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-3xl">
           <div className="space-y-6">
-            {faqPlaceholders.map((item, i) => (
+            {faqContent.map((item, i) => (
               <details
                 key={i}
                 className="group rounded-xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-card)] transition-all duration-300 open:border-[var(--primary)]/20 open:shadow-[var(--shadow-card-hover)]"

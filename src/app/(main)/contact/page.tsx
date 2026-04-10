@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { content } from "@/lib/placeholders";
+import { content } from "@/lib/site-content";
 
 export const metadata: Metadata = {
   title: "Contact Us",

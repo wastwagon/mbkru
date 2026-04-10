@@ -1,6 +1,6 @@
 # Phase 1 Pages Review — MBKRU Website
 
-**Purpose:** Review all existing pages and define Phase 1 scope. Use placeholders and public images; replace content later.
+**Purpose:** Review all existing pages and define Phase 1 scope. Default copy and illustrative imagery live in `src/lib/site-content.ts`; replace with production assets and verified text when ready.
 
 ---
 
@@ -8,20 +8,20 @@
 
 ### Nav-Linked Pages (Primary)
 
-| Route | Label | Status | Images | Placeholders |
-|-------|-------|--------|--------|--------------|
+| Route | Label | Status | Images | Content notes |
+|-------|-------|--------|--------|---------------|
 | `/` | Home | ✓ Complete | 3 Unsplash | Hero, About, CTA, pillars |
 | `/about` | About Us | ✓ Complete | 6+ Unsplash | Mission, pillars, objectives |
 | `/news` | News & Updates | ✓ Skeleton | 1 Unsplash | Single section |
 | `/citizens-voice` | MBKRU Voice | ✓ Complete | 1 Unsplash | Pillar A page |
 | `/situational-alerts` | Engagement | ✓ Complete | 1 Unsplash | Pillar B page |
 | `/parliament-tracker` | Accountability | ✓ Complete | 1 Unsplash | Pillar D page |
-| `/contact` | Get in Touch (CTA) | ✓ Complete | 0 | Form + contact placeholders |
+| `/contact` | Get in Touch (CTA) | ✓ Complete | 0 | Form + contact copy from `site-content` |
 
 ### Footer-Linked Pages
 
-| Route | Label | Status | Images | Placeholders |
-|-------|-------|--------|--------|--------------|
+| Route | Label | Status | Images | Content notes |
+|-------|-------|--------|--------|---------------|
 | `/resources` | Resources | ✓ Skeleton | 1 Unsplash | Single section |
 | `/partners` | Partners & Supporters | ✓ Complete | 1 Unsplash | Partnership content |
 | `/privacy` | Privacy Policy | ✓ Complete | 0 | Legal prose |
@@ -58,20 +58,18 @@
 
 ---
 
-## 3. Content Placeholder Status
+## 3. Baseline copy status (`site-content.ts`)
 
-### Text Placeholders (Replace Later)
+### Editable when you have final details
 
-| Location | Content | Replace With |
-|----------|---------|--------------|
-| TopBar | `+233 XX XXX XXXX` | Real phone number |
-| Contact | "Office details to be added" | Address |
-| Contact | "Contact details to be added" | Email, phone |
-| Footer | "Office details to be added" | Address |
-| Privacy | "[add contact email]" | Contact email |
-| Social links | `href="#"` | Facebook, LinkedIn, Twitter URLs |
+| Location | Current source | Update in code |
+|----------|----------------|----------------|
+| TopBar phone | Hidden until `NEXT_PUBLIC_CONTACT_PHONE` is set | Env + `content.phone` |
+| Contact / Footer | `content.officeDetails`, `content.contactDetails`, `content.address`, `content.email` | `content` in `site-content.ts` |
+| Privacy | `content.privacyContact` | Same |
+| Social links | `content.social.*` still `#` | Real Facebook, LinkedIn, Twitter URLs |
 
-### Structural Placeholders (OK for Phase 1)
+### Static sections (Phase 1 — no CMS yet)
 
 | Location | Content | Notes |
 |----------|---------|-------|
@@ -91,7 +89,7 @@
 - [x] Citizens Voice (Pillar A) — content + Early Access form
 - [x] Situational Alerts (Pillar B) — content
 - [x] Parliament Tracker (Pillar D) — content + Tracker signup form
-- [x] Contact — form + placeholder contact info
+- [x] Contact — form + contact copy from `site-content`
 - [x] News — landing page
 - [x] Resources — landing page
 - [x] Partners — content + CTA
@@ -103,17 +101,17 @@
 - [x] News article detail (`/news/[slug]`) — Prisma-backed when DB is configured
 - [ ] Resources document list/downloads
 - [ ] Partner logos grid
-- [ ] Ghana-specific imagery (use placeholders)
+- [ ] Ghana-specific imagery (illustrative Unsplash in `site-content` until custom assets)
 
 ---
 
-## 5. Centralized Placeholder Strategy
+## 5. Centralized site content (`site-content.ts`)
 
 ### Image Source
 
 - **Primary:** Unsplash (already in `next.config` remotePatterns)
 - **URL pattern:** `https://images.unsplash.com/photo-{id}?w={width}&q=80`
-- **Config:** `src/lib/placeholders.ts` — single source of truth
+- **Config:** `src/lib/site-content.ts` — single source of truth
 
 ### Image Categories
 
@@ -129,10 +127,10 @@
 | `news` | News & Updates | Media, press |
 | `resources` | Resources | Documents, library |
 
-### Content Placeholders
+### Site copy object (`content`)
 
-- Contact: `PLACEHOLDER_OFFICE`, `PLACEHOLDER_PHONE`, `PLACEHOLDER_EMAIL`
-- Social: `PLACEHOLDER_FACEBOOK`, etc. — or keep `#` for now
+- Contact: `address`, `email`, `officeDetails`, `contactDetails`, `phone` (from env when set)
+- Social: `social.facebook`, `social.linkedin`, `social.twitter` — replace `#` when URLs are ready
 
 ---
 
@@ -140,11 +138,11 @@
 
 ### Phase 1 Setup
 
-1. [x] Create `src/lib/placeholders.ts` with image URLs
-2. [x] Update all pages to import from placeholders
-3. [x] Replace hardcoded Unsplash URLs with placeholders
-4. [x] Add `alt` text for all images (placeholder-friendly)
-5. [x] Document placeholder replacement (see below)
+1. [x] Create `src/lib/site-content.ts` with image URLs
+2. [x] Update all pages to import from `site-content`
+3. [x] Replace hardcoded Unsplash URLs with `site-content` image map
+4. [x] Add `alt` text for all images (descriptive / illustrative)
+5. [x] Document how to swap imagery and copy (see below)
 
 ### Page-by-Page Updates
 
@@ -160,16 +158,16 @@
 | Resources | ✓ Uses `images.resources` |
 | TopBar, Footer, Contact, Privacy | ✓ Uses `content.*` |
 
-### Replacing Placeholders Later
+### Replacing baseline imagery and copy later
 
-**Images:** Edit `src/lib/placeholders.ts` — change Unsplash URLs to your own (local `/public` paths or CDN). Example:
+**Images:** Edit `src/lib/site-content.ts` — change Unsplash URLs to your own (local `/public` paths or CDN). Example:
 ```ts
 hero: "/images/hero.jpg",  // local
 // or
 hero: "https://your-cdn.com/hero.jpg",  // CDN
 ```
 
-**Content:** Edit `content` in `placeholders.ts` — phone, email, address, officeDetails, social URLs, privacyContact.
+**Content:** Edit `content` in `site-content.ts` — phone, email, address, officeDetails, social URLs, privacyContact.
 
 ---
 
@@ -178,7 +176,7 @@ hero: "https://your-cdn.com/hero.jpg",  // CDN
 ```
 src/
 ├── lib/
-│   └── placeholders.ts    # NEW: Centralized images + content placeholders
+│   └── site-content.ts    # Centralized imagery URLs, hero/contact copy, roadmap, FAQ, regions data
 ├── app/(main)/
 │   ├── page.tsx           # Home
 │   ├── about/page.tsx
@@ -204,10 +202,10 @@ src/
 | **Nav pages** | 7 |
 | **Footer pages** | 4 |
 | **Images to centralize** | ~15 |
-| **Text placeholders** | 6 |
+| **Site copy fields (`content`, etc.)** | 6 |
 | **Pages not yet implemented** | 0 (all exist) |
 
 All Phase 1 pages exist. The main work is:
-1. Centralize images in `placeholders.ts`
+1. Centralize images in `site-content.ts`
 2. Update pages to use config
-3. Replace text placeholders when real content is available
+3. Replace baseline copy when verified content is available

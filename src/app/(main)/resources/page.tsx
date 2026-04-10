@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
-import { images, conceptNotePlaceholder } from "@/lib/placeholders";
+import { images, resourcesConceptNote } from "@/lib/site-content";
 
 export const metadata: Metadata = {
   title: "Resources",
@@ -68,20 +68,20 @@ export default function ResourcesPage() {
           {/* Concept note — key document */}
           <div className="mb-16 rounded-2xl border-2 border-[var(--primary)]/20 bg-[var(--muted)] p-6 sm:p-8">
             <h2 className="font-display text-2xl font-bold text-[var(--foreground)]">
-              {conceptNotePlaceholder.title}
+              {resourcesConceptNote.title}
             </h2>
             <p className="mt-3 text-[var(--muted-foreground)] leading-relaxed">
-              {conceptNotePlaceholder.description}
+              {resourcesConceptNote.description}
             </p>
-            {conceptNotePlaceholder.fileUrl !== "#" ? (
-              <Button href={conceptNotePlaceholder.fileUrl} className="mt-4">
+            {resourcesConceptNote.fileUrl !== "#" ? (
+              <Button href={resourcesConceptNote.fileUrl} className="mt-4">
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                {conceptNotePlaceholder.fileLabel}
+                {resourcesConceptNote.fileLabel}
               </Button>
             ) : (
-              <p className="mt-4 text-sm font-medium text-[var(--muted-foreground)]">{conceptNotePlaceholder.fileLabel}</p>
+              <p className="mt-4 text-sm font-medium text-[var(--muted-foreground)]">{resourcesConceptNote.fileLabel}</p>
             )}
           </div>
 

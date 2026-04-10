@@ -152,7 +152,7 @@ When starting Phase 3 analytics-heavy features, add **read replicas** or **cache
 
 ## 10. Technical debt & known gaps (honest)
 
-- **Resources / About / Partners** may still use **static or placeholder** copy until you wire more CMS-like flows or keep them as marketing edits in code.
+- **Resources / About / Partners** may stay **static or code-edited** (`site-content` + page TSX) until you wire more CMS-like flows.
 - **Contact / newsletter / signup** routes log or stub — integrate Resend, Mailchimp, etc., for production.
 - **`metadataBase`** in root layout should stay aligned with `NEXT_PUBLIC_SITE_URL` for correct OG URLs on self-hosted domains.
 

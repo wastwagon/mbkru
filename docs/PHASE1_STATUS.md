@@ -11,11 +11,11 @@ Use this document to **recover context** after time away or a new machine: what 
 | Deliverable | In repo? | Notes |
 |-------------|----------|--------|
 | Homepage | Yes | `src/app/(main)/page.tsx` |
-| About (static + team CMS path) | Yes | `src/app/(main)/about/page.tsx` — content may use placeholders until expanded |
+| About (static + team CMS path) | Yes | `src/app/(main)/about/page.tsx` — baseline copy in `site-content` until expanded |
 | Citizens Voice — preview + early access | Yes | `citizens-voice/page.tsx`, `EarlyAccessForm` → `/api/early-access` |
 | Situational Alerts — preview | Yes | `situational-alerts/page.tsx` |
 | Parliament tracker — preview + signup | Yes | `parliament-tracker/page.tsx`, `TrackerSignupForm` → `/api/tracker-signup` |
-| News & Updates | Yes | `news/page.tsx`, `news/[slug]/page.tsx` — driven by **Prisma** when `DATABASE_URL` works; otherwise safe placeholders |
+| News & Updates | Yes | `news/page.tsx`, `news/[slug]/page.tsx` — driven by **Prisma** when `DATABASE_URL` works; otherwise static fallbacks |
 | Resources | Yes | `resources/page.tsx` — may stay static until you add a content model |
 | Partners | Yes | `partners/page.tsx` |
 | Contact + form | Yes | `contact/page.tsx`, `ContactForm` → `/api/contact` |

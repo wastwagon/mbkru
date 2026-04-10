@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ghanaRegionsData } from "@/lib/placeholders";
+import { ghanaRegionsData } from "@/lib/site-content";
 import { RegionModal, type RegionData } from "@/components/ui/RegionModal";
 
 /**

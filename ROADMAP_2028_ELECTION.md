@@ -27,7 +27,7 @@ MBKRU Advocates aims to position itself as Ghana's premier citizen accountabilit
 | News & Updates | ✓ Skeleton |
 | Resources | ✓ Skeleton |
 | Partners & Supporters | ✓ Live |
-| Contact | ✓ Form + placeholders |
+| Contact | ✓ Form + site copy (`site-content`) |
 | Privacy & Terms | ✓ Legal templates |
 | 16 Regions interactive viz | ✓ With modal data |
 
@@ -142,7 +142,7 @@ MBKRU Advocates aims to position itself as Ghana's premier citizen accountabilit
 2. **Secure partnerships** — Government, CHRAJ, media, development partners.
 3. **Hire or contract** — Technical lead for platform development (Phase 2 auth + reporting + moderation).
 4. **Town Hall pilot** — Confirm Greater Accra pilot venue and date (Q2 2026).
-5. **Update website roadmap** — Replace placeholder roadmap on homepage with this timeline.
+5. **Update website roadmap** — Keep the homepage roadmap section aligned with this document by editing `programmeRoadmap` in `src/lib/site-content.ts` when milestones change.
 
 ---
 

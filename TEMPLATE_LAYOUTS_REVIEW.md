@@ -49,7 +49,7 @@
 **MBKRU adaptation:**
 - Left: Featured "Latest Update" — image + date + headline + excerpt + Learn more
 - Right: 2 preview cards (date + headline + excerpt + link)
-- When no articles: Show placeholder cards "Coming soon" or single intro block
+- When no articles: Show empty state / “Coming soon” cards or a single intro block
 
 ### B. Platform Pages — Service Detail Pattern
 
@@ -76,7 +76,7 @@
 
 **MBKRU adaptation (when docs exist):**
 - Card grid: Icon or thumbnail + title + short desc + "Download" or "Read more"
-- Placeholder: Keep current intro + image; add "Document categories" placeholder cards
+- Until downloads ship: Keep current intro + image; optional category cards as static layout
 
 ### E. Newsletter — Cta3 Pattern
 
@@ -104,10 +104,10 @@
 
 | Priority | Page | Layout Change |
 |----------|------|---------------|
-| **P1** | News | Blog2: Featured + 2 preview cards (placeholder content) |
+| **P1** | News | Blog2: Featured + 2 preview cards (CMS or seed content) |
 | **P2** | Platform pages | Add "Key benefits" or "How it works" cards |
 | **P3** | Contact | Refine info blocks (icon + heading style) |
-| **P4** | Resources | Card grid placeholder for future docs |
+| **P4** | Resources | Card grid for future document list |
 | **P5** | About | Optional: Tabs for Vision/History (if content exists) |
 
 ---

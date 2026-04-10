@@ -32,11 +32,11 @@
 | MBKRU Advocates | Acronyms (MBKRU, MDCE, MP, CHRAJ, FOI, SDG 1, NGO) | About | ✓ |
 | MBKRU Advocates | Acronyms note ("fully spelled out on first use...") | About | ✓ |
 
-### ⚠️ Content Not From User (Structural / Placeholders)
+### ⚠️ Content Not From User (Structural / baseline copy)
 
 | Item | Location | Note |
 |------|----------|------|
-| Contact page placeholders | /contact | "[Add your office address here]", "[Add contact email and phone]", etc. — structural placeholders for client to fill |
+| Contact page copy | /contact | Email, address, and messaging from `content` in `src/lib/site-content.ts` — edit there for site-wide consistency |
 | Newsletter headline | Homepage | "Stay Informed" — Phase 1 deliverable from proposal, no user copy |
 | Privacy Policy | /privacy | Standard legal template — Phase 1 deliverable |
 | Terms of Use | /terms | Standard legal template — Phase 1 deliverable |
@@ -80,4 +80,4 @@
 
 - **User content:** All provided content is present and correctly placed.
 - **Phase 1:** Project remains within Phase 1 scope. No Phase 2 features implemented.
-- **Placeholders:** Contact, Privacy, and Terms use structural placeholders where you did not supply copy; these align with Phase 1 deliverables.
+- **Baseline copy:** Contact strings are centralized in `site-content`; Privacy and Terms use legal templates where custom counsel copy was not supplied — aligned with Phase 1 deliverables.

@@ -1,8 +1,9 @@
 /**
- * MBKRU Placeholder Configuration
+ * MBKRU site content & bundled UI data
  *
- * Centralized images and content placeholders for Phase 1.
- * Replace with real content when available.
+ * Central place for illustrative imagery (Unsplash), hero/brand copy, contact strings,
+ * programme roadmap cards, FAQ entries, and regional reference data. Swap URLs or copy
+ * when production assets and verified text are ready.
  *
  * Images: Unsplash (https://unsplash.com) — free to use, no attribution required.
  * URL format: https://images.unsplash.com/photo-{id}?w={width}&q=80
@@ -16,7 +17,7 @@ function img(id: string, width = 1200) {
 }
 
 /**
- * Placeholder images — semantic categories for easy replacement
+ * Illustrative imagery — semantic categories for pages and cards
  */
 export const images = {
   /** Hero, CTA sections — community, people, civic engagement */
@@ -126,7 +127,7 @@ function publicContactPhone(): string {
 }
 
 /**
- * Content placeholders — replace with real data
+ * Contact, social, and legal strings — TopBar, Footer, Contact, Privacy
  */
 export const content = {
   /** Contact — TopBar (hidden until set), Footer, Contact page */
@@ -138,21 +139,49 @@ export const content = {
   contactDetails:
     "Email info@mbkruadvocates.org — we aim to respond within two business days. When an official phone line is published, it will appear in the top bar and here.",
 
-  /** Social — replace # with real URLs */
+  /** Social — replace # with real URLs (or set NEXT_PUBLIC_* in .env) */
   social: {
     facebook: "#",
     linkedin: "#",
     twitter: "#",
   },
 
+  /** Gold top bar — short line next to social icons */
+  topBarTagline: "100% non-partisan · Citizen accountability",
+
   /** Legal */
   privacyContact: "info@mbkruadvocates.org",
 } as const;
 
+export type TopBarSocialIcon = "facebook" | "linkedin" | "twitter";
+
+/** Resolve social URLs for the top bar: env → coded http URL → /contact */
+export function getTopBarSocialLinks(): {
+  href: string;
+  label: string;
+  icon: TopBarSocialIcon;
+  external: boolean;
+}[] {
+  function resolve(envKey: string, coded: string): { href: string; external: boolean } {
+    if (typeof process !== "undefined") {
+      const v = process.env[envKey]?.trim();
+      if (v && v.startsWith("http")) return { href: v, external: true };
+    }
+    if (coded.startsWith("http")) return { href: coded, external: true };
+    return { href: "/contact", external: false };
+  }
+
+  return [
+    { label: "Facebook", icon: "facebook", ...resolve("NEXT_PUBLIC_FACEBOOK_URL", content.social.facebook) },
+    { label: "LinkedIn", icon: "linkedin", ...resolve("NEXT_PUBLIC_LINKEDIN_URL", content.social.linkedin) },
+    { label: "X (Twitter)", icon: "twitter", ...resolve("NEXT_PUBLIC_TWITTER_URL", content.social.twitter) },
+  ];
+}
+
 /**
- * News articles — placeholder for Blog2 layout
+ * Starter news slugs — align with `prisma/seed.mjs` upserts; CMS is the live source of truth.
  */
-export const newsPlaceholders = [
+export const starterNewsArticles = [
   {
     slug: "mbkru-website-launch",
     title: "MBKRU Launches Website for Citizen Voice",
@@ -195,10 +224,8 @@ export const newsPlaceholders = [
   },
 ] as const;
 
-/**
- * FAQ — placeholder for Resources / FAQ page
- */
-export const faqPlaceholders = [
+/** FAQ entries for the public FAQ page */
+export const faqContent = [
   {
     question: "Who can join MBKRU?",
     answer: "Any Ghanaian citizen of good character, 18 years or older, can become a member. No political party affiliation is required or allowed at the leadership level. MBKRU is strictly non-partisan.",
@@ -226,10 +253,10 @@ export const faqPlaceholders = [
 ] as const;
 
 /**
- * Roadmap / timeline — aligned with Ghana 2028 election
+ * Programme roadmap — aligned with Ghana 2028 election
  * Phase 1 complete. Phases 2–3 with modal detail. See ROADMAP_2028_ELECTION.md.
  */
-export const roadmapPlaceholders = [
+export const programmeRoadmap = [
   {
     period: "Mar 2026",
     phase: "Phase 1",
@@ -344,10 +371,8 @@ export const ghanaRegionsData = [
   { name: "Savannah", capital: "Damongo", population: 653266, areaKm2: 34790, districts: 7, constituencies: 7, regionalMinister: "Hon. Mr. Salisu Be-Awuribe", keySectors: "Agriculture, Livestock, Shea", pillarFocus: ["B", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "New region (2019). Largest by area. Savannah zone accountability. People's Report Card expansion." },
 ] as const;
 
-/**
- * Concept note / key document — placeholder for Resources
- */
-export const conceptNotePlaceholder = {
+/** Concept note card on Resources — PDF link when available */
+export const resourcesConceptNote = {
   title: "MBKRU Concept Note",
   description: "A concise overview of our mission, five operational pillars, and proposed approach to citizen voice and accountability in Ghana.",
   fileUrl: "#",

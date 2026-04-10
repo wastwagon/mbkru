@@ -2,7 +2,17 @@
 
 **Purpose:** Point operators and editors to **real-world** sources for seeding **`Constituency`**, **`ParliamentMember`**, **`CampaignPromise`**, and report-card content. MBKRU remains **editorially responsible** for accuracy, non-partisan framing, and rights to republish.
 
-**Import path:** Constituencies first → CSV MP import per [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md) → promises and scorecards in **admin** (with `sourceLabel` citations).
+**On-site summary:** the **`/data-sources`** page on the deployed site mirrors the main citations below for visitors.
+
+### Bundled JSON in this repository (`prisma/data/`)
+
+| File | Origin | Verify with |
+|------|--------|-------------|
+| **`constituencies.seed.json`** | English Wikipedia — [List of parliamentary constituencies of Ghana](https://en.wikipedia.org/wiki/List_of_parliamentary_constituencies_of_Ghana) (CC BY-SA 4.0). Regenerate: `npm run data:refresh-constituencies-seed`. | [Electoral Commission of Ghana](https://ec.gov.gh/) for boundaries and seat changes. |
+| **`parliament-members.seed.json`** | English Wikipedia — [List of MPs elected in the 2024 Ghanaian general election](https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2024_Ghanaian_general_election) (CC BY-SA 4.0). Regenerate: `npm run data:refresh-members-seed-wikipedia`. See `PARLIAMENT_MEMBERS_SEED_SOURCE.txt`. | [Parliament of Ghana — members](https://www.parliament.gh/members) for the current roster. |
+| **`communities.seed.json`** | Descriptions cite Ajumako Traditional Council’s public Queen Mothers page and UENR public reporting on Sunyani Traditional Council. See `COMMUNITIES_SEED_SOURCES.txt`. | Council and university primary sources linked in each community description. |
+
+**Import path (CSV alternative):** Constituencies first → CSV MP import per [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md) → promises and scorecards in **admin** (with `sourceLabel` citations).
 
 ### What can be bulk-fetched vs manual (honest scope)
 

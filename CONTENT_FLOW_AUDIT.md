@@ -30,10 +30,10 @@
 - **Acronyms:** MBKRU, MDCE, MP, CHRAJ, FOI, SDG 1, NGO — defined on About
 - **Platform pages:** Content matches pillar descriptions
 
-### ⚠️ Placeholders (Phase 1 acceptable)
+### ⚠️ Baseline copy (Phase 1 — edit in `site-content`)
 
-- **Contact:** "Office details to be added", "Contact details to be added"
-- **Footer:** "Office details to be added"
+- **Contact / Footer:** `content.officeDetails`, `content.contactDetails`, `content.address`, `content.email` in `src/lib/site-content.ts`
+- **Phone in top bar:** Shown only when `NEXT_PUBLIC_CONTACT_PHONE` is set
 
 ---
 

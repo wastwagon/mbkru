@@ -4,7 +4,7 @@ import type { Media, Post } from "@prisma/client";
 
 import { prisma } from "@/lib/db/prisma";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
-import { images } from "@/lib/placeholders";
+import { images } from "@/lib/site-content";
 
 export type PostWithMedia = Post & { featuredMedia: Media | null };
 

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { LivePlatformHeroChips, LivePlatformStrip } from "@/components/home/LivePlatformStrip";
 import { RoadmapModal, type RoadmapPhase } from "@/components/ui/RoadmapModal";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
-import { images, pillarImages, roadmapPlaceholders, heroContent } from "@/lib/placeholders";
+import { images, pillarImages, programmeRoadmap, heroContent } from "@/lib/site-content";
 import { RegionsViz } from "@/components/ui/RegionsViz";
 import { ObjectivesCarousel } from "@/components/ui/ObjectivesCarousel";
 
@@ -29,11 +29,11 @@ const trustStats = [
 ];
 
 function RoadmapSection() {
-  const [selectedPhase, setSelectedPhase] = useState<(typeof roadmapPlaceholders)[number] | null>(null);
+  const [selectedPhase, setSelectedPhase] = useState<(typeof programmeRoadmap)[number] | null>(null);
   return (
     <>
       <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:mt-10 lg:grid-cols-3">
-        {roadmapPlaceholders.map((item, i) => (
+        {programmeRoadmap.map((item, i) => (
           <motion.button
             key={item.period + item.title}
             type="button"
@@ -250,7 +250,7 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
         <div className="absolute inset-0">
           <Image
             src={images.hero}
-            alt="Community and civic engagement — placeholder"
+            alt="Community gathering — illustrative photography for the hero"
             fill
             className="object-cover"
             priority
@@ -367,7 +367,7 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
               <div className="relative aspect-[4/3] overflow-hidden rounded-xl shadow-lg">
                 <Image
                   src={images.hero}
-                  alt="Citizens and community engagement — placeholder"
+                  alt="Citizens in discussion — illustrative photography"
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 50vw"
@@ -556,7 +556,7 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
         </div>
       </section>
 
-      {/* Roadmap / Timeline — placeholder */}
+      {/* Roadmap / programme phases (published milestones, not live DB metrics) */}
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-7xl">
           <motion.div

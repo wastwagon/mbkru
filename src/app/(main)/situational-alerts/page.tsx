@@ -4,7 +4,7 @@ import Link from "next/link";
 import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
 import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { images } from "@/lib/placeholders";
+import { images } from "@/lib/site-content";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 import { isSituationalAlertsIntakeEnabled } from "@/lib/reports/situational-alerts-gate";
 

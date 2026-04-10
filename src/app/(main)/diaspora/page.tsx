@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
-import { images } from "@/lib/placeholders";
+import { images } from "@/lib/site-content";
 
 export const metadata: Metadata = {
   title: "The Diaspora as Ghana’s 17th Region",
@@ -463,7 +463,11 @@ export default function DiasporaPage() {
             </div>
             <div className="border-t border-[var(--border)] bg-[var(--section-light)]/50 px-6 py-4 lg:hidden">
               <p className="text-center text-xs text-[var(--muted-foreground)]">
-                Imagery on this page uses curated stock photos (see <code className="rounded bg-white px-1 text-[11px]">placeholders.ts</code>) to support readability; not official event photos.
+                Imagery on this page is curated stock-style photography for readability; it does not depict official MBKRU events. Public data citations are on{" "}
+                <Link href="/data-sources" className="font-medium text-[var(--primary)] underline">
+                  Data sources
+                </Link>
+                .
               </p>
             </div>
           </div>

@@ -1,0 +1,22 @@
+[
+  {
+    "slug": "ajumako-traditional-council",
+    "name": "Ajumako traditional governance space",
+    "description": "Civic space for concerns and dialogue linked to the Ajumako Traditional Area (Central Region). The Ajumako Traditional Council publishes a Queen Mothers roster and titles on its official site (Queen Mothers page at https://efuajumakotcouncil.com/). MBKRU does not represent the Council—always verify facts with official sources.",
+    "region_slug": "central",
+    "traditionalAreaName": "Ajumako Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "sunyani-traditional-council",
+    "name": "Sunyani traditional governance space",
+    "description": "Civic space related to the Sunyani Traditional Area (Bono Region). Public reporting includes University of Energy and Natural Resources (UENR) news on Sunyani Traditional Council leadership and the Paramount Queen Mother (see https://uenr.edu.gh/). MBKRU is independent and does not speak for the Traditional Council.",
+    "region_slug": "bono",
+    "traditionalAreaName": "Sunyani Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  }
+]

@@ -1,0 +1,4 @@
+parliament-members.seed.json is generated from the English Wikipedia page
+"List of MPs elected in the 2024 Ghanaian general election" (CC BY-SA 4.0).
+Regenerate: node scripts/wikipedia-mps-2024-to-parliament-members-seed.mjs
+Verify against EC / parliament.gh before relying on boundaries or names in production.

@@ -28,6 +28,7 @@ const PATH_BREADCRUMBS: Record<string, string> = {
   "/promises": "Campaign promises",
   "/report-card": "Report card",
   "/methodology": "Methodology",
+  "/data-sources": "Data sources",
   "/resources": "Resources",
   "/faq": "FAQ",
   "/partners": "Partners & Supporters",

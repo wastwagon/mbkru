@@ -23,6 +23,7 @@
     "data:pull-constituencies": "tsx scripts/fetch-constituencies-from-wikipedia.ts",
     "data:refresh-constituencies-seed": "npm run data:pull-constituencies && node scripts/csv-to-constituencies-seed-json.mjs",
     "data:refresh-members-seed": "node scripts/refresh-parliament-members-seed.mjs",
+    "data:refresh-members-seed-wikipedia": "node scripts/wikipedia-mps-2024-to-parliament-members-seed.mjs",
     "data:list-mp-constituency-slugs": "tsx scripts/list-mp-constituency-slugs.ts",
     "postinstall": "prisma generate"
   },

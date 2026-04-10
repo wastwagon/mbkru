@@ -4,7 +4,7 @@ import Link from "next/link";
 import { TrackerSignupForm } from "@/components/forms/TrackerSignupForm";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
-import { images } from "@/lib/placeholders";
+import { images } from "@/lib/site-content";
 import { isPromisesBrowseEnabled, isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
 
 export const metadata: Metadata = {

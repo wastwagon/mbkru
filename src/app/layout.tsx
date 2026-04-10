@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Kumbh_Sans, Lora, Playfair_Display } from "next/font/google";
-import { heroContent } from "@/lib/placeholders";
+import { heroContent } from "@/lib/site-content";
 import "./globals.css";
 
 const siteUrl =

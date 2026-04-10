@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, type FocusEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
@@ -327,18 +327,38 @@ function DesktopNavDropdown({
   pathname,
   isHomeHero,
   open,
-  onToggle,
+  onOpen,
   onClose,
 }: {
   entry: Extract<NavEntry, { kind: "group" }>;
   pathname: string;
   isHomeHero: boolean;
   open: boolean;
-  onToggle: () => void;
+  onOpen: () => void;
   onClose: () => void;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
+  const leaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const active = groupIsActive(pathname, entry.items);
+
+  const cancelLeaveTimer = useCallback(() => {
+    if (leaveTimerRef.current) {
+      clearTimeout(leaveTimerRef.current);
+      leaveTimerRef.current = null;
+    }
+  }, []);
+
+  const handleEnter = useCallback(() => {
+    cancelLeaveTimer();
+    onOpen();
+  }, [cancelLeaveTimer, onOpen]);
+
+  const handleLeave = useCallback(() => {
+    cancelLeaveTimer();
+    leaveTimerRef.current = setTimeout(() => onClose(), 140);
+  }, [cancelLeaveTimer, onClose]);
+
+  useEffect(() => () => cancelLeaveTimer(), [cancelLeaveTimer]);
 
   useEffect(() => {
     if (!open) return;
@@ -356,10 +376,25 @@ function DesktopNavDropdown({
     };
   }, [open, onClose]);
 
+  function handleContainerBlur(e: FocusEvent<HTMLDivElement>) {
+    const next = e.relatedTarget as Node | null;
+    if (next && wrapRef.current?.contains(next)) return;
+    requestAnimationFrame(() => {
+      if (wrapRef.current?.contains(document.activeElement)) return;
+      onClose();
+    });
+  }
+
   const btnClass = `inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-base font-medium transition-colors touch-manipulation ${desktopLinkClass(isHomeHero, active)}`;
 
   return (
-    <div className="relative" ref={wrapRef}>
+    <div
+      className="relative"
+      ref={wrapRef}
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+      onBlur={handleContainerBlur}
+    >
       <button
         type="button"
         className={btnClass}
@@ -367,32 +402,35 @@ function DesktopNavDropdown({
         aria-haspopup="menu"
         aria-controls={`nav-menu-${entry.id}`}
         id={`nav-trigger-${entry.id}`}
-        onClick={onToggle}
+        onFocus={handleEnter}
+        onClick={() => (open ? onClose() : onOpen())}
       >
         {entry.label}
         <ChevronDownIcon open={open} className={isHomeHero ? "opacity-90" : ""} />
       </button>
       {open ? (
-        <div
-          role="menu"
-          id={`nav-menu-${entry.id}`}
-          aria-labelledby={`nav-trigger-${entry.id}`}
-          className="absolute left-0 top-full z-[60] mt-2 min-w-[min(100vw-2rem,16rem)] max-w-[calc(100vw-2rem)] rounded-xl border border-[var(--border)] bg-white py-1 shadow-[var(--shadow-dropdown)]"
-        >
-          {entry.items.map((item) => {
-            const isItemActive = leafIsActive(pathname, item);
-            return (
-              <Link
-                key={item.href}
-                role="menuitem"
-                href={item.href}
-                className={`${dropdownItemClass} ${isItemActive ? "bg-[var(--section-light)] font-semibold text-[var(--primary)]" : ""}`}
-                onClick={onClose}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
+        <div className="absolute left-0 top-full z-[60] min-w-[min(100vw-2rem,16rem)] max-w-[calc(100vw-2rem)] pt-2">
+          <div
+            role="menu"
+            id={`nav-menu-${entry.id}`}
+            aria-labelledby={`nav-trigger-${entry.id}`}
+            className="rounded-xl border border-[var(--border)] bg-white py-1 shadow-[var(--shadow-dropdown)]"
+          >
+            {entry.items.map((item) => {
+              const isItemActive = leafIsActive(pathname, item);
+              return (
+                <Link
+                  key={item.href}
+                  role="menuitem"
+                  href={item.href}
+                  className={`${dropdownItemClass} ${isItemActive ? "bg-[var(--section-light)] font-semibold text-[var(--primary)]" : ""}`}
+                  onClick={onClose}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
         </div>
       ) : null}
     </div>
@@ -455,7 +493,7 @@ export function Header() {
                 pathname={pathname}
                 isHomeHero={isHomeHero}
                 open={desktopOpenId === entry.id}
-                onToggle={() => setDesktopOpenId((id) => (id === entry.id ? null : entry.id))}
+                onOpen={() => setDesktopOpenId(entry.id)}
                 onClose={closeDesktopMenus}
               />
             );

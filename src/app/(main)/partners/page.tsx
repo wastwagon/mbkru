@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { images } from "@/lib/placeholders";
+import { images } from "@/lib/site-content";
 
 export const metadata: Metadata = {
   title: "Partners & Supporters",
@@ -57,7 +57,7 @@ export default function PartnersPage() {
               Our Partners & Supporters
             </h2>
             <p className="mt-2 text-[var(--muted-foreground)]">
-              Confirmed partners and logos will be listed here. We do not display placeholder organisation names.
+              Confirmed partners and logos will be listed here. We do not display stand-in or unconfirmed organisation names.
             </p>
             <div className="mt-6 rounded-2xl border border-dashed border-[var(--border)] bg-white px-6 py-14 text-center text-sm text-[var(--muted-foreground)]">
               No partner listings published yet.

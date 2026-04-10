@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AboutPlatformLinks } from "@/components/about/AboutPlatformLinks";
 import { Badge } from "@/components/ui/Badge";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { images, pillarImages, heroContent } from "@/lib/placeholders";
+import { images, pillarImages, heroContent } from "@/lib/site-content";
 
 export const metadata: Metadata = {
   title: "About",
@@ -356,7 +356,7 @@ export default async function AboutPage() {
             </h2>
             <p className="mx-auto mt-4 text-left text-[var(--muted-foreground)] leading-relaxed">
               Formal endorsements and advisory quotes will appear here only when relationships are confirmed. We do not
-              show sample quotations or placeholder attributions.
+              show sample quotations or unverified attributions.
             </p>
           </div>
         </div>

@@ -57,7 +57,8 @@ async function main() {
     content = content.replace(/^MEMBER_SESSION_SECRET=.*$/m, `MEMBER_SESSION_SECRET=${randomSecret()}`);
     content = content.replace(/^ADMIN_PASSWORD=.*$/m, "ADMIN_PASSWORD=DevAdmin!mbkru-local-2026");
     if (!/^SEED_ACCOUNTABILITY_DEMO=/m.test(content)) {
-      content += "\n# Auto-added by setup-local.mjs\nSEED_ACCOUNTABILITY_DEMO=1\nSEED_MEMBER_DEMO=1\n";
+      content +=
+        "\n# Auto-added by setup-local.mjs\nSEED_ACCOUNTABILITY_DEMO=1\nSEED_COMMUNITIES_DEMO=1\nSEED_ENGAGEMENT_DEMOS=1\nSEED_VOICE_DEMO=1\nSEED_MEMBER_DEMO=1\n";
     }
     fs.writeFileSync(envPath, content, "utf8");
     console.log("Created .env (generated ADMIN_SESSION_SECRET, MEMBER_SESSION_SECRET; dev admin password set).\n");
@@ -122,6 +123,8 @@ async function main() {
     env: {
       ...process.env,
       SEED_ACCOUNTABILITY_DEMO: "1",
+      SEED_ENGAGEMENT_DEMOS: "1",
+      SEED_VOICE_DEMO: "1",
       SEED_MEMBER_DEMO: "1",
     },
   });

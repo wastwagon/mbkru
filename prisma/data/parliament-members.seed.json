@@ -1,0 +1,2159 @@
+[
+  {
+    "name": "Mohammed Haruna",
+    "slug": "mohammed-haruna",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "asunafo-north",
+    "active": true
+  },
+  {
+    "name": "Eric Opoku",
+    "slug": "eric-opoku",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "asunafo-south",
+    "active": true
+  },
+  {
+    "name": "Ebenezer Kwaku Addo",
+    "slug": "ebenezer-kwaku-addo",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "asutifi-north",
+    "active": true
+  },
+  {
+    "name": "Collins Dauda",
+    "slug": "collins-dauda",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "asutifi-south",
+    "active": true
+  },
+  {
+    "name": "Gideon Boako",
+    "slug": "gideon-boako",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "tano-north",
+    "active": true
+  },
+  {
+    "name": "Charles Asiedu",
+    "slug": "charles-asiedu",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "tano-south",
+    "active": true
+  },
+  {
+    "name": "Joseph Azumah",
+    "slug": "joseph-azumah",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Godwin Animli Dzogbazi-Dorani",
+    "slug": "godwin-animli-dzogbazi-dorani",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "adansi-asokwa",
+    "active": true
+  },
+  {
+    "name": "Collins Adomako-Mensah",
+    "slug": "collins-adomako-mensah",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "afigya-kwabre-north",
+    "active": true
+  },
+  {
+    "name": "Damata Ama Appianimaa Salam",
+    "slug": "damata-ama-appianimaa-salam",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "afigya-kwabre-south",
+    "active": true
+  },
+  {
+    "name": "Mavis Nkansah Boadu",
+    "slug": "mavis-nkansah-boadu",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "afigya-sekyere-east",
+    "active": true
+  },
+  {
+    "name": "Eric Nana Agyemang-Prempeh",
+    "slug": "eric-nana-agyemang-prempeh",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "ahafo-ano-north",
+    "active": true
+  },
+  {
+    "name": "Yakubu Mohammed",
+    "slug": "yakubu-mohammed",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "ahafo-ano-south-east",
+    "active": true
+  },
+  {
+    "name": "Elvis Osei Mensah Dapaah",
+    "slug": "elvis-osei-mensah-dapaah",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "ahafo-ano-south-west",
+    "active": true
+  },
+  {
+    "name": "Kwame Anyimadu - Antwi",
+    "slug": "kwame-anyimadu-antwi",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "asante-akim-central",
+    "active": true
+  },
+  {
+    "name": "Ohene Kwame Frimpong",
+    "slug": "ohene-kwame-frimpong",
+    "role": "MP",
+    "party": "Independent",
+    "constituency_slug": "asante-akim-north",
+    "active": true
+  },
+  {
+    "name": "Kwaku Asante - Boateng",
+    "slug": "kwaku-asante-boateng",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "asante-akim-south",
+    "active": true
+  },
+  {
+    "name": "Mubarak Mohammed Muntaka",
+    "slug": "mubarak-mohammed-muntaka",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "asawase",
+    "active": true
+  },
+  {
+    "name": "Patricia Appiagyei",
+    "slug": "patricia-appiagyei",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "asokwa",
+    "active": true
+  },
+  {
+    "name": "Kofi Amankwa-Manu",
+    "slug": "kofi-amankwa-manu",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "atwima-kwanwoma",
+    "active": true
+  },
+  {
+    "name": "Seth Osei-Akoto",
+    "slug": "seth-osei-akoto",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "atwima-mponua",
+    "active": true
+  },
+  {
+    "name": "Frank Yeboah",
+    "slug": "frank-yeboah",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "atwima-nwabiagya-north",
+    "active": true
+  },
+  {
+    "name": "Shirley Kyei",
+    "slug": "shirley-kyei",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "atwima-nwabiagya-south",
+    "active": true
+  },
+  {
+    "name": "Francis Asenso -Boakye",
+    "slug": "francis-asenso-boakye",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "bantama",
+    "active": true
+  },
+  {
+    "name": "Ralph Poku-Adusei",
+    "slug": "ralph-poku-adusei",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "bekwai",
+    "active": true
+  },
+  {
+    "name": "Nana Asafo-Adjei Ayeh",
+    "slug": "nana-asafo-adjei-ayeh",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "bosome-freho",
+    "active": true
+  },
+  {
+    "name": "Yaw Osei Adutwum",
+    "slug": "yaw-osei-adutwum",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "bosomtwe",
+    "active": true
+  },
+  {
+    "name": "Nana Ayew Afriyie",
+    "slug": "nana-ayew-afriyie",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "effiduase-asokore",
+    "active": true
+  },
+  {
+    "name": "Kwabena Boateng",
+    "slug": "kwabena-boateng",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "ejisu",
+    "active": true
+  },
+  {
+    "name": "Muhammad Bawah Braimah",
+    "slug": "muhammad-bawah-braimah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "ejura-sekyedumase",
+    "active": true
+  },
+  {
+    "name": "Andrew Asiamah Amoako",
+    "slug": "andrew-asiamah-amoako",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "fomena",
+    "active": true
+  },
+  {
+    "name": "Francis Kwabena B Owusu-Akyaw",
+    "slug": "francis-kwabena-b-owusu-akyaw",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "juaben",
+    "active": true
+  },
+  {
+    "name": "Ernest Yaw Anim",
+    "slug": "ernest-yaw-anim",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "kumawu",
+    "active": true
+  },
+  {
+    "name": "Onyina-Acheampong Akwasi Gyamfi",
+    "slug": "onyina-acheampong-akwasi-gyamfi",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "kwabre-east",
+    "active": true
+  },
+  {
+    "name": "Kingsley Nyarko",
+    "slug": "kingsley-nyarko",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "kwadaso",
+    "active": true
+  },
+  {
+    "name": "Kwaku Ampratwum-Sarpong",
+    "slug": "kwaku-ampratwum-sarpong",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "mampong",
+    "active": true
+  },
+  {
+    "name": "Akwasi Konadu",
+    "slug": "akwasi-konadu",
+    "role": "MP",
+    "party": "NPP",
+    "active": true
+  },
+  {
+    "name": "Nana Agyei Baffour Awuah",
+    "slug": "nana-agyei-baffour-awuah",
+    "role": "MP",
+    "party": "NPP",
+    "active": true
+  },
+  {
+    "name": "Frimpong Yaw Addo",
+    "slug": "frimpong-yaw-addo",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "manso-edubia",
+    "active": true
+  },
+  {
+    "name": "Tweneboa Kodua Fokuo",
+    "slug": "tweneboa-kodua-fokuo",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "manso-nkwanta",
+    "active": true
+  },
+  {
+    "name": "Adams Abdul Salam",
+    "slug": "adams-abdul-salam",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "new-edubease",
+    "active": true
+  },
+  {
+    "name": "Stephen Amoah",
+    "slug": "stephen-amoah",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "nhyiaeso",
+    "active": true
+  },
+  {
+    "name": "Adelaide Ntim",
+    "slug": "adelaide-ntim",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "nsuta-kwamang-beposo",
+    "active": true
+  },
+  {
+    "name": "Patrick Boakye-Yiadom",
+    "slug": "patrick-boakye-yiadom",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "obuasi-east",
+    "active": true
+  },
+  {
+    "name": "Kwaku Agyemang Kwarteng",
+    "slug": "kwaku-agyemang-kwarteng",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "obuasi-west",
+    "active": true
+  },
+  {
+    "name": "Anthony Mmieh",
+    "slug": "anthony-mmieh",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "odotobri",
+    "active": true
+  },
+  {
+    "name": "Fred Kyei Asamoah",
+    "slug": "fred-kyei-asamoah",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "offinso-north",
+    "active": true
+  },
+  {
+    "name": "Isaac Yaw Opoku",
+    "slug": "isaac-yaw-opoku",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "offinso-south",
+    "active": true
+  },
+  {
+    "name": "Michael Kwasi Aidoo",
+    "slug": "michael-kwasi-aidoo",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "oforikrom",
+    "active": true
+  },
+  {
+    "name": "Vincent Ekow Assafuah",
+    "slug": "vincent-ekow-assafuah",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "old-tafo",
+    "active": true
+  },
+  {
+    "name": "Nasira Afrah Gyekye",
+    "slug": "nasira-afrah-gyekye",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "sekyere-afram-plains",
+    "active": true
+  },
+  {
+    "name": "John Darko",
+    "slug": "john-darko",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "suame",
+    "active": true
+  },
+  {
+    "name": "Kofi Obiri Yeboah",
+    "slug": "kofi-obiri-yeboah",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "subin",
+    "active": true
+  },
+  {
+    "name": "Ahmed Ibrahim",
+    "slug": "ahmed-ibrahim",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "banda-ahenkro",
+    "active": true
+  },
+  {
+    "name": "Simon Ampaabeng Kyeremeh",
+    "slug": "simon-ampaabeng-kyeremeh",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Dickson Kyere-Duah",
+    "slug": "dickson-kyere-duah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "berekum-west",
+    "active": true
+  },
+  {
+    "name": "John Kwame Adu Jack",
+    "slug": "john-kwame-adu-jack",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "dormaa-central",
+    "active": true
+  },
+  {
+    "name": "Rachel Amma Owusuah",
+    "slug": "rachel-amma-owusuah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "dormaa-east",
+    "active": true
+  },
+  {
+    "name": "Vincent Oppong Asamoah",
+    "slug": "vincent-oppong-asamoah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "dormaa-west",
+    "active": true
+  },
+  {
+    "name": "Frederick Yaw Ahenkwah",
+    "slug": "frederick-yaw-ahenkwah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "jaman-north",
+    "active": true
+  },
+  {
+    "name": "Kwadwo Damoah",
+    "slug": "kwadwo-damoah",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "jaman-south",
+    "active": true
+  },
+  {
+    "name": "Seid Mubarak",
+    "slug": "seid-mubarak",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "sunyani-east",
+    "active": true
+  },
+  {
+    "name": "Millicent Yeboah Amankwah",
+    "slug": "millicent-yeboah-amankwah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "sunyani-west",
+    "active": true
+  },
+  {
+    "name": "Adama Sulemana",
+    "slug": "adama-sulemana",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "tain",
+    "active": true
+  },
+  {
+    "name": "Haruna Seidu",
+    "slug": "haruna-seidu",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "wenchi",
+    "active": true
+  },
+  {
+    "name": "Sanja Nanja",
+    "slug": "sanja-nanja",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "atebubu-amantin",
+    "active": true
+  },
+  {
+    "name": "Joseph Kwame Kumah",
+    "slug": "joseph-kwame-kumah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "kintampo-north",
+    "active": true
+  },
+  {
+    "name": "Felicia Adjei",
+    "slug": "felicia-adjei",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "kintampo-south",
+    "active": true
+  },
+  {
+    "name": "Joseph Kwasi Mensah",
+    "slug": "joseph-kwasi-mensah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "nkoranza-north",
+    "active": true
+  },
+  {
+    "name": "Emmanuel Kwadwo Agyekum",
+    "slug": "emmanuel-kwadwo-agyekum",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "nkoranza-south",
+    "active": true
+  },
+  {
+    "name": "Emmanuel Kwaku Boam",
+    "slug": "emmanuel-kwaku-boam",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "pru-east",
+    "active": true
+  },
+  {
+    "name": "Emmanuel Kofi Ntekuni",
+    "slug": "emmanuel-kofi-ntekuni",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "pru-west",
+    "active": true
+  },
+  {
+    "name": "Dominic Napare",
+    "slug": "dominic-napare",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "sene-east",
+    "active": true
+  },
+  {
+    "name": "Kwame Twumasi Ampofo",
+    "slug": "kwame-twumasi-ampofo",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "sene-west",
+    "active": true
+  },
+  {
+    "name": "Elizabeth Ofosu-Adjare",
+    "slug": "elizabeth-ofosu-adjare",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "techiman-north",
+    "active": true
+  },
+  {
+    "name": "Martin Kwaku Adjei-Mensah Korsah",
+    "slug": "martin-kwaku-adjei-mensah-korsah",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "techiman-south",
+    "active": true
+  },
+  {
+    "name": "Felix Kwakye Ofosu",
+    "slug": "felix-kwakye-ofosu",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "abura-asebu-kwamankese",
+    "active": true
+  },
+  {
+    "name": "Queenstar Pokua Sawyerr",
+    "slug": "queenstar-pokua-sawyerr",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "agona-east",
+    "active": true
+  },
+  {
+    "name": "Ernestina Ofori Dangbey",
+    "slug": "ernestina-ofori-dangbey",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "agona-west",
+    "active": true
+  },
+  {
+    "name": "Cassiel Ato Baah Forson",
+    "slug": "cassiel-ato-baah-forson",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "ajumako-enyan-essiam",
+    "active": true
+  },
+  {
+    "name": "Alhassan Kobina Ghansah",
+    "slug": "alhassan-kobina-ghansah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "asikuma-odoben-brakwa",
+    "active": true
+  },
+  {
+    "name": "Nurien Shaibu Migyimah",
+    "slug": "nurien-shaibu-migyimah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "assin-central",
+    "active": true
+  },
+  {
+    "name": "James Gyakye Quayson",
+    "slug": "james-gyakye-quayson",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "assin-north",
+    "active": true
+  },
+  {
+    "name": "John Ntim Fordjour",
+    "slug": "john-ntim-fordjour",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "assin-south",
+    "active": true
+  },
+  {
+    "name": "Phillis Naa Koryoo Okunor",
+    "slug": "phillis-naa-koryoo-okunor",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "awutu-senya-east",
+    "active": true
+  },
+  {
+    "name": "Gizella Akushika Tetteh- Agbotui",
+    "slug": "gizella-akushika-tetteh-agbotui",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "awutu-senya-west",
+    "active": true
+  },
+  {
+    "name": "Kwamena Minta Nyarku",
+    "slug": "kwamena-minta-nyarku",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "cape-coast-north",
+    "active": true
+  },
+  {
+    "name": "Kweku George Ricketts-Hagan",
+    "slug": "kweku-george-ricketts-hagan",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "cape-coast-south",
+    "active": true
+  },
+  {
+    "name": "Alexander Kwamina Afenyo-Markin",
+    "slug": "alexander-kwamina-afenyo-markin",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "effutu",
+    "active": true
+  },
+  {
+    "name": "Ekow Othniel Kwainoe",
+    "slug": "ekow-othniel-kwainoe",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "ekumfi",
+    "active": true
+  },
+  {
+    "name": "Kwame Asare Obeng",
+    "slug": "kwame-asare-obeng",
+    "role": "MP",
+    "party": "Independent",
+    "constituency_slug": "gomoa-central",
+    "active": true
+  },
+  {
+    "name": "Desmond De-Graft Paitoo",
+    "slug": "desmond-de-graft-paitoo",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "gomoa-east",
+    "active": true
+  },
+  {
+    "name": "Richard Gyan Mensah",
+    "slug": "richard-gyan-mensah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "gomoa-west",
+    "active": true
+  },
+  {
+    "name": "Lawrence Agyinsam",
+    "slug": "lawrence-agyinsam",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "hemang-lower-denkyira",
+    "active": true
+  },
+  {
+    "name": "Samuel Atta Mills",
+    "slug": "samuel-atta-mills",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "komenda-edina-eguafo-abirem",
+    "active": true
+  },
+  {
+    "name": "Ebenezer Prince Arhin",
+    "slug": "ebenezer-prince-arhin",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "David Theophilus Dominic Vondee",
+    "slug": "david-theophilus-dominic-vondee",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "twifo-atii-morkwaa",
+    "active": true
+  },
+  {
+    "name": "Emelia Ankomah",
+    "slug": "emelia-ankomah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "upper-denkyira-east",
+    "active": true
+  },
+  {
+    "name": "Rudolf Amoako-Gyampah",
+    "slug": "rudolf-amoako-gyampah",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "upper-denkyira-west",
+    "active": true
+  },
+  {
+    "name": "Bryan Acheampong",
+    "slug": "bryan-acheampong",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "abetifi",
+    "active": true
+  },
+  {
+    "name": "Charles Asuako Owiredu",
+    "slug": "charles-asuako-owiredu",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "abirem",
+    "active": true
+  },
+  {
+    "name": "Nana Ampaw Kwame Addo Frempong",
+    "slug": "nana-ampaw-kwame-addo-frempong",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "abuakwa-north",
+    "active": true
+  },
+  {
+    "name": "Kingsley Agyemang",
+    "slug": "kingsley-agyemang",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "abuakwa-south",
+    "active": true
+  },
+  {
+    "name": "Kofi Ahenkorah Marfo",
+    "slug": "kofi-ahenkorah-marfo",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "achiase",
+    "active": true
+  },
+  {
+    "name": "Worlase Kpeli",
+    "slug": "worlase-kpeli",
+    "role": "MP",
+    "party": "Independent",
+    "constituency_slug": "afram-plains-north",
+    "active": true
+  },
+  {
+    "name": "Joseph Appiah Boateng",
+    "slug": "joseph-appiah-boateng",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "afram-plains-south",
+    "active": true
+  },
+  {
+    "name": "Alexander Akwasi Acquah",
+    "slug": "alexander-akwasi-acquah",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "akim-oda",
+    "active": true
+  },
+  {
+    "name": "Kennedy Osei Nyarko",
+    "slug": "kennedy-osei-nyarko",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "akim-swedru",
+    "active": true
+  },
+  {
+    "name": "Sammi Awuku",
+    "slug": "sammi-awuku",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "akropong",
+    "active": true
+  },
+  {
+    "name": "Lawrencia Dziwornu",
+    "slug": "lawrencia-dziwornu",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "akwapim-south",
+    "active": true
+  },
+  {
+    "name": "George Kwame Aboagye",
+    "slug": "george-kwame-aboagye",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "asene-akroso-manso",
+    "active": true
+  },
+  {
+    "name": "Thomas Nyarko Ampem",
+    "slug": "thomas-nyarko-ampem",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "asuogyaman",
+    "active": true
+  },
+  {
+    "name": "Abena Osei Asare",
+    "slug": "abena-osei-asare",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "atiwa-east",
+    "active": true
+  },
+  {
+    "name": "Laurette Korkor Asante",
+    "slug": "laurette-korkor-asante",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "atiwa-west",
+    "active": true
+  },
+  {
+    "name": "Ida Adjoa Asiedu",
+    "slug": "ida-adjoa-asiedu",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "ayensuano",
+    "active": true
+  },
+  {
+    "name": "Kwame Appiah Kodua",
+    "slug": "kwame-appiah-kodua",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "fanteakwa-north",
+    "active": true
+  },
+  {
+    "name": "Duke Ofori-Atta",
+    "slug": "duke-ofori-atta",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "fanteakwa-south",
+    "active": true
+  },
+  {
+    "name": "Alexander Agyare",
+    "slug": "alexander-agyare",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "kade",
+    "active": true
+  },
+  {
+    "name": "Ebenezer Okletey Terlabi",
+    "slug": "ebenezer-okletey-terlabi",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Owen Kwame Frimpong",
+    "slug": "owen-kwame-frimpong",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "lower-west-akim",
+    "active": true
+  },
+  {
+    "name": "Davis Ansah Opoku",
+    "slug": "davis-ansah-opoku",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "mpraeso",
+    "active": true
+  },
+  {
+    "name": "Nana Osei-Adjei",
+    "slug": "nana-osei-adjei",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "new-juaben-north",
+    "active": true
+  },
+  {
+    "name": "Michael Okyere Baafi",
+    "slug": "michael-okyere-baafi",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "new-juaben-south",
+    "active": true
+  },
+  {
+    "name": "Joseph Frempong",
+    "slug": "joseph-frempong",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "nkawkaw",
+    "active": true
+  },
+  {
+    "name": "Frank Annoh Dompreh",
+    "slug": "frank-annoh-dompreh",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "nsawam-adoagyiri",
+    "active": true
+  },
+  {
+    "name": "Kojo Oppong Nkrumah",
+    "slug": "kojo-oppong-nkrumah",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "ofoase-ayirebi",
+    "active": true
+  },
+  {
+    "name": "Daniel Nana Addo Kenneth",
+    "slug": "daniel-nana-addo-kenneth",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "okere",
+    "active": true
+  },
+  {
+    "name": "Frank Asiedu Bekoe",
+    "slug": "frank-asiedu-bekoe",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "suhum",
+    "active": true
+  },
+  {
+    "name": "Bismark Tetteh Nyarko",
+    "slug": "bismark-tetteh-nyarko",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Emmanuel Drah",
+    "slug": "emmanuel-drah",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Albert Tetteh Nyakotey",
+    "slug": "albert-tetteh-nyakotey",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "yilo-krobo",
+    "active": true
+  },
+  {
+    "name": "Dan Abdul-latif",
+    "slug": "dan-abdul-latif",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Ewurabena Aubynn",
+    "slug": "ewurabena-aubynn",
+    "role": "MP",
+    "party": "|NDC",
+    "active": true
+  },
+  {
+    "name": "Alfred Okoe Vanderpuije",
+    "slug": "alfred-okoe-vanderpuije",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Kweku Addo",
+    "slug": "kweku-addo",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Comfort Doyoe Cudjoe-Ghansah",
+    "slug": "comfort-doyoe-cudjoe-ghansah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "ada",
+    "active": true
+  },
+  {
+    "name": "Mohammed Adamu Ramadan",
+    "slug": "mohammed-adamu-ramadan",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "adenta",
+    "active": true
+  },
+  {
+    "name": "Sedem Kweku Afenyo",
+    "slug": "sedem-kweku-afenyo",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "amasaman",
+    "active": true
+  },
+  {
+    "name": "Emmanuel Tobin",
+    "slug": "emmanuel-tobin",
+    "role": "MP",
+    "party": "NPP",
+    "active": true
+  },
+  {
+    "name": "Ernest Henry Norgbey",
+    "slug": "ernest-henry-norgbey",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "ashaiman",
+    "active": true
+  },
+  {
+    "name": "Abdul Rauf Tongym Tubazu",
+    "slug": "abdul-rauf-tongym-tubazu",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Naser Toure Mahama",
+    "slug": "naser-toure-mahama",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Yussif Issaka Jajah",
+    "slug": "yussif-issaka-jajah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "ayawaso-north",
+    "active": true
+  },
+  {
+    "name": "John Dumelo",
+    "slug": "john-dumelo",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Felix Akwetey Okle",
+    "slug": "felix-akwetey-okle",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Rita Naa Odoley Sowah",
+    "slug": "rita-naa-odoley-sowah",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Faustina Elikplim Akurugu",
+    "slug": "faustina-elikplim-akurugu",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Isaac Awuku Yibor",
+    "slug": "isaac-awuku-yibor",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Zanetor Agyeman-Rawlings",
+    "slug": "zanetor-agyeman-rawlings",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "korle-klottey",
+    "active": true
+  },
+  {
+    "name": "Joseph Akuerteh Tettey",
+    "slug": "joseph-akuerteh-tettey",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Agnes Naa Momo Lartey",
+    "slug": "agnes-naa-momo-lartey",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "krowor",
+    "active": true
+  },
+  {
+    "name": "Benjamin Narteh Ayiku",
+    "slug": "benjamin-narteh-ayiku",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Francis-Xavier Kojo Sosu",
+    "slug": "francis-xavier-kojo-sosu",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Samuel George Nartey",
+    "slug": "samuel-george-nartey",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Alfred Nii Kotei Ashie",
+    "slug": "alfred-nii-kotei-ashie",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Patrick Yaw Boamah",
+    "slug": "patrick-yaw-boamah",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "okaikwei-central",
+    "active": true
+  },
+  {
+    "name": "Theresa Lardi Awuni",
+    "slug": "theresa-lardi-awuni",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Ernest Adomako",
+    "slug": "ernest-adomako",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Daniel Keshi Bessey",
+    "slug": "daniel-keshi-bessey",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "sege",
+    "active": true
+  },
+  {
+    "name": "Linda Obenewaa Akweley Ocloo",
+    "slug": "linda-obenewaa-akweley-ocloo",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Charles Forson",
+    "slug": "charles-forson",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "tema-central",
+    "active": true
+  },
+  {
+    "name": "Isaac Ashai Odamtten",
+    "slug": "isaac-ashai-odamtten",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "James Enu",
+    "slug": "james-enu",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Gloria Owusu",
+    "slug": "gloria-owusu",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "trobu",
+    "active": true
+  },
+  {
+    "name": "Jerry Ahmed Shaib",
+    "slug": "jerry-ahmed-shaib",
+    "role": "MP",
+    "party": "NPP",
+    "active": true
+  },
+  {
+    "name": "Dominc Aduna Bingab Nitiwul",
+    "slug": "dominc-aduna-bingab-nitiwul",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "bimbilla",
+    "active": true
+  },
+  {
+    "name": "Alhassan S. Tampuli",
+    "slug": "alhassan-s-tampuli",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "gushegu",
+    "active": true
+  },
+  {
+    "name": "Mohammed Amin Adam",
+    "slug": "mohammed-amin-adam",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "karaga",
+    "active": true
+  },
+  {
+    "name": "Matthew Nyindam",
+    "slug": "matthew-nyindam",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "kpandai",
+    "active": true
+  },
+  {
+    "name": "Hamza Adam",
+    "slug": "hamza-adam",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "kumbungu",
+    "active": true
+  },
+  {
+    "name": "Misbahu Mahama Adams",
+    "slug": "misbahu-mahama-adams",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "mion",
+    "active": true
+  },
+  {
+    "name": "Abdul-Khaliq Mohammed Sherif",
+    "slug": "abdul-khaliq-mohammed-sherif",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "nanton",
+    "active": true
+  },
+  {
+    "name": "Joseph Bukari Nikpe",
+    "slug": "joseph-bukari-nikpe",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "saboba",
+    "active": true
+  },
+  {
+    "name": "Attah Issah",
+    "slug": "attah-issah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "sagnarigu",
+    "active": true
+  },
+  {
+    "name": "Abdul Aziz Fatahiya",
+    "slug": "abdul-aziz-fatahiya",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "savelugu",
+    "active": true
+  },
+  {
+    "name": "Ibrahim Murtala Muhammed",
+    "slug": "ibrahim-murtala-muhammed",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "tamale-central",
+    "active": true
+  },
+  {
+    "name": "Suhuyini Alhassan Sayibu",
+    "slug": "suhuyini-alhassan-sayibu",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "tamale-north",
+    "active": true
+  },
+  {
+    "name": "Haruna Iddrisu",
+    "slug": "haruna-iddrisu",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "tamale-south",
+    "active": true
+  },
+  {
+    "name": "Ntebe Ayo William",
+    "slug": "ntebe-ayo-william",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "tatale-sanguli",
+    "active": true
+  },
+  {
+    "name": "Habib Iddrisu",
+    "slug": "habib-iddrisu",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "tolon",
+    "active": true
+  },
+  {
+    "name": "Stanley Yaw Nandaya",
+    "slug": "stanley-yaw-nandaya",
+    "role": "MP",
+    "party": "Independent",
+    "constituency_slug": "wulensi",
+    "active": true
+  },
+  {
+    "name": "Alhassan Abdul-Fatawu",
+    "slug": "alhassan-abdul-fatawu",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "yendi",
+    "active": true
+  },
+  {
+    "name": "Alhassan Umar",
+    "slug": "alhassan-umar",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "zabzugu",
+    "active": true
+  },
+  {
+    "name": "Bandim Abed-Nego Azumah",
+    "slug": "bandim-abed-nego-azumah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "bunkpurugu",
+    "active": true
+  },
+  {
+    "name": "Seidu Alhassan Alajor",
+    "slug": "seidu-alhassan-alajor",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "chereponi",
+    "active": true
+  },
+  {
+    "name": "Nurideen Mumuni Muhammed",
+    "slug": "nurideen-mumuni-muhammed",
+    "role": "MP",
+    "party": "NPP",
+    "active": true
+  },
+  {
+    "name": "Mahama Tiah Abdul-Kabiru",
+    "slug": "mahama-tiah-abdul-kabiru",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "walewale",
+    "active": true
+  },
+  {
+    "name": "Mustapha Ussif",
+    "slug": "mustapha-ussif",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "yagaba-kubori",
+    "active": true
+  },
+  {
+    "name": "Alhassan Sulemana",
+    "slug": "alhassan-sulemana",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "yunyoo",
+    "active": true
+  },
+  {
+    "name": "Yao Gomado",
+    "slug": "yao-gomado",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "akan",
+    "active": true
+  },
+  {
+    "name": "Jean-Marie Formadi",
+    "slug": "jean-marie-formadi",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Iddie Kofi Adams",
+    "slug": "iddie-kofi-adams",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Fred Kwesi Agbenyo",
+    "slug": "fred-kwesi-agbenyo",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "guan",
+    "active": true
+  },
+  {
+    "name": "Nelson Kofi Djabab",
+    "slug": "nelson-kofi-djabab",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "krachi-east",
+    "active": true
+  },
+  {
+    "name": "Solomon Kuyon",
+    "slug": "solomon-kuyon",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "krachi-nchumuru",
+    "active": true
+  },
+  {
+    "name": "Helen Adjoa Ntoso",
+    "slug": "helen-adjoa-ntoso",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "krachi-west",
+    "active": true
+  },
+  {
+    "name": "John Oti Bless",
+    "slug": "john-oti-bless",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "nkwanta-north",
+    "active": true
+  },
+  {
+    "name": "Geoffrey Kini",
+    "slug": "geoffrey-kini",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "nkwanta-south",
+    "active": true
+  },
+  {
+    "name": "Yusif Sulemana",
+    "slug": "yusif-sulemana",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "bole-bamboi",
+    "active": true
+  },
+  {
+    "name": "Shaibu Mahama",
+    "slug": "shaibu-mahama",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "daboya-mankarigu",
+    "active": true
+  },
+  {
+    "name": "Samuel Abu Jinapor",
+    "slug": "samuel-abu-jinapor",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "damango",
+    "active": true
+  },
+  {
+    "name": "Alhassan Mumuni",
+    "slug": "alhassan-mumuni",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "salaga-north",
+    "active": true
+  },
+  {
+    "name": "Zuwera Mohammed Ibrahimah",
+    "slug": "zuwera-mohammed-ibrahimah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "salaga-south",
+    "active": true
+  },
+  {
+    "name": "Andrew Dari Chiwetey",
+    "slug": "andrew-dari-chiwetey",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "sawla-tuna-kalba",
+    "active": true
+  },
+  {
+    "name": "John Abdulai Jinapor",
+    "slug": "john-abdulai-jinapor",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "yapei-kusawgu",
+    "active": true
+  },
+  {
+    "name": "Mahama Ayariga",
+    "slug": "mahama-ayariga",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "bawku-central",
+    "active": true
+  },
+  {
+    "name": "Mahmoud Issifu",
+    "slug": "mahmoud-issifu",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "binduri",
+    "active": true
+  },
+  {
+    "name": "Isaac Adongo",
+    "slug": "isaac-adongo",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "bolgatanga-central",
+    "active": true
+  },
+  {
+    "name": "Dominic Akuritinga Ayine",
+    "slug": "dominic-akuritinga-ayine",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "bolgatanga-east",
+    "active": true
+  },
+  {
+    "name": "Charles Bawaduah",
+    "slug": "charles-bawaduah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "bongo",
+    "active": true
+  },
+  {
+    "name": "James Agalga",
+    "slug": "james-agalga",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "builsa-north",
+    "active": true
+  },
+  {
+    "name": "Clement Apaak",
+    "slug": "clement-apaak",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "builsa-south",
+    "active": true
+  },
+  {
+    "name": "Nikyema Billa Alamzy",
+    "slug": "nikyema-billa-alamzy",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "chiana-paga",
+    "active": true
+  },
+  {
+    "name": "Anabah Thomas Winsum",
+    "slug": "anabah-thomas-winsum",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "garu",
+    "active": true
+  },
+  {
+    "name": "Mark Kurt Nawaane",
+    "slug": "mark-kurt-nawaane",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "nabdam",
+    "active": true
+  },
+  {
+    "name": "Simon Akibange Aworigo",
+    "slug": "simon-akibange-aworigo",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "navrongo-central",
+    "active": true
+  },
+  {
+    "name": "Laadi Ayii Ayamba",
+    "slug": "laadi-ayii-ayamba",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "pusiga",
+    "active": true
+  },
+  {
+    "name": "Daniel Dung Mahama",
+    "slug": "daniel-dung-mahama",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "talensi",
+    "active": true
+  },
+  {
+    "name": "Akanvariva Lydia Lamisi",
+    "slug": "akanvariva-lydia-lamisi",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "tempane",
+    "active": true
+  },
+  {
+    "name": "Ebenezer Alumire Ndebilla",
+    "slug": "ebenezer-alumire-ndebilla",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "zebilla",
+    "active": true
+  },
+  {
+    "name": "Sebastian Ngmenenso Sandaare",
+    "slug": "sebastian-ngmenenso-sandaare",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "daffiama-bussie-issa",
+    "active": true
+  },
+  {
+    "name": "Cletus Seidu Dapilaah",
+    "slug": "cletus-seidu-dapilaah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "jirapa",
+    "active": true
+  },
+  {
+    "name": "Titus Kofi Beyuo",
+    "slug": "titus-kofi-beyuo",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "lambussie",
+    "active": true
+  },
+  {
+    "name": "Bede A. Zeideng",
+    "slug": "bede-a-zeideng",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "lawra",
+    "active": true
+  },
+  {
+    "name": "Sumah Anthony Mwinikaara",
+    "slug": "sumah-anthony-mwinikaara",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "nadowli-kaleo",
+    "active": true
+  },
+  {
+    "name": "Richard Kuuire",
+    "slug": "richard-kuuire",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "nandom",
+    "active": true
+  },
+  {
+    "name": "Mohammed Issah Bataglia",
+    "slug": "mohammed-issah-bataglia",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "sissala-east",
+    "active": true
+  },
+  {
+    "name": "Mohammed Adams Sukparu",
+    "slug": "mohammed-adams-sukparu",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "sissala-west",
+    "active": true
+  },
+  {
+    "name": "Abdul-Rashid Hassan Pelpuo",
+    "slug": "abdul-rashid-hassan-pelpuo",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "wa-central",
+    "active": true
+  },
+  {
+    "name": "Godfred Seidu Jasaw",
+    "slug": "godfred-seidu-jasaw",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "wa-east",
+    "active": true
+  },
+  {
+    "name": "Peter Lanchene Toobu",
+    "slug": "peter-lanchene-toobu",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "wa-west",
+    "active": true
+  },
+  {
+    "name": "Kwame Governs Agbodza",
+    "slug": "kwame-governs-agbodza",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "adaklu",
+    "active": true
+  },
+  {
+    "name": "Frank Afriyie",
+    "slug": "frank-afriyie",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Charles Kwesi Agbeve",
+    "slug": "charles-kwesi-agbeve",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Peter Kwasi Nortsu-Kotoe",
+    "slug": "peter-kwasi-nortsu-kotoe",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Bernard Ahiafor",
+    "slug": "bernard-ahiafor",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "akatsi-south",
+    "active": true
+  },
+  {
+    "name": "Richard Kwame Sefe",
+    "slug": "richard-kwame-sefe",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "anlo",
+    "active": true
+  },
+  {
+    "name": "Alexander Roosevelt Hottordze",
+    "slug": "alexander-roosevelt-hottordze",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Richmond Edem Kofi Kpotosu",
+    "slug": "richmond-edem-kofi-kpotosu",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Emmanuel Kwasi Bedzrah",
+    "slug": "emmanuel-kwasi-bedzrah",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Thomas Worlanyo Tsekpo",
+    "slug": "thomas-worlanyo-tsekpo",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "hohoe",
+    "active": true
+  },
+  {
+    "name": "Kwame Dzudzorli Gakpey",
+    "slug": "kwame-dzudzorli-gakpey",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "keta",
+    "active": true
+  },
+  {
+    "name": "Eric Edem Agbana",
+    "slug": "eric-edem-agbana",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "ketu-north",
+    "active": true
+  },
+  {
+    "name": "Dzifa Abla Gomashie",
+    "slug": "dzifa-abla-gomashie",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "ketu-south",
+    "active": true
+  },
+  {
+    "name": "Sebastian Fred Deh",
+    "slug": "sebastian-fred-deh",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "kpando",
+    "active": true
+  },
+  {
+    "name": "Joycelyn Tetteh",
+    "slug": "joycelyn-tetteh",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Samuel Okudzeto Ablakwa",
+    "slug": "samuel-okudzeto-ablakwa",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "north-tongu",
+    "active": true
+  },
+  {
+    "name": "Rockson-Nelson Dafeamekpor",
+    "slug": "rockson-nelson-dafeamekpor",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "south-dayi",
+    "active": true
+  },
+  {
+    "name": "Maxwell Kwame Lukutor",
+    "slug": "maxwell-kwame-lukutor",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "south-tongu",
+    "active": true
+  },
+  {
+    "name": "Mavis Kuukua Bissue",
+    "slug": "mavis-kuukua-bissue",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "ahanta-west",
+    "active": true
+  },
+  {
+    "name": "Joana Gyan Cudjoe",
+    "slug": "joana-gyan-cudjoe",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "amenfi-central",
+    "active": true
+  },
+  {
+    "name": "Nicholas Amankwah",
+    "slug": "nicholas-amankwah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "amenfi-east",
+    "active": true
+  },
+  {
+    "name": "Eric Afful",
+    "slug": "eric-afful",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "amenfi-west",
+    "active": true
+  },
+  {
+    "name": "Isaac Yaw Boamah-Nyarko",
+    "slug": "isaac-yaw-boamah-nyarko",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "effia",
+    "active": true
+  },
+  {
+    "name": "Emmanuel Armah-Kofi Buah",
+    "slug": "emmanuel-armah-kofi-buah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "ellembelle",
+    "active": true
+  },
+  {
+    "name": "Grace Ayensu-Danquah",
+    "slug": "grace-ayensu-danquah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "essikado-ketan",
+    "active": true
+  },
+  {
+    "name": "Kofi Arko Nokoe",
+    "slug": "kofi-arko-nokoe",
+    "role": "MP",
+    "party": "NDC",
+    "active": true
+  },
+  {
+    "name": "Dorcas Affo-Toffey",
+    "slug": "dorcas-affo-toffey",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "jomoro",
+    "active": true
+  },
+  {
+    "name": "Philip Fiifi Buckman",
+    "slug": "philip-fiifi-buckman",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "kwesimintsim",
+    "active": true
+  },
+  {
+    "name": "Bentil Godfred Henry",
+    "slug": "bentil-godfred-henry",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "mpohor",
+    "active": true
+  },
+  {
+    "name": "Robert Wisdom Cudjoe",
+    "slug": "robert-wisdom-cudjoe",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "prestea-huni-valley",
+    "active": true
+  },
+  {
+    "name": "Blay Nyameke Armah",
+    "slug": "blay-nyameke-armah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "sekondi",
+    "active": true
+  },
+  {
+    "name": "Emelia Arthur",
+    "slug": "emelia-arthur",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "shama",
+    "active": true
+  },
+  {
+    "name": "Kwabena Okyere Darko-Mensah",
+    "slug": "kwabena-okyere-darko-mensah",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "takoradi",
+    "active": true
+  },
+  {
+    "name": "Issa Salifu Taylor",
+    "slug": "issa-salifu-taylor",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "tarkwa-nsuaem",
+    "active": true
+  },
+  {
+    "name": "Isaac Adjei Mensah",
+    "slug": "isaac-adjei-mensah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "wassa-east",
+    "active": true
+  },
+  {
+    "name": "NDC",
+    "slug": "ndc",
+    "role": "MP",
+    "party": "",
+    "active": true
+  },
+  {
+    "name": "Richard Acheampong",
+    "slug": "richard-acheampong",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "bia-east",
+    "active": true
+  },
+  {
+    "name": "Mustapha Amadu Tanko",
+    "slug": "mustapha-amadu-tanko",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "bia-west",
+    "active": true
+  },
+  {
+    "name": "Bright Asamoah Brefo",
+    "slug": "bright-asamoah-brefo",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "bibiani-anhwiaso-bekwai",
+    "active": true
+  },
+  {
+    "name": "Sampson Ahi",
+    "slug": "sampson-ahi",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "bodi",
+    "active": true
+  },
+  {
+    "name": "Kwabena Mintah Akandoh",
+    "slug": "kwabena-mintah-akandoh",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "juabeso",
+    "active": true
+  },
+  {
+    "name": "Pious Kwame Nkuah",
+    "slug": "pious-kwame-nkuah",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "sefwi-akontombra",
+    "active": true
+  },
+  {
+    "name": "Kofi Benteh Afful",
+    "slug": "kofi-benteh-afful",
+    "role": "MP",
+    "party": "NDC",
+    "constituency_slug": "sefwi-wiawso",
+    "active": true
+  },
+  {
+    "name": "Frederick Addy",
+    "slug": "frederick-addy",
+    "role": "MP",
+    "party": "NPP",
+    "constituency_slug": "suaman",
+    "active": true
+  }
+]
