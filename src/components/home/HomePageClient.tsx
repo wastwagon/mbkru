@@ -18,8 +18,9 @@ import { RegionsViz } from "@/components/ui/RegionsViz";
 import { GovernmentCommitmentsHomePreview } from "@/components/home/GovernmentCommitmentsHomePreview";
 import { HomeDataProvenanceRibbon } from "@/components/home/HomeDataProvenanceRibbon";
 import { HomeParticipateHub } from "@/components/home/HomeParticipateHub";
-import { HomePromisesBrowseDashboard } from "@/components/home/HomePromisesBrowseDashboard";
+import { PromisesBrowseHomePreview } from "@/components/home/PromisesBrowseHomePreview";
 import type { GovernmentCommitmentsHomePreview as GovernmentCommitmentsHomePreviewData } from "@/lib/home-government-preview-types";
+import type { PromisesBrowseHomePreview as PromisesBrowseHomePreviewData } from "@/lib/home-promises-browse-preview-types";
 import type { HomeAtAGlanceData } from "@/lib/home-at-a-glance-types";
 
 export type HomePageNewsItem = {
@@ -75,10 +76,12 @@ function HomeProgrammePathwaysSection({ phase }: { phase: ReturnType<typeof getP
 export function HomePageClient({
   cmsPosts,
   governmentPreview,
+  promisesBrowsePreview,
   atAGlance,
 }: {
   cmsPosts: HomePageNewsItem[];
   governmentPreview: GovernmentCommitmentsHomePreviewData | null;
+  promisesBrowsePreview: PromisesBrowseHomePreviewData | null;
   atAGlance: HomeAtAGlanceData;
 }) {
   const phase = getPublicPlatformPhase();
@@ -223,7 +226,7 @@ export function HomePageClient({
 
       {governmentPreview ? <GovernmentCommitmentsHomePreview data={governmentPreview} /> : null}
 
-      <HomePromisesBrowseDashboard />
+      {promisesBrowsePreview ? <PromisesBrowseHomePreview data={promisesBrowsePreview} /> : null}
 
       {/* Key Operational Pillars — dark section, zigzag glassmorphism cards */}
       <section className="relative section-spacing section-full overflow-hidden bg-[var(--section-dark)]">
