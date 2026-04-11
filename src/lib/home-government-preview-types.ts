@@ -1,13 +1,9 @@
 import type { PromiseTrackerStats } from "@/lib/promise-tracker-public-types";
-
-export type GovernmentCommitmentHomeRow = {
-  id: string;
-  title: string;
-  status: string;
-  member: { name: string; slug: string } | null;
-};
+import type { PublicPromiseApiRow } from "@/lib/public-promise-api-row";
+import type { TrackerConstituencyOption } from "@/lib/tracker-constituency-public-types";
 
 export type GovernmentCommitmentsHomePreview = {
   stats: PromiseTrackerStats;
-  rows: GovernmentCommitmentHomeRow[];
+  initialRows: PublicPromiseApiRow[];
+  trackerConstituencies: TrackerConstituencyOption[];
 };

@@ -5,18 +5,15 @@ import { Prisma } from "@prisma/client";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { parsePromisesApiFilters } from "@/lib/promises-api-filters";
 import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
-import type {
-  GovernmentCommitmentHomeRow,
-  GovernmentCommitmentsHomePreview,
-} from "@/lib/home-government-preview-types";
-import { getCachedPromiseTrackerStats, getCachedPromisesApiRows } from "@/lib/server/accountability-cache";
+import type { GovernmentCommitmentsHomePreview } from "@/lib/home-government-preview-types";
+import type { PublicPromiseApiRow } from "@/lib/public-promise-api-row";
+import {
+  getCachedPromiseTrackerStats,
+  getCachedPromisesApiRows,
+  getCachedTrackerConstituencies,
+} from "@/lib/server/accountability-cache";
 
-export type {
-  GovernmentCommitmentHomeRow,
-  GovernmentCommitmentsHomePreview,
-} from "@/lib/home-government-preview-types";
-
-const PREVIEW_MAX = 6;
+export type { GovernmentCommitmentsHomePreview } from "@/lib/home-government-preview-types";
 
 function buildGovernmentOnlyFiltersUrl(): URL {
   const u = new URL("http://local/");
@@ -33,17 +30,13 @@ export async function getGovernmentCommitmentsHomePreview(): Promise<GovernmentC
   if (!isPromisesBrowseEnabled() || !isDatabaseConfigured()) return null;
   try {
     const filters = parsePromisesApiFilters(buildGovernmentOnlyFiltersUrl());
-    const [stats, apiRows] = await Promise.all([
+    const [stats, apiRows, trackerConstituencies] = await Promise.all([
       getCachedPromiseTrackerStats(filters),
       getCachedPromisesApiRows(filters),
+      getCachedTrackerConstituencies(),
     ]);
-    const rows: GovernmentCommitmentHomeRow[] = apiRows.slice(0, PREVIEW_MAX).map((r) => ({
-      id: r.id,
-      title: r.title,
-      status: r.status,
-      member: r.member ? { name: r.member.name, slug: r.member.slug } : null,
-    }));
-    return { stats, rows };
+    const initialRows = apiRows as PublicPromiseApiRow[];
+    return { stats, initialRows, trackerConstituencies };
   } catch (e) {
     if (isRecoverableSchemaError(e)) return null;
     throw e;

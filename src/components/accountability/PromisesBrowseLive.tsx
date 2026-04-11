@@ -37,6 +37,8 @@ type Props = {
   csvExportHref: string;
   /** Optional row between KPI strip and filter panel (e.g. homepage “Filters & results” heading). */
   filterToolbarHeader?: ReactNode;
+  /** Merge headline + status into one card (homepage government embed). */
+  statsStripCompact?: boolean;
 };
 
 const DEBOUNCE_MS = 380;
@@ -74,6 +76,7 @@ export function PromisesBrowseLive({
   trackerConstituencies,
   csvExportHref,
   filterToolbarHeader,
+  statsStripCompact = false,
 }: Props) {
   const [stats, setStats] = useState<PromiseTrackerStats>(initialStats);
   const [rows, setRows] = useState<PublicPromiseApiRow[]>(initialRows);
@@ -252,7 +255,7 @@ export function PromisesBrowseLive({
 
   return (
     <>
-      <PromiseTrackerStatsStrip stats={stats} subtitle={statsSubtitle} />
+      <PromiseTrackerStatsStrip stats={stats} subtitle={statsSubtitle} compact={statsStripCompact} />
 
       {filterToolbarHeader}
 

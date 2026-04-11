@@ -5,7 +5,7 @@ import { Logo } from "@/components/ui/Logo";
 import { FooterMemberAuth } from "@/components/layout/FooterMemberAuth";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { getFooterPlatformFlowLinks } from "@/config/public-platform-nav";
-import { content, heroContent, footerGalleryAlts, footerGalleryImages } from "@/lib/site-content";
+import { content, footerGalleryAlts, footerGalleryImages } from "@/lib/site-content";
 
 const footerLinks = {
   organization: [
@@ -42,6 +42,42 @@ export async function Footer() {
     return links;
   })();
 
+  const platformSplitAt = Math.ceil(platformLinks.length / 2);
+  const platformLinksCol1 = platformLinks.slice(0, platformSplitAt);
+  const platformLinksCol2 = platformLinks.slice(platformSplitAt);
+
+  const socialLinks = (
+    <div className="flex gap-3">
+      <a
+        href={content.social.facebook}
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white hover:text-[var(--accent-warm)]"
+        aria-label="Facebook"
+      >
+        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+        </svg>
+      </a>
+      <a
+        href={content.social.linkedin}
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white hover:text-[var(--accent-warm)]"
+        aria-label="LinkedIn"
+      >
+        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+        </svg>
+      </a>
+      <a
+        href={content.social.twitter}
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white hover:text-[var(--accent-warm)]"
+        aria-label="Twitter"
+      >
+        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+        </svg>
+      </a>
+    </div>
+  );
+
   return (
     <footer className="relative bg-[var(--footer-bg)] text-white">
       <div className="mx-auto max-w-7xl px-6 sm:px-8">
@@ -76,61 +112,40 @@ export async function Footer() {
           </div>
         </div>
 
-        {/* Main columns */}
-        <div className="grid gap-4 py-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-3 sm:py-12">
-          {/* Brand — premium logo */}
-          <div className="lg:col-span-1">
-            <Logo href="/" theme="dark" className="gap-2.5" />
-            <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/80">
-              {heroContent.tagline}. {heroContent.motto}
-            </p>
-            <div className="mt-6 flex gap-3">
-              <a
-                href={content.social.facebook}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white hover:text-[var(--accent-warm)]"
-                aria-label="Facebook"
-              >
-                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                </svg>
-              </a>
-              <a
-                href={content.social.linkedin}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white hover:text-[var(--accent-warm)]"
-                aria-label="LinkedIn"
-              >
-                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                </svg>
-              </a>
-              <a
-                href={content.social.twitter}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white hover:text-[var(--accent-warm)]"
-                aria-label="Twitter"
-              >
-                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                </svg>
-              </a>
-            </div>
-          </div>
-
-          {/* Platform — index2 "Our services" */}
-          <div className="pl-4 lg:pl-6">
+        {/* Main columns — platform spans two columns (split list); brand block removed (logo + socials live in bottom bar). */}
+        <div className="grid gap-10 py-10 sm:grid-cols-2 sm:gap-8 lg:grid-cols-5 lg:gap-6 sm:py-12">
+          <div className="sm:col-span-2 lg:col-span-2">
             <h3 className="text-base font-semibold text-white">Our Platform</h3>
-            <ul className="mt-5 space-y-3">
-              <FooterMemberAuth />
-              {platformLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-white/80 transition-colors hover:pl-2 hover:text-white"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div className="mt-5 grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-x-10">
+              <ul className="space-y-3">
+                <FooterMemberAuth />
+                {platformLinksCol1.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-white/80 transition-colors hover:pl-2 hover:text-white"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <div>
+                <h4 className="sr-only">More platform links</h4>
+                <ul className="space-y-3">
+                  {platformLinksCol2.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-sm text-white/80 transition-colors hover:pl-2 hover:text-white"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
 
           {/* Organization — index2 "Useful links" */}
@@ -193,22 +208,25 @@ export async function Footer() {
           </div>
         </div>
 
-        {/* Bottom bar — logo, legal links, copyright */}
+        {/* Bottom bar — logo, socials, legal, copyright */}
         <div className="border-t border-white/20 py-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-              <Logo href="/" theme="dark" className="scale-75 origin-left opacity-90 sm:scale-90" />
-              {footerLinks.legal.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-sm text-white/60 transition-colors hover:text-white"
-                >
-                  {link.label}
-                </Link>
-              ))}
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-3">
+              <Logo href="/" theme="dark" className="w-fit scale-90 origin-left opacity-90 sm:scale-95" />
+              {socialLinks}
+              <nav className="flex flex-wrap items-center gap-x-5 gap-y-2" aria-label="Legal">
+                {footerLinks.legal.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="text-sm text-white/60 transition-colors hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
             </div>
-            <p className="text-sm text-white/60">
+            <p className="text-sm text-white/60 lg:max-w-md lg:text-right">
               © {currentYear} My Brother&apos;s Keeper Restoration United (MBKRU). All rights reserved.
             </p>
           </div>
