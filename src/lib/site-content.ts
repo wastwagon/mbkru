@@ -1,111 +1,107 @@
 /**
  * MBKRU site content & bundled UI data
  *
- * Central place for illustrative imagery (Unsplash), hero/brand copy, contact strings,
- * programme roadmap data (About / docs), homepage pathway cards, FAQ entries, and regional reference data. Swap URLs or copy
- * when production assets and verified text are ready.
- *
- * Images: Unsplash (https://unsplash.com) — free to use, no attribution required.
- * URL format: https://images.unsplash.com/photo-{id}?w={width}&q=80
+ * Central place for illustrative imagery (`public/images/`), hero/brand copy, contact strings,
+ * programme roadmap data (About / docs), homepage pathway cards, FAQ entries, and regional reference data.
+ * Replace filenames here when production assets and verified text are ready.
  */
 
-const UNSPLASH_BASE = "https://images.unsplash.com";
+/** Wide civic / outdoor scene (1200×678) */
+const IMG_WIDE_CIVIC =
+  "604200028a3cf7a32efee05f918b846dcbed5db41a396098a4edc9f260a9ccd2-1200x678.webp";
 
-/** Build Unsplash URL with optional width */
-function img(id: string, width = 1200) {
-  return `${UNSPLASH_BASE}/photo-${id}?w=${width}&q=80`;
+/** Path under `public/images/` */
+function pub(file: string) {
+  return `/images/${file}`;
 }
 
 /**
- * Illustrative imagery — semantic categories for pages and cards
+ * Illustrative imagery — semantic categories for pages and cards (local assets)
  */
 export const images = {
-  /** Hero, CTA sections — community, people, civic engagement */
-  hero: img("1529156069898-49953e39b3ac", 1920),
-  heroThumb: img("1529156069898-49953e39b3ac", 800),
+  /** Hero, CTA sections — broad civic / outdoor Ghana */
+  hero: pub(IMG_WIDE_CIVIC),
+  heroThumb: pub(IMG_WIDE_CIVIC),
 
-  /** About, mission — community and heritage */
-  about: img("1489392191049-fc10c97e64b6", 800),
-  aboutMission: img("1489392191049-fc10c97e64b6", 800),
+  /** About, mission — heritage and culture */
+  about: pub("130207142157-ghana-tourism-akan-dance.jpg"),
+  aboutMission: pub("130207142157-ghana-tourism-akan-dance.jpg"),
 
-  /** Platform preview — citizen engagement */
-  platform: img("1529156069898-49953e39b3ac", 800),
+  /** Platform preview — citizens and public engagement */
+  platform: pub("191129141031-01-ghana-citizens-year-of-return.jpg"),
 
-  /** Pillar A — Digital platform, technology */
-  digital: img("1551434678-e076c223a692", 800),
-  digitalThumb: img("1551434678-e076c223a692", 400),
+  /** Pillar A — Digital platform, connectivity */
+  digital: pub("FQ4-3QqXMAAFN2d.jpeg.webp"),
+  digitalThumb: pub("FQ4-3QqXMAAFN2d.jpeg.webp"),
 
-  /** Pillar B — Town hall, community meetings */
-  community: img("1540575467063-178a50c2df87", 800),
-  communityThumb: img("1540575467063-178a50c2df87", 400),
+  /** Pillar B — Festivals and large gatherings */
+  community: pub("Afrochella_Festival_2019_1.jpg"),
+  communityThumb: pub("Afrochella_Festival_2019_1.jpg"),
 
   /** Pillar C — Legal, justice */
-  legal: img("1589829545856-d10d557cf95f", 800),
-  legalThumb: img("1589829545856-d10d557cf95f", 400),
+  legal: pub("cf68ddd9c6f144d6f1181fe8d38ffd79.jpg"),
+  legalThumb: pub("cf68ddd9c6f144d6f1181fe8d38ffd79.jpg"),
 
-  /** Pillar D — Accountability, governance */
-  accountability: img("1529107386315-e1a2ed48a620", 800),
-  accountabilityThumb: img("1529107386315-e1a2ed48a620", 400),
+  /** Pillar D — Accountability, press, governance */
+  accountability: pub("IMG_AIF65_Blame-Ekoue_003-2.jpg"),
+  accountabilityThumb: pub("IMG_AIF65_Blame-Ekoue_003-2.jpg"),
 
-  /** Pillar E — Presidential interface, leadership */
-  leadership: img("1529156069898-49953e39b3ac", 800),
-  leadershipThumb: img("1529156069898-49953e39b3ac", 400),
+  /** Pillar E — Diaspora bridge, leadership listening */
+  leadership: pub("Ghana_Black_Americans_66881.jpg.avif"),
+  leadershipThumb: pub("Ghana_Black_Americans_66881.jpg.avif"),
 
-  /** Partners — collaboration, teamwork */
-  partnership: img("1522071820081-009f0129c71c", 800),
+  /** Partners — collaboration */
+  partnership: pub("32a127dcb0d1b5945184124693744fe2.jpg"),
 
-  /**
-   * Diaspora / “17th Region” — global ties, dialogue, Ghana & world
-   * (Unsplash — see file header)
-   */
-  diaspora: img("1573497019940-1c28c88b4f2e", 1920),
-  diasporaSummit: img("1540575467063-178a50c2df87", 1600),
+  /** Diaspora / “17th Region” — Ghana and global Ghanaian community */
+  diaspora: pub("Ghana_Black_Americans_66881.jpg.avif"),
+  diasporaSummit: pub("Afrochella_Festival_2019_1.jpg"),
 
   /** News — media, press */
-  news: img("1504711434969-e33886168f5c", 1200),
+  news: pub("IMG_AIF65_Blame-Ekoue_003-2.jpg"),
 
   /** Resources — documents, research */
-  resources: img("1450101499163-c8848c71ca48", 1200),
+  resources: pub("cf68ddd9c6f144d6f1181fe8d38ffd79.jpg"),
 
-  /** Landscape, nature — generic */
-  landscape: img("1500382017468-9049fed747ef", 800),
+  /** Landscape — wide outdoor / civic */
+  landscape: pub(IMG_WIDE_CIVIC),
 } as const;
 
-/** Footer engagement gallery — 9 images for 3x3 grid */
+/** Footer engagement gallery — 9 distinct images for 3×3 grid */
 export const footerGalleryImages = [
-  images.community,
-  images.about,
-  images.hero,
-  images.platform,
-  images.leadership,
-  images.digital,
-  images.partnership,
-  images.landscape,
-  images.news,
+  pub("Afrochella_Festival_2019_1.jpg"),
+  pub("130207142157-ghana-tourism-akan-dance.jpg"),
+  pub(IMG_WIDE_CIVIC),
+  pub("191129141031-01-ghana-citizens-year-of-return.jpg"),
+  pub("Ghana_Black_Americans_66881.jpg.avif"),
+  pub("FQ4-3QqXMAAFN2d.jpeg.webp"),
+  pub("32a127dcb0d1b5945184124693744fe2.jpg"),
+  pub("cf68ddd9c6f144d6f1181fe8d38ffd79.jpg"),
+  pub("IMG_AIF65_Blame-Ekoue_003-2.jpg"),
 ] as const;
 
 /** Alt text for `footerGalleryImages` (same order) — accessibility */
 export const footerGalleryAlts = [
-  "Town hall and community meeting",
-  "Community and heritage",
-  "Civic engagement and dialogue",
-  "Digital citizen platform",
-  "Leadership listening session",
-  "Technology and connectivity",
-  "Partnership and collaboration",
-  "Ghana landscape and communities",
-  "News and public updates",
+  "Crowd at Afrochella festival celebrating Ghanaian music and culture",
+  "Traditional Akan dancers in kente at a public heritage event",
+  "Wide outdoor civic scene in Ghana",
+  "Ghana citizens at a Year of Return heritage gathering",
+  "Ghanaian diaspora and community connection",
+  "Crowd at a public event in Ghana",
+  "Community gathering in Ghana",
+  "Formal civic or institutional setting in Ghana",
+  "Press or public affairs photography in Ghana",
 ] as const;
 
 /**
  * Pillar image map — for homepage and About page
  */
 export const pillarImages = [
-  { id: "digital", image: images.digitalThumb, alt: "Digital platform and technology" },
-  { id: "community", image: images.communityThumb, alt: "Town hall and community meeting" },
+  { id: "digital", image: images.digitalThumb, alt: "Digital connectivity and public events in Ghana" },
+  { id: "community", image: images.communityThumb, alt: "Festival crowd and cultural celebration in Ghana" },
   { id: "legal", image: images.legalThumb, alt: "Justice and legal empowerment" },
-  { id: "accountability", image: images.accountabilityThumb, alt: "Accountability and governance" },
-  { id: "leadership", image: images.leadershipThumb, alt: "Citizen engagement with leadership" },
+  { id: "accountability", image: images.accountabilityThumb, alt: "Accountability, press, and governance" },
+  { id: "leadership", image: images.leadershipThumb, alt: "Diaspora and citizen engagement with leadership" },
 ] as const;
 
 /**
