@@ -101,9 +101,11 @@ const PHASE_1_PARTICIPATE_ACTIONS: { href: string; title: string; body: string }
 
 type Props = {
   data: HomeAtAGlanceData;
+  /** When false, hides the DB-backed “Top petitions / causes / communities / forums” preview grid (homepage). */
+  showLiveHighlights?: boolean;
 };
 
-export function HomeParticipateHub({ data }: Props) {
+export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
   const phase = getPublicPlatformPhase();
   const phase1 = phase < 2;
   const voice = platformFeatures.citizensVoicePlatform(phase);
@@ -325,6 +327,11 @@ export function HomeParticipateHub({ data }: Props) {
               open About
             </Link>
             .
+          </p>
+        ) : !showLiveHighlights ? (
+          <p className="mt-8 text-center text-sm text-[var(--muted-foreground)]">
+            Use the action cards above for the main routes. Open petitions, public causes, communities, and programme rows
+            are also listed on their dedicated index pages.
           </p>
         ) : !live ? (
           <p className="mt-8 text-center text-sm text-[var(--muted-foreground)]">

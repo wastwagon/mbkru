@@ -17,7 +17,9 @@ import {
 import { RegionsViz } from "@/components/ui/RegionsViz";
 import { GovernmentCommitmentsHomePreview } from "@/components/home/GovernmentCommitmentsHomePreview";
 import { HomeDataProvenanceRibbon } from "@/components/home/HomeDataProvenanceRibbon";
+import { HomeParticipateHub } from "@/components/home/HomeParticipateHub";
 import { PromisesBrowseHomePreview } from "@/components/home/PromisesBrowseHomePreview";
+import type { HomeAtAGlanceData } from "@/lib/home-at-a-glance-types";
 import type { GovernmentCommitmentsHomePreview as GovernmentCommitmentsHomePreviewData } from "@/lib/home-government-preview-types";
 import type { PromisesBrowseHomePreview as PromisesBrowseHomePreviewData } from "@/lib/home-promises-browse-preview-types";
 export type HomePageNewsItem = {
@@ -74,10 +76,12 @@ export function HomePageClient({
   cmsPosts,
   governmentPreview,
   promisesBrowsePreview,
+  atAGlance,
 }: {
   cmsPosts: HomePageNewsItem[];
   governmentPreview: GovernmentCommitmentsHomePreviewData | null;
   promisesBrowsePreview: PromisesBrowseHomePreviewData | null;
+  atAGlance: HomeAtAGlanceData;
 }) {
   const phase = getPublicPlatformPhase();
   const parliamentLive = platformFeatures.parliamentTrackerData(phase);
@@ -147,7 +151,7 @@ export function HomePageClient({
 
       <HomeDataProvenanceRibbon />
 
-      {/* Executive summary + Vision & Mission — same narrative order as About / programme doc */}
+      {/* Executive summary + Vision & Mission — before Participate / how-to-use */}
       <section
         id="executive-summary"
         className="section-full border-b border-[var(--border)] bg-[var(--section-light)] py-8 sm:py-10 lg:py-12"
@@ -216,6 +220,8 @@ export function HomePageClient({
           </div>
         </div>
       </section>
+
+      <HomeParticipateHub data={atAGlance} showLiveHighlights={false} />
 
       {governmentPreview ? <GovernmentCommitmentsHomePreview data={governmentPreview} /> : null}
 
