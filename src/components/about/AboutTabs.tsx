@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { mbkruStrategicContent } from "@/lib/site-content";
+
 const tabs = [
   { id: "vision", label: "Our Vision" },
   { id: "history", label: "Our History" },
@@ -11,11 +13,7 @@ const tabs = [
 const content: Record<(typeof tabs)[number]["id"], { title: string; items: string[] }> = {
   vision: {
     title: "Our Vision",
-    items: [
-      "A Ghana where no citizen feels powerless, where government listens, responds, and delivers.",
-      "Poverty treated as a national emergency rather than an acceptable condition.",
-      "Every voice heard, every grievance addressed, every promise tracked.",
-    ],
+    items: [mbkruStrategicContent.vision],
   },
   history: {
     title: "Our History",

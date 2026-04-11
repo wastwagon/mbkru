@@ -20,9 +20,12 @@ export default async function AdminContactSubmissionsPage() {
         delivery).
       </p>
 
-      <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+      <p className="mt-4 flex flex-wrap gap-4 text-sm text-[var(--muted-foreground)]">
         <Link href="/admin/leads" className="text-[var(--primary)] hover:underline">
           Lead capture (newsletter / waitlists)
+        </Link>
+        <Link href="/admin/diaspora-feedback" className="text-[var(--primary)] hover:underline">
+          Diaspora experience &amp; feedback
         </Link>
       </p>
 

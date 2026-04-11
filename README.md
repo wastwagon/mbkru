@@ -113,7 +113,7 @@ On container start, `docker-entrypoint.sh` runs **`prisma migrate deploy`** and 
 1. Set `DATABASE_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET` in `.env.local`.
 2. Run `npx prisma migrate dev` (or `migrate deploy` in production).
 3. Run `npx prisma db seed` once to create or update the admin password hash.
-4. Sign in at **`/admin/login`**. Manage **posts** (public news), **Parliament & promises** (CSV import, promises per MP), **Members** (identity verification status for Voice accounts), **Town halls & forums** (programme rows for **`/town-halls`** and **`/debates`**), **Report card** (publish cycles + scorecard entries), **Lead capture**, **Citizen reports**, and **Media**; pick a featured image per post from the library.
+4. Sign in at **`/admin/login`**. Manage **posts** (public news), **Resource library** (PDFs on **`/resources`**), **Parliament & promises** (CSV import, promises per MP), **Members** (identity verification status for Voice accounts), **Town halls & forums** (programme rows for **`/town-halls`** and **`/debates`**), **Report card** (publish cycles + scorecard entries), **Lead capture** (filter tabs + **Download CSV** → **`/api/admin/leads-export`**), **Citizen reports**, and **Media**; pick a featured image per post from the library.
 
 Additional admin accounts can be added later (e.g. new `Admin` rows + the same auth flow, or a small “invite admin” UI in Phase 2).
 
@@ -149,7 +149,7 @@ Images referenced by `mainImage` are downloaded into `public/uploads`. If your s
 | 5 | Parliament & Ministers Tracker (Preview) | `/parliament-tracker` |
 | 6 | News & Updates | `/news` |
 | 7 | Diaspora — 17th Region (context) | `/diaspora` |
-| 8 | Resources | `/resources` |
+| 8 | Resources | `/resources` · `/resources/[slug]` (per published document) |
 | 9 | Partners & Supporters | `/partners` |
 | 10 | Contact Us | `/contact` |
 | 11 | Privacy Policy | `/privacy` |
@@ -157,11 +157,12 @@ Images referenced by `mainImage` are downloaded into `public/uploads`. If your s
 
 ## Integrations (To Configure)
 
-- **Contact form** — Connect to Resend, SendGrid, or similar
-- **Newsletter** — Mailchimp or ConvertKit API
-- **reCAPTCHA** — For form spam protection
-- **Google Analytics 4** — Add GA4 script to layout
-- **Google Search Console** — Verify domain
+- **Contact form** — **Resend** when `RESEND_API_KEY` and `CONTACT_INBOX_EMAIL` are set (`src/lib/server/send-contact-email.ts`); otherwise log-only
+- **Tracker / early-access leads** — Optional staff email when `RESEND_API_KEY` and **`LEADS_STAFF_INBOX_EMAIL`** are set (`send-lead-capture-staff-email.ts`); does not apply to newsletter-only signups
+- **Newsletter** — **Postgres `LeadCapture`** always; optional **Mailchimp** (`MAILCHIMP_API_KEY`, `MAILCHIMP_LIST_ID`) or **ConvertKit** (`CONVERTKIT_API_SECRET`, `CONVERTKIT_FORM_ID`) sync after signup — see `.env.example`
+- **Bot protection** — **Cloudflare Turnstile** (`NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`) on public POSTs, not reCAPTCHA
+- **Google Analytics 4** — `NEXT_PUBLIC_GA_MEASUREMENT_ID` → `AnalyticsScripts` in `(main)/layout`
+- **Google Search Console** — `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` (HTML tag content value) on root `metadata.verification`
 
 ## Docker
 
@@ -172,7 +173,7 @@ docker compose up -d --build
 docker compose exec mbkru-web npx prisma db seed
 ```
 
-App runs at http://localhost:1100 (port 1100 → container 3000). The image runs **`prisma migrate deploy`** on start when `DATABASE_URL` is set. **Seed** creates the first admin from `ADMIN_EMAIL` / `ADMIN_PASSWORD`. Uploaded files persist in the **`mbkru_uploads`** volume (`public/uploads`).
+App runs at http://localhost:1100 (port 1100 → container 3000). The image runs **`prisma migrate deploy`** on start when `DATABASE_URL` is set. **Seed** creates the first admin from `ADMIN_EMAIL` / `ADMIN_PASSWORD`. Uploaded files persist in the **`mbkru_uploads`** volume (`public/uploads`). **Resource PDFs** for the public Resources page are stored under `public/uploads/resources/` via **Admin → Resource library** (`/admin/resources`).
 
 Use a `.env` file in the project root so `build.args` pick up `NEXT_PUBLIC_*` for the image build, and set `ADMIN_SESSION_SECRET`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD`.
 

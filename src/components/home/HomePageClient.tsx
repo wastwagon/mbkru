@@ -8,9 +8,14 @@ import { Button } from "@/components/ui/Button";
 import { LivePlatformHeroChips, LivePlatformStrip } from "@/components/home/LivePlatformStrip";
 import { RoadmapModal, type RoadmapPhase } from "@/components/ui/RoadmapModal";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
-import { images, pillarImages, programmeRoadmap, heroContent } from "@/lib/site-content";
+import {
+  images,
+  mbkruStrategicContent,
+  pillarImages,
+  programmeRoadmap,
+  heroContent,
+} from "@/lib/site-content";
 import { RegionsViz } from "@/components/ui/RegionsViz";
-import { ObjectivesCarousel } from "@/components/ui/ObjectivesCarousel";
 
 export type HomePageNewsItem = {
   id: string;
@@ -150,99 +155,6 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
     [phase],
   );
 
-  const objectives = useMemo(
-    () => [
-      {
-        title: "Restorative Justice & Reparations",
-        description:
-          "Equitable reparations for historical injustice, transforming resources into tangible benefits for communities.",
-        href: "/about",
-      },
-      {
-        title: "Accountability & Electoral Watch",
-        description: "People's Report Cards, campaign promise tracking, and citizen petition mechanisms for recall.",
-        href: parliamentLive ? "/promises" : "/parliament-tracker",
-      },
-      {
-        title: "Direct Presidential Interface",
-        description:
-          "Monthly Citizens' Brief, Quarterly Presidential Listening Sessions, and dedicated liaison with the Presidency.",
-        href: "/about",
-      },
-    ],
-    [parliamentLive],
-  );
-
-  const platformHighlightCards = useMemo(
-    () => [
-      {
-        icon: (
-          <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v9m0 0v-9m0 0V5a7 7 0 0114 0v6z"
-            />
-          </svg>
-        ),
-        title: "Citizen Voice",
-        description:
-          "Secure national membership portal connecting every Ghanaian directly to the Presidency. Personal dashboards, geo-tagged complaints, and live public statistics.",
-        href: "/citizens-voice",
-      },
-      {
-        icon: (
-          <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-            />
-          </svg>
-        ),
-        title: "Physical Engagement",
-        description:
-          "Quarterly Town Hall Meetings, Regional Public Forums, and Annual National People's Assembly — bringing citizens face-to-face with decision-makers.",
-        href: platformFeatures.townHallDirectory(phase) ? "/town-halls" : "/situational-alerts",
-      },
-      {
-        icon: (
-          <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-            />
-          </svg>
-        ),
-        title: "Accountability Watch",
-        description:
-          "People's Report Cards, campaign promise tracking, and Accountability Scorecards. Citizen petition mechanisms for recall of non-performing officials.",
-        href: "/parliament-tracker",
-      },
-      {
-        icon: (
-          <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"
-            />
-          </svg>
-        ),
-        title: "Legal Empowerment",
-        description:
-          "Volunteer lawyers, step-by-step guidance for CHRAJ, police, courts. Template letters, FOI requests, and referrals to pro-bono and legal aid organizations.",
-        href: platformFeatures.legalEmpowermentDesk(phase) ? "/legal-empowerment" : "/about",
-      },
-    ],
-    [phase],
-  );
-
   return (
     <div>
       {/* Hero — content right-aligned in glass containers */}
@@ -260,7 +172,8 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
           <div className="absolute inset-0 bg-gradient-to-r from-[var(--section-dark)]/85 via-transparent to-[var(--section-dark)]/50" />
           <div className="absolute left-4 right-4 top-[8.25rem] h-px bg-gradient-to-r from-transparent via-[var(--accent-gold)]/40 to-transparent sm:left-6 sm:right-6 lg:left-8 lg:right-8" aria-hidden />
         </div>
-        <div className="relative mx-auto flex max-w-7xl flex-col items-start px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+        <div className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+          <div className="flex flex-col items-start">
           {/* Main content card */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -281,7 +194,7 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
-              className="mt-2 font-logo text-lg font-bold leading-[1.2] tracking-tight text-white sm:text-xl lg:text-2xl xl:text-3xl"
+              className="mt-2 font-logo text-lg font-bold leading-[1.15] tracking-tight text-white sm:text-2xl lg:text-3xl xl:text-4xl 2xl:text-[2.75rem]"
             >
               {heroContent.tagline.split("President")[0]}
               <span className="text-[var(--accent-gold-bright)]">President</span>
@@ -291,7 +204,7 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
-              className="mt-1.5 text-sm font-medium text-white/95 sm:text-base"
+              className="mt-1.5 max-w-xl text-xs font-medium leading-snug text-white/95 sm:text-sm lg:text-base"
             >
               {heroContent.subhead}
             </motion.p>
@@ -331,72 +244,95 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
             </motion.div>
             <LivePlatformHeroChips />
           </motion.div>
-          {/* Stats container */}
+          </div>
+          {/* Impact metrics — full content width directly under hero (Wave D) */}
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.45 }}
-            className="mt-4 flex flex-wrap items-center justify-start gap-x-6 gap-y-2 rounded-xl border border-white/20 bg-white/5 px-4 py-3 backdrop-blur-md sm:gap-x-8 sm:px-5"
+            className="mt-6 w-full rounded-2xl border border-white/25 bg-white/10 px-4 py-4 backdrop-blur-md sm:px-6 sm:py-5"
           >
-            {trustStats.map((stat) => (
-              <div key={stat.label} className="flex flex-col items-start">
-                <span className="font-display text-lg font-bold tabular-nums text-white sm:text-xl">
-                  {stat.value}
-                </span>
-                <span className="mt-0.5 text-[10px] font-medium uppercase tracking-wider text-white/70 sm:text-xs">
-                  {stat.label}
-                </span>
-              </div>
-            ))}
+            <p className="text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--accent-gold-bright)] sm:text-xs">
+              At a glance
+            </p>
+            <div className="mt-3 flex flex-wrap items-stretch justify-center gap-6 sm:justify-between sm:gap-8 lg:gap-10">
+              {trustStats.map((stat) => (
+                <div key={stat.label} className="flex min-w-[5.5rem] flex-col items-center text-center sm:min-w-0 sm:items-start sm:text-left">
+                  <span className="font-display text-xl font-bold tabular-nums text-white sm:text-2xl lg:text-3xl">
+                    {stat.value}
+                  </span>
+                  <span className="mt-1 max-w-[10rem] text-[10px] font-medium uppercase leading-snug tracking-wide text-white/75 sm:max-w-none sm:text-xs">
+                    {stat.label}
+                  </span>
+                </div>
+              ))}
+            </div>
           </motion.div>
         </div>
       </section>
 
       <LivePlatformStrip />
 
-      {/* About — editorial layout: asymmetric grid (55/45) */}
-      <section className="section-full bg-[var(--section-light)] py-10 sm:py-12 lg:py-14">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid items-center gap-6 lg:grid-cols-[0.85fr_1fr] lg:gap-8">
+      {/* Executive summary + Vision & Mission — same narrative order as About / programme doc */}
+      <section
+        id="executive-summary"
+        className="section-full border-b border-[var(--border)] bg-[var(--section-light)] py-10 sm:py-12 lg:py-16"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start lg:gap-12">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -16 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="relative max-w-full lg:max-w-md"
+              className="relative aspect-[4/3] max-h-[22rem] overflow-hidden rounded-2xl shadow-lg lg:max-h-none lg:min-h-[20rem]"
             >
-              <div className="relative aspect-[4/3] overflow-hidden rounded-xl shadow-lg">
-                <Image
-                  src={images.hero}
-                  alt="Citizens in discussion — illustrative photography"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                />
-              </div>
+              <Image
+                src={images.hero}
+                alt="Citizens in discussion — illustrative photography"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 45vw"
+              />
             </motion.div>
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 16 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
+              className="min-w-0"
             >
-              <span className="inline-block rounded bg-[var(--primary)]/10 px-3 py-1.5 text-sm font-medium text-[var(--primary)]">
-                About
-              </span>
-              <h2 className="mt-2 font-display text-lg font-bold text-[var(--foreground)] sm:text-xl lg:text-2xl">
-                Guiding Ghana with purposeful strategic objectives
-              </h2>
-              <blockquote className="mt-3 border-l-4 border-[var(--accent-gold)] pl-5 font-logo text-lg font-semibold italic leading-relaxed text-[var(--foreground)] sm:text-xl">
-                Restorative justice, accountability, and direct citizen voice at every level of governance.
-              </blockquote>
-              <p className="mt-3 text-[var(--muted-foreground)] leading-relaxed text-[15px] sm:text-base">
-                My Brother&apos;s Keeper Restoration United (MBKRU) proposes to transform itself into Ghana&apos;s premier
-                independent, non-partisan citizens&apos; platform that connects ordinary Ghanaians directly to the highest
-                levels of government.
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--primary)]">
+                {mbkruStrategicContent.legalName}
               </p>
-              <div className="mt-5">
+              <h2 className="mt-2 font-display text-xl font-bold text-[var(--foreground)] sm:text-2xl lg:text-3xl">
+                Executive summary
+              </h2>
+              <div className="mt-4 space-y-4 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+                {mbkruStrategicContent.executiveSummaryParagraphs.map((para, i) => (
+                  <p key={i}>{para}</p>
+                ))}
+              </div>
+              <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-card)]">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[var(--primary)]">Vision</p>
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--foreground)]">{mbkruStrategicContent.vision}</p>
+                </div>
+                <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-card)]">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[var(--primary)]">Mission</p>
+                  <p className="mt-2 text-sm font-medium leading-relaxed text-[var(--foreground)]">
+                    {mbkruStrategicContent.mission}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-6 flex flex-wrap gap-3">
                 <Button href="/about" variant="primary">
-                  Learn About Us
+                  Full programme on About
                 </Button>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-2 rounded-xl border-2 border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--foreground)] transition-colors hover:border-[var(--primary)]/40"
+                >
+                  Get in Touch
+                </Link>
               </div>
             </motion.div>
           </div>
@@ -413,7 +349,7 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
             viewport={{ once: true }}
             className="mx-auto max-w-3xl text-center"
           >
-            <h2 className="font-display text-xl font-bold text-white sm:text-2xl lg:text-3xl">
+            <h2 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl xl:text-4xl">
               Key Operational Pillars
             </h2>
             <p className="mt-3 text-sm text-white/80">
@@ -466,16 +402,30 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
         </div>
       </section>
 
-      {/* How it works / Objectives — carousel + fixed content */}
+      {/* Core objectives (document §4) + accountability bridge */}
       <section className="section-spacing section-full bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-10">
+          <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-12">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <ObjectivesCarousel objectives={objectives} />
+              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--primary)]">Core objectives</p>
+              <h2 className="mt-2 font-display text-lg font-bold text-[var(--foreground)] sm:text-xl lg:text-2xl">
+                What we are building toward
+              </h2>
+              <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+                Five concrete objectives — identical wording on the About page and in programme materials.
+              </p>
+              <ol className="mt-6 space-y-4 border-l-2 border-[var(--primary)]/25 pl-5">
+                {mbkruStrategicContent.coreObjectives.map((obj, i) => (
+                  <li key={i} className="text-sm leading-relaxed text-[var(--foreground)] sm:text-base">
+                    <span className="font-display font-bold text-[var(--primary)]">{i + 1}. </span>
+                    {obj}
+                  </li>
+                ))}
+              </ol>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, x: 20 }}
@@ -483,17 +433,29 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
               viewport={{ once: true }}
               className="lg:sticky lg:top-24"
             >
-              <span className="inline-block rounded bg-[var(--primary)]/10 px-3 py-1.5 text-sm font-medium text-[var(--primary)]">
-                Our Commitment
-              </span>
-              <h2 className="mt-4 font-display text-lg font-bold text-[var(--foreground)] sm:text-xl lg:text-2xl">
-                Strategic objectives for citizen empowerment
+              <h2 className="font-display text-lg font-bold text-[var(--foreground)] sm:text-xl lg:text-2xl">
+                Accountability in practice
               </h2>
               <p className="mt-6 text-[var(--muted-foreground)] leading-relaxed">
-                By building a transparent, technology-enabled communication bridge between the Presidency, Ministers,
-                Parliament, and the people, MBKRU will ensure that elected officials are held strictly accountable to
-                the promises they make and the needs of the citizens they serve.
+                {mbkruStrategicContent.executiveSummaryParagraphs[1]}
               </p>
+              <p className="mt-4 text-[var(--muted-foreground)] leading-relaxed">
+                Explore promises, report cards, and methodology when your deployment phase enables public datasets.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                {parliamentLive ? (
+                  <Button href="/promises" variant="primary">
+                    Campaign promises
+                  </Button>
+                ) : (
+                  <Button href="/parliament-tracker" variant="primary">
+                    Accountability hub
+                  </Button>
+                )}
+                <Button href="/methodology" variant="outline">
+                  Methodology
+                </Button>
+              </div>
             </motion.div>
           </div>
         </div>
@@ -524,34 +486,61 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
                 </svg>
               </Button>
             </motion.div>
-            <div className="space-y-4">
-              {platformHighlightCards.map((card, i) => (
-                <motion.div
-                  key={card.title}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08 }}
-                >
-                  <Link
-                    href={card.href}
-                    className="group flex gap-4 rounded-xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow-card)] transition-all duration-[400ms] hover:shadow-[var(--shadow-card-hover)]"
-                  >
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[var(--primary)]/10 text-[var(--primary)]">
-                      {card.icon}
-                    </div>
-                    <div>
-                      <h3 className="font-display text-base font-semibold text-[var(--foreground)] group-hover:text-[var(--primary)] sm:text-lg">
-                        {card.title}
-                      </h3>
-                      <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-                        {card.description}
-                      </p>
-                    </div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8"
+            >
+              <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Explore further</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
+                Quick paths to programmes, published documents, and how we work. The five pillars (A–E) are laid out in
+                the next section.
+              </p>
+              <ul className="mt-5 space-y-3 text-sm font-medium text-[var(--foreground)]">
+                <li>
+                  <Link href="/about" className="text-[var(--primary)] hover:underline">
+                    Five pillars in full (About)
                   </Link>
-                </motion.div>
-              ))}
-            </div>
+                </li>
+                <li>
+                  <Link href="/citizens-voice" className="text-[var(--primary)] hover:underline">
+                    MBKRU Voice
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href={platformFeatures.townHallDirectory(phase) ? "/town-halls" : "/situational-alerts"}
+                    className="text-[var(--primary)] hover:underline"
+                  >
+                    {platformFeatures.townHallDirectory(phase) ? "Forums & town halls" : "Engagement & alerts"}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/parliament-tracker" className="text-[var(--primary)] hover:underline">
+                    Accountability &amp; parliament tracker
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href={platformFeatures.legalEmpowermentDesk(phase) ? "/legal-empowerment" : "/about"}
+                    className="text-[var(--primary)] hover:underline"
+                  >
+                    Legal empowerment {platformFeatures.legalEmpowermentDesk(phase) ? "desk" : "(on About)"}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/resources" className="text-[var(--primary)] hover:underline">
+                    Resources &amp; downloads
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/methodology" className="text-[var(--primary)] hover:underline">
+                    Accountability methodology
+                  </Link>
+                </li>
+              </ul>
+            </motion.div>
           </div>
         </div>
       </section>

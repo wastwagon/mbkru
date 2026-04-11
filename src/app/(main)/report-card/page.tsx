@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { PromiseTrackerStatsStrip } from "@/components/accountability/PromiseTrackerStatsStrip";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { getCachedPublishedReportCardCycles } from "@/lib/server/accountability-cache";
 import { isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
@@ -19,6 +20,9 @@ export const metadata: Metadata = {
 export default async function ReportCardIndexPage() {
   if (!isReportCardPublicEnabled() || !isDatabaseConfigured()) notFound();
 
+  const phase = getServerPlatformPhase();
+  const scorecardsMode = platformFeatures.accountabilityScorecards(phase);
+
   const [cycles, trackerStats] = await Promise.all([
     getCachedPublishedReportCardCycles(),
     getPromiseTrackerStats("all"),
@@ -32,6 +36,28 @@ export default async function ReportCardIndexPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          {scorecardsMode ? (
+            <div className="mb-8 rounded-2xl border border-[var(--primary)]/25 bg-[var(--primary)]/5 px-4 py-4 text-center sm:px-6">
+              <p className="text-sm font-semibold text-[var(--foreground)]">Pre-election accountability scorecards</p>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
+                This deployment highlights flagship scorecard cycles in the run-up to general elections. Narratives remain
+                explanatory — see methodology for scope and limitations.
+              </p>
+              <p className="mt-3 text-sm">
+                <Link href="/methodology" className="font-medium text-[var(--primary)] hover:underline">
+                  Read methodology
+                </Link>
+                {platformFeatures.electionObservatory(phase) ? (
+                  <>
+                    {" · "}
+                    <Link href="/election-observation" className="font-medium text-[var(--primary)] hover:underline">
+                      Election observation hub
+                    </Link>
+                  </>
+                ) : null}
+              </p>
+            </div>
+          ) : null}
           <p className="text-center text-sm text-[var(--muted-foreground)]">
             <Link href="/methodology" className="text-[var(--primary)] hover:underline">
               Methodology

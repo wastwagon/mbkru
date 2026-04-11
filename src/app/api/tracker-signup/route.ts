@@ -2,6 +2,7 @@ import { LeadCaptureSource } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 import { upsertLeadCapture } from "@/lib/server/lead-capture";
+import { sendLeadCaptureStaffNotification } from "@/lib/server/send-lead-capture-staff-email";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 import {
   requireTurnstileIfConfigured,
@@ -31,6 +32,10 @@ export async function POST(request: Request) {
     if (turnstileBlock) return turnstileBlock;
 
     await upsertLeadCapture(parsed.data.email, LeadCaptureSource.PARLIAMENT_TRACKER);
+    await sendLeadCaptureStaffNotification({
+      source: LeadCaptureSource.PARLIAMENT_TRACKER,
+      email: parsed.data.email,
+    });
 
     return NextResponse.json({ success: true });
   } catch {

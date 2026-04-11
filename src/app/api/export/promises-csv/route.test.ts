@@ -61,6 +61,7 @@ describe("GET /api/export/promises-csv", () => {
     governmentOnly: false,
     policySector: "",
     status: "",
+    q: "",
   };
 
   it("passes normalized filters to loader", async () => {

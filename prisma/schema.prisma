@@ -46,6 +46,34 @@ model Post {
   updatedAt       DateTime  @updatedAt
 }
 
+/// Public downloads on `/resources` — PDFs and office docs uploaded from admin.
+enum ResourceDocumentCategory {
+  REPORTS
+  POLICY_BRIEFS
+  RESEARCH
+  OTHER
+}
+
+model ResourceDocument {
+  id               String                   @id @default(cuid())
+  title            String                   @db.VarChar(240)
+  slug             String                   @unique @db.VarChar(140)
+  summary          String?                  @db.VarChar(600)
+  category         ResourceDocumentCategory @default(OTHER)
+  /// Path under `public` (e.g. `/uploads/resources/uuid.pdf`)
+  filePath         String                   @db.VarChar(500)
+  originalFilename String                   @db.VarChar(280)
+  mimeType         String                   @db.VarChar(120)
+  fileSize         Int?
+  publishedAt      DateTime?
+  sortOrder        Int                      @default(0)
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
+
+  @@index([publishedAt, sortOrder])
+  @@index([category, sortOrder])
+}
+
 /// Marketing / waitlist signups (Phase 1). One row per email per source; upsert is idempotent.
 enum LeadCaptureSource {
   NEWSLETTER
@@ -74,6 +102,37 @@ model ContactSubmission {
 
   @@index([createdAt])
   @@index([email])
+}
+
+/// Diaspora visit experience & feedback — public form; staff review in admin CMS.
+enum DiasporaFeedbackOverallRating {
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+}
+
+enum DiasporaFeedbackReturnIntent {
+  YES
+  NO
+  MAYBE
+}
+
+model DiasporaFeedbackSubmission {
+  id                     String                         @id @default(cuid())
+  createdAt              DateTime                       @default(now())
+  fullName               String                         @db.VarChar(200)
+  dateOfVisit            DateTime                       @db.Date
+  durationOfStay         String                         @db.VarChar(240)
+  eventsAttended         String                         @db.Text
+  overallRating          DiasporaFeedbackOverallRating
+  meaningfulAspects      String                         @db.Text
+  suggestionsImprovement String                         @db.Text
+  returnOrInvest         DiasporaFeedbackReturnIntent
+  signature              String                         @db.VarChar(200)
+  formSignedDate         DateTime                       @db.Date
+
+  @@index([createdAt])
 }
 
 // --- Phase 2 & 3 — see docs/PHASES_2_3_IMPLEMENTATION.md ---

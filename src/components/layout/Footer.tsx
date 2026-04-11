@@ -3,15 +3,9 @@ import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { Logo } from "@/components/ui/Logo";
 import { FooterMemberAuth } from "@/components/layout/FooterMemberAuth";
-import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
+import { getServerPlatformPhase } from "@/config/platform";
+import { getFooterPlatformFlowLinks } from "@/config/public-platform-nav";
 import { content, heroContent, footerGalleryAlts, footerGalleryImages } from "@/lib/site-content";
-import {
-  isCivicPetitionsAndPublicCausesEnabled,
-  isLegalEmpowermentPageEnabled,
-  isPromisesBrowseEnabled,
-  isReportCardPublicEnabled,
-  isTownHallDirectoryPageEnabled,
-} from "@/lib/reports/accountability-pages";
 
 const footerLinks = {
   organization: [
@@ -19,6 +13,7 @@ const footerLinks = {
     { href: "/about", label: "About" },
     { href: "/news", label: "News" },
     { href: "/diaspora", label: "Diaspora (17th Region)" },
+    { href: "/diaspora/feedback", label: "Diaspora visit feedback" },
     { href: "/resources", label: "Resources" },
     { href: "/faq", label: "FAQ" },
     { href: "/data-sources", label: "Data sources" },
@@ -33,27 +28,7 @@ const footerLinks = {
 export async function Footer() {
   const currentYear = new Date().getFullYear();
   const phase = getServerPlatformPhase();
-  const voiceOn = platformFeatures.citizensVoicePlatform(phase);
-
-  const platformLinks: { href: string; label: string }[] = [{ href: "/citizens-voice", label: "Voice" }];
-  if (voiceOn) {
-    platformLinks.push(
-      { href: "/citizens-voice/submit", label: "Submit a report" },
-      { href: "/track-report", label: "Track a report" },
-    );
-  }
-  if (isCivicPetitionsAndPublicCausesEnabled()) {
-    platformLinks.push({ href: "/petitions", label: "Petitions" });
-    platformLinks.push({ href: "/citizens-voice/causes", label: "Public causes" });
-  }
-  platformLinks.push(
-    { href: "/situational-alerts", label: "Engagement" },
-    { href: "/parliament-tracker", label: "Accountability" },
-  );
-  if (isPromisesBrowseEnabled()) platformLinks.push({ href: "/promises", label: "Campaign promises" });
-  if (isReportCardPublicEnabled()) platformLinks.push({ href: "/report-card", label: "Report card" });
-  if (isLegalEmpowermentPageEnabled()) platformLinks.push({ href: "/legal-empowerment", label: "Legal" });
-  if (isTownHallDirectoryPageEnabled()) platformLinks.push({ href: "/town-halls", label: "Forums" });
+  const platformLinks = getFooterPlatformFlowLinks(phase);
 
   return (
     <footer className="relative bg-[var(--footer-bg)] text-white">

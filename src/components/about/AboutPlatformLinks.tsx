@@ -1,13 +1,7 @@
 import Link from "next/link";
 
-import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
-import {
-  isLegalEmpowermentPageEnabled,
-  isPromisesBrowseEnabled,
-  isPublicVoiceStatisticsEnabled,
-  isReportCardPublicEnabled,
-  isTownHallDirectoryPageEnabled,
-} from "@/lib/reports/accountability-pages";
+import { getServerPlatformPhase } from "@/config/platform";
+import { getAboutPhaseQuickLinks } from "@/config/public-platform-nav";
 
 const pill =
   "inline-flex rounded-full border border-[var(--border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--foreground)] shadow-sm transition hover:border-[var(--primary)]/40 hover:text-[var(--primary)]";
@@ -25,8 +19,7 @@ export async function AboutPlatformLinks() {
     );
   }
 
-  const voice = platformFeatures.citizensVoicePlatform(phase);
-  const parliament = platformFeatures.parliamentTrackerData(phase);
+  const quickLinks = getAboutPhaseQuickLinks(phase);
 
   return (
     <section className="border-b border-[var(--primary)]/15 bg-gradient-to-r from-[var(--primary)]/[0.06] to-[var(--accent-gold)]/[0.06] py-5">
@@ -35,52 +28,14 @@ export async function AboutPlatformLinks() {
           Live platform (Phase {phase})
         </p>
         <p className="mx-auto mt-1 max-w-2xl text-center text-sm text-[var(--muted-foreground)]">
-          Explore tools that match this deployment — same gates as the homepage strip.
+          Explore tools that match this deployment — same gates as the header, footer, and sitemap.
         </p>
         <div className="mt-4 flex flex-wrap justify-center gap-2">
-          {voice ? (
-            <>
-              <Link href="/citizens-voice/submit" className={pill}>
-                Submit a report
-              </Link>
-              <Link href="/track-report" className={pill}>
-                Track a report
-              </Link>
-              {isPublicVoiceStatisticsEnabled() ? (
-                <Link href="/transparency" className={pill}>
-                  Voice statistics
-                </Link>
-              ) : null}
-            </>
-          ) : null}
-          {parliament && isPromisesBrowseEnabled() ? (
-            <Link href="/promises" className={pill}>
-              Campaign promises
+          {quickLinks.map(({ href, label }) => (
+            <Link key={href} href={href} className={pill}>
+              {label}
             </Link>
-          ) : null}
-          {isReportCardPublicEnabled() ? (
-            <Link href="/report-card" className={pill}>
-              Report card
-            </Link>
-          ) : null}
-          <Link href="/methodology" className={pill}>
-            Methodology
-          </Link>
-          {isLegalEmpowermentPageEnabled() ? (
-            <Link href="/legal-empowerment" className={pill}>
-              Legal
-            </Link>
-          ) : null}
-          {isTownHallDirectoryPageEnabled() ? (
-            <>
-              <Link href="/town-halls" className={pill}>
-                Forums
-              </Link>
-              <Link href="/debates" className={pill}>
-                Debates
-              </Link>
-            </>
-          ) : null}
+          ))}
         </div>
       </div>
     </section>

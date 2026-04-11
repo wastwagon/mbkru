@@ -3,6 +3,9 @@
  * Phase 1 = marketing + CMS + lead capture (no auth, no complaints DB).
  * Phase 2+ = gated in code and via NEXT_PUBLIC_PLATFORM_PHASE at build time.
  *
+ * Public routes and labels for header, footer, and About strip live in `public-platform-nav.ts`
+ * so navigation stays consistent with these flags.
+ *
  * @see docs/ARCHITECTURE.md
  */
 

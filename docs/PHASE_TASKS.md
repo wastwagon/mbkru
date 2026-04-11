@@ -60,7 +60,7 @@
 | [x] | **Vitest:** `GET /api/health` JSON handler test (mock `getHealthStatus`) |
 | [x] | **Vitest:** partner JSON routes — `/api/mps`, `/api/promises`, `/api/report-card/[year]` (mocks) |
 | [x] | **Vitest:** **`POST /api/admin/login`** — rate limit, credentials, cookie (`route.test.ts`) |
-| [ ] | **Tracker leads:** operational email “pilot open” or ESP export ([`SPRINT_BACKLOG`](./SPRINT_BACKLOG.md) Sprint 4) |
+| [x] | **Tracker leads:** optional Resend ping — **`LEADS_STAFF_INBOX_EMAIL`** + **`RESEND_API_KEY`** (tracker + early access). **ESP export:** Admin → Lead capture → **Download CSV** (`GET /api/admin/leads-export`, optional `?source=`). Newsletter stays DB-only unless you add separate automation. |
 | [x] | **Situational / ops:** `slaDueAt`, `operationsPlaybookKey`, `staffNotes` on `CitizenReport` + admin detail form + SLA overdue hint on queue |
 | [x] | **SMS (optional):** `SMS_PROVIDER=log|twilio` + `sendReportStatusSms` on status change; `submitterPhone` on `CitizenReport` + Voice form E.164; prefers member profile phone when signed in |
 | [x] | **Offline drafts (MVP):** text-only queue in `localStorage` on network / retryable HTTP errors; restore + Turnstile on submit (`VoiceReportForm`, `src/lib/client/report-submit-queue.ts`) |
@@ -93,6 +93,21 @@
 | [x] | **Security review (checklist):** [`SECURITY_CHECKLIST.md`](./SECURITY_CHECKLIST.md) — sessions, admin, APIs, deps *(execute checks each release)* |
 | [x] | **`.env` / Coolify:** changing `NEXT_PUBLIC_PLATFORM_PHASE` (or other `NEXT_PUBLIC_*`) requires a **rebuild** of the web image — see [`ARCHITECTURE.md`](./ARCHITECTURE.md) §5 and `Dockerfile` build args |
 | [x] | **Observability (guidance):** [`OBSERVABILITY.md`](./OBSERVABILITY.md) — health, CI, log retention, 429 signals, Sentry optional *(implement tools when scale requires)* |
+
+---
+
+## Feature-gap closure programme (post-audit — phased)
+
+**Purpose:** Close gaps from the engineering/product audit (SEO, integrations, editorial CMS, Phase 3 election UX, design metrics) in **ordered waves** without mixing risky changes. **Wave A** is partly code; **B–D** are mostly backlog until you pull them into a sprint.
+
+| Wave | Goal | Key deliverables | Status |
+|------|------|------------------|--------|
+| **A — Discovery & Phase 3 shell** | Search engines and election-window UX match what you ship | Sitemap includes footer/marketing URLs + phase-gated hubs; `/election-observation` + `/citizens-voice/submit/election` when Phase 3; report-card callout when `accountabilityScorecards`; nav/footer links | [x] Shipped in repo |
+| **B — Integrations** | Newsletter and contact behave like production systems | **Shipped:** optional Mailchimp/ConvertKit sync after newsletter `LeadCapture` (`esp-newsletter.ts`); `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` → root metadata. **Still manual:** Resend + inbox staging check; ESP double opt-in / tags per org | [x] Core shipped · [ ] Ops sign-off |
+| **C — Resources & editorial** | Resources page matches real assets | **Shipped:** `ResourceDocument` + migration; **`/admin/resources`**; public **`/resources`** + **`/resources/[slug]`** + sitemap entries | [x] Shipped in repo |
+| **D — Experience & metrics** | World-class civic UX | **Shipped (baseline):** hero headline scale-up; **At a glance** impact strip full-width under hero; pillar **dedupe** (removed duplicate platform card stack → **Explore further** links); fewer section badges (About / Our Commitment); pillar C link already phase-aware | [x] Baseline shipped · [ ] Deeper charts / authentic imagery when assets ready |
+
+**Depends on:** Wave **B** after ops sign-off; Wave **C** needs migrations + counsel if documents are legal; Wave **D** is parallel design/dev once A is live.
 
 ---
 

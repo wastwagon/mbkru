@@ -10,15 +10,17 @@ export default async function AdminHomePage() {
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
 
-  const [reportsTotal, reportsQueue, contactsWeek, leadsTotal, petitionsOpen] = await Promise.all([
-    prisma.citizenReport.count(),
-    prisma.citizenReport.count({
-      where: { status: { in: ["RECEIVED", "UNDER_REVIEW"] } },
-    }),
-    prisma.contactSubmission.count({ where: { createdAt: { gte: weekAgo } } }),
-    prisma.leadCapture.count(),
-    prisma.petition.count({ where: { status: "OPEN" } }),
-  ]);
+  const [reportsTotal, reportsQueue, contactsWeek, diasporaFeedbackWeek, leadsTotal, petitionsOpen] =
+    await Promise.all([
+      prisma.citizenReport.count(),
+      prisma.citizenReport.count({
+        where: { status: { in: ["RECEIVED", "UNDER_REVIEW"] } },
+      }),
+      prisma.contactSubmission.count({ where: { createdAt: { gte: weekAgo } } }),
+      prisma.diasporaFeedbackSubmission.count({ where: { createdAt: { gte: weekAgo } } }),
+      prisma.leadCapture.count(),
+      prisma.petition.count({ where: { status: "OPEN" } }),
+    ]);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
@@ -39,7 +41,7 @@ export default async function AdminHomePage() {
         </form>
       </div>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         <Link
           href="/admin/reports"
           className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition hover:border-[var(--primary)]/35"
@@ -65,6 +67,18 @@ export default async function AdminHomePage() {
           <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Contact (7 days)</p>
           <p className="mt-1 font-display text-3xl font-bold tabular-nums text-[var(--foreground)]">{contactsWeek}</p>
           <p className="mt-2 text-sm text-[var(--muted-foreground)]">Form messages saved to Postgres</p>
+        </Link>
+        <Link
+          href="/admin/diaspora-feedback"
+          className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition hover:border-[var(--primary)]/35"
+        >
+          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+            Diaspora feedback (7 days)
+          </p>
+          <p className="mt-1 font-display text-3xl font-bold tabular-nums text-[var(--foreground)]">
+            {diasporaFeedbackWeek}
+          </p>
+          <p className="mt-2 text-sm text-[var(--muted-foreground)]">Visit experience form</p>
         </Link>
         <Link
           href="/admin/leads"
@@ -104,6 +118,17 @@ export default async function AdminHomePage() {
           >
             <span className="font-semibold text-[var(--foreground)]">Image library</span>
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">Upload once, reuse on any post.</p>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/admin/resources"
+            className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
+          >
+            <span className="font-semibold text-[var(--foreground)]">Resource library</span>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              PDFs and documents for the public Resources page.
+            </p>
           </Link>
         </li>
         <li>
@@ -279,6 +304,17 @@ export default async function AdminHomePage() {
             <span className="font-semibold text-[var(--foreground)]">Contact form</span>
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
               Inbound messages from the public contact form (Postgres audit trail).
+            </p>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/admin/diaspora-feedback"
+            className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
+          >
+            <span className="font-semibold text-[var(--foreground)]">Diaspora feedback</span>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              Experience &amp; feedback form submissions from diaspora visitors (records in Postgres).
             </p>
           </Link>
         </li>

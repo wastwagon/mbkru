@@ -6,7 +6,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/"],
+      /** API, CMS, and member-only surfaces — keep crawl budget on public programme pages. */
+      disallow: ["/api/", "/admin/", "/account"],
     },
     sitemap: `${baseUrl}/sitemap.xml`,
   };

@@ -6,6 +6,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
+import {
+  getAccountabilityNavLinks,
+  getDiscoverNavLinks,
+  getGuidanceNavLinks,
+  getParticipateNavLinks,
+} from "@/config/public-platform-nav";
 import { useMemberMe } from "@/hooks/useMemberMe";
 
 type NavLeaf = {
@@ -34,61 +40,17 @@ function buildMainNav(phase: ReturnType<typeof getPublicPlatformPhase>): NavEntr
     { kind: "link", leaf: { href: "/about", label: "About" } },
   ];
 
-  const participate: NavLeaf[] = [
-    { href: "/citizens-voice", label: "Voice" },
-    { href: "/situational-alerts", label: "Engagement" },
-  ];
-  if (platformFeatures.citizensVoicePlatform(phase)) {
-    participate.push({ href: "/petitions", label: "Petitions", activeWhenPathStartsWith: "/petitions" });
-    participate.push({
-      href: "/citizens-voice/causes",
-      label: "Public causes",
-      activeWhenPathStartsWith: "/citizens-voice/causes",
-    });
-  }
-  if (platformFeatures.citizensVoicePlatform(phase) && platformFeatures.publicVoiceStatistics(phase)) {
-    participate.push({ href: "/transparency", label: "Voice stats" });
-  }
-  if (platformFeatures.communities(phase)) {
-    participate.push({ href: "/communities", label: "Communities" });
-  }
+  const participate = getParticipateNavLinks(phase) as NavLeaf[];
   entries.push({ kind: "group", id: "participate", label: "Participate", items: participate });
 
-  const accountability: NavLeaf[] = [
-    { href: "/parliament-tracker", label: "Parliament tracker" },
-  ];
-  if (platformFeatures.parliamentTrackerData(phase)) {
-    accountability.push({ href: "/government-commitments", label: "Commitments" });
-    accountability.push({
-      href: "/promises/browse",
-      label: "Promises",
-      activeWhenPathStartsWith: "/promises",
-    });
-  }
-  if (platformFeatures.publicReportCard(phase)) {
-    accountability.push({
-      href: "/report-card",
-      label: "Report card",
-      activeWhenPathStartsWith: "/report-card",
-    });
-  }
+  const accountability = getAccountabilityNavLinks(phase) as NavLeaf[];
   if (accountability.length === 1) {
     entries.push({ kind: "link", leaf: accountability[0] });
   } else {
     entries.push({ kind: "group", id: "accountability", label: "Accountability", items: accountability });
   }
 
-  const guidance: NavLeaf[] = [];
-  if (platformFeatures.legalEmpowermentDesk(phase)) {
-    guidance.push({ href: "/legal-empowerment", label: "Legal" });
-  }
-  if (platformFeatures.townHallDirectory(phase)) {
-    guidance.push({ href: "/town-halls", label: "Forums" });
-    guidance.push({ href: "/debates", label: "Debates" });
-  }
-  if (platformFeatures.whistleblowerGuidance(phase)) {
-    guidance.push({ href: "/whistleblowing", label: "Whistleblowing" });
-  }
+  const guidance = getGuidanceNavLinks(phase) as NavLeaf[];
   if (guidance.length === 1) {
     entries.push({ kind: "link", leaf: guidance[0] });
   } else if (guidance.length > 1) {
@@ -98,11 +60,8 @@ function buildMainNav(phase: ReturnType<typeof getPublicPlatformPhase>): NavEntr
   entries.push({
     kind: "group",
     id: "updates",
-    label: "News & diaspora",
-    items: [
-      { href: "/news", label: "News", activeWhenPathStartsWith: "/news" },
-      { href: "/diaspora", label: "Diaspora" },
-    ],
+    label: "News & resources",
+    items: getDiscoverNavLinks() as NavLeaf[],
   });
 
   return entries;

@@ -1,49 +1,19 @@
 import { MetadataRoute } from "next";
 
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
-import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
+import { getServerPlatformPhase } from "@/config/platform";
 import {
+  isCivicPetitionsAndPublicCausesEnabled,
   isCommunitiesBrowseEnabled,
-  isLegalEmpowermentPageEnabled,
   isPromisesBrowseEnabled,
-  isPublicVoiceStatisticsEnabled,
   isReportCardPublicEnabled,
-  isTownHallDirectoryPageEnabled,
-  isWhistleblowerGuidancePageEnabled,
 } from "@/lib/reports/accountability-pages";
+import { getPublicSitemapStaticPaths } from "@/config/public-platform-nav";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mbkruadvocates.org";
-  const routes: string[] = [
-    "",
-    "/about",
-    "/citizens-voice",
-    "/situational-alerts",
-    "/parliament-tracker",
-    "/methodology",
-    "/news",
-    "/diaspora",
-    "/contact",
-    "/privacy",
-    "/terms",
-  ];
-
-  if (isPromisesBrowseEnabled()) {
-    routes.push("/promises", "/promises/browse", "/government-commitments");
-  }
-  if (isReportCardPublicEnabled()) routes.push("/report-card");
-  if (isLegalEmpowermentPageEnabled()) routes.push("/legal-empowerment");
-  if (isTownHallDirectoryPageEnabled()) {
-    routes.push("/town-halls", "/debates");
-  }
-  if (isCitizensVoiceEnabled()) {
-    routes.push("/citizens-voice/submit", "/track-report");
-  }
-  if (isPublicVoiceStatisticsEnabled()) {
-    routes.push("/transparency");
-  }
-  if (isCommunitiesBrowseEnabled()) routes.push("/communities");
-  if (isWhistleblowerGuidancePageEnabled()) routes.push("/whistleblowing");
+  const phase = getServerPlatformPhase();
+  const routes = getPublicSitemapStaticPaths(phase);
 
   const staticEntries: MetadataRoute.Sitemap = routes.map((route) => ({
     url: `${baseUrl}${route}`,
@@ -112,6 +82,46 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
+  const petitionEntries: MetadataRoute.Sitemap = [];
+  if (isCivicPetitionsAndPublicCausesEnabled() && isDatabaseConfigured()) {
+    try {
+      const openPetitions = await prisma.petition.findMany({
+        where: { status: "OPEN" },
+        select: { slug: true, updatedAt: true },
+      });
+      for (const p of openPetitions) {
+        petitionEntries.push({
+          url: `${baseUrl}/petitions/${p.slug}`,
+          lastModified: p.updatedAt,
+          changeFrequency: "weekly",
+          priority: 0.55,
+        });
+      }
+    } catch {
+      /* DB unreachable during build */
+    }
+  }
+
+  const resourceDocumentEntries: MetadataRoute.Sitemap = [];
+  if (isDatabaseConfigured()) {
+    try {
+      const resourceDocs = await prisma.resourceDocument.findMany({
+        where: { publishedAt: { not: null } },
+        select: { slug: true, updatedAt: true },
+      });
+      for (const r of resourceDocs) {
+        resourceDocumentEntries.push({
+          url: `${baseUrl}/resources/${r.slug}`,
+          lastModified: r.updatedAt,
+          changeFrequency: "monthly",
+          priority: 0.55,
+        });
+      }
+    } catch {
+      /* DB unreachable during build */
+    }
+  }
+
   const promisesMemberEntries: MetadataRoute.Sitemap = [];
   if (isPromisesBrowseEnabled() && isDatabaseConfigured()) {
     try {
@@ -137,6 +147,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...communityEntries,
     ...newsEntries,
     ...reportCardYearEntries,
+    ...resourceDocumentEntries,
+    ...petitionEntries,
     ...promisesMemberEntries,
   ];
 }

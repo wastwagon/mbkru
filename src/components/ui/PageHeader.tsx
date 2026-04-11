@@ -22,10 +22,17 @@ const PATH_BREADCRUMBS: Record<string, string> = {
   "/contact": "Contact",
   "/citizens-voice": "Voice",
   "/situational-alerts": "Engagement",
-  "/parliament-tracker": "Accountability",
+  "/parliament-tracker": "Parliament tracker",
   "/legal-empowerment": "Legal",
   "/town-halls": "Forums",
+  "/debates": "Debates",
   "/promises": "Campaign promises",
+  "/promises/browse": "Campaign promises",
+  "/government-commitments": "Commitments",
+  "/transparency": "Voice stats",
+  "/whistleblowing": "Whistleblowing",
+  "/communities": "Communities",
+  "/election-observation": "Election observation",
   "/report-card": "Report card",
   "/methodology": "Methodology",
   "/data-sources": "Data sources",
@@ -33,6 +40,7 @@ const PATH_BREADCRUMBS: Record<string, string> = {
   "/faq": "FAQ",
   "/partners": "Partners & Supporters",
   "/diaspora": "Diaspora — 17th Region",
+  "/diaspora/feedback": "Diaspora feedback",
   "/privacy": "Privacy Policy",
   "/terms": "Terms of Use",
   "/track-report": "Track a report",
@@ -130,6 +138,12 @@ function buildBreadcrumbs(pathname: string, currentLabel?: string): BreadcrumbIt
       href: "/situational-alerts",
     });
     items.push({ label: PATH_BREADCRUMBS["/situational-alerts/submit"] ?? "Submit engagement" });
+    return items;
+  }
+
+  if (segments[0] === "diaspora" && segments[1] === "feedback") {
+    items.push({ label: PATH_BREADCRUMBS["/diaspora"] ?? "Diaspora", href: "/diaspora" });
+    items.push({ label: PATH_BREADCRUMBS["/diaspora/feedback"] ?? "Diaspora feedback" });
     return items;
   }
 

@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { Fragment } from "react";
 import { usePathname } from "next/navigation";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
+import { getAboutPhaseQuickLinks, getLiveHeroCompactLinks } from "@/config/public-platform-nav";
 import { useMemberMe } from "@/hooks/useMemberMe";
 
 const pill =
@@ -14,14 +16,9 @@ const pillDark =
 export function LivePlatformStrip() {
   const pathname = usePathname();
   const phase = getPublicPlatformPhase();
-  const voice = platformFeatures.citizensVoicePlatform(phase);
-  const parliament = platformFeatures.parliamentTrackerData(phase);
-  const publicReportCard = platformFeatures.publicReportCard(phase);
-  const voiceStats = platformFeatures.publicVoiceStatistics(phase);
-  const legal = platformFeatures.legalEmpowermentDesk(phase);
-  const townHalls = platformFeatures.townHallDirectory(phase);
   const auth = platformFeatures.authentication(phase);
   const { member, busy: authBusy } = useMemberMe(phase >= 2 && auth, pathname);
+  const toolLinks = getAboutPhaseQuickLinks(phase);
 
   if (phase < 2) {
     return (
@@ -46,65 +43,29 @@ export function LivePlatformStrip() {
           Phase {phase} — tools below match your build. Accountability data and APIs follow the same flags.
         </p>
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
-          {voice ? (
-            <>
-              <Link href="/citizens-voice/submit" className={pill}>
-                Submit a report
+          {toolLinks.map((link, i) => (
+            <Fragment key={link.href}>
+              {i === 2 && auth ? (
+                member != null ? (
+                  <Link href="/account" className={pill}>
+                    Account
+                  </Link>
+                ) : (
+                  <>
+                    <Link href="/register" className={pill}>
+                      Register
+                    </Link>
+                    <Link href="/login" className={`${pill} ${authBusy ? "opacity-75" : ""}`}>
+                      Sign in
+                    </Link>
+                  </>
+                )
+              ) : null}
+              <Link href={link.href} className={pill}>
+                {link.label}
               </Link>
-              <Link href="/track-report" className={pill}>
-                Track a report
-              </Link>
-            </>
-          ) : null}
-          {auth ? (
-            member != null ? (
-              <Link href="/account" className={pill}>
-                Account
-              </Link>
-            ) : (
-              <>
-                <Link href="/register" className={pill}>
-                  Register
-                </Link>
-                <Link href="/login" className={`${pill} ${authBusy ? "opacity-75" : ""}`}>
-                  Sign in
-                </Link>
-              </>
-            )
-          ) : null}
-          {parliament ? (
-            <Link href="/promises" className={pill}>
-              Campaign promises
-            </Link>
-          ) : null}
-          {voice && voiceStats ? (
-            <Link href="/transparency" className={pill}>
-              Voice statistics
-            </Link>
-          ) : null}
-          {publicReportCard ? (
-            <Link href="/report-card" className={pill}>
-              People&apos;s Report Card
-            </Link>
-          ) : null}
-          <Link href="/methodology" className={pill}>
-            Methodology
-          </Link>
-          {legal ? (
-            <Link href="/legal-empowerment" className={pill}>
-              Legal
-            </Link>
-          ) : null}
-          {townHalls ? (
-            <>
-              <Link href="/town-halls" className={pill}>
-                Forums
-              </Link>
-              <Link href="/debates" className={pill}>
-                Debates
-              </Link>
-            </>
-          ) : null}
+            </Fragment>
+          ))}
         </div>
       </div>
     </section>
@@ -117,13 +78,9 @@ export function LivePlatformHeroChips() {
   const phase = getPublicPlatformPhase();
   const auth = platformFeatures.authentication(phase);
   const { member, busy: authBusy } = useMemberMe(phase >= 2 && auth, pathname);
+  const compactLinks = getLiveHeroCompactLinks(phase);
 
   if (phase < 2) return null;
-
-  const voice = platformFeatures.citizensVoicePlatform(phase);
-  const parliament = platformFeatures.parliamentTrackerData(phase);
-  const publicReportCard = platformFeatures.publicReportCard(phase);
-  const voiceStats = platformFeatures.publicVoiceStatistics(phase);
 
   return (
     <div className="mt-3 flex flex-wrap gap-2">
@@ -143,26 +100,11 @@ export function LivePlatformHeroChips() {
           </>
         )
       ) : null}
-      {voice ? (
-        <>
-          <Link href="/citizens-voice/submit" className={pillDark}>
-            Submit a report
-          </Link>
-          <Link href="/track-report" className={pillDark}>
-            Track
-          </Link>
-        </>
-      ) : null}
-      {parliament ? (
-        <Link href="/promises" className={pillDark}>
-          Promises
+      {compactLinks.map((link) => (
+        <Link key={link.href} href={link.href} className={pillDark}>
+          {link.label}
         </Link>
-      ) : null}
-      {publicReportCard ? (
-        <Link href="/report-card" className={pillDark}>
-          Report card
-        </Link>
-      ) : null}
+      ))}
     </div>
   );
 }

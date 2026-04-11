@@ -1,6 +1,7 @@
 import { LeadCaptureSource } from "@prisma/client";
 import { NextResponse } from "next/server";
 
+import { pushNewsletterSubscriptionToEspIfConfigured } from "@/lib/server/esp-newsletter";
 import { upsertLeadCapture } from "@/lib/server/lead-capture";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 import { requireTurnstileIfConfigured } from "@/lib/server/verify-turnstile";
@@ -34,6 +35,7 @@ export async function POST(request: Request) {
     if (turnstileBlock) return turnstileBlock;
 
     await upsertLeadCapture(parsed.data.email, LeadCaptureSource.NEWSLETTER);
+    await pushNewsletterSubscriptionToEspIfConfigured(parsed.data.email);
 
     return NextResponse.json({ success: true });
   } catch {

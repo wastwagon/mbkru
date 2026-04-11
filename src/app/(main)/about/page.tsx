@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AboutPlatformLinks } from "@/components/about/AboutPlatformLinks";
 import { Badge } from "@/components/ui/Badge";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { images, pillarImages, heroContent } from "@/lib/site-content";
+import { images, mbkruStrategicContent, pillarImages, heroContent } from "@/lib/site-content";
 
 export const metadata: Metadata = {
   title: "About",
@@ -65,14 +65,6 @@ const stats = [
   },
 ];
 
-const coreObjectives = [
-  "Establish a permanent, two-way communication channel between citizens and the Presidency.",
-  "Create binding mechanisms that compel elected officials to respond to citizen complaints within defined timeframes.",
-  "Provide free or low-cost legal navigation support to members facing bureaucratic injustice.",
-  "Systematically monitor and publicly report on the performance of elected officials and government programs.",
-  "Influence electoral outcomes by giving citizens credible, data-driven information on candidates' records and commitments.",
-];
-
 const pillars = [
   {
     title: "Digital Platform — MBKRU Voice",
@@ -130,15 +122,11 @@ export default async function AboutPage() {
               <h2 className="mt-1.5 font-display text-lg font-bold text-[var(--foreground)] sm:text-xl lg:text-2xl">
                 Executive Summary
               </h2>
-              <p className="mt-3 text-base leading-relaxed text-[var(--muted-foreground)]">
-                My Brother&apos;s Keeper Restoration United (MBKRU) proposes to transform itself into Ghana&apos;s premier independent, non-partisan citizens&apos; platform that connects ordinary Ghanaians—especially the poor, rural, urban, and youth populations—directly to the highest levels of government.
-              </p>
-              <p className="mt-4 text-base leading-relaxed text-[var(--muted-foreground)]">
-                By building a transparent, technology-enabled communication bridge between the Presidency, Ministers, Parliament, and the people, MBKRU will ensure that elected officials are held strictly accountable to the promises they make and the needs of the citizens they serve.
-              </p>
-              <p className="mt-4 text-base leading-relaxed text-[var(--muted-foreground)]">
-                The ultimate goal is the systematic reduction and eventual eradication of extreme poverty in Ghana through sustained citizen pressure, real-time grievance redress, legal empowerment, and electoral accountability.
-              </p>
+              {mbkruStrategicContent.executiveSummaryParagraphs.map((para, i) => (
+                <p key={i} className={`text-base leading-relaxed text-[var(--muted-foreground)] ${i > 0 ? "mt-4" : "mt-3"}`}>
+                  {para}
+                </p>
+              ))}
             </div>
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-[var(--shadow-card)] lg:order-2">
               <Image
@@ -153,20 +141,27 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* Section 2: Our Mission — restorative justice & conduit role */}
+      {/* Section 2: Vision & Mission — programme document order */}
       <section className="section-spacing section-full bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-10">
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-10">
+            <div>
+              <Badge variant="primary">Vision</Badge>
+              <h2 className="mt-1.5 font-display text-lg font-bold text-[var(--foreground)] sm:text-xl lg:text-2xl">
+                The Ghana we work toward
+              </h2>
+              <p className="mt-3 text-base leading-relaxed text-[var(--muted-foreground)]">{mbkruStrategicContent.vision}</p>
+            </div>
             <div>
               <Badge variant="warm">Mission</Badge>
               <h2 className="mt-1.5 font-display text-lg font-bold text-[var(--foreground)] sm:text-xl lg:text-2xl">
-                Restorative Justice & Sustainable Development
+                Restorative justice &amp; the presidential conduit
               </h2>
-              <p className="mt-3 text-base leading-relaxed text-[var(--muted-foreground)]">
-                To advance restorative justice and sustainable development in Ghana by facilitating equitable reparations for historical injustice, including the transatlantic slave trade and colonial exploitation. Through transparent governance, community empowerment, and strategic partnerships, we commit to transforming reparative resources into tangible benefits that uplift affected communities, preserve cultural heritage, and foster economic resilience for future generations.
+              <p className="mt-3 text-base font-medium leading-relaxed text-[var(--foreground)]">
+                {mbkruStrategicContent.mission}
               </p>
               <p className="mt-4 text-base leading-relaxed text-[var(--muted-foreground)]">
-                We serve as the official, trusted conduit between the President of the Republic and the ordinary people of Ghana, giving voice to the voiceless, protecting the vulnerable, and enforcing accountability at every level of governance.
+                {mbkruStrategicContent.missionRestorativeContext}
               </p>
               <div className="mt-6 grid grid-cols-2 gap-2.5 sm:gap-3">
                 {stats.map(({ value, suffix, label, icon }) => (
@@ -190,15 +185,15 @@ export default async function AboutPage() {
                 ))}
               </div>
             </div>
-            <div className="relative isolate aspect-[4/3] overflow-hidden rounded-2xl shadow-[var(--shadow-card)]">
-              <Image
-                src={images.aboutMission}
-                alt="Community and heritage"
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-            </div>
+          </div>
+          <div className="relative mx-auto mt-10 aspect-[21/9] max-w-4xl overflow-hidden rounded-2xl shadow-[var(--shadow-card)]">
+            <Image
+              src={images.aboutMission}
+              alt="Community and heritage"
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 896px"
+            />
           </div>
         </div>
       </section>
@@ -214,14 +209,14 @@ export default async function AboutPage() {
             <Badge variant="outline" className="mt-1.5">Our Motto</Badge>
             <Badge variant="outlineGold" className="mt-5">Our Commitment</Badge>
             <h2 className="mt-2.5 font-display text-base font-bold text-white sm:text-lg lg:text-xl">
-              Advocate for the Disenfranchised • Watchdog for Accountability • Catalyst for Poverty Eradication
+              {mbkruStrategicContent.pillarTagline}
             </h2>
             <p className="mt-2 text-xs text-white/80">
               Core objectives that guide our platform and partnerships
             </p>
           </div>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:mt-10 lg:grid-cols-3">
-            {coreObjectives.map((obj, i) => (
+            {mbkruStrategicContent.coreObjectives.map((obj, i) => (
               <div
                 key={i}
                 className="group relative flex gap-4 rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm transition-all duration-300 hover:border-[var(--accent-warm)]/50 hover:bg-white/10 sm:p-5"

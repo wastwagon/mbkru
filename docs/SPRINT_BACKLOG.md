@@ -2,7 +2,7 @@
 
 **How to use this:** One sprint = roughly **1–2 weeks** for a small team; adjust to your capacity. Do not skip **security / legal** items before turning on public data collection at scale.
 
-**Master phase task list (what to do next):** [`PHASE_TASKS.md`](./PHASE_TASKS.md) — all features/tasks grouped by Phase 1 / 2 / 3 + cross-cutting checkboxes.
+**Master phase task list (what to do next):** [`PHASE_TASKS.md`](./PHASE_TASKS.md) — all features/tasks grouped by Phase 1 / 2 / 3 + cross-cutting checkboxes. **Feature-gap waves (audit follow-up):** see *Feature-gap closure programme* in [`PHASE_TASKS.md`](./PHASE_TASKS.md) (Waves A–D).
 
 **Canonical engineering detail:** [`PHASES_2_3_IMPLEMENTATION.md`](./PHASES_2_3_IMPLEMENTATION.md) · **Product scope:** [`../PHASE1_SCOPE.md`](../PHASE1_SCOPE.md) · **Roadmap:** [`../ROADMAP_2028_ELECTION.md`](../ROADMAP_2028_ELECTION.md)
 

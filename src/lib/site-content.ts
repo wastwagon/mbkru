@@ -109,14 +109,42 @@ export const pillarImages = [
 ] as const;
 
 /**
+ * Strategic narrative — board / programme document (Executive summary, Vision, Mission, Core objectives).
+ * Homepage and About import from here so messaging stays aligned.
+ */
+export const mbkruStrategicContent = {
+  legalName: "My Brother's Keeper Restoration United (MBKRU)",
+  pillarTagline:
+    "Advocate for the Disenfranchised • Watchdog for Accountability • Catalyst for Poverty Eradication",
+  executiveSummaryParagraphs: [
+    "My Brother's Keeper Restoration United (MBKRU) proposes to transform itself into Ghana's premier independent, non-partisan citizens' platform that connects ordinary Ghanaians—especially the poor, rural, urban, and youth populations—directly to the highest levels of government.",
+    "By building a transparent, technology-enabled communication bridge between the Presidency, Ministers, Parliament, and the people, MBKRU will ensure that elected officials are held strictly accountable to the promises they make and the needs of the citizens they serve.",
+    "The ultimate goal is the systematic reduction and eventual eradication of extreme poverty in Ghana through sustained advocacy and public engagement, real-time grievance redress, legal empowerment, and electoral accountability.",
+  ],
+  vision:
+    "A Ghana where no citizen feels powerless, where government listens, responds, and delivers, and where poverty is treated as a national emergency rather than an acceptable condition.",
+  mission:
+    "To serve as the official, trusted conduit between the President of the Republic and the ordinary people of Ghana, giving voice to the voiceless, protecting the vulnerable, and enforcing accountability at every level of governance.",
+  missionRestorativeContext:
+    "To advance restorative justice and sustainable development in Ghana by facilitating equitable reparations for historical injustice, including the transatlantic slave trade and colonial exploitation. Through transparent governance, community empowerment, and strategic partnerships, we commit to transforming reparative resources into tangible benefits that uplift affected communities, preserve cultural heritage, and foster economic resilience for future generations.",
+  coreObjectives: [
+    "Establish a permanent, two-way communication channel between citizens and the Presidency.",
+    "Create binding mechanisms that compel elected officials to respond to citizen complaints within defined timeframes.",
+    "Provide free or low-cost legal navigation support to members facing bureaucratic injustice.",
+    "Systematically monitor and publicly report on the performance of elected officials and government programs.",
+    "Influence electoral outcomes by giving citizens credible, data-driven information on candidates' records and commitments.",
+  ],
+} as const;
+
+/**
  * Hero / brand content — from MBKRU Advocates.pages (source docs)
  * Single source of truth for tagline, motto, subhead
  */
 export const heroContent = {
   /** Official tagline — MBKRU Advocates.pages */
   tagline: "A Direct Voice Between the President and the People of Ghana",
-  /** Condensed from "Advocate for the Disenfranchised • Watchdog for Accountability • Catalyst for Poverty Eradication" */
-  subhead: "Advocate • Watchdog • Catalyst",
+  /** Three pillars tagline — same as `mbkruStrategicContent.pillarTagline` */
+  subhead: mbkruStrategicContent.pillarTagline,
   /** Official motto — MBKRU Advocates.pages */
   motto: "For the People, By the People, With the People",
 } as const;

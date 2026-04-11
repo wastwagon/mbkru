@@ -70,6 +70,20 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
         </li>
       </ul>
 
+      <p className="mt-4 text-sm">
+        <a
+          href={
+            sourceFilter
+              ? `/api/admin/leads-export?source=${encodeURIComponent(sourceFilter)}`
+              : "/api/admin/leads-export"
+          }
+          className="font-semibold text-[var(--primary)] hover:underline"
+        >
+          Download CSV
+        </a>
+        <span className="text-[var(--muted-foreground)]"> — UTF-8, Excel-friendly; respects the filter above.</span>
+      </p>
+
       <div className="mt-6 flex flex-wrap gap-2" role="tablist" aria-label="Filter by signup source">
         {SOURCE_TABS.map((t) => {
           const active =

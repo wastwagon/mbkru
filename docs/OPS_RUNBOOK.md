@@ -14,6 +14,9 @@ Use before major traffic (e.g. election window) or after infra changes:
 - [ ] **`SKIP_DB_SEED=1`** on production after first stable deploy (see below).
 - [ ] **`GET /api/health`:** HTTP **200** (or **503** only if Postgres intentionally down in a test); JSON **`dependencies`** and **`accountability`** flags match the phase you intend.
 - [ ] **`NEXT_PUBLIC_*`:** any change (phase, site URL, Turnstile, analytics) required a **full image rebuild** — confirm current image matches env in your registry.
+- [ ] **Search Console:** set `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` to the HTML-tag content value, rebuild, then complete verification in Google Search Console.
+- [ ] **Newsletter ESP:** when `MAILCHIMP_*` or `CONVERTKIT_*` is set, confirm a test signup appears in the audience/form; failures log as `[esp-newsletter]` only — Postgres `LeadCapture` remains source of truth.
+- [ ] **Lead staff pings:** with `RESEND_API_KEY` + **`LEADS_STAFF_INBOX_EMAIL`**, submit a Parliament tracker and an early-access test signup; confirm one email each (`[leads-notify]` in logs on success).
 - [ ] **Phase:** `NEXT_PUBLIC_PLATFORM_PHASE` at build time matches what product/legal approved for this environment.
 
 ---
@@ -30,7 +33,7 @@ Use before major traffic (e.g. election window) or after infra changes:
 
 - Rotate **`ADMIN_SESSION_SECRET`**, **`MEMBER_SESSION_SECRET`**, DB passwords, Resend/Turnstile keys on compromise or per org policy (e.g. annually).
 - Run **`npm audit`** periodically; plan **Prisma major** upgrades separately — [`PRISMA7_NOTES.md`](./PRISMA7_NOTES.md).
-- Review **upload volume** size and backup retention for **`public/uploads/reports/`**.
+- Review **upload volume** size and backup retention for **`public/uploads/reports/`** and **`public/uploads/resources/`** (public Resource library PDFs).
 
 ---
 

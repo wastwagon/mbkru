@@ -53,10 +53,11 @@ flowchart TB
 | Path | Purpose |
 |------|---------|
 | `src/app/(main)/` | Public marketing routes; route groups keep layouts consistent |
+| `src/middleware.ts` | Edge: `X-Robots-Tag: noindex, nofollow` on **`/admin/*`** and **`/account/*`** (complements `robots.ts`) |
 | `src/app/admin/` | Authenticated admin: login, posts CRUD, media library |
 | `src/app/api/` | Server-only HTTP API; admin login/logout/media upload + public form endpoints |
 | `src/components/` | UI; `forms/` holds client forms aligned with API routes |
-| `src/config/` | **Platform phase**, feature flags — single source of truth |
+| `src/config/` | **Platform phase**, feature flags — single source of truth; **`public-platform-nav.ts`** drives header, footer “Our Platform”, About/home quick links, **`sitemap.ts`** static paths, and **`/account`** explore links from the same gates |
 | `src/lib/` | Shared utilities; **`env.server.ts`** is server-only |
 | `src/lib/admin/` | JWT session helpers, `requireSession` for server actions |
 | `prisma/`, **`prisma.config.ts`** | Schema, migrations, **seed** (first admin from env); seed command is configured in **`prisma.config.ts`** (replaces deprecated `package.json#prisma`) |

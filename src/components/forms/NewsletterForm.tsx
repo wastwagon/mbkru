@@ -37,6 +37,9 @@ export function NewsletterForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <p className="text-center text-sm font-medium text-[var(--foreground)] sm:text-left">
+        Get accountability updates
+      </p>
       <FormTurnstile
         ref={turnstileRef}
         action="newsletter"
@@ -60,7 +63,7 @@ export function NewsletterForm() {
           disabled={status === "loading" || (isTurnstileWidgetEnabled && !turnstileToken)}
           className="min-h-[56px] rounded-xl bg-[var(--primary)] font-semibold text-white shadow-md hover:bg-[var(--primary-dark)] hover:shadow-lg sm:min-h-[60px] sm:shrink-0"
         >
-          {status === "loading" ? "Subscribing…" : "Subscribe"}
+          {status === "loading" ? "Joining…" : "Get updates"}
         </Button>
       </div>
       {status === "success" && (

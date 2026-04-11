@@ -158,6 +158,27 @@ export default function DiasporaPage() {
         description="Announcement context, reported Summit activities, and how MBKRU supports civic education, accountability, and collaboration in Phase 1."
       />
 
+      <div className="border-b border-[var(--primary)]/20 bg-gradient-to-r from-[var(--primary)]/[0.08] via-white to-[var(--accent-gold)]/[0.12]">
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-4 py-5 sm:flex-row sm:items-center sm:px-6 lg:px-8">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">Visiting Ghana?</p>
+            <p className="mt-1 max-w-2xl text-sm text-[var(--muted-foreground)]">
+              Share your experience in our structured feedback form — responses are saved to the MBKRU admin for
+              programme records.
+            </p>
+          </div>
+          <Link
+            href="/diaspora/feedback"
+            className={`${ctaClass} shrink-0 bg-[var(--primary)] text-white hover:bg-[var(--primary)]/90`}
+          >
+            Open feedback form
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </Link>
+        </div>
+      </div>
+
       {/* Hero: mobile-first — image stacks above copy; premium card + imagery */}
       <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
