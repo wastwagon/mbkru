@@ -6,6 +6,8 @@ export type MemberMe = { displayName?: string | null; email: string };
 
 type MeResponse = { member?: MemberMe | null };
 
+const AUTH_ME_FETCH_MS = 12_000;
+
 /**
  * Cached GET /api/auth/me for client UI (header, homepage chips). Refetch when
  * `pathname` changes (e.g. after login navigation). No-op when `enabled` is false.
@@ -16,7 +18,9 @@ export function useMemberMe(enabled: boolean, pathname: string) {
   useEffect(() => {
     if (!enabled) return;
     let cancelled = false;
-    fetch("/api/auth/me", { credentials: "include" })
+    const ac = new AbortController();
+    const timeoutId = setTimeout(() => ac.abort(), AUTH_ME_FETCH_MS);
+    fetch("/api/auth/me", { credentials: "include", signal: ac.signal })
       .then(async (res) => {
         if (cancelled) return;
         if (!res.ok) {
@@ -28,9 +32,14 @@ export function useMemberMe(enabled: boolean, pathname: string) {
       })
       .catch(() => {
         if (!cancelled) setMember(null);
+      })
+      .finally(() => {
+        clearTimeout(timeoutId);
       });
     return () => {
       cancelled = true;
+      ac.abort();
+      clearTimeout(timeoutId);
     };
   }, [enabled, pathname]);
 

@@ -33,48 +33,49 @@ function SocialIcon({ icon }: { icon: "facebook" | "linkedin" | "twitter" }) {
   );
 }
 
+const contactLinkClass =
+  "flex min-h-[44px] min-w-0 items-center justify-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs text-white/95 transition-colors hover:bg-white/20 hover:text-white sm:min-h-0 sm:justify-start sm:bg-transparent sm:px-0 sm:py-0 sm:text-sm";
+
 export function TopBar() {
   return (
     <div className="relative z-40 overflow-hidden bg-[var(--accent-gold)] text-white">
-      <div className="relative mx-auto flex max-w-7xl flex-col gap-2 px-4 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-2 lg:px-8">
+      <div className="relative mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-2 sm:px-6 sm:py-2 lg:px-8">
         <div className="absolute bottom-0 left-4 right-4 h-[2px] bg-gradient-to-r from-transparent via-white/40 to-transparent sm:left-6 sm:right-6 lg:left-8 lg:right-8" aria-hidden />
-        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 text-sm sm:justify-start">
+        <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-start sm:gap-x-6 sm:gap-y-1">
           <a
             href={`https://maps.google.com/?q=${encodeURIComponent(contactInfo.address)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 text-white/95 transition-colors hover:text-white"
+            className={contactLinkClass}
           >
             <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            <span>{contactInfo.address}</span>
+            <span className="min-w-0 text-center sm:text-left">{contactInfo.address}</span>
           </a>
           <a
             href={`mailto:${contactInfo.email}`}
-            className="flex items-center gap-2 text-white/95 transition-colors hover:text-white"
+            title={contactInfo.email}
+            className={contactLinkClass}
           >
             <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
-            <span>{contactInfo.email}</span>
+            <span className="min-w-0 break-all text-center sm:break-normal sm:text-left">{contactInfo.email}</span>
           </a>
           {contactInfo.tel ? (
             <a
               href={`tel:${contactInfo.tel.replace(/\s/g, "")}`}
-              className="flex items-center gap-2 text-white/95 transition-colors hover:text-white"
+              className={contactLinkClass}
             >
               <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
-              <span>{contactInfo.tel}</span>
+              <span className="min-w-0 text-center sm:text-left">{contactInfo.tel}</span>
             </a>
           ) : null}
-          <Link
-            href="/data-sources"
-            className="flex items-center gap-1.5 text-white/95 transition-colors hover:text-white"
-          >
+          <Link href="/data-sources" className={`${contactLinkClass} touch-manipulation`}>
             <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -82,14 +83,14 @@ export function TopBar() {
             <span className="sm:hidden">Sources</span>
           </Link>
         </div>
-        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:justify-end">
-          <span className="max-w-[220px] text-center text-[11px] font-semibold uppercase leading-snug tracking-wide text-white/90 sm:max-w-none sm:text-left sm:text-xs">
+        <div className="flex w-full flex-col items-center gap-3 border-t border-white/20 pt-3 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end sm:border-t-0 sm:pt-0 sm:gap-x-4 sm:gap-y-2">
+          <span className="w-full max-w-md px-1 text-center text-[10px] font-semibold uppercase leading-relaxed tracking-wide text-white/95 sm:w-auto sm:max-w-none sm:px-0 sm:text-left sm:text-xs">
             {content.topBarTagline}
           </span>
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center justify-center gap-2.5 sm:gap-2">
             {socialLinks.map(({ href, label, icon, external }) => {
               const className =
-                "flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 text-white transition-all duration-300 hover:bg-white hover:text-[var(--section-dark)]";
+                "flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 text-white transition-all duration-300 hover:bg-white hover:text-[var(--section-dark)] sm:h-8 sm:w-8 sm:rounded-lg";
               const inner = <SocialIcon icon={icon} />;
               if (external) {
                 return (

@@ -41,8 +41,41 @@ function todayIsoDate() {
   return `${y}-${m}-${day}`;
 }
 
+const SUBMIT_TIMEOUT_MS = 45_000;
+const SUBMIT_TIMEOUT_SEC = Math.round(SUBMIT_TIMEOUT_MS / 1000);
+
+const DIASPORA_SUBMIT_ERROR_FALLBACK =
+  "The server returned an error or dropped the connection. Try again in a few minutes or email info@mbkruadvocates.org.";
+
+/** User-visible explanation; always returns non-empty text. */
+function describeDiasporaSubmitError(e: unknown): string {
+  const isAbort =
+    typeof e === "object" &&
+    e !== null &&
+    "name" in e &&
+    (e as { name: unknown }).name === "AbortError";
+  if (isAbort) {
+    return `The server did not finish within about ${SUBMIT_TIMEOUT_SEC} seconds, so the request was stopped. That usually means the website or database is slow or unreachable—not a problem with your answers. Wait a few minutes and try again, or email info@mbkruadvocates.org.`;
+  }
+  if (e instanceof Error) {
+    const m = e.message.trim();
+    if (
+      m === "Failed to fetch" ||
+      m === "Load failed" ||
+      m === "NetworkError when attempting to fetch resource."
+    ) {
+      return "Your browser could not reach the server. Check your connection and try again, or email info@mbkruadvocates.org.";
+    }
+    if (m && m !== "Failed") {
+      return `${m} If this keeps happening, email info@mbkruadvocates.org.`;
+    }
+  }
+  return DIASPORA_SUBMIT_ERROR_FALLBACK;
+}
+
 export function DiasporaFeedbackForm() {
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [receivedAtIso, setReceivedAtIso] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(undefined);
@@ -69,6 +102,10 @@ export function DiasporaFeedbackForm() {
   });
 
   async function onSubmit(data: FormData) {
+    setStatus("idle");
+    setErrorMessage(null);
+    const ac = new AbortController();
+    const timeoutId = setTimeout(() => ac.abort(), SUBMIT_TIMEOUT_MS);
     try {
       const res = await fetch("/api/diaspora-feedback", {
         method: "POST",
@@ -77,12 +114,14 @@ export function DiasporaFeedbackForm() {
           ...data,
           turnstileToken: turnstileToken ?? undefined,
         }),
+        signal: ac.signal,
       });
       if (!res.ok) {
         const j = (await res.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(j?.error ?? "Failed");
+        throw new Error(j?.error ?? `Request failed (${res.status})`);
       }
       const okJson = (await res.json().catch(() => ({}))) as { receivedAt?: string };
+      setErrorMessage(null);
       setReceivedAtIso(okJson.receivedAt ?? new Date().toISOString());
       setStatus("success");
       reset({
@@ -98,9 +137,12 @@ export function DiasporaFeedbackForm() {
       } as DefaultValues<FormData>);
       setTurnstileToken(null);
       turnstileRef.current?.reset();
-    } catch {
+    } catch (e) {
       setReceivedAtIso(null);
       setStatus("error");
+      setErrorMessage(describeDiasporaSubmitError(e));
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 
@@ -353,17 +395,16 @@ export function DiasporaFeedbackForm() {
         </div>
       )}
       {status === "error" && (
-        <div className="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-900" role="alert">
-          <svg className="h-5 w-5 shrink-0 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-900" role="alert">
+          <svg className="mt-0.5 h-5 w-5 shrink-0 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <p className="text-sm font-medium">
-            Something went wrong. Please try again, or email{" "}
-            <a href="mailto:info@mbkruadvocates.org" className="underline">
-              info@mbkruadvocates.org
-            </a>
-            .
-          </p>
+          <div className="text-sm">
+            <p className="font-semibold text-red-950">We could not send your feedback.</p>
+            <p className="mt-2 font-normal leading-relaxed text-red-900/95">
+              {errorMessage ?? DIASPORA_SUBMIT_ERROR_FALLBACK}
+            </p>
+          </div>
         </div>
       )}
 
