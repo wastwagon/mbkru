@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ghanaRegionsData } from "@/lib/site-content";
+import { GhanaRegionsSvgMap } from "@/components/ui/GhanaRegionsSvgMap";
 import { RegionModal, type RegionData } from "@/components/ui/RegionModal";
+import { ghanaRegionsData } from "@/lib/site-content";
 
 /**
  * 16 Regions of Ghana — interactive data viz with modal lightbox
@@ -24,7 +25,7 @@ export function RegionsViz() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </span>
-            Click any region for details
+            Click a region or use the map below for details
           </p>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -45,6 +46,12 @@ export function RegionsViz() {
           ))}
         </div>
       </div>
+
+      <GhanaRegionsSvgMap
+        selectedRegionName={selectedRegion?.name ?? null}
+        onSelectRegion={setSelectedRegion}
+      />
+
       <RegionModal region={selectedRegion} onClose={() => setSelectedRegion(null)} />
     </>
   );
