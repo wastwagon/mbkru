@@ -9,8 +9,7 @@ import type {
   GovernmentCommitmentHomeRow,
   GovernmentCommitmentsHomePreview,
 } from "@/lib/home-government-preview-types";
-import { getCachedPromisesApiRows } from "@/lib/server/accountability-cache";
-import { getPromiseTrackerStats } from "@/lib/server/promise-tracker-stats";
+import { getCachedPromiseTrackerStats, getCachedPromisesApiRows } from "@/lib/server/accountability-cache";
 
 export type {
   GovernmentCommitmentHomeRow,
@@ -35,7 +34,7 @@ export async function getGovernmentCommitmentsHomePreview(): Promise<GovernmentC
   try {
     const filters = parsePromisesApiFilters(buildGovernmentOnlyFiltersUrl());
     const [stats, apiRows] = await Promise.all([
-      getPromiseTrackerStats("government"),
+      getCachedPromiseTrackerStats(filters),
       getCachedPromisesApiRows(filters),
     ]);
     const rows: GovernmentCommitmentHomeRow[] = apiRows.slice(0, PREVIEW_MAX).map((r) => ({

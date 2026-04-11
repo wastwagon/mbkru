@@ -48,3 +48,12 @@ export function parsePromiseListElectionCycle(raw: string | undefined): string |
   const c = raw?.trim() ?? "";
   return c.length > 0 ? c : undefined;
 }
+
+const CONSTITUENCY_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+/** URL `constituency=` slug — must match `Constituency.slug` in the database. */
+export function parsePromiseListConstituencySlug(raw: string | undefined): string {
+  const v = raw?.trim().toLowerCase() ?? "";
+  if (v.length > 120 || !CONSTITUENCY_SLUG_RE.test(v)) return "";
+  return v;
+}

@@ -20,5 +20,11 @@ export type PublicPromiseApiRow = {
     electionCycle: string | null;
     sourceUrl: string | null;
   } | null;
-  member: { name: string; slug: string; role: string; party: string | null } | null;
+  member: {
+    name: string;
+    slug: string;
+    role: string;
+    party: string | null;
+    constituency: { name: string; slug: string } | null;
+  } | null;
 };

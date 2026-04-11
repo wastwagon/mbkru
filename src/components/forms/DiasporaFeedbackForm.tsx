@@ -379,17 +379,16 @@ export function DiasporaFeedbackForm() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
           <div>
-            <p className="text-sm font-semibold">Thank you — your feedback has been recorded.</p>
+            <p className="text-sm font-semibold">Thank you for your feedback.</p>
             {receivedAtIso ? (
               <p className="mt-1 text-xs text-green-900/85">
-                Received{" "}
-                <time dateTime={receivedAtIso}>{formatSubmissionDateTime(receivedAtIso)}</time>
-                <span className="text-green-900/75"> (stored timestamp).</span>
+                We received it on{" "}
+                <time dateTime={receivedAtIso}>{formatSubmissionDateTime(receivedAtIso)}</time>.
               </p>
             ) : null}
             <p className="mt-1 text-sm text-green-800/90">
-              The MBKRU team can review your responses in the website admin. You may close this page or submit another
-              entry if needed.
+              We appreciate you taking the time to share your experience; it helps us strengthen diaspora engagement and
+              programme follow-up.
             </p>
           </div>
         </div>

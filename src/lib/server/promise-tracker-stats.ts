@@ -2,36 +2,46 @@ import "server-only";
 
 import type { Prisma } from "@prisma/client";
 
+import { buildPromisesCatalogueWhere } from "@/lib/build-promises-catalogue-where";
 import type { PromiseTrackerStats } from "@/lib/promise-tracker-public-types";
+import { campaignPromiseMemberWhere } from "@/lib/promise-catalogue-where";
+import type { PromisesApiFilters } from "@/lib/promises-api-filters";
 import { prisma } from "@/lib/db/prisma";
 
 export type { PromiseTrackerStats } from "@/lib/promise-tracker-public-types";
 
-function baseMemberWhere(): Prisma.CampaignPromiseWhereInput {
-  return {
-    memberId: { not: null },
-    member: { is: { active: true } },
-  };
-}
+/**
+ * Headline tracker counts aligned with the public promise catalogue for the same
+ * {@link PromisesApiFilters} (government vs browse via `governmentOnly`).
+ */
+export async function getPromiseTrackerStats(filters: PromisesApiFilters): Promise<PromiseTrackerStats> {
+  const scope = filters.governmentOnly ? "government" : "all";
+  const catalogueWhere = buildPromisesCatalogueWhere(filters);
 
-export async function getPromiseTrackerStats(scope: "all" | "government"): Promise<PromiseTrackerStats> {
-  const memberOk = baseMemberWhere();
-  const scopedWhere: Prisma.CampaignPromiseWhereInput =
-    scope === "government" ? { ...memberOk, isGovernmentProgramme: true } : memberOk;
+  const memberSlug = filters.memberSlug.trim() || undefined;
+  const constituencySlug = filters.constituencySlug.trim() || undefined;
+  const rosterWhere = campaignPromiseMemberWhere(memberSlug, constituencySlug);
+
+  const memberSliceFilters: PromisesApiFilters = { ...filters, governmentOnly: false };
+  const memberCatalogueWhere = buildPromisesCatalogueWhere(memberSliceFilters);
+  const governmentPromisesWhere: Prisma.CampaignPromiseWhereInput = {
+    AND: [memberCatalogueWhere, { isGovernmentProgramme: true }],
+  };
 
   const [totalPromises, governmentPromises, mpsWithPromises, activeMpsTotal, statusGroups, cycles, entryCount] =
     await Promise.all([
-      prisma.campaignPromise.count({ where: scopedWhere }),
-      prisma.campaignPromise.count({
-        where: { ...memberOk, isGovernmentProgramme: true },
-      }),
+      prisma.campaignPromise.count({ where: catalogueWhere }),
+      prisma.campaignPromise.count({ where: governmentPromisesWhere }),
       prisma.parliamentMember.count({
-        where: { active: true, promises: { some: { ...memberOk } } },
+        where: {
+          ...rosterWhere,
+          promises: { some: catalogueWhere },
+        },
       }),
-      prisma.parliamentMember.count({ where: { active: true } }),
+      prisma.parliamentMember.count({ where: rosterWhere }),
       prisma.campaignPromise.groupBy({
         by: ["status"],
-        where: scopedWhere,
+        where: catalogueWhere,
         _count: { _all: true },
       }),
       prisma.reportCardCycle.count({ where: { publishedAt: { not: null } } }),

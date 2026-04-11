@@ -1,10 +1,11 @@
 import "server-only";
 
-import type { Prisma, PromiseStatus } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 
 import { ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC } from "@/lib/accountability-http";
+import { buildPromisesCatalogueWhere } from "@/lib/build-promises-catalogue-where";
 import type { PromisesApiFilters } from "@/lib/promises-api-filters";
+import type { TrackerConstituencyOption } from "@/lib/tracker-constituency-public-types";
 import {
   MPS_ROSTER_TAG,
   PROMISES_INDEX_TAG,
@@ -13,6 +14,7 @@ import {
   reportCardYearTag,
 } from "@/lib/accountability-tags";
 import { prisma } from "@/lib/db/prisma";
+import { getPromiseTrackerStats } from "@/lib/server/promise-tracker-stats";
 
 export {
   ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC,
@@ -148,6 +150,7 @@ export type { PromisesApiFilters } from "@/lib/promises-api-filters";
 function serializePromisesApiFilters(f: PromisesApiFilters): string {
   return [
     f.memberSlug,
+    f.constituencySlug,
     f.partySlug,
     f.electionCycle,
     f.governmentOnly ? "1" : "0",
@@ -157,42 +160,22 @@ function serializePromisesApiFilters(f: PromisesApiFilters): string {
   ].join("|");
 }
 
-function buildPromisesWhere(filters: PromisesApiFilters): Prisma.CampaignPromiseWhereInput {
-  const memberIs: Prisma.ParliamentMemberWhereInput = { active: true };
-  if (filters.memberSlug) memberIs.slug = filters.memberSlug;
-
-  const q = filters.q.trim();
-  const clauses: Prisma.CampaignPromiseWhereInput[] = [
-    { memberId: { not: null } },
-    { member: { is: memberIs } },
-  ];
-  if (q) {
-    clauses.push({
-      OR: [
-        { title: { contains: q, mode: "insensitive" } },
-        { description: { contains: q, mode: "insensitive" } },
-      ],
-    });
-  }
-
-  const where: Prisma.CampaignPromiseWhereInput = { AND: clauses };
-  if (filters.partySlug) where.partySlug = filters.partySlug;
-  if (filters.electionCycle) where.electionCycle = filters.electionCycle;
-  if (filters.governmentOnly) where.isGovernmentProgramme = true;
-  if (filters.policySector) where.policySector = filters.policySector;
-  if (filters.status) where.status = filters.status as PromiseStatus;
-  return where;
-}
-
 async function loadPromisesApiRows(filters: PromisesApiFilters) {
   const memberSlug = filters.memberSlug;
   const items = await prisma.campaignPromise.findMany({
-    where: buildPromisesWhere(filters),
+    where: buildPromisesCatalogueWhere(filters),
     take: memberSlug ? 100 : 75,
     orderBy: { updatedAt: "desc" },
     include: {
       member: {
-        select: { name: true, slug: true, role: true, party: true, active: true },
+        select: {
+          name: true,
+          slug: true,
+          role: true,
+          party: true,
+          active: true,
+          constituency: { select: { name: true, slug: true } },
+        },
       },
       manifestoDocument: {
         select: { id: true, title: true, partySlug: true, electionCycle: true, sourceUrl: true },
@@ -231,6 +214,9 @@ async function loadPromisesApiRows(filters: PromisesApiFilters) {
           slug: p.member.slug,
           role: p.member.role,
           party: p.member.party,
+          constituency: p.member.constituency
+            ? { name: p.member.constituency.name, slug: p.member.constituency.slug }
+            : null,
         }
       : null,
   }));
@@ -257,13 +243,41 @@ export async function getCachedPromisesApiRows(filters: PromisesApiFilters) {
   )();
 }
 
+/** Tracker KPI strip — same filter keying as {@link getCachedPromisesApiRows}. */
+export async function getCachedPromiseTrackerStats(filters: PromisesApiFilters) {
+  if (filters.q.trim()) {
+    return getPromiseTrackerStats(filters);
+  }
+
+  const key = serializePromisesApiFilters(filters);
+  const memberSlug = filters.memberSlug;
+
+  return unstable_cache(
+    async () => getPromiseTrackerStats(filters),
+    ["promise-tracker-stats-v1", key],
+    {
+      tags: memberSlug
+        ? [PROMISES_INDEX_TAG, promisesMemberTag(memberSlug)]
+        : [PROMISES_INDEX_TAG],
+      revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC,
+    },
+  )();
+}
+
 async function loadPromisesCsvRows(filters: PromisesApiFilters) {
   const items = await prisma.campaignPromise.findMany({
-    where: buildPromisesWhere(filters),
+    where: buildPromisesCatalogueWhere(filters),
     orderBy: { updatedAt: "desc" },
     include: {
       member: {
-        select: { name: true, slug: true, role: true, party: true, active: true },
+        select: {
+          name: true,
+          slug: true,
+          role: true,
+          party: true,
+          active: true,
+          constituency: { select: { name: true, slug: true } },
+        },
       },
       manifestoDocument: {
         select: { id: true, title: true, sourceUrl: true },
@@ -295,6 +309,7 @@ async function loadPromisesCsvRows(filters: PromisesApiFilters) {
               slug: p.member.slug,
               role: p.member.role,
               party: p.member.party,
+              constituencyName: p.member.constituency?.name ?? null,
             }
           : null,
       }));
@@ -318,6 +333,38 @@ export async function getCachedPromisesExportCsvRows(filters: PromisesApiFilters
         : [PROMISES_INDEX_TAG],
       revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC,
     },
+  )();
+}
+
+export type { TrackerConstituencyOption } from "@/lib/tracker-constituency-public-types";
+
+/** Constituencies + first active MP per seat — powers the public tracker dropdown (seeded JSON + roster). */
+export async function getCachedTrackerConstituencies(): Promise<TrackerConstituencyOption[]> {
+  return unstable_cache(
+    async () => {
+      const rows = await prisma.constituency.findMany({
+        orderBy: [{ region: { name: "asc" } }, { name: "asc" }],
+        select: {
+          slug: true,
+          name: true,
+          region: { select: { name: true } },
+          members: {
+            where: { active: true },
+            orderBy: { name: "asc" },
+            take: 1,
+            select: { name: true, slug: true },
+          },
+        },
+      });
+      return rows.map((r) => ({
+        slug: r.slug,
+        name: r.name,
+        regionName: r.region.name,
+        mp: r.members[0] ? { name: r.members[0].name, slug: r.members[0].slug } : null,
+      }));
+    },
+    ["tracker-constituencies-v1"],
+    { tags: [MPS_ROSTER_TAG, PROMISES_INDEX_TAG], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
 }
 

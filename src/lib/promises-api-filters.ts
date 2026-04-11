@@ -12,6 +12,8 @@ const PROMISE_STATUS_PARAMS = [
 
 export type PromisesApiFilters = {
   memberSlug: string;
+  /** Constituency slug (matches `Constituency.slug`) — filters promises via linked MP’s seat. */
+  constituencySlug: string;
   partySlug: string;
   electionCycle: string;
   governmentOnly: boolean;
@@ -39,8 +41,13 @@ export function parsePromisesApiFilters(url: URL): PromisesApiFilters {
   const qRaw = sp.get("q")?.trim() ?? "";
   const q = qRaw.length > MAX_Q_LEN ? qRaw.slice(0, MAX_Q_LEN) : qRaw;
 
+  const rawConst = sp.get("constituency")?.trim().toLowerCase() ?? "";
+  const constituencySlug =
+    /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(rawConst) && rawConst.length <= 120 ? rawConst : "";
+
   return {
     memberSlug: sp.get("memberSlug")?.trim().toLowerCase() ?? "",
+    constituencySlug,
     partySlug: sp.get("partySlug")?.trim().toLowerCase() ?? "",
     electionCycle: sp.get("electionCycle")?.trim() ?? "",
     governmentOnly,
@@ -48,4 +55,26 @@ export function parsePromisesApiFilters(url: URL): PromisesApiFilters {
     status,
     q,
   };
+}
+
+/** Unfiltered browse catalogue (no query params). */
+export function defaultPromisesApiFilters(): PromisesApiFilters {
+  return parsePromisesApiFilters(new URL("http://local/"));
+}
+
+/** Whether tracker KPIs differ from the page’s “wide open” default (for subtitle copy). */
+export function promisesFiltersNarrowCatalogue(
+  filters: PromisesApiFilters,
+  mode: "browse" | "government",
+): boolean {
+  const row =
+    Boolean(filters.constituencySlug) ||
+    Boolean(filters.memberSlug) ||
+    Boolean(filters.partySlug) ||
+    Boolean(filters.electionCycle) ||
+    Boolean(filters.policySector) ||
+    Boolean(filters.status) ||
+    Boolean(filters.q.trim());
+  if (mode === "government") return row;
+  return row || filters.governmentOnly;
 }

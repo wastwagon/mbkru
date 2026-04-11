@@ -42,6 +42,7 @@ describe("GET /api/promises", () => {
 
   const emptyFilters = {
     memberSlug: "",
+    constituencySlug: "",
     partySlug: "",
     electionCycle: "",
     governmentOnly: false,
@@ -89,6 +90,14 @@ describe("GET /api/promises", () => {
     });
   });
 
+  it("parses constituency slug", async () => {
+    await GET(new Request("https://example.com/api/promises?constituency=klottey-korle"));
+    expect(getCachedPromisesApiRows).toHaveBeenCalledWith({
+      ...emptyFilters,
+      constituencySlug: "klottey-korle",
+    });
+  });
+
   it("returns promises array and cache header", async () => {
     vi.mocked(getCachedPromisesApiRows).mockResolvedValue([
       {
@@ -108,7 +117,7 @@ describe("GET /api/promises", () => {
         isGovernmentProgramme: false,
         policySector: null,
         manifesto: null,
-        member: { name: "A", slug: "a", role: "MP", party: null },
+        member: { name: "A", slug: "a", role: "MP", party: null, constituency: null },
       },
     ]);
     const res = await GET(new Request("https://example.com/api/promises"));

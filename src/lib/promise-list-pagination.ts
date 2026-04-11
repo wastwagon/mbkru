@@ -14,6 +14,7 @@ export function buildPromiseListPageHref(
     sector: string | undefined;
     status: string | undefined;
     governmentOnly?: boolean;
+    constituency?: string;
     page: number;
   },
 ): string {
@@ -22,6 +23,7 @@ export function buildPromiseListPageHref(
   if (args.sector) p.set("sector", args.sector);
   if (args.status) p.set("status", args.status);
   if (args.governmentOnly) p.set("governmentOnly", "1");
+  if (args.constituency) p.set("constituency", args.constituency);
   if (args.page > 1) p.set("page", String(args.page));
   const qs = p.toString();
   return qs ? `${basePath}?${qs}` : basePath;

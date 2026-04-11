@@ -12,8 +12,8 @@ import {
   isPromisesBrowseEnabled,
   isReportCardPublicEnabled,
 } from "@/lib/reports/accountability-pages";
-import { getCachedMpsPublicRoster } from "@/lib/server/accountability-cache";
-import { getPromiseTrackerStats } from "@/lib/server/promise-tracker-stats";
+import { defaultPromisesApiFilters } from "@/lib/promises-api-filters";
+import { getCachedMpsPublicRoster, getCachedPromiseTrackerStats } from "@/lib/server/accountability-cache";
 
 export const metadata: Metadata = {
   title: "Accountability & Electoral Watch",
@@ -46,7 +46,7 @@ export default async function ParliamentTrackerPage() {
 
   const dbReady = isDatabaseConfigured();
   const [trackerStats, mpRoster] = dbReady
-    ? await Promise.all([getPromiseTrackerStats("all"), getCachedMpsPublicRoster()])
+    ? await Promise.all([getCachedPromiseTrackerStats(defaultPromisesApiFilters()), getCachedMpsPublicRoster()])
     : [null, [] as Awaited<ReturnType<typeof getCachedMpsPublicRoster>>];
 
   const accountabilityTools = [

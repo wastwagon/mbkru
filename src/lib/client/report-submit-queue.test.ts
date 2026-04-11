@@ -35,6 +35,7 @@ const validPayload = {
   kind: "VOICE" as const,
   title: "Enough chars title",
   body: "Enough characters in body for validation rules.",
+  submitterPhone: undefined as string | undefined,
 };
 
 describe("queuedReportPayloadSchema", () => {

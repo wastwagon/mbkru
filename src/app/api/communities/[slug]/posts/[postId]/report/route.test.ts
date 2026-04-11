@@ -73,7 +73,7 @@ describe("POST /api/communities/[slug]/posts/[postId]/report", () => {
     vi.mocked(isDatabaseConfigured).mockReturnValue(true);
     vi.mocked(allowPublicFormRequest).mockResolvedValue(true);
     vi.mocked(isCommunitySlug).mockReturnValue(true);
-    vi.mocked(getMemberSession).mockResolvedValue({ memberId: "m2" });
+    vi.mocked(getMemberSession).mockResolvedValue({ memberId: "m2", email: "m2@example.com" });
     vi.mocked(findActiveCommunityBySlug).mockResolvedValue({
       id: "c1",
       slug: "east-area",
@@ -93,14 +93,16 @@ describe("POST /api/communities/[slug]/posts/[postId]/report", () => {
     vi.mocked(prisma.communityPost.findFirst).mockResolvedValue({
       id: "p1",
       authorMemberId: "m1",
-    });
+    } as Awaited<ReturnType<typeof prisma.communityPost.findFirst>>);
     vi.mocked(prisma.communityPostReport.findFirst).mockResolvedValue(null);
-    vi.mocked(prisma.communityPostReport.create).mockResolvedValue({ id: "r1" });
+    vi.mocked(prisma.communityPostReport.create).mockResolvedValue({ id: "r1" } as Awaited<
+      ReturnType<typeof prisma.communityPostReport.create>
+    >);
     vi.mocked(notifyCommunityModeratorsOfPostReport).mockResolvedValue();
   });
 
   it("returns 400 for self-report attempts", async () => {
-    vi.mocked(getMemberSession).mockResolvedValue({ memberId: "m1" });
+    vi.mocked(getMemberSession).mockResolvedValue({ memberId: "m1", email: "m1@example.com" });
     const req = new Request("https://example.com/api/communities/east-area/posts/p1/report", {
       method: "POST",
       body: JSON.stringify({ reason: "Abusive content" }),
@@ -110,7 +112,9 @@ describe("POST /api/communities/[slug]/posts/[postId]/report", () => {
   });
 
   it("returns 409 when user already has an open report", async () => {
-    vi.mocked(prisma.communityPostReport.findFirst).mockResolvedValue({ id: "open1" });
+    vi.mocked(prisma.communityPostReport.findFirst).mockResolvedValue({ id: "open1" } as Awaited<
+      ReturnType<typeof prisma.communityPostReport.findFirst>
+    >);
     const req = new Request("https://example.com/api/communities/east-area/posts/p1/report", {
       method: "POST",
       body: JSON.stringify({ reason: "Abusive content" }),

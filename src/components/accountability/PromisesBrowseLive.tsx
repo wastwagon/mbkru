@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 
 import { PromiseEvidenceCard } from "@/components/accountability/PromiseEvidenceCard";
+import { PromiseTrackerStatsStrip } from "@/components/accountability/PromiseTrackerStatsStrip";
 import {
   POLICY_SECTOR_LABELS,
   POLICY_SECTOR_VALUES,
@@ -12,12 +13,16 @@ import {
   PROMISE_LIST_STATUS_FILTER,
   PROMISE_LIST_STATUS_LABELS,
 } from "@/lib/promise-list-filters";
+import { parsePromisesApiFilters, promisesFiltersNarrowCatalogue } from "@/lib/promises-api-filters";
+import type { PromiseTrackerStats } from "@/lib/promise-tracker-public-types";
 import type { PublicPromiseApiRow } from "@/lib/public-promise-api-row";
+import type { TrackerConstituencyOption } from "@/lib/tracker-constituency-public-types";
 
 export type { PublicPromiseApiRow } from "@/lib/public-promise-api-row";
 
 type Props = {
   mode: "browse" | "government";
+  initialStats: PromiseTrackerStats;
   initialRows: PublicPromiseApiRow[];
   initialQ: string;
   initialSector: string | undefined;
@@ -25,8 +30,13 @@ type Props = {
   initialGovernmentOnly: boolean;
   initialPartySlug?: "ndc" | "npp";
   initialElectionCycle?: string;
+  /** From URL `constituency=` — filters via MP’s seat (seeded constituencies + roster). */
+  initialConstituencySlug: string;
+  trackerConstituencies: TrackerConstituencyOption[];
   /** Base path for CSV export query mirroring filters */
   csvExportHref: string;
+  /** Optional row between KPI strip and filter panel (e.g. homepage “Filters & results” heading). */
+  filterToolbarHeader?: ReactNode;
 };
 
 const DEBOUNCE_MS = 380;
@@ -52,6 +62,7 @@ function catalogueValueFromState(
 
 export function PromisesBrowseLive({
   mode,
+  initialStats,
   initialRows,
   initialQ,
   initialSector,
@@ -59,8 +70,12 @@ export function PromisesBrowseLive({
   initialGovernmentOnly,
   initialPartySlug,
   initialElectionCycle,
+  initialConstituencySlug,
+  trackerConstituencies,
   csvExportHref,
+  filterToolbarHeader,
 }: Props) {
+  const [stats, setStats] = useState<PromiseTrackerStats>(initialStats);
   const [rows, setRows] = useState<PublicPromiseApiRow[]>(initialRows);
   const [q, setQ] = useState(initialQ);
   const [sector, setSector] = useState(initialSector ?? "");
@@ -73,9 +88,20 @@ export function PromisesBrowseLive({
   const [cycleFilter, setCycleFilter] = useState(
     initialPartySlug && initialElectionCycle ? initialElectionCycle : initialPartySlug ? MANIFESTO_CYCLE : "",
   );
+  const [constituencySlug, setConstituencySlug] = useState(initialConstituencySlug);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const constituenciesByRegion = useMemo(() => {
+    const map = new Map<string, TrackerConstituencyOption[]>();
+    for (const c of trackerConstituencies) {
+      const list = map.get(c.regionName) ?? [];
+      list.push(c);
+      map.set(c.regionName, list);
+    }
+    return [...map.entries()].sort(([a], [b]) => a.localeCompare(b));
+  }, [trackerConstituencies]);
 
   const buildParams = useCallback(() => {
     const p = new URLSearchParams();
@@ -85,22 +111,53 @@ export function PromisesBrowseLive({
     if (status) p.set("status", status);
     if (partyFilter) p.set("partySlug", partyFilter);
     if (cycleFilter) p.set("electionCycle", cycleFilter);
+    if (constituencySlug) p.set("constituency", constituencySlug);
     if (govLocked || governmentOnly) p.set("governmentOnly", "true");
     return p;
-  }, [q, sector, status, governmentOnly, govLocked, partyFilter, cycleFilter]);
+  }, [q, sector, status, governmentOnly, govLocked, partyFilter, cycleFilter, constituencySlug]);
+
+  const catalogueFiltersFromParams = useMemo(() => {
+    const u = new URL("http://local/");
+    buildParams().forEach((value, key) => u.searchParams.set(key, value));
+    return parsePromisesApiFilters(u);
+  }, [buildParams]);
+
+  const statsSubtitle = useMemo(() => {
+    const narrow = promisesFiltersNarrowCatalogue(
+      catalogueFiltersFromParams,
+      mode === "government" ? "government" : "browse",
+    );
+    if (!narrow) return undefined;
+    const name = constituencySlug
+      ? trackerConstituencies.find((c) => c.slug === constituencySlug)?.name
+      : undefined;
+    return name
+      ? `Counts and status mix match the table for your current filters (${name}).`
+      : "Counts and status mix match the table for your current filters.";
+  }, [catalogueFiltersFromParams, mode, constituencySlug, trackerConstituencies]);
 
   const runFetch = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/promises?${buildParams().toString()}`, { cache: "no-store" });
-      if (!res.ok) {
-        setError(res.status === 429 ? "Too many requests — try again shortly." : "Could not load results.");
+      const qs = buildParams().toString();
+      const [promisesRes, statsRes] = await Promise.all([
+        fetch(`/api/promises?${qs}`, { cache: "no-store" }),
+        fetch(`/api/accountability/promise-tracker-stats?${qs}`, { cache: "no-store" }),
+      ]);
+      if (!promisesRes.ok) {
+        setError(
+          promisesRes.status === 429 ? "Too many requests — try again shortly." : "Could not load results.",
+        );
         setLoading(false);
         return;
       }
-      const data = (await res.json()) as { promises?: PublicPromiseApiRow[] };
+      const data = (await promisesRes.json()) as { promises?: PublicPromiseApiRow[] };
       setRows(Array.isArray(data.promises) ? data.promises : []);
+      if (statsRes.ok) {
+        const statsJson = (await statsRes.json()) as { stats?: PromiseTrackerStats };
+        if (statsJson.stats) setStats(statsJson.stats);
+      }
     } catch {
       setError("Network error while searching.");
     } finally {
@@ -125,12 +182,20 @@ export function PromisesBrowseLive({
   }, []);
 
   useEffect(() => {
+    setStats(initialStats);
+  }, [initialStats]);
+
+  useEffect(() => {
+    setRows(initialRows);
+  }, [initialRows]);
+
+  useEffect(() => {
     if (skipNextDebouncedFetch.current) {
       skipNextDebouncedFetch.current = false;
       return;
     }
     scheduleFetch();
-  }, [q, sector, status, governmentOnly, partyFilter, cycleFilter, scheduleFetch]);
+  }, [q, sector, status, governmentOnly, partyFilter, cycleFilter, constituencySlug, scheduleFetch]);
 
   const csvHref = useMemo(() => {
     const p = buildParams();
@@ -138,7 +203,13 @@ export function PromisesBrowseLive({
   }, [buildParams, csvExportHref]);
 
   const hasActiveFilters = Boolean(
-    q.trim() || sector || status || (!govLocked && governmentOnly) || partyFilter || cycleFilter,
+    q.trim() ||
+      sector ||
+      status ||
+      (!govLocked && governmentOnly) ||
+      partyFilter ||
+      cycleFilter ||
+      constituencySlug,
   );
 
   const clearHref = mode === "government" ? "/government-commitments" : "/promises/browse";
@@ -146,6 +217,7 @@ export function PromisesBrowseLive({
   const catalogueSelectValue = catalogueValueFromState(govLocked, governmentOnly, partyFilter, cycleFilter);
 
   const onCatalogueChange = (v: string) => {
+    setConstituencySlug("");
     if (govLocked) {
       if (v === "all") {
         setPartyFilter("");
@@ -180,7 +252,13 @@ export function PromisesBrowseLive({
 
   return (
     <>
-      <div className="mt-8 flex flex-col gap-4 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-end">
+      <PromiseTrackerStatsStrip stats={stats} subtitle={statsSubtitle} />
+
+      {filterToolbarHeader}
+
+      <div
+        className={`flex flex-col gap-4 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-end ${filterToolbarHeader ? "mt-4" : "mt-8"}`}
+      >
         <div className="min-w-0 flex-1 sm:max-w-xs">
           <label htmlFor="live-q" className="block text-xs font-medium text-[var(--foreground)]">
             Search <span className="font-normal text-[var(--muted-foreground)]">(live)</span>
@@ -190,7 +268,7 @@ export function PromisesBrowseLive({
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Title or description…"
+            placeholder="Title, source, manifesto, or MP name…"
             className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             autoComplete="off"
           />
@@ -223,8 +301,36 @@ export function PromisesBrowseLive({
           </select>
           <p className="mt-1 text-[11px] leading-snug text-[var(--muted-foreground)]">
             {govLocked
-              ? "Still scoped to executive / programme-tagged rows; narrow by party manifesto."
-              : "Combine with category and status below. NDC/NPP options match 2024 cycle rows in the database."}
+              ? "Executive / programme-tagged rows. Items can also appear on an MP’s page when a member is linked — one record, two surfaces."
+              : "Combine with category and status below. NDC/NPP options match 2024 cycle rows in the database. Gov-tagged rows with an MP still appear here when you browse all."}
+          </p>
+        </div>
+
+        <div className="basis-full w-full min-w-0 sm:max-w-xl">
+          <label htmlFor="live-constituency" className="block text-xs font-medium text-[var(--foreground)]">
+            Constituency <span className="font-normal text-[var(--muted-foreground)]">(MP from roster)</span>
+          </label>
+          <select
+            id="live-constituency"
+            value={constituencySlug}
+            onChange={(e) => setConstituencySlug(e.target.value)}
+            className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+          >
+            <option value="">All constituencies</option>
+            {constituenciesByRegion.map(([regionName, opts]) => (
+              <optgroup key={regionName} label={regionName}>
+                {opts.map((c) => (
+                  <option key={c.slug} value={c.slug}>
+                    {c.name}
+                    {c.mp ? ` — ${c.mp.name}` : " — (no active MP in catalogue)"}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+          <p className="mt-1 text-[11px] leading-snug text-[var(--muted-foreground)]">
+            Uses the same constituency and MP records as parliament.gh imports — filter promises for whoever holds
+            that seat in this database.
           </p>
         </div>
 
@@ -332,6 +438,7 @@ export function PromisesBrowseLive({
                           {" "}
                           · {p.member.role}
                           {p.member.party ? ` · ${p.member.party}` : ""}
+                          {p.member.constituency ? ` · ${p.member.constituency.name}` : ""}
                         </span>
                         {p.isGovernmentProgramme ? (
                           <span className="ml-1 rounded-full bg-[var(--section-light)] px-2 py-0.5 text-[10px] font-semibold uppercase text-[var(--foreground)]">
@@ -341,7 +448,23 @@ export function PromisesBrowseLive({
                         {p.electionCycle ? (
                           <span className="text-[var(--muted-foreground)]"> · Cycle {p.electionCycle}</span>
                         ) : null}
+                        {mode === "government" && p.isGovernmentProgramme ? (
+                          <span className="mt-1 block text-xs text-[var(--muted-foreground)]">
+                            Also on{" "}
+                            <Link
+                              href={`/promises/${encodeURIComponent(p.member.slug)}`}
+                              className="font-medium text-[var(--primary)] hover:underline"
+                            >
+                              this MP’s promises page
+                            </Link>
+                            .
+                          </span>
+                        ) : null}
                       </>
+                    ) : mode === "government" && p.isGovernmentProgramme ? (
+                      <span className="text-sm text-[var(--muted-foreground)]">
+                        Programme / executive record — no MP profile linked yet.
+                      </span>
                     ) : null
                   }
                 />

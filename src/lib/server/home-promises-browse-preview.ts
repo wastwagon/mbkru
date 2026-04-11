@@ -7,8 +7,11 @@ import type { PromisesBrowseHomePreview } from "@/lib/home-promises-browse-previ
 import { parsePromisesApiFilters } from "@/lib/promises-api-filters";
 import type { PublicPromiseApiRow } from "@/lib/public-promise-api-row";
 import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
-import { getCachedPromisesApiRows } from "@/lib/server/accountability-cache";
-import { getPromiseTrackerStats } from "@/lib/server/promise-tracker-stats";
+import {
+  getCachedPromiseTrackerStats,
+  getCachedPromisesApiRows,
+  getCachedTrackerConstituencies,
+} from "@/lib/server/accountability-cache";
 
 export type { PromisesBrowseHomePreview } from "@/lib/home-promises-browse-preview-types";
 
@@ -21,12 +24,13 @@ export async function getPromisesBrowseHomePreview(): Promise<PromisesBrowseHome
   if (!isPromisesBrowseEnabled() || !isDatabaseConfigured()) return null;
   try {
     const filters = parsePromisesApiFilters(new URL("http://local/"));
-    const [stats, apiRows] = await Promise.all([
-      getPromiseTrackerStats("all"),
+    const [stats, apiRows, trackerConstituencies] = await Promise.all([
+      getCachedPromiseTrackerStats(filters),
       getCachedPromisesApiRows(filters),
+      getCachedTrackerConstituencies(),
     ]);
     const initialRows = apiRows as PublicPromiseApiRow[];
-    return { stats, initialRows };
+    return { stats, initialRows, trackerConstituencies };
   } catch (e) {
     if (isRecoverableSchemaError(e)) return null;
     throw e;

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 import { PromisesBrowseLive } from "@/components/accountability/PromisesBrowseLive";
-import { PromiseTrackerStatsStrip } from "@/components/accountability/PromiseTrackerStatsStrip";
 import type { PromisesBrowseHomePreview as BrowsePreviewData } from "@/lib/home-promises-browse-preview-types";
 
 type Props = {
@@ -40,22 +39,15 @@ export function PromisesBrowseHomePreview({ data }: Props) {
           </p>
         </motion.div>
 
-        <PromiseTrackerStatsStrip stats={stats} />
-
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="mt-8"
         >
-          <div className="flex flex-wrap items-end justify-between gap-3 border-b border-[var(--border)] pb-3">
-            <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Filters &amp; results</h3>
-            <Link href="/promises/browse" className="text-sm font-semibold text-[var(--primary)] hover:underline">
-              Open full browse page →
-            </Link>
-          </div>
           <PromisesBrowseLive
             mode="browse"
+            initialStats={stats}
             initialRows={initialRows}
             initialQ=""
             initialSector={undefined}
@@ -63,7 +55,17 @@ export function PromisesBrowseHomePreview({ data }: Props) {
             initialGovernmentOnly={false}
             initialPartySlug={undefined}
             initialElectionCycle={undefined}
+            initialConstituencySlug=""
+            trackerConstituencies={data.trackerConstituencies}
             csvExportHref="/api/export/promises-csv"
+            filterToolbarHeader={
+              <div className="mt-8 flex flex-wrap items-end justify-between gap-3 border-b border-[var(--border)] pb-3">
+                <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Filters &amp; results</h3>
+                <Link href="/promises/browse" className="text-sm font-semibold text-[var(--primary)] hover:underline">
+                  Open full browse page →
+                </Link>
+              </div>
+            }
           />
         </motion.div>
       </div>

@@ -8,7 +8,8 @@ import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { getCachedPublishedReportCardCycles } from "@/lib/server/accountability-cache";
 import { isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
-import { getPromiseTrackerStats } from "@/lib/server/promise-tracker-stats";
+import { defaultPromisesApiFilters } from "@/lib/promises-api-filters";
+import { getCachedPromiseTrackerStats } from "@/lib/server/accountability-cache";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ export default async function ReportCardIndexPage() {
 
   const [cycles, trackerStats] = await Promise.all([
     getCachedPublishedReportCardCycles(),
-    getPromiseTrackerStats("all"),
+    getCachedPromiseTrackerStats(defaultPromisesApiFilters()),
   ]);
 
   return (

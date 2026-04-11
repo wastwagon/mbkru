@@ -56,6 +56,7 @@ describe("GET /api/export/promises-csv", () => {
 
   const emptyFilters = {
     memberSlug: "",
+    constituencySlug: "",
     partySlug: "",
     electionCycle: "",
     governmentOnly: false,
@@ -92,7 +93,7 @@ describe("GET /api/export/promises-csv", () => {
         isGovernmentProgramme: true,
         manifestoTitle: "2024 manifesto",
         manifestoSourceUrl: "https://example.com/manifesto.pdf",
-        member: { name: "A", slug: "a", role: "MP", party: null },
+        member: { name: "A", slug: "a", role: "MP", party: null, constituencyName: null },
       },
     ]);
     const res = await GET(new Request("https://example.com/api/export/promises-csv"));
@@ -104,7 +105,7 @@ describe("GET /api/export/promises-csv", () => {
     expect(buf[2]).toBe(0xbf);
     const text = new TextDecoder("utf-8").decode(buf);
     expect(text).toContain(
-      "id,title,description,source_label,source_url,source_date,verification_notes,status,policy_sector,updated_at,election_cycle,party_slug,manifesto_document_id,manifesto_page_ref,is_government_programme,manifesto_title,manifesto_source_url,member_name,member_slug,member_role,member_party",
+      "id,title,description,source_label,source_url,source_date,verification_notes,status,policy_sector,updated_at,election_cycle,party_slug,manifesto_document_id,manifesto_page_ref,is_government_programme,manifesto_title,manifesto_source_url,member_name,member_slug,member_role,member_party,member_constituency",
     );
     expect(text).toContain('"Free, fair"');
     expect(text).toContain('"Line1\nLine2"');

@@ -16,9 +16,14 @@ describe("promise-list-pagination", () => {
   });
 
   it("buildPromiseListPageHref omits page 1 and empty params", () => {
-    expect(buildPromiseListPageHref("/government-commitments", { q: "", page: 1 })).toBe(
-      "/government-commitments",
-    );
+    expect(
+      buildPromiseListPageHref("/government-commitments", {
+        q: "",
+        sector: undefined,
+        status: undefined,
+        page: 1,
+      }),
+    ).toBe("/government-commitments");
   });
 
   it("buildPromiseListPageHref preserves filters and page", () => {
@@ -43,5 +48,18 @@ describe("promise-list-pagination", () => {
         page: 2,
       }),
     ).toBe("/promises/browse?page=2");
+  });
+
+  it("buildPromiseListPageHref includes constituency when set", () => {
+    expect(
+      buildPromiseListPageHref("/promises/browse", {
+        q: "",
+        sector: undefined,
+        status: undefined,
+        governmentOnly: false,
+        constituency: "abetifi",
+        page: 1,
+      }),
+    ).toBe("/promises/browse?constituency=abetifi");
   });
 });
