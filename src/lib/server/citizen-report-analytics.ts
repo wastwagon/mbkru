@@ -1,36 +1,34 @@
 import "server-only";
 
+import {
+  CITIZEN_REPORT_ANALYTICS_MAX_MONTHS,
+  type CitizenReportAnalytics,
+} from "@/lib/citizen-report-analytics-shared";
 import { prisma } from "@/lib/db/prisma";
 
-export type CitizenReportAnalytics = {
-  generatedAt: string;
-  windowMonths: number;
-  windowSince: string;
-  totals: {
-    all: number;
-    inWindow: number;
-    /** All-time counts by report kind. */
-    byKind: Record<string, number>;
-    /** All-time counts by workflow status. */
-    byStatus: Record<string, number>;
-    /** Rolling window counts by kind (matches monthly chart window). */
-    byKindInWindow: Record<string, number>;
-    byStatusInWindow: Record<string, number>;
-    withAttachments: number;
-    slaOpenOverdue: number;
-  };
-  byRegion: Array<{ regionId: string; regionSlug: string; regionName: string; count: number }>;
-  byMonth: Array<{ yearMonth: string; count: number }>;
-};
-
-const MAX_MONTHS = 36;
+export type { CitizenReportAnalytics } from "@/lib/citizen-report-analytics-shared";
+export {
+  citizenReportAnalyticsToCsv,
+  parseCitizenReportAnalyticsMonthsParam,
+} from "@/lib/citizen-report-analytics-shared";
 
 function clampMonths(raw: number | undefined): number {
   if (raw === undefined || !Number.isFinite(raw)) return 12;
   const n = Math.floor(raw);
   if (n < 1) return 1;
-  if (n > MAX_MONTHS) return MAX_MONTHS;
+  if (n > CITIZEN_REPORT_ANALYTICS_MAX_MONTHS) return CITIZEN_REPORT_ANALYTICS_MAX_MONTHS;
   return n;
+}
+
+function sortPlaybookGroups(
+  rows: Array<{ operationsPlaybookKey: string | null; _count: { _all: number } }>,
+): Array<{ key: string; count: number }> {
+  return rows
+    .map((r) => ({
+      key: r.operationsPlaybookKey ?? "",
+      count: r._count._all,
+    }))
+    .sort((a, b) => b.count - a.count);
 }
 
 /** Aggregate, non-identifying stats for dashboards and annual reporting. */
@@ -50,6 +48,11 @@ export async function getCitizenReportAnalytics(monthsParam?: number): Promise<C
     statusGroupsWindow,
     withAttachments,
     slaOpenOverdue,
+    playbookAll,
+    playbookWindow,
+    publicCauseWithThread,
+    publicCauseThreadLive,
+    publicCauseThreadClosed,
     regionGroups,
     monthRows,
   ] = await Promise.all([
@@ -81,6 +84,22 @@ export async function getCitizenReportAnalytics(monthsParam?: number): Promise<C
         slaDueAt: { lt: new Date() },
         status: { in: ["RECEIVED", "UNDER_REVIEW"] },
       },
+    }),
+    prisma.citizenReport.groupBy({
+      by: ["operationsPlaybookKey"],
+      _count: { _all: true },
+    }),
+    prisma.citizenReport.groupBy({
+      by: ["operationsPlaybookKey"],
+      where: { createdAt: { gte: since } },
+      _count: { _all: true },
+    }),
+    prisma.citizenReport.count({ where: { publicCauseSlug: { not: null } } }),
+    prisma.citizenReport.count({
+      where: { publicCauseSlug: { not: null }, publicCauseClosed: false },
+    }),
+    prisma.citizenReport.count({
+      where: { publicCauseSlug: { not: null }, publicCauseClosed: true },
     }),
     prisma.citizenReport.groupBy({
       by: ["regionId"],
@@ -158,6 +177,13 @@ export async function getCitizenReportAnalytics(monthsParam?: number): Promise<C
       byStatusInWindow,
       withAttachments,
       slaOpenOverdue,
+    },
+    byPlaybookAll: sortPlaybookGroups(playbookAll),
+    byPlaybookInWindow: sortPlaybookGroups(playbookWindow),
+    publicCauses: {
+      withThread: publicCauseWithThread,
+      threadLive: publicCauseThreadLive,
+      threadClosed: publicCauseThreadClosed,
     },
     byRegion,
     byMonth,

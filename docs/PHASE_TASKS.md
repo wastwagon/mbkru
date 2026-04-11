@@ -8,21 +8,23 @@
 2. Match **build-time** `NEXT_PUBLIC_PLATFORM_PHASE` to what you are allowed to show in production (`1` → marketing + admin; `2` → + Voice + members + promises; `3` → + report card flagship).
 3. **Demo data:** `SEED_ACCOUNTABILITY_DEMO=1 npx prisma db seed` (fictional MPs/promises/report card year **2099**). **Pilot members:** `SEED_MEMBER_DEMO=1` (see [`.env.example`](../.env.example)) — two fictional **`Member`** rows for **`/login`**. **Real data:** constituency master via **`POST /api/admin/constituencies/import`**, dry-run **`POST /api/admin/parliament-members/reconcile`**, then MP CSV **`POST /api/admin/parliament-members/import`** — see [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md); admin promises/report card.
 
-**Companion docs:** [`PHASES_2_3_IMPLEMENTATION.md`](./PHASES_2_3_IMPLEMENTATION.md) · [`ARCHITECTURE.md`](./ARCHITECTURE.md) · [`PHASE1_SCOPE.md`](../PHASE1_SCOPE.md) · [`ROADMAP_2028_ELECTION.md`](../ROADMAP_2028_ELECTION.md) · [`PLATFORM_EXPANSION_PLAN.md`](./PLATFORM_EXPANSION_PLAN.md) · **[`FULL_PLATFORM_IMPLEMENTATION_PLAN.md`](./FULL_PLATFORM_IMPLEMENTATION_PLAN.md)** (full-scope build order, schema, APIs, UI — workstreams A–O)
+**Companion docs:** [`PHASES_2_3_IMPLEMENTATION.md`](./PHASES_2_3_IMPLEMENTATION.md) · [`ARCHITECTURE.md`](./ARCHITECTURE.md) · [`PHASE1_SCOPE.md`](../PHASE1_SCOPE.md) · [`ROADMAP_2028_ELECTION.md`](../ROADMAP_2028_ELECTION.md) · **[`EARLY_RECOGNITION_LAUNCH_PLAN.md`](./EARLY_RECOGNITION_LAUNCH_PLAN.md)** (sooner public launch vs 2028 calendar — gaps + R-phases) · **[`PHASE_GAPS_CLOSURE_QUEUE.md`](./PHASE_GAPS_CLOSURE_QUEUE.md)** (finish Phases 1–3 before 4+) · [`PLATFORM_EXPANSION_PLAN.md`](./PLATFORM_EXPANSION_PLAN.md) · **[`FULL_PLATFORM_IMPLEMENTATION_PLAN.md`](./FULL_PLATFORM_IMPLEMENTATION_PLAN.md)** (full-scope build order, schema, APIs, UI — workstreams A–O)
 
 ---
 
 ## Phase 4+ — Full platform implementation (no MVP trim)
 
-**Goal:** Ship the **complete** expansion: manifesto registry + government/opposition promise filters, data reconciliation tooling, **`/whistleblowing`** + analytics, and **full communities** (verification, moderation, search, notifications, admin). **Execution order:** workstreams **A→O** in [`FULL_PLATFORM_IMPLEMENTATION_PLAN.md`](./FULL_PLATFORM_IMPLEMENTATION_PLAN.md).
+**Goal:** Ship the **complete** expansion: manifesto registry + government/opposition promise filters, data reconciliation tooling, **`/whistleblowing`** + **staff** Voice/report aggregates (`/admin/analytics/citizen-reports` + CSV export), and **full communities** (verification, moderation, search, notifications, admin). **Execution order:** workstreams **A→O** in [`FULL_PLATFORM_IMPLEMENTATION_PLAN.md`](./FULL_PLATFORM_IMPLEMENTATION_PLAN.md).
 
 | Status | Task |
 |--------|------|
-| [ ] | **A** Legal/comms: citation policy, whistleblowing copy, community terms |
-| [ ] | **B–D** Manifesto schema + admin + public `/government-commitments` |
+| [x] | **A (docs + product copy)** Citation/claims policy ([`CITATION_AND_CLAIMS_POLICY.md`](./CITATION_AND_CLAIMS_POLICY.md)), interim communities governance ([`COMMUNITIES_PUBLIC_GOVERNANCE.md`](./COMMUNITIES_PUBLIC_GOVERNANCE.md)), on-site summary at **`/methodology#claims-and-citations`**, phase-gated **`/whistleblowing`** |
+| [ ] | **A (counsel / public terms)** Privacy, Terms, Voice disclosures, and **public** community/partner terms signed off for production marketing |
+| [x] | **B–D** Manifesto schema + admin (`/admin/manifestos`) + public **`/government-commitments`** |
 | [x] | **E** Constituency CSV import + MP dry-run reconcile APIs + runbook; EC-aligned bulk constituency file is editorial/ops |
 | [ ] | **F–M** Communities: Prisma, APIs, public UI, admin UI, FTS, notifications |
-| [ ] | **N** Whistleblowing page + citizen-report aggregates (admin) |
+| [x] | **N (public)** **`/whistleblowing`** when Phase ≥ 2 (`isWhistleblowerGuidancePageEnabled`) |
+| [x] | **N (admin)** Citizen-report **aggregates** for staff — **`/admin/analytics/citizen-reports`**, `GET /api/admin/analytics/citizen-reports`, `GET /api/admin/analytics/citizen-reports/export` (playbook + public-cause counts, UTF-8 CSV; no PII) |
 | [ ] | **O** Tests, security checklist, runbooks |
 | [ ] | Partner onboarding (200+ communities) runs **after** software DoD — not a code MVP gate |
 
@@ -77,7 +79,7 @@
 | [x] | Tagged cache + `revalidateTag`; accountability **HTTP** helpers tested |
 | [x] | **`/methodology`**, election-observation form notices, OPS notes in docs |
 | [x] | Pillar routes **`/legal-empowerment`**, **`/town-halls`** when phase ≥ 2 |
-| [x] | **Partner programme (draft):** [`docs/PARTNER_API.md`](PARTNER_API.md) — attribution, caching, rate limits, versioning *recommendation* *(final terms with legal + public page when launching)* |
+| [x] | **Partner programme (draft):** [`docs/PARTNER_API.md`](PARTNER_API.md) — attribution, caching, rate limits, versioning *recommendation* · **public summary:** **`/partner-api`** (Phase 2+) *(MOU / contractual terms with legal still TBD)* |
 | [ ] | **Real datasets:** vetted CSV import + editorial sign-off before toggling Phase 3 in prod — procedure: [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md); source pointers: [`DATA_SOURCES.md`](./DATA_SOURCES.md) |
 | [x] | **Research export:** `GET /api/export/mps-csv` + `GET /api/export/promises-csv` (UTF-8 BOM CSV; promises export is full list) — [`PARTNER_API.md`](./PARTNER_API.md) |
 | [ ] | **Stretch:** PMO-style modules (bills, votes, plenary) — *new product verticals; scope separately* |
@@ -119,7 +121,7 @@ Work **top to bottom** within your target phase; do not skip legal/ops items if 
 2. **Phase 2 tests** — `/api/health` + partner JSON routes in Vitest *(done — `src/app/api/**/route.test.ts`)*  
 3. **Phase 2 privacy** — expanded on site *(counsel review)*  
 4. **Data** — `SEED_ACCOUNTABILITY_DEMO=1` on staging; then real CSV import dry-run  
-5. **Phase 3 partner** — draft [`PARTNER_API.md`](./PARTNER_API.md) *(sign-off + public terms page when launching)*  
+5. **Phase 3 partner** — public summary **`/partner-api`** + draft [`PARTNER_API.md`](./PARTNER_API.md) *(counsel + MOU language when contracting)*  
 6. **Prisma 7** — schedule upgrade spike  
 
 ---

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getMemberSession } from "@/lib/member/session";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 import { prisma } from "@/lib/db/prisma";
+import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
 
 export default async function AccountReportsPage() {
   if (!isCitizensVoiceEnabled()) notFound();
@@ -63,15 +64,15 @@ export default async function AccountReportsPage() {
                 {r.status.replace(/_/g, " ")}
               </p>
               <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-                Submitted {r.createdAt.toLocaleDateString("en-GB", { dateStyle: "medium" })}
+                Submitted{" "}
+                <time dateTime={r.createdAt.toISOString()}>{formatSubmissionDateTime(r.createdAt)}</time>
                 {r.adminReplies[0]?.createdAt ? (
                   <>
                     {" "}
                     · Latest team note{" "}
-                    {r.adminReplies[0].createdAt.toLocaleString("en-GB", {
-                      dateStyle: "medium",
-                      timeStyle: "short",
-                    })}
+                    <time dateTime={r.adminReplies[0].createdAt.toISOString()}>
+                      {formatSubmissionDateTime(r.adminReplies[0].createdAt)}
+                    </time>
                   </>
                 ) : null}
               </p>

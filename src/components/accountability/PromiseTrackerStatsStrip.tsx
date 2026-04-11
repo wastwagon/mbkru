@@ -1,12 +1,17 @@
+"use client";
+
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import type { PromiseTrackerStats } from "@/lib/server/promise-tracker-stats";
+import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
+import type { PromiseTrackerStats } from "@/lib/promise-tracker-public-types";
 
 type Props = {
   stats: PromiseTrackerStats;
   /** Shown under the headline metrics */
   subtitle?: string;
+  /** Tighter spacing and hide partner-data footer (e.g. homepage embed). */
+  compact?: boolean;
 };
 
 function pct(part: number, whole: number): number {
@@ -38,7 +43,8 @@ function KpiCard({
   );
 }
 
-export function PromiseTrackerStatsStrip({ stats, subtitle }: Props) {
+export function PromiseTrackerStatsStrip({ stats, subtitle, compact }: Props) {
+  const partnerDataPageEnabled = platformFeatures.partnerJsonProgramme(getPublicPlatformPhase());
   const { byStatus, totalPromises } = stats;
   const met = byStatus.FULFILLED ?? 0;
   const inProgress = byStatus.IN_PROGRESS ?? 0;
@@ -47,7 +53,7 @@ export function PromiseTrackerStatsStrip({ stats, subtitle }: Props) {
   const barTotal = Math.max(1, met + inProgress + broken + tracking);
 
   return (
-    <div className="mt-8 w-full space-y-5">
+    <div className={`w-full ${compact ? "mt-0 space-y-4" : "mt-8 space-y-5"}`}>
       <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-4 py-6 text-white shadow-xl ring-1 ring-slate-700/60 sm:px-6 sm:py-8 lg:px-8">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="max-w-2xl">
@@ -151,20 +157,24 @@ export function PromiseTrackerStatsStrip({ stats, subtitle }: Props) {
         <p className="text-center text-sm leading-relaxed text-slate-600">{subtitle}</p>
       ) : null}
 
-      <p className="text-center text-sm leading-relaxed text-slate-600">
-        <strong className="font-semibold text-slate-900">JSON API</strong> — read-only{" "}
-        <Link href="/api/promises" className="font-medium text-sky-700 underline decoration-sky-700/30 underline-offset-2 hover:text-sky-900">
-          GET /api/promises
-        </Link>{" "}
-        returns the same rows the live search uses (filters:{" "}
-        <code className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-mono text-slate-800">q</code>,{" "}
-        <code className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-mono text-slate-800">policySector</code>,{" "}
-        <code className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-mono text-slate-800">status</code>,{" "}
-        <code className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-mono text-slate-800">governmentOnly</code>,{" "}
-        <code className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-mono text-slate-800">partySlug</code>,{" "}
-        <code className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-mono text-slate-800">electionCycle</code>
-        ). Rate-limited for public use.
-      </p>
+      {!compact ? (
+        <p className="text-center text-sm leading-relaxed text-slate-600">
+          Totals and status mix update as editors publish changes to the catalogue — they are not macro-economic forecasts.
+          {partnerDataPageEnabled ? (
+            <>
+              {" "}
+              Media, CSOs, and civic technologists can reuse the same figures under our{" "}
+              <Link
+                href="/partner-api"
+                className="font-medium text-sky-700 underline decoration-sky-700/30 underline-offset-2 hover:text-sky-900"
+              >
+                partner data &amp; API
+              </Link>{" "}
+              terms (machine-readable exports; rate limits apply).
+            </>
+          ) : null}
+        </p>
+      ) : null}
     </div>
   );
 }

@@ -2,6 +2,8 @@
 
 **Status:** Draft for **comms and legal review** before external distribution. The JSON routes below are **read-only**, **rate-limited**, and **cached** at the edge per `Cache-Control` headers.
 
+**Public summary (Phase 2+ builds):** on-site page **`/partner-api`** (same gates as the JSON handlers via `partnerJsonProgramme`).
+
 **Related:** [`ARCHITECTURE.md`](./ARCHITECTURE.md) · accountability cache tags in `src/lib/accountability-tags.ts` · handler tests in `src/app/api/**/route.test.ts`
 
 ---
@@ -52,7 +54,7 @@ Partners should **respect `Cache-Control`** and not hammer origin; expect **429*
 - **Accuracy:** Datasets are compiled for **civic accountability**; partners should surface **methodology** and **update dates** (JSON includes timestamps / labels where applicable).
 - **No warranty:** Data is provided **as-is**; MBKRU may correct or withdraw published entries subject to editorial and legal review.
 
-Final **Terms of Use** for embeds should be signed off by counsel and published on the public site when the partner programme launches.
+Final **Terms of Use** for embeds should be signed off by counsel; the public **`/partner-api`** page is the programme-facing summary until contractual terms are attached to MOUs or separate agreements.
 
 ---
 

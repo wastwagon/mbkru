@@ -16,6 +16,7 @@ import {
   removeReportQueueItem,
 } from "@/lib/client/report-submit-queue";
 import { nearestRegionSlug } from "@/lib/geo/ghana-region-centroids";
+import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
 
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
@@ -95,6 +96,7 @@ export function VoiceReportForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [trackingCode, setTrackingCode] = useState<string | null>(null);
+  const [submittedAtIso, setSubmittedAtIso] = useState<string | null>(null);
   const [uploadNote, setUploadNote] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [mapSectionOpen, setMapSectionOpen] = useState(false);
@@ -324,6 +326,7 @@ export function VoiceReportForm({
         trackingCode?: string;
         id?: string;
         attachmentUploadToken?: string;
+        submittedAt?: string;
       };
       if (!res.ok) {
         if (fileList.length === 0 && isRetryableReportSubmitResponse(res.status)) {
@@ -350,7 +353,10 @@ export function VoiceReportForm({
         setTurnstileToken(null);
         return;
       }
-      if (data.trackingCode) setTrackingCode(data.trackingCode);
+      if (data.trackingCode) {
+        setTrackingCode(data.trackingCode);
+        setSubmittedAtIso(data.submittedAt ?? new Date().toISOString());
+      }
       syncQueue();
 
       if (fileList.length > 0 && data.id) {
@@ -514,6 +520,13 @@ export function VoiceReportForm({
             Save your tracking code:{" "}
             <span className="font-mono text-base font-bold tracking-wide">{trackingCode}</span>
           </p>
+          {submittedAtIso ? (
+            <p className="mt-2 text-sm text-green-900/90">
+              <span className="font-medium">Recorded</span>{" "}
+              <time dateTime={submittedAtIso}>{formatSubmissionDateTime(submittedAtIso)}</time>
+              <span className="text-green-900/80"> (server time, Ghana programme use).</span>
+            </p>
+          ) : null}
           <p className="mt-2 text-sm">
             <Link href={`/track-report?code=${encodeURIComponent(trackingCode)}`} className="underline">
               Check status

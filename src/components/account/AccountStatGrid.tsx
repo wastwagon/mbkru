@@ -1,3 +1,5 @@
+import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
+
 export type AccountStatGridProps = {
   totalReports: number;
   activeReports: number;
@@ -48,14 +50,6 @@ export function AccountStatGrid({
   attachmentCount,
   lastSubmittedAt,
 }: AccountStatGridProps) {
-  const lastLabel = lastSubmittedAt
-    ? new Intl.DateTimeFormat("en-GB", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      }).format(lastSubmittedAt)
-    : null;
-
   return (
     <section className="mt-8" aria-labelledby="account-stats-heading">
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -70,9 +64,12 @@ export function AccountStatGrid({
             Signed-in submissions and how they move through review.
           </p>
         </div>
-        {lastLabel ? (
+        {lastSubmittedAt ? (
           <p className="text-xs text-[var(--muted-foreground)]">
-            Last submission · <span className="text-[var(--foreground)]">{lastLabel}</span>
+            Last submission ·{" "}
+            <time dateTime={lastSubmittedAt.toISOString()} className="text-[var(--foreground)]">
+              {formatSubmissionDateTime(lastSubmittedAt)}
+            </time>
           </p>
         ) : null}
       </div>

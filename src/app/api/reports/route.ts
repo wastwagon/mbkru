@@ -91,7 +91,7 @@ export async function POST(request: Request) {
         latitude: lat ?? null,
         longitude: lng ?? null,
       },
-      select: { trackingCode: true, id: true },
+      select: { trackingCode: true, id: true, createdAt: true },
     });
 
     const attachmentUploadToken = signReportAttachmentScope(report.id);
@@ -100,6 +100,7 @@ export async function POST(request: Request) {
       ok: true,
       trackingCode: report.trackingCode,
       id: report.id,
+      submittedAt: report.createdAt.toISOString(),
       ...(attachmentUploadToken ? { attachmentUploadToken } : {}),
     });
   } catch (e) {

@@ -1,21 +1,26 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { HomeHeroSlider } from "@/components/home/HomeHeroSlider";
 import { LivePlatformStrip } from "@/components/home/LivePlatformStrip";
-import { RoadmapModal, type RoadmapPhase } from "@/components/ui/RoadmapModal";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import {
+  homepageEngagementPathways,
   images,
   mbkruStrategicContent,
   pillarImages,
-  programmeRoadmap,
 } from "@/lib/site-content";
 import { RegionsViz } from "@/components/ui/RegionsViz";
+import { GovernmentCommitmentsHomePreview } from "@/components/home/GovernmentCommitmentsHomePreview";
+import { HomeDataProvenanceRibbon } from "@/components/home/HomeDataProvenanceRibbon";
+import { HomeParticipateHub } from "@/components/home/HomeParticipateHub";
+import { HomePromisesBrowseDashboard } from "@/components/home/HomePromisesBrowseDashboard";
+import type { GovernmentCommitmentsHomePreview as GovernmentCommitmentsHomePreviewData } from "@/lib/home-government-preview-types";
+import type { HomeAtAGlanceData } from "@/lib/home-at-a-glance-types";
 
 export type HomePageNewsItem = {
   id: string;
@@ -26,69 +31,56 @@ export type HomePageNewsItem = {
   dateLabel: string;
 };
 
-function RoadmapSection() {
-  const [selectedPhase, setSelectedPhase] = useState<(typeof programmeRoadmap)[number] | null>(null);
+function HomeProgrammePathwaysSection({ phase }: { phase: ReturnType<typeof getPublicPlatformPhase> }) {
+  const items = homepageEngagementPathways.filter((item) => {
+    if (item.href === "/communities" && !platformFeatures.communities(phase)) return false;
+    if (item.href === "/town-halls" && !platformFeatures.townHallDirectory(phase)) return false;
+    return true;
+  });
+
   return (
-    <>
-      <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:mt-10 lg:grid-cols-3">
-        {programmeRoadmap.map((item, i) => (
-          <motion.button
-            key={item.period + item.title}
-            type="button"
-            onClick={() => setSelectedPhase(item)}
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.06 }}
-            className="group flex flex-col rounded-xl border border-[var(--border)] bg-white p-6 text-left shadow-[var(--shadow-card)] transition-all duration-300 hover:border-[var(--primary)]/20 hover:shadow-[var(--shadow-card-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/20"
+    <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:mt-10 lg:grid-cols-3 xl:grid-cols-4">
+      {items.map((item, i) => (
+        <motion.div
+          key={item.href}
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: i * 0.06 }}
+        >
+          <Link
+            href={item.href}
+            className="group flex h-full flex-col rounded-xl border border-[var(--border)] bg-white p-6 text-left shadow-[var(--shadow-card)] transition-all duration-300 hover:border-[var(--primary)]/20 hover:shadow-[var(--shadow-card-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/20"
           >
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-block rounded-lg bg-[var(--accent-gold)]/20 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[var(--accent-gold)]">
-                {item.period}
-              </span>
-              {"phase" in item && (
-                <span
-                  className={`rounded px-2 py-0.5 text-xs font-medium ${
-                    item.status === "complete" ? "bg-green-100 text-green-800" : "bg-[var(--primary)]/10 text-[var(--primary)]"
-                  }`}
-                >
-                  {item.phase} {item.status === "complete" ? "✓" : ""}
-                </span>
-              )}
-            </div>
+            <span className="inline-block w-fit rounded-lg bg-[var(--primary)]/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[var(--primary)]">
+              {item.tag}
+            </span>
             <h3 className="mt-3 font-display text-lg font-semibold text-[var(--foreground)] group-hover:text-[var(--primary)]">
               {item.title}
             </h3>
-            <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
-              {item.description}
-            </p>
-            {"items" in item && item.items && item.items.length > 0 && (
-              <ul className="mt-4 flex-1 space-y-1.5 border-t border-[var(--border)] pt-4">
-                {item.items.slice(0, 3).map((bullet) => (
-                  <li key={bullet} className="flex items-start gap-2 text-xs text-[var(--muted-foreground)]">
-                    <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[var(--primary)]" aria-hidden />
-                    <span>{bullet}</span>
-                  </li>
-                ))}
-                {item.items.length > 3 && (
-                  <li className="pt-1 text-xs font-medium text-[var(--primary)]">
-                    +{item.items.length - 3} more · click for full details
-                  </li>
-                )}
-              </ul>
-            )}
-          </motion.button>
-        ))}
-      </div>
-      <RoadmapModal
-        phase={selectedPhase as RoadmapPhase | null}
-        onClose={() => setSelectedPhase(null)}
-      />
-    </>
+            <p className="mt-2 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{item.description}</p>
+            <span className="mt-4 text-sm font-semibold text-[var(--primary)]">
+              Open
+              <span aria-hidden className="ml-1 inline-block transition-transform group-hover:translate-x-0.5">
+                →
+              </span>
+            </span>
+          </Link>
+        </motion.div>
+      ))}
+    </div>
   );
 }
 
-export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
+export function HomePageClient({
+  cmsPosts,
+  governmentPreview,
+  atAGlance,
+}: {
+  cmsPosts: HomePageNewsItem[];
+  governmentPreview: GovernmentCommitmentsHomePreviewData | null;
+  atAGlance: HomeAtAGlanceData;
+}) {
   const phase = getPublicPlatformPhase();
   const parliamentLive = platformFeatures.parliamentTrackerData(phase);
 
@@ -155,13 +147,17 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
 
       <LivePlatformStrip />
 
+      <HomeDataProvenanceRibbon />
+
+      <HomeParticipateHub data={atAGlance} />
+
       {/* Executive summary + Vision & Mission — same narrative order as About / programme doc */}
       <section
         id="executive-summary"
-        className="section-full border-b border-[var(--border)] bg-[var(--section-light)] py-10 sm:py-12 lg:py-16"
+        className="section-full border-b border-[var(--border)] bg-[var(--section-light)] py-8 sm:py-10 lg:py-12"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start lg:gap-12">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start lg:gap-10">
             <motion.div
               initial={{ opacity: 0, x: -16 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -188,12 +184,16 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
               <h2 className="mt-2 font-display text-xl font-bold text-[var(--foreground)] sm:text-2xl lg:text-3xl">
                 Executive summary
               </h2>
-              <div className="mt-4 space-y-4 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
-                {mbkruStrategicContent.executiveSummaryParagraphs.map((para, i) => (
-                  <p key={i}>{para}</p>
-                ))}
-              </div>
-              <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+                {mbkruStrategicContent.executiveSummaryParagraphs[0]}
+              </p>
+              <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+                <Link href="/about#executive-summary" className="font-semibold text-[var(--primary)] hover:underline">
+                  Continue on About
+                </Link>{" "}
+                for the full executive summary, restorative justice context, and pillar detail.
+              </p>
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-card)]">
                   <p className="text-xs font-semibold uppercase tracking-wide text-[var(--primary)]">Vision</p>
                   <p className="mt-2 text-sm leading-relaxed text-[var(--foreground)]">{mbkruStrategicContent.vision}</p>
@@ -205,7 +205,7 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
                   </p>
                 </div>
               </div>
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className="mt-5 flex flex-wrap gap-3">
                 <Button href="/about" variant="primary">
                   Full programme on About
                 </Button>
@@ -220,6 +220,10 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
           </div>
         </div>
       </section>
+
+      {governmentPreview ? <GovernmentCommitmentsHomePreview data={governmentPreview} /> : null}
+
+      <HomePromisesBrowseDashboard />
 
       {/* Key Operational Pillars — dark section, zigzag glassmorphism cards */}
       <section className="relative section-spacing section-full overflow-hidden bg-[var(--section-dark)]">
@@ -298,7 +302,11 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
                 What we are building toward
               </h2>
               <p className="mt-3 text-sm text-[var(--muted-foreground)]">
-                Five concrete objectives — identical wording on the About page and in programme materials.
+                Five concrete objectives — full wording on{" "}
+                <Link href="/about#core-objectives" className="font-medium text-[var(--primary)] hover:underline">
+                  About
+                </Link>
+                .
               </p>
               <ol className="mt-6 space-y-4 border-l-2 border-[var(--primary)]/25 pl-5">
                 {mbkruStrategicContent.coreObjectives.map((obj, i) => (
@@ -318,17 +326,19 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
               <h2 className="font-display text-lg font-bold text-[var(--foreground)] sm:text-xl lg:text-2xl">
                 Accountability in practice
               </h2>
-              <p className="mt-6 text-[var(--muted-foreground)] leading-relaxed">
-                {mbkruStrategicContent.executiveSummaryParagraphs[1]}
+              <p className="mt-4 text-sm leading-relaxed text-[var(--muted-foreground)]">
+                {mbkruStrategicContent.homepageAccountabilityTeaser}
               </p>
-              <p className="mt-4 text-[var(--muted-foreground)] leading-relaxed">
-                Explore promises, report cards, and methodology when your deployment phase enables public datasets.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className="mt-5 flex flex-wrap gap-3">
                 {parliamentLive ? (
-                  <Button href="/promises" variant="primary">
-                    Campaign promises
-                  </Button>
+                  <>
+                    <Button href="/government-commitments" variant="primary">
+                      Government commitments
+                    </Button>
+                    <Button href="/promises" variant="outline">
+                      By MP
+                    </Button>
+                  </>
                 ) : (
                   <Button href="/parliament-tracker" variant="primary">
                     Accountability hub
@@ -336,6 +346,9 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
                 )}
                 <Button href="/methodology" variant="outline">
                   Methodology
+                </Button>
+                <Button href="/about" variant="outline">
+                  About
                 </Button>
               </div>
             </motion.div>
@@ -356,10 +369,12 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
                 Our Platform Provides Citizen-Centric Advice to All Ghanaians
               </h2>
               <p className="mt-4 text-[var(--muted-foreground)] leading-relaxed">
-                MBKRU connects ordinary citizens directly to the highest levels of government. Our platform offers transparent, technology-enabled channels for filing complaints, tracking responses, and holding elected officials accountable to their promises.
-              </p>
-              <p className="mt-4 text-[var(--muted-foreground)] leading-relaxed">
-                Our team of dedicated coordinators and partners brings experience across governance, legal empowerment, and citizen engagement. You can trust us to provide accurate, timely, and effective support for your concerns.
+                MBKRU connects citizens to national leadership through transparent channels for voice, tracking, and
+                accountability. Coordinators, partners, and programme detail are summarised on{" "}
+                <Link href="/about" className="font-semibold text-[var(--primary)] hover:underline">
+                  About
+                </Link>{" "}
+                and across pillar pages.
               </p>
               <Button href="/citizens-voice" className="mt-6">
                 Explore Our Platform
@@ -376,13 +391,12 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
             >
               <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Explore further</h3>
               <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                Quick paths to programmes, published documents, and how we work. The five pillars (A–E) are laid out in
-                the next section.
+                Pillar-by-pillar copy and links live on About; start here for the busiest public routes.
               </p>
               <ul className="mt-5 space-y-3 text-sm font-medium text-[var(--foreground)]">
                 <li>
                   <Link href="/about" className="text-[var(--primary)] hover:underline">
-                    Five pillars in full (About)
+                    About — pillars &amp; objectives
                   </Link>
                 </li>
                 <li>
@@ -390,35 +404,21 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
                     MBKRU Voice
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    href={platformFeatures.townHallDirectory(phase) ? "/town-halls" : "/situational-alerts"}
-                    className="text-[var(--primary)] hover:underline"
-                  >
-                    {platformFeatures.townHallDirectory(phase) ? "Forums & town halls" : "Engagement & alerts"}
-                  </Link>
-                </li>
+                {parliamentLive ? (
+                  <li>
+                    <Link href="/government-commitments" className="text-[var(--primary)] hover:underline">
+                      Government commitments
+                    </Link>
+                  </li>
+                ) : null}
                 <li>
                   <Link href="/parliament-tracker" className="text-[var(--primary)] hover:underline">
-                    Accountability &amp; parliament tracker
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href={platformFeatures.legalEmpowermentDesk(phase) ? "/legal-empowerment" : "/about"}
-                    className="text-[var(--primary)] hover:underline"
-                  >
-                    Legal empowerment {platformFeatures.legalEmpowermentDesk(phase) ? "desk" : "(on About)"}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/resources" className="text-[var(--primary)] hover:underline">
-                    Resources &amp; downloads
+                    Parliament tracker
                   </Link>
                 </li>
                 <li>
                   <Link href="/methodology" className="text-[var(--primary)] hover:underline">
-                    Accountability methodology
+                    Methodology
                   </Link>
                 </li>
               </ul>
@@ -427,9 +427,9 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
         </div>
       </section>
 
-      {/* Roadmap / programme phases (published milestones, not live DB metrics) */}
+      {/* Programme pathways — stakeholder entry points (replaces quarter roadmap cards on the homepage) */}
       <section className="section-spacing section-full bg-[var(--section-light)]">
-        <div className="mx-auto max-w-7xl">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -437,29 +437,53 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
             className="text-center"
           >
             <span className="inline-block rounded bg-[var(--primary)]/10 px-3 py-1.5 text-sm font-medium text-[var(--primary)]">
-              What&apos;s Next
+              Explore
             </span>
             <h2 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl lg:text-4xl">
-              Our Roadmap
+              Programme pathways
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-[var(--muted-foreground)]">
-              Key milestones toward Ghana 2028 election. Accountability Scorecards published 90 days before.
+              Jump straight into Voice, accountability tools, provenance, methodology, and partnerships. These cards are
+              navigation — not a delivery calendar.
             </p>
-            <p className="mx-auto mt-3 max-w-2xl text-center text-xs text-[var(--muted-foreground)]">
-              These cards summarise published programme phases — not live metrics from the platform database.
+            <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-[var(--muted-foreground)]">
+              For the full programme story, pillars, and long-range planning narrative, read{" "}
+              <Link href="/about" className="font-medium text-[var(--primary)] hover:underline">
+                About
+              </Link>
+              . Quarter-by-quarter milestones for funders remain in programme documentation referenced from About and
+              Data sources.
             </p>
           </motion.div>
           <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-[var(--muted-foreground)]">
-            Funders and partners can align with our phased rollout. Click any card for full details — or reach us via{" "}
+            Need a conversation?{" "}
             <Link href="/contact" className="font-medium text-[var(--primary)] hover:underline">
               Contact
-            </Link>
-            .
+            </Link>{" "}
+            the coordination desk.
           </p>
-          <RoadmapSection />
-          <div className="mt-10 text-center">
+          {phase >= 3 ? (
+            <p className="mx-auto mt-4 max-w-2xl rounded-xl border border-[var(--primary)]/20 bg-[var(--primary)]/[0.06] px-4 py-3 text-center text-sm leading-relaxed text-[var(--foreground)]">
+              <span className="font-semibold">This site is running Phase 3 of our public roll-out</span>{" "}
+              <span className="text-[var(--muted-foreground)]">
+                — so election observation, communities, petitions, and full accountability browsing can appear here when
+                enabled. That is independent of any printed programme calendar your team keeps for board reporting.
+              </span>
+            </p>
+          ) : phase === 2 ? (
+            <p className="mx-auto mt-4 max-w-2xl rounded-xl border border-[var(--border)] bg-white/80 px-4 py-3 text-center text-sm leading-relaxed text-[var(--muted-foreground)]">
+              <span className="font-semibold text-[var(--foreground)]">Phase 2 build</span> — Voice, accounts, and
+              accountability data can be live on this site while programme communications still use their own planning
+              calendar.
+            </p>
+          ) : null}
+          <HomeProgrammePathwaysSection phase={phase} />
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+            <Button href="/about" variant="outline">
+              Full programme on About
+            </Button>
             <Button href="/contact">
-              Discuss Phase Approval
+              Contact the team
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>

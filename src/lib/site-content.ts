@@ -2,7 +2,7 @@
  * MBKRU site content & bundled UI data
  *
  * Central place for illustrative imagery (Unsplash), hero/brand copy, contact strings,
- * programme roadmap cards, FAQ entries, and regional reference data. Swap URLs or copy
+ * programme roadmap data (About / docs), homepage pathway cards, FAQ entries, and regional reference data. Swap URLs or copy
  * when production assets and verified text are ready.
  *
  * Images: Unsplash (https://unsplash.com) — free to use, no attribution required.
@@ -116,11 +116,15 @@ export const mbkruStrategicContent = {
   legalName: "My Brother's Keeper Restoration United (MBKRU)",
   pillarTagline:
     "Advocate for the Disenfranchised • Watchdog for Accountability • Catalyst for Poverty Eradication",
+  /** Full programme overview — all three paragraphs render on About; homepage shows only the first. */
   executiveSummaryParagraphs: [
     "My Brother's Keeper Restoration United (MBKRU) proposes to transform itself into Ghana's premier independent, non-partisan citizens' platform that connects ordinary Ghanaians—especially the poor, rural, urban, and youth populations—directly to the highest levels of government.",
     "By building a transparent, technology-enabled communication bridge between the Presidency, Ministers, Parliament, and the people, MBKRU will ensure that elected officials are held strictly accountable to the promises they make and the needs of the citizens they serve.",
     "The ultimate goal is the systematic reduction and eventual eradication of extreme poverty in Ghana through sustained advocacy and public engagement, real-time grievance redress, legal empowerment, and electoral accountability.",
   ],
+  /** Homepage — accountability column points readers to About + tracker surfaces. */
+  homepageAccountabilityTeaser:
+    "The full bridge narrative, restorative justice context, and five objectives are on About. Tracked pledges and methodology update with each deployment phase.",
   vision:
     "A Ghana where no citizen feels powerless, where government listens, responds, and delivers, and where poverty is treated as a national emergency rather than an acceptable condition.",
   mission:
@@ -261,7 +265,7 @@ export const faqContent = [
   {
     question: "How do I report an issue or file a complaint?",
     answer:
-      "On deployments running Phase 2 or higher, register at /register, sign in, and use MBKRU Voice from your account or /citizens-voice/submit. On Phase 1 marketing sites, use the contact form or join early access on the Citizens Voice page.",
+      "When member accounts are live on this site, create an account, sign in, and submit through MBKRU Voice from your account page or the Voice submit flow. While the site stays in Phase 1 (information and previews only), use the contact form or the early-access options on the Citizens Voice page.",
   },
   {
     question: "Is MBKRU affiliated with any political party?",
@@ -278,7 +282,7 @@ export const faqContent = [
   {
     question: "When will the MBKRU Voice platform be available?",
     answer:
-      "Full Voice features are available when the site is built with Phase 2+ (self-serve registration at /register). On Phase 1-only deployments, sign up for early access on the Citizens Voice page.",
+      "Full Voice features switch on when the programme enables member accounts and reporting on this domain (self-serve registration). Until then, use early access on the Citizens Voice page and the contact form so the team can reach you.",
   },
 ] as const;
 
@@ -345,7 +349,7 @@ export const programmeRoadmap = [
       "Constituency-level Town Hall expansion",
       "FOI & CHRAJ data pipeline",
     ],
-    detailContent: `The first People's Report Card establishes the accountability baseline. Every Minister, Regional Minister, and MP receives a data-driven assessment. Campaign promise tracking uses 2024 manifestos as baseline. The Annual National People's Assembly convenes with selected members presenting priority issues to the President. Constituency-level Town Halls expand across Ghana. FOI and CHRAJ data pipelines support evidence-based reporting.`,
+    detailContent: `The first People's Report Card establishes the accountability baseline. Every Minister, Regional Minister, and MP receives a data-driven assessment. Campaign promise tracking uses 2024 manifestos as baseline. The Annual National People's Assembly convenes with selected members presenting priority issues to the President. Constituency-level Town Halls expand across Ghana. FOI and CHRAJ data pipelines support evidence-based reporting. From late 2027 through mid-2028 the programme maintains published updates (Voice statistics, promise catalogue revisions, and regional forum cadence) so the pre-election scorecard release is evidence-led rather than a single snapshot.`,
   },
   {
     period: "Q3 2028",
@@ -355,12 +359,12 @@ export const programmeRoadmap = [
     description: "Published 90 days before Ghana 2028 election. Maximum impact.",
     items: [
       "Accountability Scorecards published (Aug–Sep 2028)",
-      "Pre-election debates in every constituency (275)",
+      "Pre-election debates in every constituency (275–276 per EC seat map)",
       "National People's Assembly (election focus)",
       "Media & CSO partnerships for coverage",
       "Real-time 2028 manifesto tracking",
     ],
-    detailContent: `Accountability Scorecards are published 90 days before the Ghana 2028 general election — the flagship deliverable. Pre-election debates and town halls are held in all 275 constituencies. The National People's Assembly focuses on election-year priorities. Media and CSO partnerships ensure broad coverage. Real-time tracking of 2028 manifestos begins as soon as parties release them. Voters have data-driven information to hold candidates accountable.`,
+    detailContent: `Accountability Scorecards are published 90 days before the Ghana 2028 general election — the flagship deliverable. Pre-election debates and town halls are held nationwide; constituency counts follow the Electoral Commission (275 toward 276 seats, including Guan where applicable). The National People's Assembly focuses on election-year priorities. Media and CSO partnerships ensure broad coverage. Real-time tracking of 2028 manifestos begins as soon as parties release them. On a Phase 3 website build, MBKRU may ship election-observation intake and hardened public scorecard pages before these calendar windows — see methodology for scope.`,
   },
   {
     period: "Q4 2028",
@@ -375,6 +379,61 @@ export const programmeRoadmap = [
       "Legacy: 3 Report Cards + Scorecards in public record",
     ],
     detailContent: `Ghana holds its general election in November–December 2028. MBKRU serves as a trusted, non-partisan accountability reference for voters. Post-election, promise tracking begins for the new administration. Voter education and civic engagement continue. MBKRU's legacy: three People's Report Cards and Accountability Scorecards in the public record, establishing a new standard for citizen-led accountability in Ghana.`,
+  },
+] as const;
+
+/**
+ * Homepage “pathways” grid — replaces the old quarter-by-quarter roadmap cards on the home page.
+ * Stakeholders get direct routes into live tools; the detailed delivery calendar stays in About and internal programme docs.
+ */
+export const homepageEngagementPathways = [
+  {
+    tag: "Voice",
+    title: "Citizen reporting",
+    description: "How MBKRU Voice works, what we moderate, and how to submit when your deployment enables intake.",
+    href: "/citizens-voice",
+  },
+  {
+    tag: "Accountability",
+    title: "Promises & parliament",
+    description: "Tracker hub, government commitments, and promise browsing — aligned with published methodology.",
+    href: "/parliament-tracker",
+  },
+  {
+    tag: "Communities",
+    title: "Community spaces",
+    description: "Traditional-area and Queen Mothers community pages — membership and posting rules vary by space.",
+    href: "/communities",
+  },
+  {
+    tag: "Forums",
+    title: "Town halls & regional forums",
+    description: "Programme town halls, constituency debates, and regional listening events with published citations.",
+    href: "/town-halls",
+  },
+  {
+    tag: "Evidence",
+    title: "Data sources",
+    description: "Where constituencies, MPs, and public figures are cited — and how to challenge or correct a row.",
+    href: "/data-sources",
+  },
+  {
+    tag: "Method",
+    title: "Methodology",
+    description: "Scoring rules, limitations, and how we separate programme narrative from live catalogue data.",
+    href: "/methodology",
+  },
+  {
+    tag: "Help",
+    title: "FAQ",
+    description: "Membership, Voice rollout, petitions, and common questions in plain language.",
+    href: "/faq",
+  },
+  {
+    tag: "Collaborate",
+    title: "Partners & media",
+    description: "Institutions, foundations, and journalists working with MBKRU on governance outcomes.",
+    href: "/partners",
   },
 ] as const;
 

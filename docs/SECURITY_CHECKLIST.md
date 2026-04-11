@@ -13,6 +13,7 @@ Use for **releases** and **quarterly** review; not a substitute for a profession
 
 - [ ] Admin routes require **valid JWT** (proxy + server actions / `getAdminSession`).
 - [ ] **Rate limit** on **`/api/admin/login`** (in place via `allowPublicFormRequest`; Vitest covers 429 path in `src/app/api/admin/login/route.test.ts`).
+- [ ] **Rate limit** heavy admin **GET** aggregates — citizen-report JSON + CSV export and petition-pending JSON use `allowAdminSessionRequest` per admin (`RATE_LIMIT_*` window shared with public forms).
 - [ ] **File uploads** (media, report attachments) respect size/MIME limits — see `report-attachment-limits` and admin media route.
 
 ## Public APIs

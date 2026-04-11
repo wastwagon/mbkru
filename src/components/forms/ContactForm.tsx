@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/Button";
+import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
 
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
@@ -27,6 +28,7 @@ const inputNormal = "border-[var(--border)] hover:border-[var(--primary)]/30";
 
 export function ContactForm() {
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [receivedAtIso, setReceivedAtIso] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(undefined);
 
@@ -61,11 +63,14 @@ export function ContactForm() {
         }),
       });
       if (!res.ok) throw new Error("Failed to send");
+      const payload = (await res.json().catch(() => ({}))) as { receivedAt?: string };
+      setReceivedAtIso(payload.receivedAt ?? new Date().toISOString());
       setStatus("success");
       reset();
       setTurnstileToken(null);
       turnstileRef.current?.reset();
     } catch {
+      setReceivedAtIso(null);
       setStatus("error");
     }
   }
@@ -199,7 +204,16 @@ export function ContactForm() {
           <svg className="h-5 w-5 shrink-0 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
-          <p className="text-sm font-medium">Thank you. Your message has been sent. We aim to respond within two business days.</p>
+          <div className="text-sm font-medium text-green-800">
+            <p>Thank you. Your message has been sent. We aim to respond within two business days.</p>
+            {receivedAtIso ? (
+              <p className="mt-2 text-xs font-normal text-green-900/85">
+                Logged{" "}
+                <time dateTime={receivedAtIso}>{formatSubmissionDateTime(receivedAtIso)}</time>
+                {` — `}use this timestamp if you follow up with our team.
+              </p>
+            ) : null}
+          </div>
         </div>
       )}
       {status === "error" && (

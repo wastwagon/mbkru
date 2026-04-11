@@ -61,7 +61,7 @@ function buildMainNav(phase: ReturnType<typeof getPublicPlatformPhase>): NavEntr
     kind: "group",
     id: "updates",
     label: "News & resources",
-    items: getDiscoverNavLinks() as NavLeaf[],
+    items: getDiscoverNavLinks(phase) as NavLeaf[],
   });
 
   return entries;
@@ -203,7 +203,7 @@ function MemberAuthNav({
         {menuOpen ? (
           <div
             role="menu"
-            className="absolute right-0 top-full z-[60] mt-2 min-w-[220px] rounded-xl border border-[var(--border)] bg-white py-1 shadow-[var(--shadow-dropdown)]"
+            className="absolute right-0 top-full z-[60] min-w-[220px] -mt-px rounded-xl border border-[var(--border)] bg-white pb-1 pt-[calc(0.5rem+1px)] shadow-[var(--shadow-dropdown)]"
           >
             <Link
               role="menuitem"
@@ -300,36 +300,25 @@ function DesktopNavDropdown({
   open,
   onOpen,
   onClose,
+  onCancelDelayedFlyoutClose,
 }: {
   entry: Extract<NavEntry, { kind: "group" }>;
   pathname: string;
   isHomeHero: boolean;
   open: boolean;
   onOpen: () => void;
+  /** Immediate close: outside click, Escape, blur leaving the flyout. */
   onClose: () => void;
+  /** Clears the header’s delayed flyout close (scheduled when the pointer leaves the whole desktop nav cluster). */
+  onCancelDelayedFlyoutClose: () => void;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const leaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const active = groupIsActive(pathname, entry.items);
 
-  const cancelLeaveTimer = useCallback(() => {
-    if (leaveTimerRef.current) {
-      clearTimeout(leaveTimerRef.current);
-      leaveTimerRef.current = null;
-    }
-  }, []);
-
   const handleEnter = useCallback(() => {
-    cancelLeaveTimer();
+    onCancelDelayedFlyoutClose();
     onOpen();
-  }, [cancelLeaveTimer, onOpen]);
-
-  const handleLeave = useCallback(() => {
-    cancelLeaveTimer();
-    leaveTimerRef.current = setTimeout(() => onClose(), 140);
-  }, [cancelLeaveTimer, onClose]);
-
-  useEffect(() => () => cancelLeaveTimer(), [cancelLeaveTimer]);
+  }, [onCancelDelayedFlyoutClose, onOpen]);
 
   useEffect(() => {
     if (!open) return;
@@ -356,14 +345,16 @@ function DesktopNavDropdown({
     });
   }
 
-  const btnClass = `inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-base font-medium transition-colors touch-manipulation ${desktopLinkClass(isHomeHero, active)}`;
+  const btnClass = `inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-base font-medium transition-colors touch-manipulation ${desktopLinkClass(isHomeHero, active)}`;
+
+  /** Must match the dropdown panel `min-w` so the hover target spans the full panel width (otherwise `mouseleave` fires when moving onto the right side of a wide menu). */
+  const openHoverMinClass = "min-w-[min(100vw-2rem,16rem)]";
 
   return (
     <div
-      className="relative"
+      className={`relative inline-flex flex-col items-start ${open ? openHoverMinClass : ""}`}
       ref={wrapRef}
       onMouseEnter={handleEnter}
-      onMouseLeave={handleLeave}
       onBlur={handleContainerBlur}
     >
       <button
@@ -380,12 +371,12 @@ function DesktopNavDropdown({
         <ChevronDownIcon open={open} className={isHomeHero ? "opacity-90" : ""} />
       </button>
       {open ? (
-        <div className="absolute left-0 top-full z-[60] min-w-[min(100vw-2rem,16rem)] max-w-[calc(100vw-2rem)] pt-2">
+        <div className="absolute left-0 top-full z-[60] w-full max-w-[calc(100vw-2rem)] -mt-px pt-[calc(0.375rem+1px)]">
           <div
             role="menu"
             id={`nav-menu-${entry.id}`}
             aria-labelledby={`nav-trigger-${entry.id}`}
-            className="rounded-xl border border-[var(--border)] bg-white py-1 shadow-[var(--shadow-dropdown)]"
+            className={`min-w-[min(100vw-2rem,16rem)] rounded-xl border border-[var(--border)] bg-white py-1 shadow-[var(--shadow-dropdown)]`}
           >
             {entry.items.map((item) => {
               const isItemActive = leafIsActive(pathname, item);
@@ -418,7 +409,29 @@ export function Header() {
   const navStructure = buildMainNav(phase);
   const showMemberAuth = platformFeatures.authentication(phase);
 
-  const closeDesktopMenus = useCallback(() => setDesktopOpenId(null), []);
+  const desktopFlyoutLeaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelDesktopFlyoutLeaveTimer = useCallback(() => {
+    if (desktopFlyoutLeaveTimerRef.current) {
+      clearTimeout(desktopFlyoutLeaveTimerRef.current);
+      desktopFlyoutLeaveTimerRef.current = null;
+    }
+  }, []);
+
+  const closeDesktopMenus = useCallback(() => {
+    cancelDesktopFlyoutLeaveTimer();
+    setDesktopOpenId(null);
+  }, [cancelDesktopFlyoutLeaveTimer]);
+
+  const scheduleDesktopFlyoutClose = useCallback(() => {
+    cancelDesktopFlyoutLeaveTimer();
+    desktopFlyoutLeaveTimerRef.current = setTimeout(() => {
+      desktopFlyoutLeaveTimerRef.current = null;
+      setDesktopOpenId(null);
+    }, 220);
+  }, [cancelDesktopFlyoutLeaveTimer]);
+
+  useEffect(() => () => cancelDesktopFlyoutLeaveTimer(), [cancelDesktopFlyoutLeaveTimer]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 100);
@@ -443,7 +456,11 @@ export function Header() {
       <nav className="mx-auto flex max-w-7xl min-h-[60px] items-center justify-between gap-4 overflow-visible px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
         <Logo href="/" className="gap-2.5" theme={isHomeHero ? "dark" : "light"} />
 
-        <div className="hidden min-w-0 flex-1 items-center justify-center gap-1 xl:gap-2 lg:flex">
+        <div
+          className="hidden min-w-0 flex-1 items-center justify-center gap-0.5 xl:gap-1 lg:flex"
+          onMouseEnter={cancelDesktopFlyoutLeaveTimer}
+          onMouseLeave={scheduleDesktopFlyoutClose}
+        >
           {navStructure.map((entry) => {
             if (entry.kind === "link") {
               const active = leafIsActive(pathname, entry.leaf);
@@ -451,7 +468,7 @@ export function Header() {
                 <Link
                   key={entry.leaf.href}
                   href={entry.leaf.href}
-                  className={`shrink-0 whitespace-nowrap rounded-lg px-2 py-1.5 text-sm font-medium transition-colors xl:text-base touch-manipulation ${desktopLinkClass(isHomeHero, active)}`}
+                  className={`shrink-0 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-sm font-medium transition-colors xl:text-base touch-manipulation ${desktopLinkClass(isHomeHero, active)}`}
                 >
                   {entry.leaf.label}
                 </Link>
@@ -466,6 +483,7 @@ export function Header() {
                 open={desktopOpenId === entry.id}
                 onOpen={() => setDesktopOpenId(entry.id)}
                 onClose={closeDesktopMenus}
+                onCancelDelayedFlyoutClose={cancelDesktopFlyoutLeaveTimer}
               />
             );
           })}

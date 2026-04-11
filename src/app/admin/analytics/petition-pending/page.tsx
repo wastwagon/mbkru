@@ -51,6 +51,10 @@ export default async function AdminPetitionPendingAnalyticsPage() {
           Run expired-row cleanup
         </Link>
       </p>
+      <p className="mt-2 max-w-2xl text-xs text-[var(--muted-foreground)]">
+        JSON requests are rate-limited per admin (<code className="text-[11px]">RATE_LIMIT_*</code>). A{" "}
+        <code className="text-[11px]">429</code> means wait briefly before refreshing or scripting this endpoint.
+      </p>
 
       <section className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">

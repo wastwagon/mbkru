@@ -34,3 +34,8 @@ export function isWhistleblowerGuidancePageEnabled(): boolean {
 export function isCivicPetitionsAndPublicCausesEnabled(): boolean {
   return platformFeatures.citizensVoicePlatform(getServerPlatformPhase());
 }
+
+/** Public partner data & API terms (`/partner-api`); Phase 2+ only. */
+export function isPartnerApiTermsPageEnabled(): boolean {
+  return platformFeatures.partnerJsonProgramme(getServerPlatformPhase());
+}

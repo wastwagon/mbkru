@@ -7,7 +7,11 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { images } from "@/lib/site-content";
-import { isPromisesBrowseEnabled, isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
+import {
+  isPartnerApiTermsPageEnabled,
+  isPromisesBrowseEnabled,
+  isReportCardPublicEnabled,
+} from "@/lib/reports/accountability-pages";
 import { getCachedMpsPublicRoster } from "@/lib/server/accountability-cache";
 import { getPromiseTrackerStats } from "@/lib/server/promise-tracker-stats";
 
@@ -38,6 +42,7 @@ const accountabilityStepIcons = {
 export default async function ParliamentTrackerPage() {
   const showPromises = isPromisesBrowseEnabled();
   const showReportCard = isReportCardPublicEnabled();
+  const partnerDataPage = isPartnerApiTermsPageEnabled();
 
   const dbReady = isDatabaseConfigured();
   const [trackerStats, mpRoster] = dbReady
@@ -89,11 +94,19 @@ export default async function ParliamentTrackerPage() {
                 <div>
                   <h2 className="font-display text-lg font-bold text-[var(--foreground)]">Parliamentary roster</h2>
                   <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-                    {mpRoster.length} active MP{mpRoster.length === 1 ? "" : "s"} in catalogue. Open promise pages or the{" "}
-                    <Link href="/api/mps" className="text-[var(--primary)] hover:underline">
-                      JSON roster
-                    </Link>
-                    .
+                    {mpRoster.length} active MP{mpRoster.length === 1 ? "" : "s"} in this catalogue. Open promise pages from
+                    the list, or{" "}
+                    {partnerDataPage ? (
+                      <>
+                        see{" "}
+                        <Link href="/partner-api" className="text-[var(--primary)] hover:underline">
+                          Partner data &amp; API
+                        </Link>{" "}
+                        for machine-readable exports of the same roster.
+                      </>
+                    ) : (
+                      "ask the team if you need a machine-readable export of this roster."
+                    )}
                   </p>
                 </div>
                 {showPromises ? (
@@ -107,7 +120,8 @@ export default async function ParliamentTrackerPage() {
               </div>
               {mpRoster.length === 0 ? (
                 <p className="mt-6 text-sm text-[var(--muted-foreground)]">
-                  No parliament members loaded yet. Run seed with bundled MP JSON or import via admin.
+                  No parliamentarians are listed yet. They will appear here once the programme publishes a roster for
+                  this site.
                 </p>
               ) : (
                 <ul className="mt-6 max-h-[min(28rem,55vh)] divide-y divide-[var(--border)] overflow-y-auto rounded-xl border border-[var(--border)]">

@@ -5,9 +5,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 
 type Props = { variant: "login" | "register" };
 
-/**
- * Shown when `NEXT_PUBLIC_PLATFORM_PHASE` &lt; 2 at build — avoids confusing 404 on /login and /register.
- */
+/** Shown when member auth routes are disabled for this deployment (Phase 1-style build). */
 export function MemberAuthUnavailable({ variant }: Props) {
   const title = variant === "login" ? "Sign in" : "Create account";
 
@@ -20,19 +18,23 @@ export function MemberAuthUnavailable({ variant }: Props) {
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-lg rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
           <p className="text-[var(--foreground)] leading-relaxed">
-            <strong>Member sign-in is not enabled on this deployment.</strong> The site was built with{" "}
-            <strong>Phase 1</strong> settings, so marketing and previews work, but{" "}
-            <code className="rounded bg-[var(--muted)] px-1.5 py-0.5 text-sm">/login</code> and{" "}
-            <code className="rounded bg-[var(--muted)] px-1.5 py-0.5 text-sm">/register</code> stay off until the next
-            production build.
+            <strong>Member sign-in is not available on this site yet.</strong> This deployment is in{" "}
+            <strong>Phase 1</strong> mode (public information and contact). Accounts and MBKRU Voice open when the
+            programme turns on later phases on this domain.
           </p>
-          <p className="mt-4 text-sm leading-relaxed text-[var(--muted-foreground)]">
-            <strong className="text-[var(--foreground)]">Operators (Coolify / Docker):</strong> set build argument{" "}
-            <code className="rounded bg-[var(--muted)] px-1 py-0.5 text-xs">NEXT_PUBLIC_PLATFORM_PHASE=2</code> (or{" "}
-            <code className="rounded bg-[var(--muted)] px-1 py-0.5 text-xs">3</code>), set{" "}
-            <code className="rounded bg-[var(--muted)] px-1 py-0.5 text-xs">MEMBER_SESSION_SECRET</code> (≥32 chars), then{" "}
-            <strong>rebuild</strong> the image — <code className="text-xs">NEXT_PUBLIC_*</code> is baked in at build time.
-          </p>
+          <details className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--section-light)]/60 px-4 py-3 text-sm">
+            <summary className="cursor-pointer font-semibold text-[var(--foreground)]">
+              Technical notes for site operators
+            </summary>
+            <p className="mt-3 text-xs leading-relaxed text-[var(--muted-foreground)]">
+              Enable Phase 2 (or 3) at build time, set a member session secret (32+ random characters), then rebuild the
+              web image so visitor-facing flags and Voice routes match —{" "}
+              <code className="rounded bg-white px-1 py-0.5 font-mono text-[11px]">NEXT_PUBLIC_PLATFORM_PHASE</code>,{" "}
+              <code className="rounded bg-white px-1 py-0.5 font-mono text-[11px]">MEMBER_SESSION_SECRET</code>, and other{" "}
+              <code className="rounded bg-white px-1 py-0.5 font-mono text-[11px]">NEXT_PUBLIC_*</code> values are fixed at
+              build time.
+            </p>
+          </details>
           <ul className="mt-5 list-disc space-y-2 pl-5 text-sm text-[var(--muted-foreground)]">
             <li>
               <Link href="/citizens-voice" className="font-medium text-[var(--primary)] hover:underline">

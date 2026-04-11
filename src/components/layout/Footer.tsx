@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { Logo } from "@/components/ui/Logo";
 import { FooterMemberAuth } from "@/components/layout/FooterMemberAuth";
-import { getServerPlatformPhase } from "@/config/platform";
+import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { getFooterPlatformFlowLinks } from "@/config/public-platform-nav";
 import { content, heroContent, footerGalleryAlts, footerGalleryImages } from "@/lib/site-content";
 
@@ -29,6 +29,18 @@ export async function Footer() {
   const currentYear = new Date().getFullYear();
   const phase = getServerPlatformPhase();
   const platformLinks = getFooterPlatformFlowLinks(phase);
+  const organizationLinks = (() => {
+    const links = [...footerLinks.organization];
+    if (platformFeatures.partnerJsonProgramme(phase)) {
+      const idx = links.findIndex((l) => l.href === "/data-sources");
+      if (idx >= 0) {
+        links.splice(idx + 1, 0, { href: "/partner-api", label: "Partner data & API" });
+      } else {
+        links.push({ href: "/partner-api", label: "Partner data & API" });
+      }
+    }
+    return links;
+  })();
 
   return (
     <footer className="relative bg-[var(--footer-bg)] text-white">
@@ -125,7 +137,7 @@ export async function Footer() {
           <div>
             <h3 className="text-base font-semibold text-white">Useful Links</h3>
             <ul className="mt-5 space-y-3">
-              {footerLinks.organization.map((link) => (
+              {organizationLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}

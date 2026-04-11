@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { getMemberSession } from "@/lib/member/session";
 import { isCivicPetitionsAndPublicCausesEnabled } from "@/lib/reports/accountability-pages";
+import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
 import { isPetitionGuestEmailVerificationEnabled } from "@/lib/server/petition-guest-verification";
 
 export const dynamic = "force-dynamic";
@@ -121,7 +122,8 @@ export default async function PetitionDetailPage({ params, searchParams }: Props
           <div className="mt-6 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
             <p className="text-xs text-[var(--muted-foreground)]">
               By {p.author.displayName ?? "Member"}
-              {p.region?.name ? ` · ${p.region.name}` : ""} · {p.createdAt.toLocaleDateString("en-GB")}
+              {p.region?.name ? ` · ${p.region.name}` : ""} · Opened{" "}
+              <time dateTime={p.createdAt.toISOString()}>{formatSubmissionDateTime(p.createdAt)}</time>
             </p>
             <div className="prose prose-sm mt-4 max-w-none text-[var(--foreground)]">
               <pre className="whitespace-pre-wrap font-sans text-sm">{p.body}</pre>
@@ -135,7 +137,7 @@ export default async function PetitionDetailPage({ params, searchParams }: Props
                 {recent.map((s, i) => (
                   <li key={i}>
                     {s.consentShowName && s.signerName?.trim() ? s.signerName.trim() : "Supporter"} ·{" "}
-                    {s.createdAt.toLocaleDateString("en-GB")}
+                    <time dateTime={s.createdAt.toISOString()}>{formatSubmissionDateTime(s.createdAt)}</time>
                   </li>
                 ))}
               </ul>

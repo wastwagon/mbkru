@@ -6,6 +6,7 @@ import { useForm, Controller, type DefaultValues } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/Button";
+import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
 const schema = z.object({
@@ -42,6 +43,7 @@ function todayIsoDate() {
 
 export function DiasporaFeedbackForm() {
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [receivedAtIso, setReceivedAtIso] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(undefined);
 
@@ -80,6 +82,8 @@ export function DiasporaFeedbackForm() {
         const j = (await res.json().catch(() => null)) as { error?: string } | null;
         throw new Error(j?.error ?? "Failed");
       }
+      const okJson = (await res.json().catch(() => ({}))) as { receivedAt?: string };
+      setReceivedAtIso(okJson.receivedAt ?? new Date().toISOString());
       setStatus("success");
       reset({
         fullName: "",
@@ -95,6 +99,7 @@ export function DiasporaFeedbackForm() {
       setTurnstileToken(null);
       turnstileRef.current?.reset();
     } catch {
+      setReceivedAtIso(null);
       setStatus("error");
     }
   }
@@ -333,6 +338,13 @@ export function DiasporaFeedbackForm() {
           </svg>
           <div>
             <p className="text-sm font-semibold">Thank you — your feedback has been recorded.</p>
+            {receivedAtIso ? (
+              <p className="mt-1 text-xs text-green-900/85">
+                Received{" "}
+                <time dateTime={receivedAtIso}>{formatSubmissionDateTime(receivedAtIso)}</time>
+                <span className="text-green-900/75"> (stored timestamp).</span>
+              </p>
+            ) : null}
             <p className="mt-1 text-sm text-green-800/90">
               The MBKRU team can review your responses in the website admin. You may close this page or submit another
               entry if needed.

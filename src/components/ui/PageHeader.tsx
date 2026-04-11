@@ -36,6 +36,7 @@ const PATH_BREADCRUMBS: Record<string, string> = {
   "/report-card": "Report card",
   "/methodology": "Methodology",
   "/data-sources": "Data sources",
+  "/partner-api": "Partner data & API",
   "/resources": "Resources",
   "/faq": "FAQ",
   "/partners": "Partners & Supporters",

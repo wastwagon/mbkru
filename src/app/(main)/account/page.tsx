@@ -204,7 +204,7 @@ export default async function AccountPage() {
         <p className="mt-1 text-sm text-[var(--muted-foreground)]">
           {voiceOn
             ? "Submit, review, and track reports tied to your account."
-            : "MBKRU Voice reporting and your full dashboard will appear here when this environment runs Phase 2+."}
+            : "MBKRU Voice reporting and your full dashboard will appear here when Voice is enabled for this site."}
         </p>
         {voiceOn ? (
           <div className="mt-5 grid gap-4 sm:grid-cols-3">

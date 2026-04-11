@@ -22,9 +22,8 @@ export function LivePlatformStrip() {
       <section className="border-y border-[var(--border)] bg-[var(--section-light)]/90 py-4">
         <div className="mx-auto max-w-7xl px-4 text-center text-sm leading-relaxed text-[var(--muted-foreground)] sm:px-6 lg:px-8">
           <span className="font-semibold text-[var(--foreground)]">Phase 1 deployment.</span> News, contact, and waitlists
-          are live. MBKRU Voice, campaign promises, report cards, and pillar pages activate when this site is built with{" "}
-          <code className="rounded bg-white px-1 py-0.5 text-xs">NEXT_PUBLIC_PLATFORM_PHASE</code> ≥ 2 — see roadmap
-          below.
+          are live. MBKRU Voice, campaign promises, report cards, and pillar pages switch on when this site is upgraded to
+          Phase 2 or higher — see the roadmap below.
         </div>
       </section>
     );
@@ -40,7 +39,8 @@ export function LivePlatformStrip() {
           Live on this deployment
         </p>
         <p className="mx-auto mt-1 max-w-2xl text-center text-xs text-[var(--muted-foreground)]">
-          Phase {phase} — tools below match your build. Accountability data and APIs follow the same flags.
+          Phase {phase} — the shortcuts below match what is turned on for visitors on this site, including accountability
+          browsing when your programme enables it.
         </p>
         <p className="mb-2 mt-4 text-center text-[10px] font-medium uppercase tracking-wide text-[var(--muted-foreground)] sm:hidden">
           Swipe for more tools →

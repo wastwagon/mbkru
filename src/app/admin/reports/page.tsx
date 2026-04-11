@@ -51,6 +51,15 @@ export default async function AdminReportsPage({ searchParams }: Props) {
         Triage by kind or open a row for status, staff notes, and audit. Status and team-note emails use Resend when
         configured.
       </p>
+      <p className="mt-3 text-sm">
+        <Link
+          href="/admin/analytics/citizen-reports"
+          className="font-medium text-[var(--primary)] hover:underline"
+        >
+          Aggregate analytics
+        </Link>
+        <span className="text-[var(--muted-foreground)]"> — counts by kind, status, region, playbook; no personal data.</span>
+      </p>
 
       <div className="mt-6 flex flex-wrap gap-2" role="tablist" aria-label="Filter by report kind">
         {KIND_TABS.map((t) => {

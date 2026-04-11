@@ -25,7 +25,7 @@ Use this document to **recover context** after time away or a new machine: what 
 
 **Conclusion:** For **product and engineering scope** as written in `PHASE1_SCOPE.md` — **Phase 1 is complete in the codebase** (pages, flows, admin CMS for news, API stubs, Docker, docs).  
 
-**Optional follow-ups** (still “Phase 1 polish”, not Phase 2 features): wire **email/newsletter** providers, **reCAPTCHA**, **GA4**, richer Resources/Partners editing. Those are handover items in `README.md`, not missing pages.
+**Optional follow-ups** (still “Phase 1 polish”, not Phase 2 features): wire **email/newsletter** providers, **reCAPTCHA**, **GA4**, richer Resources/Partners editing. Those are handover items in `README.md`, not missing pages. For **ordered** gap closure (ops, legal, editorial) before Phase 4+, use [`PHASE_GAPS_CLOSURE_QUEUE.md`](./PHASE_GAPS_CLOSURE_QUEUE.md).
 
 ---
 

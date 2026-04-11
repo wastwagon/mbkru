@@ -114,7 +114,7 @@ export default async function AboutPage() {
       <AboutPlatformLinks />
 
       {/* Section 1: Executive Summary — who we are (lead with overview) */}
-      <section className="section-spacing section-full bg-[var(--section-light)]">
+      <section id="executive-summary" className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-10">
             <div className="lg:order-1">
@@ -199,7 +199,7 @@ export default async function AboutPage() {
       </section>
 
       {/* Section 3: Motto + Tagline + Core Objectives — premium combined layout */}
-      <section className="relative section-spacing section-full overflow-hidden bg-[var(--section-dark)]">
+      <section id="core-objectives" className="relative section-spacing section-full overflow-hidden bg-[var(--section-dark)]">
         <div className="absolute inset-0 bg-[linear-gradient(160deg,var(--section-dark)_0%,rgba(212,160,23,0.15)_40%,var(--section-dark)_100%)]" aria-hidden />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl text-left">

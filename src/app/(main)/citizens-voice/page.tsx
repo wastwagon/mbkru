@@ -115,7 +115,7 @@ export default async function CitizensVoicePage() {
                     ) : (
                       "the transparency page"
                     )}{" "}
-                    when Phase 2+ is enabled
+                    when the programme enables public statistics for this site
                   </span>
                 </li>
               </ul>

@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { isPromisesBrowseEnabled, isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
+import {
+  isPartnerApiTermsPageEnabled,
+  isPromisesBrowseEnabled,
+  isReportCardPublicEnabled,
+} from "@/lib/reports/accountability-pages";
 
 export const metadata: Metadata = {
   title: "Accountability methodology",
@@ -12,6 +16,7 @@ export const metadata: Metadata = {
 export default async function MethodologyPage() {
   const showPromises = isPromisesBrowseEnabled();
   const showReportCard = isReportCardPublicEnabled();
+  const showPartnerApi = isPartnerApiTermsPageEnabled();
 
   return (
     <div>
@@ -71,30 +76,56 @@ export default async function MethodologyPage() {
             oversight by bodies such as CHRAJ, the Auditor-General, or the Electoral Commission.
           </p>
 
+          <h2 id="claims-and-citations" className="mt-10 font-display text-xl font-bold">
+            Claims, citations &amp; limitations
+          </h2>
+          <ul className="mt-4 list-inside list-disc space-y-2 text-[var(--muted-foreground)]">
+            <li>
+              <strong className="text-[var(--foreground)]">Promises and commitments</strong> are tracked as editorial
+              catalogue rows with sources (manifesto, speech, official URL) where our QA requires them — not findings by
+              courts or the Electoral Commission.
+            </li>
+            <li>
+              <strong className="text-[var(--foreground)]">Report card metrics</strong> are explanatory; they complement
+              statutory oversight and never substitute for it.
+            </li>
+            <li>
+              <strong className="text-[var(--foreground)]">Voice and situational channels</strong> triage citizen input
+              for programme accountability — not legal advice or a government hotline.
+            </li>
+            <li>
+              <strong className="text-[var(--foreground)]">Bulk data changes</strong> (imports, retags) follow internal
+              dry-run and sign-off before we market them as refreshed public datasets.
+            </li>
+          </ul>
+
           <p className="mt-12 text-sm text-[var(--muted-foreground)]">
-            Technical access (when your deployment phase enables them):{" "}
-            {showPromises ? (
+            {showPromises || showReportCard ? (
               <>
-                <code className="rounded bg-[var(--section-light)] px-1.5 py-0.5 text-xs">GET /api/mps</code>
-                {" · "}
-                <code className="rounded bg-[var(--section-light)] px-1.5 py-0.5 text-xs">
-                  GET /api/promises?memberSlug=…
-                </code>
-                {showReportCard ? " · " : ""}
+                When enabled for this deployment, partners can pull the same MP roster, promise catalogue, and published
+                report-card cycles through read-only exports. Requests are rate-limited and responses may be cached briefly
+                between refreshes.{" "}
+                {showPartnerApi ? (
+                  <>
+                    <Link href="/partner-api" className="font-medium text-[var(--primary)] hover:underline">
+                      Partner data &amp; API
+                    </Link>{" "}
+                    summarises endpoints, attribution, and fair-use expectations for dashboards and newsrooms.
+                  </>
+                ) : (
+                  "Contact us for partner terms before production embeds."
+                )}
               </>
-            ) : null}
-            {showReportCard ? (
-              <code className="rounded bg-[var(--section-light)] px-1.5 py-0.5 text-xs">
-                GET /api/report-card/[year]
-              </code>
-            ) : null}
-            {(showPromises || showReportCard)
-              ? " — rate-limited; responses may be cached briefly (see ops runbook). Contact us for partner terms before production embeds."
-              : " See ops docs for phase flags."}
+            ) : (
+              "Optional public data feeds follow the same phase rules as the rest of this site — programme staff can confirm what is enabled for your deployment."
+            )}
           </p>
 
-          <p className="mt-6">
-            <Link href="/parliament-tracker" className="text-sm font-medium text-[var(--primary)] hover:underline">
+          <p className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-sm">
+            <Link href="/whistleblowing" className="font-medium text-[var(--primary)] hover:underline">
+              Whistleblowing guidance
+            </Link>
+            <Link href="/parliament-tracker" className="font-medium text-[var(--primary)] hover:underline">
               ← Accountability &amp; Electoral Watch
             </Link>
           </p>

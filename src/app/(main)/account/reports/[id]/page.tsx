@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getMemberSession } from "@/lib/member/session";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 import { prisma } from "@/lib/db/prisma";
+import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -57,6 +58,10 @@ export default async function AccountReportDetailPage({ params }: Props) {
       {report.category ? (
         <p className="mt-1 text-xs text-[var(--muted-foreground)]">Category: {report.category}</p>
       ) : null}
+      <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+        Submitted{" "}
+        <time dateTime={report.createdAt.toISOString()}>{formatSubmissionDateTime(report.createdAt)}</time>
+      </p>
 
       <div className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--section-light)]/40 p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Your submission</h2>
@@ -74,7 +79,7 @@ export default async function AccountReportDetailPage({ params }: Props) {
             {report.adminReplies.map((r) => (
               <li key={r.id} className="border-b border-[var(--border)] pb-4 last:border-0 last:pb-0">
                 <p className="text-xs text-[var(--muted-foreground)]">
-                  {r.createdAt.toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
+                  <time dateTime={r.createdAt.toISOString()}>{formatSubmissionDateTime(r.createdAt)}</time>
                 </p>
                 <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--foreground)]">{r.body}</p>
               </li>
@@ -84,7 +89,8 @@ export default async function AccountReportDetailPage({ params }: Props) {
       </div>
 
       <p className="mt-8 text-xs text-[var(--muted-foreground)]">
-        Last updated {report.updatedAt.toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
+        Last updated{" "}
+        <time dateTime={report.updatedAt.toISOString()}>{formatSubmissionDateTime(report.updatedAt)}</time>
       </p>
     </div>
   );

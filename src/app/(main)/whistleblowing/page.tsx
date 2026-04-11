@@ -50,6 +50,13 @@ export default function WhistleblowingPage() {
               on MBKRU can surface concerns collectively; they complement but do not replace confidential reporting channels
               where those exist.
             </p>
+            <p className="mt-8 text-sm text-[var(--muted-foreground)]">
+              For how we describe evidence, promises, and score-style outputs on the public site, see{" "}
+              <Link href="/methodology#claims-and-citations" className="font-medium text-[var(--primary)] hover:underline">
+                Accountability methodology — claims &amp; citations
+              </Link>
+              .
+            </p>
           </div>
         </div>
       </section>

@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     } = parsed.data;
 
     try {
-      await createDiasporaFeedbackSubmission({
+      const { createdAt } = await createDiasporaFeedbackSubmission({
         fullName,
         email,
         dateOfVisit,
@@ -59,6 +59,7 @@ export async function POST(request: Request) {
         signature,
         formSignedDate,
       });
+      return NextResponse.json({ success: true, receivedAt: createdAt.toISOString() });
     } catch (e) {
       console.error("[diaspora-feedback] failed to persist submission", e);
       return NextResponse.json(
@@ -67,7 +68,6 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Failed to process request" }, { status: 500 });
   }

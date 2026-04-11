@@ -8,14 +8,24 @@ vi.mock("@/lib/db/prisma", () => ({
   isDatabaseConfigured: vi.fn(),
 }));
 
-vi.mock("@/lib/server/citizen-report-analytics", () => ({
-  getCitizenReportAnalytics: vi.fn(),
+vi.mock("@/lib/server/rate-limit", () => ({
+  allowAdminSessionRequest: vi.fn().mockResolvedValue(true),
 }));
+
+vi.mock("@/lib/server/citizen-report-analytics", async () => {
+  const shared = await import("@/lib/citizen-report-analytics-shared");
+  return {
+    getCitizenReportAnalytics: vi.fn(),
+    parseCitizenReportAnalyticsMonthsParam: shared.parseCitizenReportAnalyticsMonthsParam,
+    citizenReportAnalyticsToCsv: shared.citizenReportAnalyticsToCsv,
+  };
+});
 
 import { GET } from "./route";
 import { getAdminSession } from "@/lib/admin/session";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { getCitizenReportAnalytics } from "@/lib/server/citizen-report-analytics";
+import { allowAdminSessionRequest } from "@/lib/server/rate-limit";
 
 const sample = {
   generatedAt: "2026-01-01T00:00:00.000Z",
@@ -31,6 +41,9 @@ const sample = {
     withAttachments: 0,
     slaOpenOverdue: 0,
   },
+  byPlaybookAll: [{ key: "", count: 10 }],
+  byPlaybookInWindow: [{ key: "", count: 2 }],
+  publicCauses: { withThread: 1, threadLive: 1, threadClosed: 0 },
   byRegion: [],
   byMonth: [{ yearMonth: "2025-12", count: 2 }],
 };
@@ -40,12 +53,22 @@ describe("GET /api/admin/analytics/citizen-reports", () => {
     vi.mocked(getAdminSession).mockReset();
     vi.mocked(isDatabaseConfigured).mockReset();
     vi.mocked(getCitizenReportAnalytics).mockReset();
+    vi.mocked(allowAdminSessionRequest).mockReset();
+    vi.mocked(allowAdminSessionRequest).mockResolvedValue(true);
   });
 
   it("returns 401 without admin session", async () => {
     vi.mocked(getAdminSession).mockResolvedValue(null);
     const res = await GET(new Request("http://localhost/api/admin/analytics/citizen-reports"));
     expect(res.status).toBe(401);
+  });
+
+  it("returns 429 when rate limited", async () => {
+    vi.mocked(getAdminSession).mockResolvedValue({ adminId: "a1" });
+    vi.mocked(allowAdminSessionRequest).mockResolvedValue(false);
+    const res = await GET(new Request("http://localhost/api/admin/analytics/citizen-reports"));
+    expect(res.status).toBe(429);
+    expect(getCitizenReportAnalytics).not.toHaveBeenCalled();
   });
 
   it("returns 503 when database not configured", async () => {

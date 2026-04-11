@@ -21,8 +21,8 @@ export type DiasporaFeedbackSubmissionInput = {
 
 export async function createDiasporaFeedbackSubmission(
   input: DiasporaFeedbackSubmissionInput,
-): Promise<void> {
-  await prisma.diasporaFeedbackSubmission.create({
+): Promise<{ createdAt: Date }> {
+  const row = await prisma.diasporaFeedbackSubmission.create({
     data: {
       fullName: input.fullName.trim(),
       email: normalizeLeadEmail(input.email),
@@ -36,5 +36,7 @@ export async function createDiasporaFeedbackSubmission(
       signature: input.signature.trim(),
       formSignedDate: input.formSignedDate,
     },
+    select: { createdAt: true },
   });
+  return { createdAt: row.createdAt };
 }

@@ -11,8 +11,8 @@ export type ContactSubmissionInput = {
   enquiryType?: string | null;
 };
 
-export async function createContactSubmission(input: ContactSubmissionInput): Promise<void> {
-  await prisma.contactSubmission.create({
+export async function createContactSubmission(input: ContactSubmissionInput): Promise<{ createdAt: Date }> {
+  const row = await prisma.contactSubmission.create({
     data: {
       name: input.name.trim(),
       email: normalizeLeadEmail(input.email),
@@ -20,5 +20,7 @@ export async function createContactSubmission(input: ContactSubmissionInput): Pr
       message: input.message.trim(),
       enquiryType: input.enquiryType?.trim() || null,
     },
+    select: { createdAt: true },
   });
+  return { createdAt: row.createdAt };
 }

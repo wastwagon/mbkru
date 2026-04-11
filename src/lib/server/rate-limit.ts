@@ -68,3 +68,13 @@ export async function allowPublicFormRequest(
   if (hasRedisUrl()) return redisAllow(bucket);
   return memoryAllow(bucket);
 }
+
+/**
+ * After `getAdminSession()` succeeds — rate-limits expensive admin reads per admin identity
+ * (shared office IP does not collapse multiple staff into one bucket).
+ */
+export async function allowAdminSessionRequest(adminId: string, routeKey: string): Promise<boolean> {
+  const bucket = `admin:${routeKey}:${adminId}`;
+  if (hasRedisUrl()) return redisAllow(bucket);
+  return memoryAllow(bucket);
+}

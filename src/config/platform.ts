@@ -81,4 +81,7 @@ export const platformFeatures = {
 
   /** Whistleblower guidance page (Phase 2+; complements MBKRU Voice) */
   whistleblowerGuidance: (phase: PlatformPhase) => phase >= 2,
+
+  /** Read-only partner JSON/CSV programme (`/api/mps`, etc.) + public terms page `/partner-api` */
+  partnerJsonProgramme: (phase: PlatformPhase) => phase >= 2,
 } as const;

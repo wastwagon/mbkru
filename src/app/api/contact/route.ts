@@ -27,15 +27,18 @@ export async function POST(request: Request) {
 
     const { name, email, subject, message, enquiryType } = parsed.data;
 
+    let receivedAtIso: string | null = null;
+
     if (isDatabaseConfigured()) {
       try {
-        await createContactSubmission({
+        const { createdAt } = await createContactSubmission({
           name,
           email,
           subject,
           message,
           enquiryType,
         });
+        receivedAtIso = createdAt.toISOString();
       } catch (e) {
         console.error("[contact] failed to persist submission", e);
         return NextResponse.json(
@@ -60,7 +63,11 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json({ success: true });
+    if (!receivedAtIso) {
+      receivedAtIso = new Date().toISOString();
+    }
+
+    return NextResponse.json({ success: true, receivedAt: receivedAtIso });
   } catch {
     return NextResponse.json(
       { error: "Failed to process request" },

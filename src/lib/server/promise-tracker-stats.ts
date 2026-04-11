@@ -2,18 +2,10 @@ import "server-only";
 
 import type { Prisma } from "@prisma/client";
 
+import type { PromiseTrackerStats } from "@/lib/promise-tracker-public-types";
 import { prisma } from "@/lib/db/prisma";
 
-export type PromiseTrackerStats = {
-  scope: "all" | "government";
-  totalPromises: number;
-  governmentPromises: number;
-  mpsWithPromises: number;
-  activeMpsTotal: number;
-  publishedReportCardCycles: number;
-  reportCardEntriesPublished: number;
-  byStatus: Partial<Record<string, number>>;
-};
+export type { PromiseTrackerStats } from "@/lib/promise-tracker-public-types";
 
 function baseMemberWhere(): Prisma.CampaignPromiseWhereInput {
   return {

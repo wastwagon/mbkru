@@ -16,6 +16,7 @@ describe("platformFeatures", () => {
     expect(platformFeatures.communities(1)).toBe(false);
     expect(platformFeatures.manifestoRegistry(1)).toBe(false);
     expect(platformFeatures.whistleblowerGuidance(1)).toBe(false);
+    expect(platformFeatures.partnerJsonProgramme(1)).toBe(false);
   });
 
   it("phase 2: voice, parliament JSON, public report card & transparency stats", () => {
@@ -28,6 +29,7 @@ describe("platformFeatures", () => {
     expect(platformFeatures.communities(2)).toBe(true);
     expect(platformFeatures.manifestoRegistry(2)).toBe(true);
     expect(platformFeatures.whistleblowerGuidance(2)).toBe(true);
+    expect(platformFeatures.partnerJsonProgramme(2)).toBe(true);
   });
 
   it("phase 3: election observatory + reserved flagship flag", () => {
@@ -35,5 +37,6 @@ describe("platformFeatures", () => {
     expect(platformFeatures.publicVoiceStatistics(3)).toBe(true);
     expect(platformFeatures.accountabilityScorecards(3)).toBe(true);
     expect(platformFeatures.electionObservatory(3)).toBe(true);
+    expect(platformFeatures.partnerJsonProgramme(3)).toBe(true);
   });
 });

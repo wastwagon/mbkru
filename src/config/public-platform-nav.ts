@@ -78,12 +78,16 @@ export function getGuidanceNavLinks(phase: PlatformPhase): PublicNavLink[] {
 }
 
 /** News & resources (header dropdown). */
-export function getDiscoverNavLinks(): PublicNavLink[] {
-  return [
+export function getDiscoverNavLinks(phase: PlatformPhase): PublicNavLink[] {
+  const links: PublicNavLink[] = [
     { href: "/news", label: "News", activeWhenPathStartsWith: "/news" },
     { href: "/resources", label: "Resources", activeWhenPathStartsWith: "/resources" },
     { href: "/diaspora", label: "Diaspora" },
   ];
+  if (platformFeatures.partnerJsonProgramme(phase)) {
+    links.push({ href: "/partner-api", label: "Partner data", activeWhenPathStartsWith: "/partner-api" });
+  }
+  return links;
 }
 
 /**
@@ -232,6 +236,9 @@ export function getPublicSitemapStaticPaths(phase: PlatformPhase): string[] {
   if (platformFeatures.whistleblowerGuidance(phase)) {
     routes.push("/whistleblowing");
   }
+  if (platformFeatures.partnerJsonProgramme(phase)) {
+    routes.push("/partner-api");
+  }
 
   return routes;
 }
@@ -262,6 +269,9 @@ export function getAccountSidebarExploreLinks(phase: PlatformPhase): PublicNavLi
     out.push({ href: "/report-card", label: "Report card" });
   }
   out.push({ href: "/methodology", label: "Methodology" });
+  if (platformFeatures.partnerJsonProgramme(phase)) {
+    out.push({ href: "/partner-api", label: "Partner data & API" });
+  }
   if (platformFeatures.legalEmpowermentDesk(phase)) {
     out.push({ href: "/legal-empowerment", label: "Legal desk" });
   }

@@ -3,6 +3,8 @@
 **Purpose:** Realistic timeline and implementation plan aligned with Ghana's next general election (November–December 2028).  
 **Last updated:** March 2026
 
+**Early recognition (sooner than these calendar quarters):** If you intend to **launch publicly earlier** for brand, partners, and pilots — without moving the 2028 election anchor — use **[`docs/EARLY_RECOGNITION_LAUNCH_PLAN.md`](docs/EARLY_RECOGNITION_LAUNCH_PLAN.md)** for **remaining gaps**, **R0–R4 recognition phases**, and how they relate to `NEXT_PUBLIC_PLATFORM_PHASE`.
+
 ---
 
 ## Executive Summary
