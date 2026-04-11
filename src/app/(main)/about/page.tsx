@@ -3,7 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { AboutPlatformLinks } from "@/components/about/AboutPlatformLinks";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { images, mbkruStrategicContent, pillarImages, heroContent } from "@/lib/site-content";
 
 export const metadata: Metadata = {
@@ -104,6 +106,9 @@ const pillars = [
 ];
 
 export default async function AboutPage() {
+  const phase = getServerPlatformPhase();
+  const parliamentLive = platformFeatures.parliamentTrackerData(phase);
+
   return (
     <div>
       <PageHeader
@@ -198,8 +203,11 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* Section 3: Motto + Tagline + Core Objectives — premium combined layout */}
-      <section id="core-objectives" className="relative section-spacing section-full overflow-hidden bg-[var(--section-dark)]">
+      {/* Section 3: Motto + pillar tagline (objectives listed below on white) */}
+      <section
+        id="motto-pillar-intro"
+        className="relative section-spacing section-full overflow-hidden bg-[var(--section-dark)]"
+      >
         <div className="absolute inset-0 bg-[linear-gradient(160deg,var(--section-dark)_0%,rgba(212,160,23,0.15)_40%,var(--section-dark)_100%)]" aria-hidden />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl text-left">
@@ -212,29 +220,128 @@ export default async function AboutPage() {
               {mbkruStrategicContent.pillarTagline}
             </h2>
             <p className="mt-2 text-xs text-white/80">
-              Core objectives that guide our platform and partnerships
+              Core objectives that guide our platform and partnerships — detailed list follows.
             </p>
           </div>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:mt-10 lg:grid-cols-3">
-            {mbkruStrategicContent.coreObjectives.map((obj, i) => (
-              <div
-                key={i}
-                className="group relative flex gap-4 rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm transition-all duration-300 hover:border-[var(--accent-warm)]/50 hover:bg-white/10 sm:p-5"
-              >
-                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg font-display text-lg font-bold ${i % 2 === 0 ? "bg-[var(--accent-gold)]/20 text-[var(--accent-gold)]" : "bg-[var(--accent-warm)]/25 text-[var(--accent-warm)]"}`}>
-                  {String(i + 1).padStart(2, "0")}
-                </div>
-                <p className="text-sm leading-relaxed text-white/90">
-                  {obj}
-                </p>
+        </div>
+      </section>
+
+      {/* Core objectives + accountability (moved from homepage) */}
+      <section id="core-objectives" className="section-spacing section-full bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-12">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--primary)]">Core objectives</p>
+              <h2 className="mt-2 font-display text-lg font-bold text-[var(--foreground)] sm:text-xl lg:text-2xl">
+                What we are building toward
+              </h2>
+              <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+                Five concrete objectives that anchor the programme document and this site.
+              </p>
+              <ol className="mt-6 space-y-4 border-l-2 border-[var(--primary)]/25 pl-5">
+                {mbkruStrategicContent.coreObjectives.map((obj, i) => (
+                  <li key={i} className="text-sm leading-relaxed text-[var(--foreground)] sm:text-base">
+                    <span className="font-display font-bold text-[var(--primary)]">{i + 1}. </span>
+                    {obj}
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div className="lg:sticky lg:top-24">
+              <h2 className="font-display text-lg font-bold text-[var(--foreground)] sm:text-xl lg:text-2xl">
+                Accountability in practice
+              </h2>
+              <p className="mt-4 text-sm leading-relaxed text-[var(--muted-foreground)]">
+                {mbkruStrategicContent.homepageAccountabilityTeaser}
+              </p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                {parliamentLive ? (
+                  <>
+                    <Button href="/government-commitments" variant="primary">
+                      Government commitments
+                    </Button>
+                    <Button href="/promises" variant="outline">
+                      By MP
+                    </Button>
+                  </>
+                ) : (
+                  <Button href="/parliament-tracker" variant="primary">
+                    Accountability hub
+                  </Button>
+                )}
+                <Button href="/methodology" variant="outline">
+                  Methodology
+                </Button>
+                <Button href="#platform-pillars" variant="outline">
+                  Platform pillars
+                </Button>
               </div>
-            ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Our platform + explore further (moved from homepage) */}
+      <section className="section-spacing section-full bg-[var(--section-light-cream)]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-10">
+            <div>
+              <h2 className="font-display text-base font-bold text-[var(--foreground)] sm:text-lg lg:text-xl lg:leading-tight">
+                Our Platform Provides Citizen-Centric Advice to All Ghanaians
+              </h2>
+              <p className="mt-4 text-[var(--muted-foreground)] leading-relaxed">
+                MBKRU connects citizens to national leadership through transparent channels for voice, tracking, and
+                accountability. Coordinators, partners, and programme detail continue on this page and across pillar
+                pages.
+              </p>
+              <Button href="/citizens-voice" className="mt-6">
+                Explore Our Platform
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Button>
+            </div>
+            <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
+              <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Explore further</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
+                Pillar-by-pillar copy and links live below; start here for the busiest public routes.
+              </p>
+              <ul className="mt-5 space-y-3 text-sm font-medium text-[var(--foreground)]">
+                <li>
+                  <Link href="#platform-pillars" className="text-[var(--primary)] hover:underline">
+                    About — pillars &amp; objectives
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/citizens-voice" className="text-[var(--primary)] hover:underline">
+                    MBKRU Voice
+                  </Link>
+                </li>
+                {parliamentLive ? (
+                  <li>
+                    <Link href="/government-commitments" className="text-[var(--primary)] hover:underline">
+                      Government commitments
+                    </Link>
+                  </li>
+                ) : null}
+                <li>
+                  <Link href="/parliament-tracker" className="text-[var(--primary)] hover:underline">
+                    Parliament tracker
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/methodology" className="text-[var(--primary)] hover:underline">
+                    Methodology
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Section 4: Our Platform Pillars — how we deliver */}
-      <section className="section-spacing section-full bg-[var(--section-light)]">
+      <section id="platform-pillars" className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <Badge variant="gold">How We Deliver</Badge>

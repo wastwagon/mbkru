@@ -17,12 +17,9 @@ import {
 import { RegionsViz } from "@/components/ui/RegionsViz";
 import { GovernmentCommitmentsHomePreview } from "@/components/home/GovernmentCommitmentsHomePreview";
 import { HomeDataProvenanceRibbon } from "@/components/home/HomeDataProvenanceRibbon";
-import { HomeParticipateHub } from "@/components/home/HomeParticipateHub";
 import { PromisesBrowseHomePreview } from "@/components/home/PromisesBrowseHomePreview";
 import type { GovernmentCommitmentsHomePreview as GovernmentCommitmentsHomePreviewData } from "@/lib/home-government-preview-types";
 import type { PromisesBrowseHomePreview as PromisesBrowseHomePreviewData } from "@/lib/home-promises-browse-preview-types";
-import type { HomeAtAGlanceData } from "@/lib/home-at-a-glance-types";
-
 export type HomePageNewsItem = {
   id: string;
   slug: string;
@@ -77,12 +74,10 @@ export function HomePageClient({
   cmsPosts,
   governmentPreview,
   promisesBrowsePreview,
-  atAGlance,
 }: {
   cmsPosts: HomePageNewsItem[];
   governmentPreview: GovernmentCommitmentsHomePreviewData | null;
   promisesBrowsePreview: PromisesBrowseHomePreviewData | null;
-  atAGlance: HomeAtAGlanceData;
 }) {
   const phase = getPublicPlatformPhase();
   const parliamentLive = platformFeatures.parliamentTrackerData(phase);
@@ -151,8 +146,6 @@ export function HomePageClient({
       <LivePlatformStrip />
 
       <HomeDataProvenanceRibbon />
-
-      <HomeParticipateHub data={atAGlance} />
 
       {/* Executive summary + Vision & Mission — same narrative order as About / programme doc */}
       <section
@@ -288,145 +281,6 @@ export function HomePageClient({
           >
             <RegionsViz />
           </motion.div>
-        </div>
-      </section>
-
-      {/* Core objectives (document §4) + accountability bridge */}
-      <section className="section-spacing section-full bg-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-12">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--primary)]">Core objectives</p>
-              <h2 className="mt-2 font-display text-lg font-bold text-[var(--foreground)] sm:text-xl lg:text-2xl">
-                What we are building toward
-              </h2>
-              <p className="mt-3 text-sm text-[var(--muted-foreground)]">
-                Five concrete objectives — full wording on{" "}
-                <Link href="/about#core-objectives" className="font-medium text-[var(--primary)] hover:underline">
-                  About
-                </Link>
-                .
-              </p>
-              <ol className="mt-6 space-y-4 border-l-2 border-[var(--primary)]/25 pl-5">
-                {mbkruStrategicContent.coreObjectives.map((obj, i) => (
-                  <li key={i} className="text-sm leading-relaxed text-[var(--foreground)] sm:text-base">
-                    <span className="font-display font-bold text-[var(--primary)]">{i + 1}. </span>
-                    {obj}
-                  </li>
-                ))}
-              </ol>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="lg:sticky lg:top-24"
-            >
-              <h2 className="font-display text-lg font-bold text-[var(--foreground)] sm:text-xl lg:text-2xl">
-                Accountability in practice
-              </h2>
-              <p className="mt-4 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                {mbkruStrategicContent.homepageAccountabilityTeaser}
-              </p>
-              <div className="mt-5 flex flex-wrap gap-3">
-                {parliamentLive ? (
-                  <>
-                    <Button href="/government-commitments" variant="primary">
-                      Government commitments
-                    </Button>
-                    <Button href="/promises" variant="outline">
-                      By MP
-                    </Button>
-                  </>
-                ) : (
-                  <Button href="/parliament-tracker" variant="primary">
-                    Accountability hub
-                  </Button>
-                )}
-                <Button href="/methodology" variant="outline">
-                  Methodology
-                </Button>
-                <Button href="/about" variant="outline">
-                  About
-                </Button>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Our Platform — citizen-centric advice (from About) */}
-      <section className="section-spacing section-full bg-[var(--section-light-cream)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-10">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="font-display text-base font-bold text-[var(--foreground)] sm:text-lg lg:text-xl lg:leading-tight">
-                Our Platform Provides Citizen-Centric Advice to All Ghanaians
-              </h2>
-              <p className="mt-4 text-[var(--muted-foreground)] leading-relaxed">
-                MBKRU connects citizens to national leadership through transparent channels for voice, tracking, and
-                accountability. Coordinators, partners, and programme detail are summarised on{" "}
-                <Link href="/about" className="font-semibold text-[var(--primary)] hover:underline">
-                  About
-                </Link>{" "}
-                and across pillar pages.
-              </p>
-              <Button href="/citizens-voice" className="mt-6">
-                Explore Our Platform
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Button>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8"
-            >
-              <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Explore further</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                Pillar-by-pillar copy and links live on About; start here for the busiest public routes.
-              </p>
-              <ul className="mt-5 space-y-3 text-sm font-medium text-[var(--foreground)]">
-                <li>
-                  <Link href="/about" className="text-[var(--primary)] hover:underline">
-                    About — pillars &amp; objectives
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/citizens-voice" className="text-[var(--primary)] hover:underline">
-                    MBKRU Voice
-                  </Link>
-                </li>
-                {parliamentLive ? (
-                  <li>
-                    <Link href="/government-commitments" className="text-[var(--primary)] hover:underline">
-                      Government commitments
-                    </Link>
-                  </li>
-                ) : null}
-                <li>
-                  <Link href="/parliament-tracker" className="text-[var(--primary)] hover:underline">
-                    Parliament tracker
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/methodology" className="text-[var(--primary)] hover:underline">
-                    Methodology
-                  </Link>
-                </li>
-              </ul>
-            </motion.div>
-          </div>
         </div>
       </section>
 
