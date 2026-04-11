@@ -52,6 +52,7 @@ export default async function AdminDiasporaFeedbackPage() {
             <tr>
               <th className="px-4 py-3 font-medium">Received</th>
               <th className="px-4 py-3 font-medium">Name</th>
+              <th className="px-4 py-3 font-medium">Email</th>
               <th className="px-4 py-3 font-medium">Visit</th>
               <th className="px-4 py-3 font-medium">Stay</th>
               <th className="px-4 py-3 font-medium">Rating</th>
@@ -62,7 +63,7 @@ export default async function AdminDiasporaFeedbackPage() {
           <tbody className="divide-y divide-[var(--border)]">
             {rows.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-[var(--muted-foreground)]">
+                <td colSpan={8} className="px-4 py-8 text-center text-[var(--muted-foreground)]">
                   No submissions yet.
                 </td>
               </tr>
@@ -77,6 +78,11 @@ export default async function AdminDiasporaFeedbackPage() {
                     <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
                       Signed: {row.signature} · {formatDate(row.formSignedDate)}
                     </p>
+                  </td>
+                  <td className="px-4 py-3">
+                    <a href={`mailto:${row.email}`} className="font-mono text-xs text-[var(--primary)] hover:underline">
+                      {row.email}
+                    </a>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-[var(--foreground)]">{formatDate(row.dateOfVisit)}</td>
                   <td className="max-w-[140px] px-4 py-3 text-[var(--muted-foreground)]">{row.durationOfStay}</td>

@@ -33,6 +33,7 @@ export async function POST(request: Request) {
 
     const {
       fullName,
+      email,
       dateOfVisit,
       durationOfStay,
       eventsAttended,
@@ -47,6 +48,7 @@ export async function POST(request: Request) {
     try {
       await createDiasporaFeedbackSubmission({
         fullName,
+        email,
         dateOfVisit,
         durationOfStay,
         eventsAttended,

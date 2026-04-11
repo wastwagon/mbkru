@@ -53,7 +53,7 @@ flowchart TB
 | Path | Purpose |
 |------|---------|
 | `src/app/(main)/` | Public marketing routes; route groups keep layouts consistent |
-| `src/middleware.ts` | Edge: `X-Robots-Tag: noindex, nofollow` on **`/admin/*`** and **`/account/*`** (complements `robots.ts`) |
+| `src/proxy.ts` | Next.js 16 **proxy** (edge): JWT gates for **`/admin/*`** (except login) and **`/account/*`**, plus `X-Robots-Tag: noindex, nofollow` on those paths (complements `robots.ts`) |
 | `src/app/admin/` | Authenticated admin: login, posts CRUD, media library |
 | `src/app/api/` | Server-only HTTP API; admin login/logout/media upload + public form endpoints |
 | `src/components/` | UI; `forms/` holds client forms aligned with API routes |

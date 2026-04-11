@@ -5,7 +5,8 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { LivePlatformHeroChips, LivePlatformStrip } from "@/components/home/LivePlatformStrip";
+import { HomeHeroSlider } from "@/components/home/HomeHeroSlider";
+import { LivePlatformStrip } from "@/components/home/LivePlatformStrip";
 import { RoadmapModal, type RoadmapPhase } from "@/components/ui/RoadmapModal";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import {
@@ -13,7 +14,6 @@ import {
   mbkruStrategicContent,
   pillarImages,
   programmeRoadmap,
-  heroContent,
 } from "@/lib/site-content";
 import { RegionsViz } from "@/components/ui/RegionsViz";
 
@@ -25,13 +25,6 @@ export type HomePageNewsItem = {
   image: string;
   dateLabel: string;
 };
-
-const trustStats = [
-  { value: "5", label: "Operational Pillars" },
-  { value: "16", label: "Regions of Ghana" },
-  { value: "100%", label: "Non-Partisan" },
-  { value: "SDG 1", label: "Poverty Eradication" },
-];
 
 function RoadmapSection() {
   const [selectedPhase, setSelectedPhase] = useState<(typeof programmeRoadmap)[number] | null>(null);
@@ -157,119 +150,8 @@ export function HomePageClient({ cmsPosts }: { cmsPosts: HomePageNewsItem[] }) {
 
   return (
     <div>
-      {/* Hero — content right-aligned in glass containers */}
-      <section className="relative -mt-[8.5rem] min-h-[55vh] overflow-hidden pt-[8.5rem]">
-        <div className="absolute inset-0">
-          <Image
-            src={images.hero}
-            alt="Community gathering — illustrative photography for the hero"
-            fill
-            className="object-cover"
-            priority
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[var(--section-dark)]/98 via-[var(--section-dark)]/90 to-[var(--section-dark)]/85" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--section-dark)]/85 via-transparent to-[var(--section-dark)]/50" />
-          <div className="absolute left-4 right-4 top-[8.25rem] h-px bg-gradient-to-r from-transparent via-[var(--accent-gold)]/40 to-transparent sm:left-6 sm:right-6 lg:left-8 lg:right-8" aria-hidden />
-        </div>
-        <div className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
-          <div className="flex flex-col items-start">
-          {/* Main content card */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="w-full max-w-xl rounded-2xl border border-white/20 bg-white/5 p-5 shadow-xl backdrop-blur-md sm:p-6 lg:max-w-lg"
-          >
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1 }}
-              className="inline-flex items-center gap-2 rounded-full border border-[var(--accent-gold)]/50 bg-[var(--accent-gold)]/15 px-3.5 py-1 text-xs font-medium tracking-wide text-[var(--accent-gold-bright)]"
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-gold)]" />
-              MBKRU
-            </motion.span>
-            <motion.h1
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
-              className="mt-2 font-logo text-lg font-bold leading-[1.15] tracking-tight text-white sm:text-2xl lg:text-3xl xl:text-4xl 2xl:text-[2.75rem]"
-            >
-              {heroContent.tagline.split("President")[0]}
-              <span className="text-[var(--accent-gold-bright)]">President</span>
-              {heroContent.tagline.split("President")[1]}
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25 }}
-              className="mt-1.5 max-w-xl text-xs font-medium leading-snug text-white/95 sm:text-sm lg:text-base"
-            >
-              {heroContent.subhead}
-            </motion.p>
-            <motion.p
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="mt-1 text-xs font-medium text-[var(--accent-gold-bright)]"
-            >
-              {heroContent.motto}
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35 }}
-              className="mt-4 flex flex-wrap gap-3"
-            >
-              <Button
-                href="/contact"
-                variant="primary"
-                className="inline-flex items-center gap-2 bg-white text-[var(--section-dark)] hover:bg-white/90"
-              >
-                Get in Touch
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Button>
-              <Link
-                href="/about"
-                className="inline-flex items-center gap-2 rounded-xl border-2 border-white/50 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:border-white hover:bg-white/10"
-              >
-                Learn More
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
-            </motion.div>
-            <LivePlatformHeroChips />
-          </motion.div>
-          </div>
-          {/* Impact metrics — full content width directly under hero (Wave D) */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.45 }}
-            className="mt-6 w-full rounded-2xl border border-white/25 bg-white/10 px-4 py-4 backdrop-blur-md sm:px-6 sm:py-5"
-          >
-            <p className="text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--accent-gold-bright)] sm:text-xs">
-              At a glance
-            </p>
-            <div className="mt-3 flex flex-wrap items-stretch justify-center gap-6 sm:justify-between sm:gap-8 lg:gap-10">
-              {trustStats.map((stat) => (
-                <div key={stat.label} className="flex min-w-[5.5rem] flex-col items-center text-center sm:min-w-0 sm:items-start sm:text-left">
-                  <span className="font-display text-xl font-bold tabular-nums text-white sm:text-2xl lg:text-3xl">
-                    {stat.value}
-                  </span>
-                  <span className="mt-1 max-w-[10rem] text-[10px] font-medium uppercase leading-snug tracking-wide text-white/75 sm:max-w-none sm:text-xs">
-                    {stat.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      {/* Hero — 3-slide carousel: brand + two latest news (or news placeholders) */}
+      <HomeHeroSlider newsForSlides={cmsPosts.slice(0, 2)} />
 
       <LivePlatformStrip />
 

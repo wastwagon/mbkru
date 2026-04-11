@@ -33,6 +33,7 @@ function isoDateOnlyField() {
 export const diasporaFeedbackBodySchema = z
   .object({
     fullName: z.string().trim().min(1).max(200),
+    email: emailSchema,
     dateOfVisit: isoDateOnlyField(),
     durationOfStay: z.string().trim().min(1).max(240),
     eventsAttended: z.string().trim().min(1).max(10_000),

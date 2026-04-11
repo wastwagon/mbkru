@@ -17,7 +17,7 @@ export default function DiasporaFeedbackPage() {
     <div>
       <PageHeader
         title="Diaspora experience & feedback"
-        description="Tell us about your visit, programmes you joined, and how we can strengthen diaspora engagement. Your submission is stored in the MBKRU admin for records and follow-up."
+        description="Tell us about your visit, programmes you joined, and how we can strengthen diaspora engagement. Your email is used for follow-up; submissions are stored in the MBKRU admin for programme records."
       />
 
       <section className="section-spacing section-full bg-[var(--section-light)]">

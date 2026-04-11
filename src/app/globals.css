@@ -1,20 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  /* MBKRU Brand — Bright, appealing (teal-led, gold accents) */
+  /* MBKRU Brand — Bright, appealing (teal-led, gold accents) + Ghana flag harmony */
+  --ghana-red: #b91c1c;
+  --ghana-gold: #e9b949;
+  --ghana-green: #0f6b4d;
   --background: #ffffff;
-  --foreground: #1e3a4f;
-  --primary: #0d9488;
-  --primary-dark: #0f766e;
+  --foreground: #1a3652;
+  --primary: #0f9d8c;
+  --primary-dark: #0d7c70;
   --primary-foreground: #ffffff;
   --secondary: #14b8a6;
-  --accent: #0d9488;
+  --accent: #0f9d8c;
   --accent-gold: #d4a017;
-  --accent-gold-bright: #e5b02a;
-  --accent-gold-light: #fef3c7;
+  --accent-gold-bright: #f0c24a;
+  --accent-gold-light: #fff8e6;
   --accent-warm: #c2410c;
-  --muted: #f0fdfa;
-  --muted-foreground: #64748b;
+  --muted: #f4fcf9;
+  --muted-foreground: #5b6b7d;
   --border: #e2e8f0;
   --card: #ffffff;
   --card-foreground: #1e3a4f;
@@ -35,12 +38,12 @@
   --shadow-dropdown: 0 20px 30px rgb(0 0 0 / 0.2);
   --primary-on-dark: rgba(255, 255, 255, 0.95);
   --primary-on-dark-muted: rgba(255, 255, 255, 0.8);
-  --footer-bg: #0f766e;
-  --section-light: #fafdfc;
-  --section-light-alt: #f0fdfa;
-  --section-light-tertiary: #ecfdfb;
-  --section-dark: #0f766e;
-  --section-light-cream: #fffbeb;
+  --footer-bg: #0d6b5c;
+  --section-light: #fafcf9;
+  --section-light-alt: #eef8f4;
+  --section-light-tertiary: #e8f6f1;
+  --section-dark: #0d6b5c;
+  --section-light-cream: #fff9ec;
   --topbar-bg: #1e293b;
 }
 

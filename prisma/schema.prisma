@@ -122,6 +122,7 @@ model DiasporaFeedbackSubmission {
   id                     String                         @id @default(cuid())
   createdAt              DateTime                       @default(now())
   fullName               String                         @db.VarChar(200)
+  email                  String                         @db.VarChar(320)
   dateOfVisit            DateTime                       @db.Date
   durationOfStay         String                         @db.VarChar(240)
   eventsAttended         String                         @db.Text
@@ -133,6 +134,7 @@ model DiasporaFeedbackSubmission {
   formSignedDate         DateTime                       @db.Date
 
   @@index([createdAt])
+  @@index([email])
 }
 
 // --- Phase 2 & 3 — see docs/PHASES_2_3_IMPLEMENTATION.md ---

@@ -1,15 +1,25 @@
 import "server-only";
 
-import type { ResourceDocument } from "@prisma/client";
+import { Prisma, type ResourceDocument } from "@prisma/client";
 
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 
+/** DB URL set but migrations not applied, or schema drift — treat as empty. */
+function isRecoverableSchemaError(err: unknown): boolean {
+  return err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2021";
+}
+
 export async function getPublishedResourceDocuments(): Promise<ResourceDocument[]> {
   if (!isDatabaseConfigured()) return [];
-  return prisma.resourceDocument.findMany({
-    where: { publishedAt: { not: null } },
-    orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }],
-  });
+  try {
+    return await prisma.resourceDocument.findMany({
+      where: { publishedAt: { not: null } },
+      orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }],
+    });
+  } catch (e) {
+    if (isRecoverableSchemaError(e)) return [];
+    throw e;
+  }
 }
 
 export async function getPublishedResourceDocumentBySlug(
@@ -18,12 +28,17 @@ export async function getPublishedResourceDocumentBySlug(
   if (!isDatabaseConfigured()) return null;
   const key = slug.trim();
   if (!key) return null;
-  return prisma.resourceDocument.findFirst({
-    where: {
-      publishedAt: { not: null },
-      slug: { equals: key, mode: "insensitive" },
-    },
-  });
+  try {
+    return await prisma.resourceDocument.findFirst({
+      where: {
+        publishedAt: { not: null },
+        slug: { equals: key, mode: "insensitive" },
+      },
+    });
+  } catch (e) {
+    if (isRecoverableSchemaError(e)) return null;
+    throw e;
+  }
 }
 
 export function formatResourceFileSize(bytes: number | null): string {

@@ -179,28 +179,6 @@ export function getAboutPhaseQuickLinks(phase: PlatformPhase): PublicNavLink[] {
 }
 
 /**
- * Homepage hero chips — short labels, tight order: report → track → promises → report card → stats.
- * Auth (Register / Sign in / Account) stays in the component.
- */
-export function getLiveHeroCompactLinks(phase: PlatformPhase): PublicNavLink[] {
-  const out: PublicNavLink[] = [];
-  if (platformFeatures.citizensVoicePlatform(phase)) {
-    out.push({ href: "/citizens-voice/submit", label: "Submit a report" });
-    out.push({ href: "/track-report", label: "Track" });
-  }
-  if (platformFeatures.parliamentTrackerData(phase)) {
-    out.push({ href: "/promises/browse", label: "Promises" });
-  }
-  if (platformFeatures.publicReportCard(phase)) {
-    out.push({ href: "/report-card", label: "Report card" });
-  }
-  if (platformFeatures.citizensVoicePlatform(phase) && platformFeatures.publicVoiceStatistics(phase)) {
-    out.push({ href: "/transparency", label: "Voice stats" });
-  }
-  return out;
-}
-
-/**
  * Static public URLs for `src/app/sitemap.ts` — same phase gates as navigation so crawlers
  * only see routes that exist for this build.
  */

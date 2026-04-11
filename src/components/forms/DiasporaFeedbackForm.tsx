@@ -10,6 +10,7 @@ import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
 const schema = z.object({
   fullName: z.string().min(1, "Please enter your full name").max(200),
+  email: z.string().min(1, "Please enter your email").email("Please enter a valid email").max(320),
   dateOfVisit: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Choose the date of your visit"),
   durationOfStay: z.string().min(1, "Please describe duration of stay").max(240),
   eventsAttended: z.string().min(1, "Please list events or programmes").max(10_000),
@@ -54,6 +55,7 @@ export function DiasporaFeedbackForm() {
     resolver: zodResolver(schema),
     defaultValues: {
       fullName: "",
+      email: "",
       dateOfVisit: "",
       durationOfStay: "",
       eventsAttended: "",
@@ -81,6 +83,7 @@ export function DiasporaFeedbackForm() {
       setStatus("success");
       reset({
         fullName: "",
+        email: "",
         dateOfVisit: "",
         durationOfStay: "",
         eventsAttended: "",
@@ -112,9 +115,30 @@ export function DiasporaFeedbackForm() {
               </p>
             )}
           </div>
+          <div className="sm:col-span-2">
+            <label htmlFor="email" className={labelClass}>
+              2. Email address
+            </label>
+            <input
+              id="email"
+              type="email"
+              autoComplete="email"
+              placeholder="you@example.com"
+              className={inputBase}
+              {...register("email")}
+            />
+            <p className="mt-1.5 text-xs text-[var(--muted-foreground)]">
+              Required so the team can follow up on your feedback. This is not the same as creating a member account.
+            </p>
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600" role="alert">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
           <div>
             <label htmlFor="dateOfVisit" className={labelClass}>
-              2. Date of visit
+              3. Date of visit
             </label>
             <input id="dateOfVisit" type="date" className={inputBase} {...register("dateOfVisit")} />
             {errors.dateOfVisit && (
@@ -125,7 +149,7 @@ export function DiasporaFeedbackForm() {
           </div>
           <div>
             <label htmlFor="durationOfStay" className={labelClass}>
-              3. Duration of stay
+              4. Duration of stay
             </label>
             <input
               id="durationOfStay"
@@ -142,7 +166,7 @@ export function DiasporaFeedbackForm() {
           </div>
           <div className="sm:col-span-2">
             <label htmlFor="eventsAttended" className={labelClass}>
-              4. Events / programmes attended
+              5. Events / programmes attended
             </label>
             <textarea
               id="eventsAttended"
@@ -163,7 +187,7 @@ export function DiasporaFeedbackForm() {
       <section className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-sm)] sm:p-8">
         <h2 className={sectionTitle}>Your experience</h2>
         <fieldset className="mt-6">
-          <legend className={labelClass}>5. How would you rate your overall experience in Ghana?</legend>
+          <legend className={labelClass}>6. How would you rate your overall experience in Ghana?</legend>
           <Controller
             name="overallRating"
             control={control}
@@ -200,7 +224,7 @@ export function DiasporaFeedbackForm() {
 
         <div className="mt-8">
           <label htmlFor="meaningfulAspects" className={labelClass}>
-            6. What aspects of your visit were most meaningful?
+            7. What aspects of your visit were most meaningful?
           </label>
           <textarea
             id="meaningfulAspects"
@@ -217,7 +241,7 @@ export function DiasporaFeedbackForm() {
 
         <div className="mt-8">
           <label htmlFor="suggestionsImprovement" className={labelClass}>
-            7. Suggestions for improvement
+            8. Suggestions for improvement
           </label>
           <textarea
             id="suggestionsImprovement"
@@ -233,7 +257,7 @@ export function DiasporaFeedbackForm() {
         </div>
 
         <fieldset className="mt-8">
-          <legend className={labelClass}>8. Would you consider returning or investing in Ghana?</legend>
+          <legend className={labelClass}>9. Would you consider returning or investing in Ghana?</legend>
           <Controller
             name="returnOrInvest"
             control={control}
@@ -351,8 +375,8 @@ export function DiasporaFeedbackForm() {
           )}
         </Button>
         <p className="max-w-md text-xs text-[var(--muted-foreground)]">
-          Submissions are stored securely for programme records. MBKRU does not use this form for party-political
-          campaigning.
+          Submissions are stored securely for programme records, including your email for follow-up. MBKRU does not use
+          this form for party-political campaigning.
         </p>
       </div>
     </form>
