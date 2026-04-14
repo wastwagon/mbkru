@@ -1,6 +1,8 @@
-# MBKRU Advocates - Development with Docker
-# Run: docker compose -f docker-compose.dev.yml up
-# Hot reload enabled - edit code and see changes
+# MBKRU Advocates - Full-stack development with Docker
+# Run: docker compose -f docker-compose.dev.yml up --build
+# Hot reload enabled - edit code and see changes.
+#
+# First time: cp .env.example .env and set ADMIN_*, ADMIN_SESSION_SECRET, MEMBER_SESSION_SECRET (or use npm run setup:local for host dev).
 
 services:
   mbkru-dev:
@@ -10,13 +12,69 @@ services:
     container_name: mbkru-website-dev
     ports:
       - "1100:1100"
+    env_file:
+      - path: .env
+        required: false
     volumes:
       - .:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_SITE_URL=http://localhost:1100
+      - NEXT_PUBLIC_PLATFORM_PHASE=${NEXT_PUBLIC_PLATFORM_PHASE:-3}
+      # Always use Docker service names (host .env often has localhost:55432 for host-side tools).
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-mbkru}:${POSTGRES_PASSWORD:-mbkru_dev}@postgres:5432/${POSTGRES_DB:-mbkru}
+      - REDIS_URL=redis://redis:6379
       - WATCHPACK_POLLING=true
-      # Copy .env.example → .env: DATABASE_URL, ADMIN_*, ADMIN_SESSION_SECRET, MEMBER_SESSION_SECRET,
-      # NEXT_PUBLIC_PLATFORM_PHASE (default 3 for full Voice + report card). Then: prisma migrate dev && db seed
-    command: npm run dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    # Apply migrations then start Next (Postgres is already healthy).
+    command: sh -c "npx prisma migrate deploy && exec npm run dev"
+    networks:
+      - mbkru
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: mbkru-postgres-dev
+    ports:
+      - "${POSTGRES_HOST_PORT:-55432}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-mbkru}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mbkru_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-mbkru}
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - mbkru
+
+  redis:
+    image: redis:7-alpine
+    container_name: mbkru-redis-dev
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_dev_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - mbkru
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+
+networks:
+  mbkru:
+    driver: bridge

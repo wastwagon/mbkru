@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -8,13 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { HomeHeroSlider } from "@/components/home/HomeHeroSlider";
 import { LivePlatformStrip } from "@/components/home/LivePlatformStrip";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
-import {
-  homepageEngagementPathways,
-  images,
-  mbkruStrategicContent,
-  pillarImages,
-} from "@/lib/site-content";
-import { RegionsViz } from "@/components/ui/RegionsViz";
+import { homepageEngagementPathways, images, mbkruStrategicContent } from "@/lib/site-content";
 import { GovernmentCommitmentsHomePreview } from "@/components/home/GovernmentCommitmentsHomePreview";
 import { HomeDataProvenanceRibbon } from "@/components/home/HomeDataProvenanceRibbon";
 import { HomeParticipateHub } from "@/components/home/HomeParticipateHub";
@@ -84,63 +77,6 @@ export function HomePageClient({
   atAGlance: HomeAtAGlanceData;
 }) {
   const phase = getPublicPlatformPhase();
-  const parliamentLive = platformFeatures.parliamentTrackerData(phase);
-
-  const pillars = useMemo(
-    () => [
-      {
-        letter: "A",
-        title: "Digital Platform — MBKRU Voice",
-        items: [
-          "Secure membership portal (mbkru.org.gh)",
-          "Personal dashboard",
-          "Geo-tagged complaints",
-          "Public statistics",
-        ],
-        href: "/citizens-voice",
-        image: pillarImages[0].image,
-        alt: pillarImages[0].alt,
-      },
-      {
-        letter: "B",
-        title: "Physical Engagement Network",
-        items: ["Quarterly Town Hall Meetings", "Regional Public Forums", "Annual National People's Assembly"],
-        href: platformFeatures.townHallDirectory(phase) ? "/town-halls" : "/situational-alerts",
-        image: pillarImages[1].image,
-        alt: pillarImages[1].alt,
-      },
-      {
-        letter: "C",
-        title: "Legal Empowerment Desk",
-        items: ["Volunteer and partnered lawyers", "CHRAJ, police, courts guidance", "FOI requests", "Pro-bono referrals"],
-        href: platformFeatures.legalEmpowermentDesk(phase) ? "/legal-empowerment" : "/about",
-        image: pillarImages[2].image,
-        alt: pillarImages[2].alt,
-      },
-      {
-        letter: "D",
-        title: "Accountability & Electoral Watch",
-        items: [
-          "People's Report Cards",
-          "Campaign promise tracking",
-          "Accountability Scorecards",
-          "Citizen petition mechanism",
-        ],
-        href: "/parliament-tracker",
-        image: pillarImages[3].image,
-        alt: pillarImages[3].alt,
-      },
-      {
-        letter: "E",
-        title: "Direct Presidential Interface",
-        items: ["Monthly Citizens' Brief", "Quarterly Presidential Listening Sessions", "Dedicated liaison office"],
-        href: "/about",
-        image: pillarImages[4].image,
-        alt: pillarImages[4].alt,
-      },
-    ],
-    [phase],
-  );
 
   return (
     <div>
@@ -227,69 +163,6 @@ export function HomePageClient({
 
       {promisesBrowsePreview ? <PromisesBrowseHomePreview data={promisesBrowsePreview} /> : null}
 
-      {/* Key Operational Pillars — dark section, zigzag glassmorphism cards */}
-      <section className="relative section-spacing section-full overflow-hidden bg-[var(--section-dark)]">
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,var(--section-dark)_0%,rgba(6,42,61,0.95)_50%,var(--section-dark)_100%)]" aria-hidden />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mx-auto max-w-3xl text-center"
-          >
-            <h2 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl xl:text-4xl">
-              Key Operational Pillars
-            </h2>
-            <p className="mt-3 text-sm text-white/80">
-              A direct bridge between citizens and government. Accountability, transparency, and citizen voice.
-            </p>
-          </motion.div>
-          {/* Row 1 = 3 cards, Row 2 = 2 cards — all left-aligned */}
-          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-10 lg:grid-cols-3 lg:gap-5">
-            {pillars.map((pillar, i) => (
-              <motion.div
-                key={pillar.title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-              >
-                <Link
-                  href={pillar.href}
-                  className="group flex gap-4 rounded-xl border border-white/20 bg-white/5 p-4 shadow-lg backdrop-blur-md transition-all duration-300 hover:border-[var(--accent-warm)]/50 hover:bg-white/10 sm:p-5"
-                >
-                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg font-display text-lg font-bold ${i % 2 === 0 ? "text-[var(--accent-gold)]" : "text-[var(--accent-warm)]"}`}>
-                    {pillar.letter}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="flex flex-wrap items-center gap-2 font-display text-base font-semibold text-white group-hover:text-[var(--accent-gold)] sm:text-lg">
-                      <span>{pillar.title}</span>
-                      {pillar.letter === "D" && parliamentLive ? (
-                        <span className="rounded-full bg-emerald-400/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-200">
-                          Live data
-                        </span>
-                      ) : null}
-                    </h3>
-                    <p className="mt-2 text-sm leading-relaxed text-white/90">
-                      {pillar.items.slice(0, 2).join(". ")}
-                    </p>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-          {/* 16 Regions data viz */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mt-8 lg:mt-10"
-          >
-            <RegionsViz />
-          </motion.div>
-        </div>
-      </section>
-
       {/* Programme pathways — stakeholder entry points (replaces quarter roadmap cards on the homepage) */}
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -310,7 +183,11 @@ export function HomePageClient({
               navigation — not a delivery calendar.
             </p>
             <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-[var(--muted-foreground)]">
-              For the full programme story, pillars, and long-range planning narrative, read{" "}
+              For the five pillars and regional map, see{" "}
+              <Link href="/about#key-operational-pillars" className="font-medium text-[var(--primary)] hover:underline">
+                About — pillars &amp; regions
+              </Link>
+              . For the full programme story and long-range planning narrative, read{" "}
               <Link href="/about" className="font-medium text-[var(--primary)] hover:underline">
                 About
               </Link>

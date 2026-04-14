@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { AboutPlatformLinks } from "@/components/about/AboutPlatformLinks";
+import { OperationalPillarsRegionsSection } from "@/components/operational-pillars/OperationalPillarsRegionsSection";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -308,8 +309,13 @@ export default async function AboutPage() {
               </p>
               <ul className="mt-5 space-y-3 text-sm font-medium text-[var(--foreground)]">
                 <li>
+                  <Link href="#key-operational-pillars" className="text-[var(--primary)] hover:underline">
+                    Operational pillars &amp; regions (map)
+                  </Link>
+                </li>
+                <li>
                   <Link href="#platform-pillars" className="text-[var(--primary)] hover:underline">
-                    About — pillars &amp; objectives
+                    About — pillar detail &amp; objectives
                   </Link>
                 </li>
                 <li>
@@ -339,6 +345,8 @@ export default async function AboutPage() {
           </div>
         </div>
       </section>
+
+      <OperationalPillarsRegionsSection />
 
       {/* Section 4: Our Platform Pillars — how we deliver */}
       <section id="platform-pillars" className="section-spacing section-full bg-[var(--section-light)]">
