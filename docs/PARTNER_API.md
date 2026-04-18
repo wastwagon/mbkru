@@ -13,7 +13,7 @@
 | Method | Path | Phase gate | Purpose |
 |--------|------|------------|---------|
 | `GET` | `/api/mps` | `NEXT_PUBLIC_PLATFORM_PHASE` ≥ 2 + `parliamentTrackerData` | Active MP/minister roster (summary + promise counts) |
-| `GET` | `/api/promises` | Same | Campaign promises; see **§1.1** for query filters |
+| `GET` | `/api/promises` | Same | Tracked commitments (JSON); see **§1.1** for query filters |
 | `GET` | `/api/report-card/[year]` | Phase ≥ 2 + `publicReportCard` | Published People’s Report Card cycle (404 if unpublished / missing) |
 | `GET` | `/api/export/mps-csv` | Same gates as `/api/mps` | **CSV** roster (`slug`, `name`, `role`, `party`, `constituency_name`, `promise_count`); UTF-8 BOM for Excel; rate-limited like JSON |
 | `GET` | `/api/export/promises-csv` | Same gates as `/api/promises` | **CSV** promises (full export, no 50-row JSON cap); optional `?memberSlug=`; UTF-8 BOM; separate rate bucket `promises-export-csv` |

@@ -48,7 +48,7 @@ MBKRU Advocates aims to position itself as Ghana's premier citizen accountabilit
 | **Q2 2026** | Platform development | • MBKRU Voice MVP (registration, dashboard) • Town Hall pilot (Greater Accra) • Backend for complaint intake (no public submission yet) |
 | **Q3 2026** | Early access launch | • Limited early access for registered members • Town Halls in Ashanti, Western, Central • Geo-tagged complaint pilot (Greater Accra) • Legal Empowerment Desk pilot |
 | **Q4 2026** | National rollout | • Full MBKRU Voice launch (all 16 regions) • Regional Public Forums begin • First People's Report Card data collection starts • CHRAJ/FOI liaison established |
-| **Q1 2027** | Full operations | • All five pillars operational • First Annual National People's Assembly • Campaign promise tracking database (2024 promises baseline) |
+| **Q1 2027** | Full operations | • All five pillars operational • First Annual National People's Assembly • Public promise catalogue (2024 baseline rows) |
 | **Q2 2027** | Data & scale | • People's Report Card Year 1 publication (baseline) • Constituency-level Town Halls • Parliamentary tracker data pipeline |
 
 ### Phase 3 — Election Readiness (Q3 2027 – Q4 2028)
@@ -57,12 +57,12 @@ MBKRU Advocates aims to position itself as Ghana's premier citizen accountabilit
 
 | Quarter | Milestone | Deliverables |
 |---------|-----------|--------------|
-| **Q3 2027** | Pre-election year prep | • People's Report Card Year 2 • Campaign promise tracking live • Pre-election debate framework (constituency mapping) |
+| **Q3 2027** | Pre-election year prep | • People's Report Card Year 2 • Public promise catalogue live • Pre-election debate framework (constituency mapping) |
 | **Q4 2027** | Election year ramp | • Accountability Scorecard methodology finalised • Constituency Town Hall schedule (275 constituencies) • Media partnerships for broadcast |
-| **Q1 2028** | Campaign season | • Real-time promise tracking (2028 manifestos) • Situational alerts for electoral issues • Legal Empowerment Desk: voter rights, dispute resolution |
+| **Q1 2028** | Campaign season | • Real-time catalogue updates (2028 manifestos) • Situational alerts for electoral issues • Legal Empowerment Desk: voter rights, dispute resolution |
 | **Q2 2028** | Scorecard production | • Data aggregation for all MPs, Ministers, Regional Ministers • Scorecard drafting and review • Stakeholder preview (CSOs, media) |
 | **Q3 2028** | **90-day publication** | • **Accountability Scorecards published (Aug–Sep 2028)** • Pre-election debates in every constituency • National People's Assembly (election focus) |
-| **Q4 2028** | **Election** | • Ghana General Election (Nov–Dec 2028) • MBKRU as trusted accountability reference • Post-election promise tracking begins |
+| **Q4 2028** | **Election** | • Ghana General Election (Nov–Dec 2028) • MBKRU as trusted accountability reference • Post-election catalogue updates begin |
 
 ---
 
@@ -71,7 +71,7 @@ MBKRU Advocates aims to position itself as Ghana's premier citizen accountabilit
 ### 1. People's Report Card (Pillar D)
 
 - **What:** Annual data-driven assessment of every Minister, Regional Minister, and MP.
-- **Impact:** By 2028, three report cards (2026, 2027, 2028) will exist. Voters can compare incumbents' performance against campaign promises.
+- **Impact:** By 2028, three report cards (2026, 2027, 2028) will exist. Voters can compare incumbents' performance against tracked commitments in the public catalogue.
 - **Timeline:** Year 1 (2027), Year 2 (2028), Year 3 (2028 pre-election).
 
 ### 2. Accountability Scorecards (Pillar D)
@@ -80,9 +80,9 @@ MBKRU Advocates aims to position itself as Ghana's premier citizen accountabilit
 - **Impact:** Directly shapes voter information. Candidates and incumbents are held to their records. Media and CSOs use scorecards for debates and coverage.
 - **Timeline:** Publication **August–September 2028**.
 
-### 3. Campaign Promise Tracking (Pillar D)
+### 3. Public promise catalogue (Pillar D)
 
-- **What:** Real-time tracking of campaign promises versus delivery.
+- **What:** Real-time tracking of documented commitments versus delivery.
 - **Impact:** 2024 promises become baseline. 2028 manifestos are tracked from day one. Voters see promise vs. delivery before casting ballots.
 - **Timeline:** 2024 baseline by Q1 2027; 2028 manifestos from Q1 2028.
 

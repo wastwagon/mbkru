@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import { PromiseEvidenceCard } from "@/components/accountability/PromiseEvidenceCard";
 import { PromiseTrackerStatsStrip } from "@/components/accountability/PromiseTrackerStatsStrip";
+import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import {
   POLICY_SECTOR_LABELS,
   POLICY_SECTOR_VALUES,
@@ -295,7 +296,7 @@ export function PromisesBrowseLive({
               </>
             ) : (
               <>
-                <option value="all">All tracked promises</option>
+                <option value="all">{accountabilityProse.browseCatalogueSelectAllTracked}</option>
                 <option value="gov">Government programme only</option>
                 <option value="ndc2024">NDC 2024 (manifesto-linked)</option>
                 <option value="npp2024">NPP 2024 (manifesto-linked)</option>
@@ -332,8 +333,7 @@ export function PromisesBrowseLive({
             ))}
           </select>
           <p className="mt-1 text-[11px] leading-snug text-[var(--muted-foreground)]">
-            Uses the same constituency and MP records as parliament.gh imports — filter promises for whoever holds
-            that seat in this database.
+            {accountabilityProse.browseConstituencyFilterHelp}
           </p>
         </div>
 
@@ -398,8 +398,8 @@ export function PromisesBrowseLive({
       {rows.length === 0 && !loading ? (
         <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
           {mode === "government"
-            ? "No government-programme commitments match. Try clearing search or filters."
-            : "No promise records match. Try clearing search or filters."}
+            ? accountabilityProse.browseFiltersEmptyGovernmentMode
+            : accountabilityProse.browseFiltersEmptyResult}
         </p>
       ) : null}
 
@@ -458,7 +458,7 @@ export function PromisesBrowseLive({
                               href={`/promises/${encodeURIComponent(p.member.slug)}`}
                               className="font-medium text-[var(--primary)] hover:underline"
                             >
-                              this MP’s promises page
+                              this MP’s pledge sheet
                             </Link>
                             .
                           </span>

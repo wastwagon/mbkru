@@ -4,6 +4,10 @@ import { notFound } from "next/navigation";
 
 import { PageHeader } from "@/components/ui/PageHeader";
 import {
+  ACCOUNTABILITY_CATALOGUE_ROUTES,
+  accountabilityProse,
+} from "@/config/accountability-catalogue-destinations";
+import {
   isPartnerApiTermsPageEnabled,
   isPromisesBrowseEnabled,
   isReportCardPublicEnabled,
@@ -25,7 +29,7 @@ export default function PartnerApiPage() {
     <div>
       <PageHeader
         title="Partner data &amp; API"
-        description="Read-only endpoints for MPs, campaign promises, the People’s Report Card, and research exports. This page is a public summary of how we expect partners to use them — not a substitute for legal advice or a signed agreement."
+        description={accountabilityProse.partnerApiPageIntro}
       />
 
       <section className="section-spacing section-full bg-white">
@@ -61,8 +65,11 @@ export default function PartnerApiPage() {
                   <td className="border-b border-[var(--border)] px-3 py-2">
                     Active MP/minister roster (when{" "}
                     {showMpsPromises ? (
-                      <Link href="/promises" className="font-medium text-[var(--primary)] hover:underline">
-                        promise browsing
+                      <Link
+                        href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
+                        className="font-medium text-[var(--primary)] hover:underline"
+                      >
+                        {accountabilityProse.partnerApiMpsCellLinkLabel}
                       </Link>
                     ) : (
                       "parliament data"
@@ -75,7 +82,7 @@ export default function PartnerApiPage() {
                     /api/promises
                   </td>
                   <td className="border-b border-[var(--border)] px-3 py-2">
-                    Campaign promises with optional filters; JSON responses are capped — use CSV for full exports.
+                    {accountabilityProse.apiPromisesTableRow}
                   </td>
                 </tr>
                 <tr>

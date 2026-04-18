@@ -9,7 +9,7 @@
 
 | Surface | Nature of claim | Must be true |
 |---------|-----------------|--------------|
-| Campaign promise rows | Editorial record of **documented** pledges + status workflow | Every row traceable to a cited source or manifesto link where required by internal QA |
+| Catalogue rows (tracked commitments) | Editorial record of **documented** pledges + status workflow | Every row traceable to a cited source or manifesto link where required by internal QA |
 | People’s Report Card / scorecard entries | **Explanatory** assessment | Methodology published; limitations visible; not framed as court or EC findings |
 | Voice & situational summaries (public) | Triage / advocacy context | No raw PII; moderated where policy says so |
 

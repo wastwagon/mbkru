@@ -2,8 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+import { PromiseCatalogueSurfacesCallout } from "@/components/accountability/PromiseCatalogueSurfacesCallout";
 import { PromisesBrowseLive } from "@/components/accountability/PromisesBrowseLive";
 import { PageHeader } from "@/components/ui/PageHeader";
+import {
+  ACCOUNTABILITY_CATALOGUE_ROUTES,
+  accountabilityCatalogueNavMedium,
+} from "@/config/accountability-catalogue-destinations";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { parsePromisesApiFilters } from "@/lib/promises-api-filters";
 import {
@@ -24,7 +29,7 @@ import {
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Browse campaign promises",
+  title: accountabilityCatalogueNavMedium.browseAll,
   description:
     "Search and filter documented MP and minister commitments — by constituency, category, status, and government programme tag.",
 };
@@ -94,18 +99,20 @@ export default async function PromisesBrowsePage({ searchParams }: Props) {
   return (
     <div>
       <PageHeader
-        title="Browse promises"
-        description="All documented commitments we track for active parliamentarians, including rows that are also tagged as government programmes (same record appears on Government commitments). Filters update as you type. Not every pledge exists online — we record what we can cite."
-        breadcrumbCurrentLabel="Browse"
+        title={accountabilityCatalogueNavMedium.browseAll}
+        description={`All documented commitments we track for active parliamentarians, including rows that are also tagged as government programmes (same record appears on ${accountabilityCatalogueNavMedium.government}). Filters update as you type. Not every pledge exists online — we record what we can cite.`}
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="text-sm text-[var(--muted-foreground)]">
-            <Link href="/promises" className="text-[var(--primary)] hover:underline">
+            <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className="text-[var(--primary)] hover:underline">
               ← By MP
             </Link>
             {" · "}
-            <Link href="/government-commitments" className="text-[var(--primary)] hover:underline">
+            <Link
+              href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments}
+              className="text-[var(--primary)] hover:underline"
+            >
               Government commitments
             </Link>
             {" · "}
@@ -113,6 +120,8 @@ export default async function PromisesBrowsePage({ searchParams }: Props) {
               Accountability hub
             </Link>
           </p>
+
+          <PromiseCatalogueSurfacesCallout variant="browse" />
 
           <PromisesBrowseLive
             mode="browse"

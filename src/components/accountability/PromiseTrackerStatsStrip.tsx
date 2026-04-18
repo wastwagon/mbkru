@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import type { PromiseTrackerStats } from "@/lib/promise-tracker-public-types";
 
@@ -140,8 +141,8 @@ export function PromiseTrackerStatsStrip({ stats, subtitle, compact }: Props) {
         ? "government-programme row in this slice"
         : "government-programme rows in this slice"
       : totalPromises === 1
-        ? "promise in this catalogue slice"
-        : "promises in this catalogue slice";
+        ? "commitment in this catalogue slice"
+        : "commitments in this catalogue slice";
 
   const snapshotIntro =
     stats.scope === "government"
@@ -177,10 +178,12 @@ export function PromiseTrackerStatsStrip({ stats, subtitle, compact }: Props) {
               <p className="font-display text-3xl font-bold tabular-nums tracking-tight text-emerald-950 sm:text-4xl">
                 {stats.governmentPromises}
               </p>
-              <p className="mt-1 text-xs font-medium text-slate-500">Also on Government commitments</p>
+              <p className="mt-1 text-xs font-medium text-slate-500">
+                {accountabilityProse.statsStripGovernmentKpiFootnote}
+              </p>
             </KpiCard>
           ) : null}
-          <KpiCard label="MPs w/ promises">
+          <KpiCard label={accountabilityProse.statsStripMpsWithCatalogueRowsLabel}>
             <p className="font-display text-3xl font-bold tabular-nums tracking-tight sm:text-4xl">
               {stats.mpsWithPromises}
               <span className="ml-1.5 text-lg font-semibold text-slate-500 sm:text-xl">/ {stats.activeMpsTotal}</span>

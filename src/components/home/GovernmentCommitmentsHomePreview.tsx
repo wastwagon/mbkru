@@ -4,6 +4,10 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 import { PromisesBrowseLive } from "@/components/accountability/PromisesBrowseLive";
+import {
+  ACCOUNTABILITY_CATALOGUE_ROUTES,
+  accountabilityHomePreviewCopy,
+} from "@/config/accountability-catalogue-destinations";
 import type { GovernmentCommitmentsHomePreview as GovPreviewData } from "@/lib/home-government-preview-types";
 
 type Props = {
@@ -28,14 +32,17 @@ export function GovernmentCommitmentsHomePreview({ data }: Props) {
         >
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--primary)]">Accountability</p>
           <h2 className="mt-2 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
-            Government commitments tracker
+            {accountabilityHomePreviewCopy.governmentHeading}
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
-            Same live search, constituency filter, and catalogue as{" "}
-            <Link href="/government-commitments" className="font-semibold text-[var(--primary)] hover:underline">
-              Government commitments
+            {accountabilityHomePreviewCopy.governmentLead}{" "}
+            <Link
+              href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments}
+              className="font-semibold text-[var(--primary)] hover:underline"
+            >
+              Open full page
             </Link>
-            . Executive- and programme-tagged pledges use the same rows as MP pledge sheets where a member is linked.
+            .
           </p>
         </motion.div>
 
@@ -63,7 +70,7 @@ export function GovernmentCommitmentsHomePreview({ data }: Props) {
               <div className="mt-8 flex flex-wrap items-end justify-between gap-3 border-b border-[var(--border)] pb-3">
                 <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Filters &amp; results</h3>
                 <Link
-                  href="/government-commitments"
+                  href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments}
                   className="text-sm font-semibold text-[var(--primary)] hover:underline"
                 >
                   Open full tracker →

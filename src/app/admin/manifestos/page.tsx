@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { createManifestoDocumentAction } from "@/app/admin/manifestos/actions";
+import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
 
@@ -20,7 +21,7 @@ export default async function AdminManifestosPage() {
       </p>
       <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">Manifesto registry</h1>
       <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-        Register party manifesto documents so campaign promises can cite them. Public list:{" "}
+        {accountabilityProse.adminManifestosIntro}{" "}
         <Link href="/api/manifestos" className="text-[var(--primary)] hover:underline">
           /api/manifestos
         </Link>

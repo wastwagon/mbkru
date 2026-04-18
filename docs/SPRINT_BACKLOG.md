@@ -71,7 +71,7 @@
 |---|------|---------|
 | 1 | **Import pipeline** | **Shipped:** CSV → **`POST /api/admin/parliament-members/import`** + **`/admin/parliament`** list |
 | 2 | **Promises** | **Shipped:** **`/admin/parliament/[id]`** + public **`GET /api/mps`**, **`GET /api/promises`**; browse UI **`/promises`**, **`/promises/[slug]`** (Phase 2+) |
-| 3 | **Methodology page** | **Shipped:** **`/methodology`** — principles, promise tracking, score-style disclaimer |
+| 3 | **Methodology page** | **Shipped:** **`/methodology`** — principles, tracked commitments & catalogue, score-style disclaimer |
 
 ---
 

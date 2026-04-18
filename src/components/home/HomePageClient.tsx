@@ -7,10 +7,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { HomeHeroSlider } from "@/components/home/HomeHeroSlider";
 import { LivePlatformStrip } from "@/components/home/LivePlatformStrip";
+import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import {
   homepageEngagementPathways,
-  images,
   mbkruStrategicContent,
   pillarImages,
 } from "@/lib/site-content";
@@ -122,7 +122,7 @@ export function HomePageClient({
         title: "Accountability & Electoral Watch",
         items: [
           "People's Report Cards",
-          "Campaign promise tracking",
+          accountabilityProse.pillarHomeBullet,
           "Accountability Scorecards",
           "Citizen petition mechanism",
         ],
@@ -151,73 +151,41 @@ export function HomePageClient({
 
       <HomeDataProvenanceRibbon />
 
-      {/* Executive summary + Vision & Mission — before Participate / how-to-use */}
+      {/* Who we are — short intro; full story on About (matches Participate / pathways density) */}
       <section
         id="executive-summary"
-        className="section-full border-b border-[var(--border)] bg-[var(--section-light)] py-8 sm:py-10 lg:py-12"
+        className="section-full border-b border-[var(--border)] bg-gradient-to-b from-[var(--section-light)] to-white py-10 sm:py-12"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start lg:gap-10">
-            <motion.div
-              initial={{ opacity: 0, x: -16 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="relative aspect-[4/3] max-h-[22rem] overflow-hidden rounded-2xl shadow-lg lg:max-h-none lg:min-h-[20rem]"
-            >
-              <Image
-                src={images.hero}
-                alt="Citizens in discussion — illustrative photography"
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 45vw"
-              />
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 16 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="min-w-0"
-            >
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--primary)]">
-                {mbkruStrategicContent.legalName}
-              </p>
-              <h2 className="mt-2 font-display text-xl font-bold text-[var(--foreground)] sm:text-2xl lg:text-3xl">
-                Executive summary
-              </h2>
-              <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
-                {mbkruStrategicContent.executiveSummaryParagraphs[0]}
-              </p>
-              <p className="mt-3 text-sm text-[var(--muted-foreground)]">
-                <Link href="/about#executive-summary" className="font-semibold text-[var(--primary)] hover:underline">
-                  Continue on About
-                </Link>{" "}
-                for the full executive summary, restorative justice context, and pillar detail.
-              </p>
-              <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-card)]">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-[var(--primary)]">Vision</p>
-                  <p className="mt-2 text-sm leading-relaxed text-[var(--foreground)]">{mbkruStrategicContent.vision}</p>
-                </div>
-                <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-card)]">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-[var(--primary)]">Mission</p>
-                  <p className="mt-2 text-sm font-medium leading-relaxed text-[var(--foreground)]">
-                    {mbkruStrategicContent.mission}
-                  </p>
-                </div>
-              </div>
-              <div className="mt-5 flex flex-wrap gap-3">
-                <Button href="/about" variant="primary">
-                  Full programme on About
-                </Button>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center gap-2 rounded-xl border-2 border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--foreground)] transition-colors hover:border-[var(--primary)]/40"
-                >
-                  Get in Touch
-                </Link>
-              </div>
-            </motion.div>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mx-auto max-w-2xl text-center"
+          >
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--primary)]">
+              {mbkruStrategicContent.legalName}
+            </p>
+            <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
+              {mbkruStrategicContent.homepageWhoWeAreHeading}
+            </h2>
+            <p className="mt-4 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+              {mbkruStrategicContent.homepageWhoWeAreLead}
+            </p>
+            <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+              Executive summary, vision, mission, and pillars are on{" "}
+              <Link href="/about#executive-summary" className="font-semibold text-[var(--primary)] hover:underline">
+                About
+              </Link>
+              .
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Button href="/about">About MBKRU</Button>
+              <Button href="/contact" variant="outline">
+                Get in touch
+              </Button>
+            </div>
+          </motion.div>
         </div>
       </section>
 

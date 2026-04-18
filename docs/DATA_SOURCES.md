@@ -22,7 +22,7 @@ There is **no official** state bulk MP JSON API we can call from CI. **open.afri
 |--------|------------------|--------------|
 | **MP roster** | **Yes, locally** via **[ghanamps](https://github.com/yeboahnanaosei/ghanamps)** (`ghanamps members` → JSON). Verify sample rows on [parliament.gh](https://www.parliament.gh/members). | **`npm run data:pull-mps`** → `prisma/data/generated/parliament-members.bulk.csv` (auto-merges [`parliament-members.starter.csv`](../prisma/data/parliament-members.starter.csv)). Or **`MP_JSON_PATH=./mps.json npm run data:pull-mps`** if you saved JSON without the CLI. |
 | **Constituency master** | **Partially** — English Wikipedia’s [list page](https://en.wikipedia.org/wiki/List_of_parliamentary_constituencies_of_Ghana) (CC BY-SA) has machine-readable tables; **not** an EC legal boundary source. | **`npm run data:pull-constituencies`** → `prisma/data/generated/constituencies.wikipedia.csv` (~268 rows when links use `(Ghana parliament constituency)`; a few seats use shorter wikilinks — add manually). Merges [`constituencies.starter.csv`](../prisma/data/constituencies.starter.csv). Cross-check with **`npm run data:list-mp-constituency-slugs -- mps.json`**. |
-| **Campaign promises** | **No** automated full extract (copyright + accuracy). | Themes + PDF links in seed; **you** add cited lines in admin. |
+| **Tracked commitments** | **No** automated full extract (copyright + accuracy). | Themes + PDF links in seed; **you** add cited lines in admin. |
 | **Report card scores** | **No** — editorial methodology. | Pilot cycle (scores **pending**) shows UI; publish real cycles in admin. |
 | **Town halls / forums (programme)** | Roadmap-aligned placeholders only. | **`TownHallEvent`** rows from `prisma db seed` (see **`prisma/data/TOWN_HALL_SEED_SOURCES.txt`**). Replace with confirmed events operationally; admin CRUD can be added later. |
 | **Communities / alerts** | **No** single open national dataset for alerts. | Communities: **`communities.seed.json`**; situational intake via Voice forms. |
@@ -86,7 +86,7 @@ The importer **does not** create `Constituency` rows. You need **`slug`** values
 
 ---
 
-## 3. Campaign promises & party manifestos (2024 cycle and beyond)
+## 3. Tracked commitments & party manifestos (2024 cycle and beyond)
 
 - **Party manifestos** are **party publications**, usually **copyrighted**. Do **not** bulk-copy full PDF text into the database without **permission** or a **clear fair-use / citation** policy from counsel.
 - **Production-ready approach:** Obtain the **official PDF or web version** from the **party or coalition**, then **manually** (or with licensed tooling) extract **short, cited** promise lines into **`CampaignPromise`** with **`sourceLabel`** (e.g. “NDC 2024 manifesto, p. 42, education”).
@@ -103,7 +103,7 @@ Use these only as **starting points** to download or cite the **same document** 
 
 **Non-partisan analysis (secondary):** Organisations such as **ACEP**, **Verité Research**, and academic papers may **summarise** manifestos — use them for **research**, not as a substitute for **primary** citations on your `CampaignPromise` rows.
 
-### 3.2 “Governing government” promise tracking (how MBKRU fits)
+### 3.2 “Governing government” — tracked commitments (how MBKRU fits)
 
 1. **Roster truth:** Who is an MP → **Parliament of Ghana** directory ([members](https://www.parliament.gh/members)) + your imported `ParliamentMember` rows.  
 2. **Promise truth:** What was promised → **manifesto excerpts** you have rights to cite, stored as **`CampaignPromise`** with `sourceLabel`, `sourceDate`, `status` (TRACKING → FULFILLED / BROKEN / etc.).  

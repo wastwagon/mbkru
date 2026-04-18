@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
 import {
+  ACCOUNTABILITY_CATALOGUE_ROUTES,
+  accountabilityCatalogueNavMedium,
+  accountabilityProse,
+} from "@/config/accountability-catalogue-destinations";
+import {
   isPartnerApiTermsPageEnabled,
   isPromisesBrowseEnabled,
   isReportCardPublicEnabled,
@@ -9,8 +14,7 @@ import {
 
 export const metadata: Metadata = {
   title: "Accountability methodology",
-  description:
-    "How MBKRU approaches promise tracking and score-style accountability — independent, transparent, and adapted for Ghana.",
+  description: accountabilityProse.methodologyPageMetaDescription,
 };
 
 export default async function MethodologyPage() {
@@ -30,9 +34,37 @@ export default async function MethodologyPage() {
           {showPromises || showReportCard ? (
             <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-[var(--muted-foreground)]">
               {showPromises ? (
-                <Link href="/promises" className="font-medium text-[var(--primary)] hover:underline">
-                  Campaign promises
-                </Link>
+                <>
+                  <Link
+                    href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp}
+                    className="font-medium text-[var(--primary)] hover:underline"
+                  >
+                    {accountabilityCatalogueNavMedium.byMp}
+                  </Link>
+                  <span aria-hidden className="text-[var(--muted-foreground)]/50">
+                    ·
+                  </span>
+                  <Link
+                    href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
+                    className="font-medium text-[var(--primary)] hover:underline"
+                  >
+                    {accountabilityCatalogueNavMedium.browseAll}
+                  </Link>
+                  <span aria-hidden className="text-[var(--muted-foreground)]/50">
+                    ·
+                  </span>
+                  <Link
+                    href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments}
+                    className="font-medium text-[var(--primary)] hover:underline"
+                  >
+                    {accountabilityCatalogueNavMedium.government}
+                  </Link>
+                </>
+              ) : null}
+              {showPromises && showReportCard ? (
+                <span aria-hidden className="text-[var(--muted-foreground)]/50">
+                  ·
+                </span>
               ) : null}
               {showReportCard ? (
                 <Link href="/report-card" className="font-medium text-[var(--primary)] hover:underline">
@@ -57,12 +89,10 @@ export default async function MethodologyPage() {
             </li>
           </ul>
 
-          <h2 className="mt-12 font-display text-xl font-bold">Promise tracking</h2>
-          <p className="mt-4 text-[var(--muted-foreground)]">
-            Campaign promises are logged with a title, optional narrative, and a source label (e.g. manifesto section
-            or speech). Status moves through tracking, in progress, fulfilled, broken, or deferred — always tied back to
-            evidence or a transparent rationale for deferral.
-          </p>
+          <h2 className="mt-12 font-display text-xl font-bold">
+            {accountabilityProse.methodologyCatalogueSectionHeading}
+          </h2>
+          <p className="mt-4 text-[var(--muted-foreground)]">{accountabilityProse.methodologyPromiseTrackingBody}</p>
 
           <h2 className="mt-12 font-display text-xl font-bold">Score-style views (People&apos;s Report Card)</h2>
           <p className="mt-4 text-[var(--muted-foreground)]">
@@ -81,8 +111,9 @@ export default async function MethodologyPage() {
           </h2>
           <ul className="mt-4 list-inside list-disc space-y-2 text-[var(--muted-foreground)]">
             <li>
-              <strong className="text-[var(--foreground)]">Promises and commitments</strong> are tracked as editorial
-              catalogue rows with sources (manifesto, speech, official URL) where our QA requires them — not findings by
+              <strong className="text-[var(--foreground)]">{accountabilityProse.methodologyClaimsBulletStrong}</strong>{" "}
+              are tracked as editorial catalogue rows with sources (manifesto, speech, official URL) where our QA requires
+              them — not findings by
               courts or the Electoral Commission.
             </li>
             <li>
@@ -102,7 +133,8 @@ export default async function MethodologyPage() {
           <p className="mt-12 text-sm text-[var(--muted-foreground)]">
             {showPromises || showReportCard ? (
               <>
-                When enabled for this deployment, partners can pull the same MP roster, promise catalogue, and published
+                When enabled for this deployment, partners can pull the same MP roster, public commitment catalogue, and
+                published
                 report-card cycles through read-only exports. Requests are rate-limited and responses may be cached briefly
                 between refreshes.{" "}
                 {showPartnerApi ? (

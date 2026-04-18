@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import {
+  pathnameIsPromisesBrowseAccountability,
+  pathnameIsPromisesByMpAccountability,
+} from "@/config/accountability-catalogue-destinations";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { getAccountSidebarExploreLinks, getAccountSidebarVoiceLinks } from "@/config/public-platform-nav";
 
@@ -10,6 +14,12 @@ type NavItem = { href: string; label: string };
 
 function accountNavActive(pathname: string, href: string) {
   if (href === "/account") return pathname === "/account";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function exploreNavActive(pathname: string, href: string): boolean {
+  if (href === "/promises") return pathnameIsPromisesByMpAccountability(pathname);
+  if (href === "/promises/browse") return pathnameIsPromisesBrowseAccountability(pathname);
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
@@ -69,7 +79,7 @@ export function AccountSidebar() {
           <ul className="mt-2 space-y-0.5">
             {explore.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className={linkClass(pathname === item.href)}>
+                <Link href={item.href} className={linkClass(exploreNavActive(pathname, item.href))}>
                   {item.label}
                 </Link>
               </li>

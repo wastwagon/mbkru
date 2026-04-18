@@ -143,6 +143,7 @@ export async function createCampaignPromiseAction(formData: FormData): Promise<v
   revalidateTag(promisesMemberTag(member.slug), "max");
   revalidateTag(MPS_ROSTER_TAG, "max");
   revalidatePath("/promises");
+  revalidatePath("/promises/browse");
   revalidatePath(`/promises/${member.slug}`);
   revalidatePath("/government-commitments");
 }
@@ -180,6 +181,7 @@ export async function updateCampaignPromiseStatusAction(formData: FormData): Pro
     revalidateTag(promisesMemberTag(member.slug), "max");
     revalidateTag(MPS_ROSTER_TAG, "max");
     revalidatePath("/promises");
+    revalidatePath("/promises/browse");
     revalidatePath(`/promises/${member.slug}`);
     revalidatePath("/government-commitments");
   }
@@ -221,6 +223,8 @@ export async function updateCampaignPromiseEvidenceAction(formData: FormData): P
     policySector = null;
   }
 
+  const isGovernmentProgramme = formData.get("isGovernmentProgramme") === "on";
+
   const row = await prisma.campaignPromise.findFirst({
     where: { id: parsed.data.promiseId, memberId: parsed.data.memberId },
     select: { id: true },
@@ -234,6 +238,7 @@ export async function updateCampaignPromiseEvidenceAction(formData: FormData): P
       sourceUrl,
       verificationNotes,
       policySector,
+      isGovernmentProgramme,
     },
   });
 
@@ -250,5 +255,6 @@ export async function updateCampaignPromiseEvidenceAction(formData: FormData): P
   }
   revalidateTag(MPS_ROSTER_TAG, "max");
   revalidatePath("/promises");
+  revalidatePath("/promises/browse");
   revalidatePath("/government-commitments");
 }

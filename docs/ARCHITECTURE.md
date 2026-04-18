@@ -98,7 +98,7 @@ Implementation: `src/config/platform.ts`. Use these flags to guard new routes, n
 |-----------|---------|--------------|
 | News posts, media metadata | PostgreSQL (`Post`, `Media`) | Same; richer workflows |
 | Regions / members / citizen reports | — | `Region`, `Member`, `CitizenReport`, attachments (Phase 2+) |
-| MPs, promises, report cards | — | `ParliamentMember`, `CampaignPromise`, `ReportCardCycle`, `ScorecardEntry` (Phase 2–3) |
+| MPs, tracked commitments, report cards | — | `ParliamentMember`, `CampaignPromise`, `ReportCardCycle`, `ScorecardEntry` (Phase 2–3) |
 | Uploaded files | Disk (`public/uploads`) + volume in Docker | Optional S3-compatible object storage |
 | Form submissions | Logs / external ESP | **`LeadCapture`** + **`ContactSubmission`** (contact form full text); ESP optional; Redis for rate limiting |
 | Public users, complaints | N/A | PostgreSQL (+ optional Auth.js / Clerk / etc.) |
@@ -117,7 +117,7 @@ Read-only routes for partners and embeds (gated by `platformFeatures` in `src/co
 | `GET /api/promises` | Phase ≥ 2 — optional `?memberSlug=` filter |
 | `GET /api/report-card/[year]` | Phase ≥ 2 (`publicReportCard`) — published cycle only; **404** uses `private, no-store` |
 
-Admin **CSV import** and **promise** mutations call **`revalidateTag`** so JSON and HTML stay in sync without waiting for the TTL.
+Admin **CSV import** and **catalogue** mutations call **`revalidateTag`** so JSON and HTML stay in sync without waiting for the TTL.
 
 ---
 

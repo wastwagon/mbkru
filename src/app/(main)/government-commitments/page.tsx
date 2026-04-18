@@ -2,8 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+import { PromiseCatalogueSurfacesCallout } from "@/components/accountability/PromiseCatalogueSurfacesCallout";
 import { PromisesBrowseLive } from "@/components/accountability/PromisesBrowseLive";
 import { PageHeader } from "@/components/ui/PageHeader";
+import {
+  ACCOUNTABILITY_CATALOGUE_ROUTES,
+  accountabilityCatalogueNavMedium,
+  accountabilityProse,
+} from "@/config/accountability-catalogue-destinations";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { parsePromisesApiFilters } from "@/lib/promises-api-filters";
 import {
@@ -24,9 +30,8 @@ import {
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Government commitments",
-  description:
-    "Campaign promises tagged as government programmes or executive commitments — tracked alongside MP and minister pledges.",
+  title: accountabilityCatalogueNavMedium.government,
+  description: accountabilityProse.governmentCommitmentsMetaDescription,
 };
 
 type Props = {
@@ -86,17 +91,20 @@ export default async function GovernmentCommitmentsPage({ searchParams }: Props)
   return (
     <div>
       <PageHeader
-        title="Government commitments"
+        title={accountabilityCatalogueNavMedium.government}
         description="Programme- and executive-tagged pledges (often manifesto- or policy-paper sourced). The same database row can also sit under an MP when a member is linked — one record, two public surfaces, identical status. Not a legal finding."
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm text-[var(--muted-foreground)]">
-            <Link href="/promises" className="text-[var(--primary)] hover:underline">
+            <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className="text-[var(--primary)] hover:underline">
               By MP
             </Link>
             {" · "}
-            <Link href="/promises/browse" className="text-[var(--primary)] hover:underline">
+            <Link
+              href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
+              className="text-[var(--primary)] hover:underline"
+            >
               Browse all
             </Link>
             {" · "}
@@ -108,6 +116,8 @@ export default async function GovernmentCommitmentsPage({ searchParams }: Props)
               Accountability hub
             </Link>
           </p>
+
+          <PromiseCatalogueSurfacesCallout variant="government" />
 
           <PromisesBrowseLive
             mode="government"

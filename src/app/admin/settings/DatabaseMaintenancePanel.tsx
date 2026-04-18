@@ -127,7 +127,7 @@ export function DatabaseMaintenancePanel() {
                 variables <code className="rounded bg-black/5 px-1">SEED_ACCOUNTABILITY_DEMO</code> and{" "}
                 <code className="rounded bg-black/5 px-1">SEED_COMMUNITIES_DEMO</code> are{" "}
                 <strong>not</strong> set to <code className="rounded bg-black/5 px-1">0</code> — those flags skip
-                starter promises, report-card pilot, and community listings.
+                starter catalogue rows, report-card pilot, and community listings.
               </p>
             );
           })()}

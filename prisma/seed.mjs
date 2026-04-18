@@ -100,7 +100,7 @@ const POSTS_SEED = [
       "1. **Digital platform (MBKRU Voice)** — secure intake, status tracking, and public statistics where appropriate.",
       "2. **Physical engagement** — quarterly town halls, regional forums, and a national assembly-style gathering.",
       "3. **Legal empowerment** — templates, signposting to CHRAJ and courts, and pro-bono pathways where available.",
-      "4. **Accountability & electoral watch** — promise tracking, scorecards, and petition mechanisms as we scale.",
+      "4. **Accountability & electoral watch** — public promise catalogue, scorecards, and petition mechanisms as we scale.",
       "5. **Presidential interface** — structured briefings and listening sessions so citizen sentiment is not lost in translation.",
       "",
       "## Phased delivery",

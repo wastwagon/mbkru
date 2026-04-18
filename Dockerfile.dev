@@ -1,8 +1,11 @@
-# Development Dockerfile - for local dev with hot reload
+# Development image: deps installed here; bind-mount the repo at runtime for hot reload.
 FROM node:20-alpine
+RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 COPY package.json package-lock.json* ./
+COPY prisma ./prisma
 RUN npm ci
 COPY . .
+RUN chmod +x /app/docker-dev-entrypoint.sh
 EXPOSE 1100
-CMD ["npm", "run", "dev"]
+ENTRYPOINT ["/app/docker-dev-entrypoint.sh"]

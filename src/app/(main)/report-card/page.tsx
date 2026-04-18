@@ -4,6 +4,11 @@ import type { Metadata } from "next";
 
 import { PromiseTrackerStatsStrip } from "@/components/accountability/PromiseTrackerStatsStrip";
 import { PageHeader } from "@/components/ui/PageHeader";
+import {
+  ACCOUNTABILITY_CATALOGUE_ROUTES,
+  accountabilityCatalogueNavMedium,
+  accountabilityProse,
+} from "@/config/accountability-catalogue-destinations";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { getCachedPublishedReportCardCycles } from "@/lib/server/accountability-cache";
@@ -64,8 +69,8 @@ export default async function ReportCardIndexPage() {
               Methodology
             </Link>
             {" · "}
-            <Link href="/promises" className="text-[var(--primary)] hover:underline">
-              Campaign promises
+            <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className="text-[var(--primary)] hover:underline">
+              {accountabilityCatalogueNavMedium.byMp}
             </Link>
             {" · "}
             <Link href="/parliament-tracker" className="text-[var(--primary)] hover:underline">
@@ -75,7 +80,7 @@ export default async function ReportCardIndexPage() {
 
           <PromiseTrackerStatsStrip
             stats={trackerStats}
-            subtitle="Cross-links promises, MPs, and published scorecard rows — same aggregates as the promise browser."
+            subtitle={accountabilityProse.reportCardStatsStripSubtitle}
           />
 
           {cycles.length === 0 ? (

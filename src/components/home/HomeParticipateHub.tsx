@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/Button";
+import { getAccountabilityParticipateHubTiles } from "@/config/accountability-catalogue-destinations";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { homeAtAGlanceHasLiveContent, type HomeAtAGlanceData } from "@/lib/home-at-a-glance-types";
 
@@ -187,20 +188,13 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
           body: "Roadmap placeholders toward nationwide debate coverage.",
         }
       : null,
-    parliament
-      ? {
-          href: "/government-commitments",
-          title: "Government commitments",
-          body: "Executive-track pledges in the same catalogue as MP promises.",
-        }
-      : null,
-    parliament
-      ? {
-          href: "/promises/browse",
-          title: "Browse promises",
-          body: "Search all documented commitments for active MPs.",
-        }
-      : null,
+    ...(parliament
+      ? Object.values(getAccountabilityParticipateHubTiles()).map((t) => ({
+          href: t.href,
+          title: t.title,
+          body: t.body,
+        }))
+      : []),
     reportCard
       ? {
           href: "/report-card",

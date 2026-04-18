@@ -1,6 +1,9 @@
 /**
  * Public site navigation — single source of truth for header dropdowns, footer “Our Platform”,
  * About / homepage quick links, **`sitemap.ts`** static paths, and **`/account`** sidebar explore links.
+ * Promise catalogue hrefs and medium labels come from **`accountability-catalogue-destinations.ts`**
+ * so nav, account tiles, and metadata stay aligned.
+ *
  * Keeps `NEXT_PUBLIC_PLATFORM_PHASE` / feature gates aligned everywhere users discover tools
  * (see `docs/ARCHITECTURE.md` §5).
  *
@@ -8,6 +11,11 @@
  * `getServerPlatformPhase()` so server-rendered HTML matches client hydration.
  */
 
+import {
+  ACCOUNTABILITY_CATALOGUE_ROUTES,
+  accountabilityCatalogueNavMedium,
+  accountabilityCatalogueNavShort,
+} from "./accountability-catalogue-destinations";
 import type { PlatformPhase } from "./platform";
 import { platformFeatures } from "./platform";
 
@@ -16,6 +24,8 @@ export type PublicNavLink = {
   label: string;
   /** When set, treat any path under this prefix as active (header). */
   activeWhenPathStartsWith?: string;
+  /** With prefix matching from `href`, suppress active state under this path (e.g. `/promises` vs `/promises/browse`). */
+  activeExcludePathStartsWith?: string;
 };
 
 /** Participate — citizen voice, engagement, and related channels (header group). */
@@ -52,8 +62,20 @@ export function getParticipateNavLinks(phase: PlatformPhase): PublicNavLink[] {
 export function getAccountabilityNavLinks(phase: PlatformPhase): PublicNavLink[] {
   const links: PublicNavLink[] = [{ href: "/parliament-tracker", label: "Parliament tracker" }];
   if (platformFeatures.parliamentTrackerData(phase)) {
-    links.push({ href: "/government-commitments", label: "Commitments" });
-    links.push({ href: "/promises/browse", label: "Promises", activeWhenPathStartsWith: "/promises" });
+    links.push({
+      href: ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments,
+      label: accountabilityCatalogueNavShort.government,
+    });
+    links.push({
+      href: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
+      label: accountabilityCatalogueNavShort.browseAll,
+      activeWhenPathStartsWith: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
+    });
+    links.push({
+      href: ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp,
+      label: accountabilityCatalogueNavShort.byMp,
+      activeExcludePathStartsWith: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
+    });
   }
   if (platformFeatures.publicReportCard(phase)) {
     links.push({ href: "/report-card", label: "Report card", activeWhenPathStartsWith: "/report-card" });
@@ -122,8 +144,18 @@ export function getFooterPlatformFlowLinks(phase: PlatformPhase): PublicNavLink[
   links.push({ href: "/parliament-tracker", label: "Parliament tracker" });
 
   if (platformFeatures.parliamentTrackerData(phase)) {
-    links.push({ href: "/government-commitments", label: "Commitments" });
-    links.push({ href: "/promises/browse", label: "Campaign promises" });
+    links.push({
+      href: ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments,
+      label: accountabilityCatalogueNavMedium.government,
+    });
+    links.push({
+      href: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
+      label: accountabilityCatalogueNavMedium.browseAll,
+    });
+    links.push({
+      href: ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp,
+      label: accountabilityCatalogueNavMedium.byMp,
+    });
   }
   if (platformFeatures.publicReportCard(phase)) {
     links.push({ href: "/report-card", label: "Report card" });
@@ -156,7 +188,18 @@ export function getAboutPhaseQuickLinks(phase: PlatformPhase): PublicNavLink[] {
     links.push({ href: "/transparency", label: "Voice statistics" });
   }
   if (platformFeatures.parliamentTrackerData(phase)) {
-    links.push({ href: "/promises/browse", label: "Campaign promises" });
+    links.push({
+      href: ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments,
+      label: accountabilityCatalogueNavMedium.government,
+    });
+    links.push({
+      href: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
+      label: accountabilityCatalogueNavMedium.browseAll,
+    });
+    links.push({
+      href: ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp,
+      label: accountabilityCatalogueNavMedium.byMp,
+    });
   }
   if (platformFeatures.publicReportCard(phase)) {
     links.push({ href: "/report-card", label: "Report card" });
@@ -262,8 +305,18 @@ export function getAccountSidebarExploreLinks(phase: PlatformPhase): PublicNavLi
   const out: PublicNavLink[] = [];
   out.push({ href: "/parliament-tracker", label: "Parliament tracker" });
   if (platformFeatures.parliamentTrackerData(phase)) {
-    out.push({ href: "/government-commitments", label: "Commitments" });
-    out.push({ href: "/promises/browse", label: "Campaign promises" });
+    out.push({
+      href: ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments,
+      label: accountabilityCatalogueNavMedium.government,
+    });
+    out.push({
+      href: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
+      label: accountabilityCatalogueNavMedium.browseAll,
+    });
+    out.push({
+      href: ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp,
+      label: accountabilityCatalogueNavMedium.byMp,
+    });
   }
   if (platformFeatures.publicReportCard(phase)) {
     out.push({ href: "/report-card", label: "Report card" });

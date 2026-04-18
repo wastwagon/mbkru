@@ -6,6 +6,10 @@ import {
   updateCampaignPromiseEvidenceAction,
   updateCampaignPromiseStatusAction,
 } from "@/app/admin/parliament/actions";
+import {
+  accountabilityCatalogueNavMedium,
+  accountabilityProse,
+} from "@/config/accountability-catalogue-destinations";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
 import { POLICY_SECTOR_LABELS, POLICY_SECTOR_VALUES } from "@/lib/promise-policy-sectors";
@@ -49,7 +53,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
       <p className="text-sm text-[var(--muted-foreground)]">
         <Link href="/admin/parliament" className="text-[var(--primary)] hover:underline">
-          ← Parliament &amp; promises
+          {accountabilityProse.adminParliamentListBackLink}
         </Link>
       </p>
 
@@ -82,7 +86,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
       </dl>
 
       <section className="mt-10 rounded-xl border border-[var(--border)] bg-white p-5">
-        <h2 className="text-sm font-semibold text-[var(--foreground)]">Add campaign promise</h2>
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">{accountabilityProse.adminAddPromiseHeading}</h2>
         <form action={createCampaignPromiseAction} className="mt-4 space-y-3">
           <input type="hidden" name="memberId" value={member.id} />
           <div>
@@ -265,19 +269,26 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
               Mark as government programme / executive commitment
             </label>
           </div>
+          <p className="mt-2 text-xs leading-relaxed text-[var(--muted-foreground)]">
+            {accountabilityProse.adminCreateGovernmentTagHint}
+          </p>
           <button
             type="submit"
             className="rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
           >
-            Save promise
+            {accountabilityProse.adminCreateCatalogueRowButton}
           </button>
         </form>
       </section>
 
       <section className="mt-8">
-        <h2 className="text-sm font-semibold text-[var(--foreground)]">Promises</h2>
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">
+          {accountabilityProse.adminMemberCatalogueSectionHeading}
+        </h2>
         {member.promises.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">None yet.</p>
+          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+            {accountabilityProse.adminMemberCatalogueEmpty}
+          </p>
         ) : (
           <ul className="mt-4 space-y-4">
             {member.promises.map((p) => (
@@ -407,6 +418,20 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                         </option>
                       ))}
                     </select>
+                  </div>
+                  <div className="flex items-center gap-2 pt-1">
+                    <input
+                      id={`gov-flag-${p.id}`}
+                      name="isGovernmentProgramme"
+                      type="checkbox"
+                      value="on"
+                      defaultChecked={p.isGovernmentProgramme}
+                      className="h-4 w-4 rounded border-[var(--border)]"
+                    />
+                    <label htmlFor={`gov-flag-${p.id}`} className="text-xs text-[var(--foreground)]">
+                      Mark as government programme / executive commitment (public{" "}
+                      {accountabilityCatalogueNavMedium.government} page)
+                    </label>
                   </div>
                   <button
                     type="submit"

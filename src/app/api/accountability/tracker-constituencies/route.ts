@@ -8,7 +8,7 @@ import {
 } from "@/lib/server/accountability-cache";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 
-/** Constituency roster with optional active MP — for the public promise tracker dropdown. */
+/** Constituency roster with optional active MP — for the public commitment tracker dropdown. */
 export async function GET(request: Request) {
   if (!platformFeatures.parliamentTrackerData(getServerPlatformPhase())) {
     return NextResponse.json({ error: "Not available" }, { status: 404 });

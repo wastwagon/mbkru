@@ -112,10 +112,14 @@ export const mbkruStrategicContent = {
   legalName: "My Brother's Keeper Restoration United (MBKRU)",
   pillarTagline:
     "Advocate for the Disenfranchised • Watchdog for Accountability • Catalyst for Poverty Eradication",
-  /** Full programme overview — all three paragraphs render on About; homepage shows only the first. */
+  /** Homepage — one scannable line; vision, mission, and full narrative on About. */
+  homepageWhoWeAreHeading: "Who we are",
+  homepageWhoWeAreLead:
+    "An independent, non-partisan citizens' platform connecting Ghanaians to accountable governance — through voice, legal navigation, and public data.",
+  /** Full programme overview — all three paragraphs render on About; homepage no longer repeats them. */
   executiveSummaryParagraphs: [
     "My Brother's Keeper Restoration United (MBKRU) proposes to transform itself into Ghana's premier independent, non-partisan citizens' platform that connects ordinary Ghanaians—especially the poor, rural, urban, and youth populations—directly to the highest levels of government.",
-    "By building a transparent, technology-enabled communication bridge between the Presidency, Ministers, Parliament, and the people, MBKRU will ensure that elected officials are held strictly accountable to the promises they make and the needs of the citizens they serve.",
+    "By building a transparent, technology-enabled communication bridge between the Presidency, Ministers, Parliament, and the people, MBKRU will ensure that elected officials are held strictly accountable to the commitments they make and the needs of the citizens they serve.",
     "The ultimate goal is the systematic reduction and eventual eradication of extreme poverty in Ghana through sustained advocacy and public engagement, real-time grievance redress, legal empowerment, and electoral accountability.",
   ],
   /** Homepage — accountability column points readers to About + tracker surfaces. */
@@ -269,7 +273,7 @@ export const faqContent = [
   },
   {
     question: "What is the People's Report Card?",
-    answer: "The People's Report Card is an annual, data-driven assessment of every Minister, Regional Minister, and Member of Parliament. It tracks campaign promises versus delivery and is published 90 days before general elections.",
+    answer: "The People's Report Card is an annual, data-driven assessment of every Minister, Regional Minister, and Member of Parliament. It tracks documented commitments in the public catalogue versus delivery and is published 90 days before general elections.",
   },
   {
     question: "How is MBKRU funded?",
@@ -340,12 +344,12 @@ export const programmeRoadmap = [
     description: "First accountability baseline. All five pillars operational.",
     items: [
       "First Report Card published (Ministers, Regional Ministers, MPs)",
-      "Campaign promise tracking — 2024 baseline",
+      "Public commitment catalogue — 2024 baseline",
       "Annual National People's Assembly",
       "Constituency-level Town Hall expansion",
       "FOI & CHRAJ data pipeline",
     ],
-    detailContent: `The first People's Report Card establishes the accountability baseline. Every Minister, Regional Minister, and MP receives a data-driven assessment. Campaign promise tracking uses 2024 manifestos as baseline. The Annual National People's Assembly convenes with selected members presenting priority issues to the President. Constituency-level Town Halls expand across Ghana. FOI and CHRAJ data pipelines support evidence-based reporting. From late 2027 through mid-2028 the programme maintains published updates (Voice statistics, promise catalogue revisions, and regional forum cadence) so the pre-election scorecard release is evidence-led rather than a single snapshot.`,
+    detailContent: `The first People's Report Card establishes the accountability baseline. Every Minister, Regional Minister, and MP receives a data-driven assessment. The public commitment catalogue uses 2024 manifestos as baseline. The Annual National People's Assembly convenes with selected members presenting priority issues to the President. Constituency-level Town Halls expand across Ghana. FOI and CHRAJ data pipelines support evidence-based reporting. From late 2027 through mid-2028 the programme maintains published updates (Voice statistics, catalogue revisions, and regional forum cadence) so the pre-election scorecard release is evidence-led rather than a single snapshot.`,
   },
   {
     period: "Q3 2028",
@@ -370,11 +374,11 @@ export const programmeRoadmap = [
     description: "MBKRU as trusted accountability reference for voters.",
     items: [
       "Ghana General Election (Nov–Dec 2028)",
-      "Post-election promise tracking begins",
+      "Post-election catalogue updates begin",
       "Voter education & civic engagement",
       "Legacy: 3 Report Cards + Scorecards in public record",
     ],
-    detailContent: `Ghana holds its general election in November–December 2028. MBKRU serves as a trusted, non-partisan accountability reference for voters. Post-election, promise tracking begins for the new administration. Voter education and civic engagement continue. MBKRU's legacy: three People's Report Cards and Accountability Scorecards in the public record, establishing a new standard for citizen-led accountability in Ghana.`,
+    detailContent: `Ghana holds its general election in November–December 2028. MBKRU serves as a trusted, non-partisan accountability reference for voters. Post-election, catalogue updates begin for the new administration. Voter education and civic engagement continue. MBKRU's legacy: three People's Report Cards and Accountability Scorecards in the public record, establishing a new standard for citizen-led accountability in Ghana.`,
   },
 ] as const;
 
@@ -448,7 +452,7 @@ export const ghanaRegionsData = [
   { name: "Upper West", capital: "Wa", population: 901502, areaKm2: 18476, districts: 11, constituencies: 11, regionalMinister: "Hon. Mr. Charles Lwanga Puozuing", keySectors: "Agriculture, Shea, Livestock", pillarFocus: ["B", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "Upper West hub. Regional forum planned. SDG 1 priority. Accountability tracking." },
   { name: "Central", capital: "Cape Coast", population: 2859821, areaKm2: 9826, districts: 22, constituencies: 23, regionalMinister: "Hon. Mr. Ekow Panyin Okyere Eduamoah", keySectors: "Tourism, Fisheries, Agriculture", pillarFocus: ["A", "B", "D"], townHallStatus: "Planned Q3 2026", mbkruVoiceStatus: "Planned", mbkruNote: "Historic capital. Tourism & fisheries accountability. Town Hall planned. Citizen voice expansion." },
   { name: "Bono", capital: "Sunyani", population: 1208649, areaKm2: 11113, districts: 12, constituencies: 12, regionalMinister: "Hon. Mr. Joseph Addae Akwaboah", keySectors: "Cocoa, Timber, Agriculture", pillarFocus: ["A", "B", "D"], townHallStatus: "Planned Q4 2026", mbkruVoiceStatus: "Planned", mbkruNote: "Bono hub. Cocoa sector focus. People's Report Card. Regional Public Forum planned." },
-  { name: "Bono East", capital: "Techiman", population: 1203400, areaKm2: 23248, districts: 11, constituencies: 11, regionalMinister: "Hon. Mr. Francis Owusu Antwi", keySectors: "Commerce, Agriculture, Transport", pillarFocus: ["A", "B", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "Commercial hub. Regional forum planned. Accountability tracking. Campaign promise monitoring." },
+  { name: "Bono East", capital: "Techiman", population: 1203400, areaKm2: 23248, districts: 11, constituencies: 11, regionalMinister: "Hon. Mr. Francis Owusu Antwi", keySectors: "Commerce, Agriculture, Transport", pillarFocus: ["A", "B", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "Commercial hub. Regional forum planned. Accountability tracking. Promise catalogue monitoring." },
   { name: "Ahafo", capital: "Goaso", population: 564668, areaKm2: 5196, districts: 6, constituencies: 6, regionalMinister: "Hon. Mrs. Charity Gardner", keySectors: "Mining, Cocoa, Agriculture", pillarFocus: ["B", "C", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "New region (2019). Mining sector accountability. Legal Empowerment Desk. Engagement planned." },
   { name: "Oti", capital: "Dambai", population: 747248, areaKm2: 11066, districts: 8, constituencies: 10, regionalMinister: "Hon. Mr. John Kwadwo Gyapong", keySectors: "Agriculture, Volta Basin", pillarFocus: ["A", "B"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "New region (2019). Volta Basin focus. Town Hall expansion planned. Citizen voice pilot. Includes Guan constituency." },
   { name: "Western North", capital: "Sefwi Wiawso", population: 880921, areaKm2: 10079, districts: 9, constituencies: 9, regionalMinister: "Hon. Mr. Wilbert Petty Brentum", keySectors: "Cocoa, Timber, Mining", pillarFocus: ["B", "C", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "New region (2019). Cocoa & timber. Regional Public Forum planned. Accountability focus." },

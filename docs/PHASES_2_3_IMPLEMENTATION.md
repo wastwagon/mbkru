@@ -1,6 +1,6 @@
 # Phase 2 & 3 — Engineering implementation guide
 
-**Purpose:** Expand MBKRU from Phase 1 (marketing + Postgres admin CMS + lead capture) through **Phase 2** (MBKRU Voice, alerts, data pipelines) and **Phase 3** (election readiness, Accountability Scorecards, promise tracking at scale).  
+**Purpose:** Expand MBKRU from Phase 1 (marketing + Postgres admin CMS + lead capture) through **Phase 2** (MBKRU Voice, alerts, data pipelines) and **Phase 3** (election readiness, Accountability Scorecards, public promise catalogue at scale).  
 **Companion docs:** [`ROADMAP_2028_ELECTION.md`](../ROADMAP_2028_ELECTION.md) (business timeline), [`docs/ARCHITECTURE.md`](ARCHITECTURE.md) (stack), [`PHASE1_SCOPE.md`](../PHASE1_SCOPE.md) (baseline). **All phase tasks (checkbox backlog):** [`docs/PHASE_TASKS.md`](PHASE_TASKS.md).  
 **Last updated:** March 2026
 
@@ -13,7 +13,7 @@
 | Editorial CMS (news, media) | **Yes** — `/admin`, Prisma `Post` / `Media` | Same; extend for Resources / static pages if desired |
 | Public user accounts | No | **Yes** — `Member` model |
 | Complaints / geo reports | Preview UI only | **Yes** — `CitizenReport` + attachments + status workflow |
-| MP / promise / scorecard data | Preview copy | **Yes** — `ParliamentMember`, `CampaignPromise`, `ReportCardCycle`, `ScorecardEntry` |
+| MP / catalogue / scorecard data | Preview copy | **Yes** — `ParliamentMember`, `CampaignPromise`, `ReportCardCycle`, `ScorecardEntry` |
 
 The **backend CMS for news is done** in Phase 1. Phases 2–3 add **member-facing products** and **accountability datasets**, not a replacement CMS.
 
@@ -100,7 +100,7 @@ New / planned tables (see `prisma/schema.prisma`):
 | `CitizenReport` | 2–3 | Voice + situational + election observation kinds |
 | `CitizenReportAttachment` | 2 | Evidence files |
 | `ParliamentMember` | 2–3 | MPs, ministers, regional ministers |
-| `CampaignPromise` | 2–3 | Promise tracking |
+| `CampaignPromise` | 2–3 | Tracked commitments (public catalogue) |
 | `ReportCardCycle` | 2–3 | People’s Report Card annual cycle (public when published + `publicReportCard` flag) |
 | `ScorecardEntry` | 2–3 | Per-official scores + narrative + flexible `metrics` JSON until methodology stabilises |
 

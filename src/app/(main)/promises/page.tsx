@@ -3,6 +3,11 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/ui/PageHeader";
+import {
+  ACCOUNTABILITY_CATALOGUE_ROUTES,
+  accountabilityCatalogueNavMedium,
+  accountabilityProse,
+} from "@/config/accountability-catalogue-destinations";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { getCachedPromisesIndexMembers } from "@/lib/server/accountability-cache";
 import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
@@ -10,7 +15,7 @@ import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Campaign promises",
+  title: accountabilityCatalogueNavMedium.byMp,
   description: "Track documented commitments from MPs and ministers — sources and status in one place.",
 };
 
@@ -22,18 +27,24 @@ export default async function PromisesIndexPage() {
   return (
     <div>
       <PageHeader
-        title="Campaign promises"
+        title={accountabilityCatalogueNavMedium.byMp}
         description="Documented commitments we are tracking. Each row links to sources and current status. This is not a legal finding — see our methodology for how we work."
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm text-[var(--muted-foreground)]">
-            <Link href="/promises/browse" className="text-[var(--primary)] hover:underline">
-              Browse all
+            <Link
+              href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
+              className="text-[var(--primary)] hover:underline"
+            >
+              {accountabilityCatalogueNavMedium.browseAll}
             </Link>
             {" · "}
-            <Link href="/government-commitments" className="text-[var(--primary)] hover:underline">
-              Government commitments
+            <Link
+              href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments}
+              className="text-[var(--primary)] hover:underline"
+            >
+              {accountabilityCatalogueNavMedium.government}
             </Link>
             {" · "}
             <Link href="/methodology" className="text-[var(--primary)] hover:underline">
@@ -47,7 +58,7 @@ export default async function PromisesIndexPage() {
 
           {members.length === 0 ? (
             <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
-              No public promise records yet. Check back after the team publishes data in admin.
+              {accountabilityProse.promisesIndexEmptyState}
             </p>
           ) : (
             <ul className="mt-10 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-white">
@@ -66,7 +77,7 @@ export default async function PromisesIndexPage() {
                       </p>
                     </div>
                     <span className="shrink-0 text-sm font-medium text-[var(--primary)]">
-                      {m._count.promises} promise{m._count.promises === 1 ? "" : "s"} →
+                      {m._count.promises} catalogue row{m._count.promises === 1 ? "" : "s"} →
                     </span>
                   </Link>
                 </li>

@@ -4,6 +4,10 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 import { PromisesBrowseLive } from "@/components/accountability/PromisesBrowseLive";
+import {
+  ACCOUNTABILITY_CATALOGUE_ROUTES,
+  accountabilityHomePreviewCopy,
+} from "@/config/accountability-catalogue-destinations";
 import type { PromisesBrowseHomePreview as BrowsePreviewData } from "@/lib/home-promises-browse-preview-types";
 
 type Props = {
@@ -28,14 +32,17 @@ export function PromisesBrowseHomePreview({ data }: Props) {
         >
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--primary)]">Live catalogue</p>
           <h2 className="mt-2 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
-            Promises browse dashboard
+            {accountabilityHomePreviewCopy.browseHeading}
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
-            Same live search, filters, and rows as{" "}
-            <Link href="/promises/browse" className="font-semibold text-[var(--primary)] hover:underline">
-              Browse promises
-            </Link>{" "}
-            — full accountability catalogue on this site (server-rendered data, same as the full page).
+            {accountabilityHomePreviewCopy.browseLead}{" "}
+            <Link
+              href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
+              className="font-semibold text-[var(--primary)] hover:underline"
+            >
+              Open full page
+            </Link>
+            .
           </p>
         </motion.div>
 
@@ -61,7 +68,10 @@ export function PromisesBrowseHomePreview({ data }: Props) {
             filterToolbarHeader={
               <div className="mt-8 flex flex-wrap items-end justify-between gap-3 border-b border-[var(--border)] pb-3">
                 <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Filters &amp; results</h3>
-                <Link href="/promises/browse" className="text-sm font-semibold text-[var(--primary)] hover:underline">
+                <Link
+                  href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
+                  className="text-sm font-semibold text-[var(--primary)] hover:underline"
+                >
                   Open full browse page →
                 </Link>
               </div>

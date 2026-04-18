@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { MetricsDisplay } from "@/components/accountability/MetricsDisplay";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { getCachedPublishedReportCardYear } from "@/lib/server/accountability-cache";
 import { isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
@@ -109,7 +110,7 @@ export default async function ReportCardYearPage({ params }: Props) {
                         href={`/promises/${encodeURIComponent(e.member.slug)}`}
                         className="text-[var(--primary)] hover:underline"
                       >
-                        View campaign promises
+                        {accountabilityProse.mpPledgeSheetLink}
                       </Link>
                     </p>
                   ) : null}

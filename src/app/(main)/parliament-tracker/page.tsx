@@ -5,6 +5,11 @@ import { PromiseTrackerStatsStrip } from "@/components/accountability/PromiseTra
 import { TrackerSignupForm } from "@/components/forms/TrackerSignupForm";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
+import {
+  ACCOUNTABILITY_CATALOGUE_ROUTES,
+  accountabilityCatalogueNavMedium,
+  accountabilityProse,
+} from "@/config/accountability-catalogue-destinations";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { images } from "@/lib/site-content";
 import {
@@ -17,8 +22,7 @@ import { getCachedMpsPublicRoster, getCachedPromiseTrackerStats } from "@/lib/se
 
 export const metadata: Metadata = {
   title: "Accountability & Electoral Watch",
-  description:
-    "People's Report Card, campaign promise tracking, Accountability Scorecards, citizen petition mechanism.",
+  description: accountabilityProse.parliamentTrackerMetaDescription,
 };
 
 const accountabilityStepIcons = {
@@ -60,9 +64,9 @@ export default async function ParliamentTrackerPage() {
     },
     {
       icon: accountabilityStepIcons.promises,
-      title: "Campaign Promise Tracking",
-      description: "Real-time tracking of campaign promises versus delivery. Hold elected officials to their word.",
-      href: showPromises ? "/promises/browse" : undefined,
+      title: accountabilityProse.hubBrowseCardTitle,
+      description: accountabilityProse.hubBrowseCardDescription,
+      href: showPromises ? ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises : undefined,
       badge: showPromises ? ("Live" as const) : undefined,
     },
     {
@@ -79,7 +83,7 @@ export default async function ParliamentTrackerPage() {
     <div>
       <PageHeader
         title="Accountability & Electoral Watch"
-        description="Accountability & Electoral Watch — People's Report Cards, campaign tracking, and Accountability Scorecards."
+        description={`Accountability & Electoral Watch — ${accountabilityProse.parliamentPageHeaderDescription}`}
       />
 
       {dbReady && trackerStats ? (
@@ -87,7 +91,7 @@ export default async function ParliamentTrackerPage() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <PromiseTrackerStatsStrip
               stats={trackerStats}
-              subtitle="Use Browse promises for live filters; roster below lists every active MP in the database (including zero-promise rows)."
+              subtitle={accountabilityProse.statsStripBrowseSubtitle}
             />
             <div className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6">
               <div className="flex flex-wrap items-end justify-between gap-3">
@@ -111,10 +115,10 @@ export default async function ParliamentTrackerPage() {
                 </div>
                 {showPromises ? (
                   <Link
-                    href="/promises"
+                    href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp}
                     className="text-sm font-medium text-[var(--primary)] hover:underline"
                   >
-                    Promises by MP →
+                    {accountabilityCatalogueNavMedium.byMp} →
                   </Link>
                 ) : null}
               </div>
@@ -186,7 +190,7 @@ export default async function ParliamentTrackerPage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
-                  <span>Real-time tracking of campaign promises versus delivery</span>
+                  <span>{accountabilityProse.pillarDRealtimeBullet}</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
@@ -246,20 +250,24 @@ export default async function ParliamentTrackerPage() {
               <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
                 Get Tracker Notifications
               </h2>
-              <p className="mt-2 text-[var(--muted-foreground)]">
-                Receive updates on People&apos;s Report Cards, Accountability Scorecards, and campaign promise tracking.
-              </p>
+              <p className="mt-2 text-[var(--muted-foreground)]">{accountabilityProse.trackerSignupUpdates}</p>
               <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
                 <Link href="/methodology" className="font-medium text-[var(--primary)] hover:underline">
                   Methodology
                 </Link>
                 {showPromises ? (
                   <>
-                    <Link href="/promises" className="font-medium text-[var(--primary)] hover:underline">
-                      Promises by MP
+                    <Link
+                      href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp}
+                      className="font-medium text-[var(--primary)] hover:underline"
+                    >
+                      {accountabilityCatalogueNavMedium.byMp}
                     </Link>
-                    <Link href="/promises/browse" className="font-medium text-[var(--primary)] hover:underline">
-                      Browse &amp; filter
+                    <Link
+                      href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
+                      className="font-medium text-[var(--primary)] hover:underline"
+                    >
+                      {accountabilityCatalogueNavMedium.browseAll}
                     </Link>
                   </>
                 ) : null}

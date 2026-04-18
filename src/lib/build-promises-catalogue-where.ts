@@ -7,7 +7,7 @@ import {
 } from "@/lib/promise-catalogue-where";
 import type { PromisesApiFilters } from "@/lib/promises-api-filters";
 
-/** Same `where` as public promise rows (`/api/promises`, CSV, HTML browse). */
+/** Same `where` as public catalogue rows (`/api/promises`, CSV, HTML browse). */
 export function buildPromisesCatalogueWhere(filters: PromisesApiFilters): Prisma.CampaignPromiseWhereInput {
   const q = filters.q.trim();
   const clauses: Prisma.CampaignPromiseWhereInput[] = [];

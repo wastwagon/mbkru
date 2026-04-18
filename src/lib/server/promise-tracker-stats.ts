@@ -11,7 +11,7 @@ import { prisma } from "@/lib/db/prisma";
 export type { PromiseTrackerStats } from "@/lib/promise-tracker-public-types";
 
 /**
- * Headline tracker counts aligned with the public promise catalogue for the same
+ * Headline tracker counts aligned with the public commitment catalogue for the same
  * {@link PromisesApiFilters} (government vs browse via `governmentOnly`).
  */
 export async function getPromiseTrackerStats(filters: PromisesApiFilters): Promise<PromiseTrackerStats> {

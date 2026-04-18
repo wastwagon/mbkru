@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
+
 import { logoutAction } from "@/app/admin/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
@@ -191,9 +193,11 @@ export default async function AdminHomePage() {
             href="/admin/parliament"
             className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
           >
-            <span className="font-semibold text-[var(--foreground)]">Parliament &amp; promises</span>
+            <span className="font-semibold text-[var(--foreground)]">
+              {accountabilityProse.adminParliamentSectionTitle}
+            </span>
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              CSV import for MPs/ministers and campaign promise records.
+              {accountabilityProse.adminDashboardParliamentCard}
             </p>
           </Link>
         </li>

@@ -1,22 +1,91 @@
-# MBKRU Advocates - Development with Docker
-# Run: docker compose -f docker-compose.dev.yml up
-# Hot reload enabled - edit code and see changes
+# MBKRU — full-stack local development in Docker (Next.js dev server + Postgres + Redis).
+#
+# Hot reload: the app directory is bind-mounted; WATCHPACK_POLLING helps file watching on Docker Desktop (macOS/Windows).
+# Rebuild the image only when dependencies or Dockerfile.dev change — not for normal code edits.
+#
+# Setup:
+#   cp .env.example .env
+#   Set ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_SESSION_SECRET, MEMBER_SESSION_SECRET (and any optional keys you use).
+#   docker compose -f docker-compose.dev.yml up --build
+#
+# Open http://localhost:1100
+#
+# DATABASE_URL / REDIS_URL below point at Compose service names; keep localhost URLs in .env for host-side tools
+# (Postgres is published on 55432, Redis on 6379 by default).
+#
+# Optional first-time / refreshed demo data (idempotent):
+#   docker compose -f docker-compose.dev.yml exec mbkru-dev npx prisma db seed
+#
+# After editing prisma/schema.prisma:
+#   docker compose -f docker-compose.dev.yml exec mbkru-dev npx prisma generate
+#
+# New npm dependencies:
+#   docker compose -f docker-compose.dev.yml build --no-cache mbkru-dev
 
 services:
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_dev_data:/data
+    ports:
+      # Default 56379 avoids clashing with a Redis already bound to 6379 on the host.
+      - "${REDIS_HOST_PORT:-56379}:6379"
+    networks:
+      - mbkru-dev
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "${POSTGRES_HOST_PORT:-55432}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-mbkru}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mbkru_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-mbkru}
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mbkru} -d ${POSTGRES_DB:-mbkru}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mbkru-dev
+
   mbkru-dev:
     build:
       context: .
       dockerfile: Dockerfile.dev
     container_name: mbkru-website-dev
     ports:
-      - "1100:1100"
+      - "${HOST_PORT:-1100}:1100"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:1100}
+      NEXT_PUBLIC_PLATFORM_PHASE: ${NEXT_PUBLIC_PLATFORM_PHASE:-3}
+      # Override host-oriented .env URLs for in-container networking:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-mbkru}:${POSTGRES_PASSWORD:-mbkru_dev}@postgres:5432/${POSTGRES_DB:-mbkru}
+      REDIS_URL: redis://redis:6379
+      WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
     volumes:
       - .:/app
       - /app/node_modules
-    environment:
-      - NODE_ENV=development
-      - NEXT_PUBLIC_SITE_URL=http://localhost:1100
-      - WATCHPACK_POLLING=true
-      # Copy .env.example → .env: DATABASE_URL, ADMIN_*, ADMIN_SESSION_SECRET, MEMBER_SESSION_SECRET,
-      # NEXT_PUBLIC_PLATFORM_PHASE (default 3 for full Voice + report card). Then: prisma migrate dev && db seed
-    command: npm run dev
+      - /app/.next
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - mbkru-dev
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+
+networks:
+  mbkru-dev:
+    driver: bridge

@@ -18,8 +18,8 @@ function csvCell(value: string | number | null | undefined): string {
 const CSV_BOM = "\uFEFF";
 
 /**
- * Campaign promises as CSV (full set; same query params as `GET /api/promises`: `memberSlug`, `partySlug`, `electionCycle`, `governmentOnly`).
- * Same phase gate and rate limits as JSON; UTF-8 BOM for Excel.
+ * Tracked commitment rows as CSV — same phase gate, rate limits, and query params as `GET /api/promises`
+ * (`memberSlug`, `partySlug`, `electionCycle`, `governmentOnly`). UTF-8 BOM for Excel.
  */
 export async function GET(request: Request) {
   if (!platformFeatures.parliamentTrackerData(getServerPlatformPhase())) {

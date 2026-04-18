@@ -5,6 +5,11 @@ import { AboutPlatformLinks } from "@/components/about/AboutPlatformLinks";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
+import {
+  ACCOUNTABILITY_CATALOGUE_ROUTES,
+  accountabilityCatalogueNavMedium,
+  accountabilityCatalogueNavShort,
+} from "@/config/accountability-catalogue-destinations";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { images, mbkruStrategicContent, pillarImages, heroContent } from "@/lib/site-content";
 
@@ -91,7 +96,8 @@ const pillars = [
   },
   {
     title: "Accountability & Electoral Watch",
-    description: "People's Report Cards, real-time campaign promise tracking, and Accountability Scorecards. Citizen petition mechanisms for recall of non-performing officials.",
+    description:
+      "People's Report Cards, a public commitment catalogue with live filters, and Accountability Scorecards. Citizen petition mechanisms for recall of non-performing officials.",
     image: pillarImages[3].image,
     alt: pillarImages[3].alt,
     href: "/parliament-tracker",
@@ -257,11 +263,11 @@ export default async function AboutPage() {
               <div className="mt-5 flex flex-wrap gap-3">
                 {parliamentLive ? (
                   <>
-                    <Button href="/government-commitments" variant="primary">
-                      Government commitments
+                    <Button href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments} variant="primary">
+                      {accountabilityCatalogueNavMedium.government}
                     </Button>
-                    <Button href="/promises" variant="outline">
-                      By MP
+                    <Button href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} variant="outline">
+                      {accountabilityCatalogueNavShort.byMp}
                     </Button>
                   </>
                 ) : (
@@ -319,8 +325,11 @@ export default async function AboutPage() {
                 </li>
                 {parliamentLive ? (
                   <li>
-                    <Link href="/government-commitments" className="text-[var(--primary)] hover:underline">
-                      Government commitments
+                    <Link
+                      href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments}
+                      className="text-[var(--primary)] hover:underline"
+                    >
+                      {accountabilityCatalogueNavMedium.government}
                     </Link>
                   </li>
                 ) : null}

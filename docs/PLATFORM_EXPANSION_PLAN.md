@@ -1,4 +1,4 @@
-# Platform expansion — data reality, promise tracking, Queen Mothers communities
+# Platform expansion — data reality, tracked commitments, Queen Mothers communities
 
 **Purpose:** Turn the product vision into **phased, buildable work**: reliable inputs for **MPs and promises**, clarity on **government manifesto tracking**, stronger **citizen / whistleblower** positioning, and a new **Queen Mothers & communities** pillar. This doc is the **master task source** for scope beyond current Phase 2/3 code.
 

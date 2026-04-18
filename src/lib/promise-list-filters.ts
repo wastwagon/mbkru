@@ -2,7 +2,7 @@ import type { PromiseStatus } from "@prisma/client";
 
 import { isPolicySectorValue } from "@/lib/promise-policy-sectors";
 
-/** Status values allowed in public promise list filters (matches `PromiseStatus`). */
+/** Status values allowed in public catalogue list filters (matches `PromiseStatus`). */
 export const PROMISE_LIST_STATUS_FILTER = [
   "TRACKING",
   "IN_PROGRESS",

@@ -6,7 +6,7 @@ import { parsePromisesApiFilters } from "@/lib/promises-api-filters";
 import { accountabilityPublicCacheControl, getCachedPromisesApiRows } from "@/lib/server/accountability-cache";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 
-/** Public read-only campaign promises (Phase 2+ accountability pilot). */
+/** Public read-only JSON for the tracked-commitments catalogue (Phase 2+ accountability pilot). */
 export async function GET(request: Request) {
   if (!platformFeatures.parliamentTrackerData(getServerPlatformPhase())) {
     return NextResponse.json({ error: "Not available" }, { status: 404 });

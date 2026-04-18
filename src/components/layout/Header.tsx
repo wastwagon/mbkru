@@ -19,6 +19,8 @@ type NavLeaf = {
   label: string;
   /** When set, highlight for any path starting with this prefix. */
   activeWhenPathStartsWith?: string;
+  /** Suppress active state when pathname starts with this (used with `href` prefix matching). */
+  activeExcludePathStartsWith?: string;
 };
 
 type NavEntry =
@@ -26,8 +28,17 @@ type NavEntry =
   | { kind: "group"; id: string; label: string; items: NavLeaf[] };
 
 function leafIsActive(pathname: string, leaf: NavLeaf): boolean {
-  if (leaf.activeWhenPathStartsWith != null) return pathname.startsWith(leaf.activeWhenPathStartsWith);
-  return pathname === leaf.href;
+  if (leaf.activeWhenPathStartsWith != null) {
+    if (!pathname.startsWith(leaf.activeWhenPathStartsWith)) return false;
+    if (leaf.activeExcludePathStartsWith && pathname.startsWith(leaf.activeExcludePathStartsWith)) return false;
+    return true;
+  }
+  if (pathname === leaf.href) return true;
+  if (pathname.startsWith(`${leaf.href}/`)) {
+    if (leaf.activeExcludePathStartsWith && pathname.startsWith(leaf.activeExcludePathStartsWith)) return false;
+    return true;
+  }
+  return false;
 }
 
 function groupIsActive(pathname: string, items: NavLeaf[]): boolean {

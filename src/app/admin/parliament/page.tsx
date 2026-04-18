@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
 
@@ -20,9 +21,11 @@ export default async function AdminParliamentPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">Parliament &amp; promises</h1>
+      <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">
+        {accountabilityProse.adminParliamentSectionTitle}
+      </h1>
       <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-        Import MPs / ministers from CSV, then attach campaign promises per person. Public read APIs (Phase 2+ build):{" "}
+        {accountabilityProse.adminParliamentIntro}{" "}
         <code className="rounded bg-[var(--section-light)] px-1 text-xs">GET /api/mps</code>
         {" · "}
         <code className="rounded bg-[var(--section-light)] px-1 text-xs">GET /api/promises</code>.
@@ -55,14 +58,14 @@ export default async function AdminParliamentPage() {
                   {m.constituency ? ` · ${m.constituency.name}` : ""}
                 </p>
                 <p className="text-xs text-[var(--muted-foreground)]">
-                  {m._count.promises} promise{m._count.promises === 1 ? "" : "s"}
+                  {m._count.promises} catalogue row{m._count.promises === 1 ? "" : "s"}
                 </p>
               </div>
               <Link
                 href={`/admin/parliament/${m.id}`}
                 className="shrink-0 text-sm font-semibold text-[var(--primary)] hover:underline"
               >
-                Edit / promises
+                Edit / catalogue
               </Link>
             </li>
           ))

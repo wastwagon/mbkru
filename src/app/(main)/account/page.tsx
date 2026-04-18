@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AccountStatGrid } from "@/components/account/AccountStatGrid";
+import { getAccountabilityCatalogueCards } from "@/config/accountability-catalogue-destinations";
 import { prisma } from "@/lib/db/prisma";
 import { getMemberSession } from "@/lib/member/session";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
@@ -301,18 +302,37 @@ export default async function AccountPage() {
               Public accountability
             </h2>
             <p className="mt-2 max-w-2xl text-sm text-[var(--muted-foreground)]">
-              Explore promises, scores, and resources published for transparency.
+              Scores, methodology, and the promise catalogue — three public lenses into the same tracked commitments when
+              parliament data is enabled.
             </p>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {showPromises ? (
-                <Link
-                  href="/promises"
-                  className="flex items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--primary)] shadow-sm transition hover:border-[var(--primary)]/25 hover:shadow-md"
+            {showPromises ? (
+              <div className="mt-6" aria-labelledby="promise-tracker-subheading">
+                <h3
+                  id="promise-tracker-subheading"
+                  className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]"
                 >
-                  Promises
-                  <ChevronIcon />
-                </Link>
-              ) : null}
+                  Promise tracker
+                </h3>
+                <p className="mt-1 max-w-2xl text-xs leading-relaxed text-[var(--muted-foreground)]">
+                  Same dataset as the homepage live blocks: government-tagged slice, full browse, or MP roster entry points.
+                </p>
+                <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                  {getAccountabilityCatalogueCards().map((card) => (
+                    <Link key={card.href} href={card.href} className={tileClass}>
+                      <span className="font-display text-base font-semibold text-[var(--foreground)]">{card.title}</span>
+                      <span className="mt-2 flex-1 text-xs leading-relaxed text-[var(--muted-foreground)]">
+                        {card.description}
+                      </span>
+                      <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)]">
+                        Open
+                        <ChevronIcon className="transition-transform group-hover:translate-x-0.5" />
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+            <div className={`grid gap-3 sm:grid-cols-2 lg:grid-cols-3 ${showPromises ? "mt-8" : "mt-5"}`}>
               {showReportCard ? (
                 <Link
                   href="/report-card"

@@ -1,4 +1,4 @@
-/** Resolved public link for a campaign promise (direct URL preferred, else linked manifesto). */
+/** Resolved public link for a tracked commitment row (direct URL preferred, else linked manifesto). */
 export function primarySourceUrl(p: {
   sourceUrl: string | null | undefined;
   manifestoDocument: { sourceUrl: string | null } | null | undefined;

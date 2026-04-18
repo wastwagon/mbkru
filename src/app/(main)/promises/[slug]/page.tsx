@@ -4,6 +4,11 @@ import type { Metadata } from "next";
 
 import { PromiseEvidenceCard } from "@/components/accountability/PromiseEvidenceCard";
 import { PageHeader } from "@/components/ui/PageHeader";
+import {
+  ACCOUNTABILITY_CATALOGUE_ROUTES,
+  accountabilityCatalogueNavMedium,
+  accountabilityProse,
+} from "@/config/accountability-catalogue-destinations";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { getCachedPromisesMemberPublic } from "@/lib/server/accountability-cache";
 import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
@@ -15,11 +20,11 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   if (!isPromisesBrowseEnabled() || !isDatabaseConfigured()) {
-    return { title: "Promises" };
+    return { title: accountabilityCatalogueNavMedium.byMp };
   }
   const member = await getCachedPromisesMemberPublic(slug.toLowerCase());
   return {
-    title: member ? `Promises — ${member.name}` : "Promises",
+    title: member ? `${member.name} — ${accountabilityCatalogueNavMedium.byMp}` : accountabilityCatalogueNavMedium.byMp,
   };
 }
 
@@ -35,14 +40,14 @@ export default async function PromisesByMemberPage({ params }: Props) {
     <div>
       <PageHeader
         title={member.name}
-        description={`${member.role}${member.party ? ` · ${member.party}` : ""}${member.constituency ? ` · ${member.constituency.name}` : ""} — campaign promises we are tracking.`}
+        description={`${member.role}${member.party ? ` · ${member.party}` : ""}${member.constituency ? ` · ${member.constituency.name}` : ""}${accountabilityProse.memberSheetMetaSuffix}`}
         breadcrumbCurrentLabel={member.name}
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <p className="text-sm text-[var(--muted-foreground)]">
-            <Link href="/promises" className="text-[var(--primary)] hover:underline">
-              ← All people
+            <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className="text-[var(--primary)] hover:underline">
+              {accountabilityProse.mpRosterBackLink}
             </Link>
           </p>
 

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Fragment } from "react";
 import { usePathname } from "next/navigation";
+import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { getAboutPhaseQuickLinks } from "@/config/public-platform-nav";
 import { useMemberMe } from "@/hooks/useMemberMe";
@@ -22,8 +23,7 @@ export function LivePlatformStrip() {
       <section className="border-y border-[var(--border)] bg-[var(--section-light)]/90 py-4">
         <div className="mx-auto max-w-7xl px-4 text-center text-sm leading-relaxed text-[var(--muted-foreground)] sm:px-6 lg:px-8">
           <span className="font-semibold text-[var(--foreground)]">Phase 1 deployment.</span> News, contact, and waitlists
-          are live. MBKRU Voice, campaign promises, report cards, and pillar pages switch on when this site is upgraded to
-          Phase 2 or higher — see the roadmap below.
+          are live. {accountabilityProse.livePlatformStripPhase1}
         </div>
       </section>
     );

@@ -56,7 +56,7 @@
 | [x] | **`/login`**, **`/register`**, **`/account`**, header + homepage **session-aware** auth UI |
 | [x] | **`POST /api/reports`**, **`GET /api/reports/me`**, track API, attachments, admin reports |
 | [x] | Situational / election kinds + admin filters + submit routes |
-| [x] | Parliament **CSV import**, **`/admin/parliament`**, public **`/promises`**, **`GET /api/mps`**, **`GET /api/promises`** |
+| [x] | Parliament **CSV import**, **`/admin/parliament`** (Parliament & catalogue), public **`/promises`**, **`GET /api/mps`**, **`GET /api/promises`** |
 | [x] | Maps (lazy Leaflet), region centroids, rate limits on public POSTs |
 | [x] | **Privacy policy** — Voice: location, attachments, anonymous/email + tracking, moderation; retention expanded *(counsel review still recommended)* |
 | [x] | **Vitest:** `GET /api/health` JSON handler test (mock `getHealthStatus`) |
