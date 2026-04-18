@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { NextConfig } from "next";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
@@ -23,6 +24,8 @@ if (isHttpsCanonical) {
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Pin tracing to this app directory (avoids picking a parent-folder lockfile as root).
+  outputFileTracingRoot: path.resolve(process.cwd()),
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

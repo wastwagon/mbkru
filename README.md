@@ -181,18 +181,25 @@ Use a `.env` file in the project root so `build.args` pick up `NEXT_PUBLIC_*` fo
 
 ```bash
 docker compose -f docker-compose.fullstack.yml up -d --build
-docker compose exec mbkru-web npx prisma db seed
+# optional manual retry if seed fails:
+docker compose -f docker-compose.fullstack.yml exec mbkru-web node /app/node_modules/prisma/build/index.js db seed
 ```
 
-Same URL; Postgres backs the app; Redis is on the Docker network for rate limiting and future queues.
+Same URL; Postgres backs the app; Redis is on the Docker network for rate limiting and future queues. On startup, `docker-entrypoint.sh` runs `prisma migrate deploy` and `prisma db seed` automatically when `DATABASE_URL` is set (skip seed with `SKIP_DB_SEED=1`).
 
 ### Development with Docker
 
+Creates **Postgres** (host **55432** → container 5432), **Redis**, and the **Next.js** dev server on **http://localhost:1100**. The dev container runs **`prisma migrate deploy`** on each start, then **`npm run dev`**.
+
 ```bash
-docker compose -f docker-compose.dev.yml up
+./scripts/docker-dev-up.sh
+# optional (idempotent) starter/admin seed:
+docker compose -f docker-compose.dev.yml exec mbkru-dev npx prisma db seed
 ```
 
-Hot reload enabled. Edit code and see changes at http://localhost:1100.
+Or manually: `docker compose -f docker-compose.dev.yml up -d --build` (copy `.env.example` → `.env` first for `ADMIN_*` / session secrets).
+
+If Docker errors with **blob … input/output error** or **containerd**, restart Docker Desktop, free disk space, or use **Troubleshoot → Clean / Reset data** (local images are removed).
 
 ### Build image only
 

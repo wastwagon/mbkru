@@ -356,14 +356,11 @@ function DesktopNavDropdown({
     });
   }
 
-  const btnClass = `inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-base font-medium transition-colors touch-manipulation ${desktopLinkClass(isHomeHero, active)}`;
-
-  /** Must match the dropdown panel `min-w` so the hover target spans the full panel width (otherwise `mouseleave` fires when moving onto the right side of a wide menu). */
-  const openHoverMinClass = "min-w-[min(100vw-2rem,16rem)]";
+  const btnClass = `inline-flex shrink-0 items-center gap-1 rounded-lg px-2.5 py-1.5 text-base font-medium transition-colors touch-manipulation ${desktopLinkClass(isHomeHero, active)}`;
 
   return (
     <div
-      className={`relative inline-flex flex-col items-start ${open ? openHoverMinClass : ""}`}
+      className="relative inline-flex shrink-0 flex-col items-start"
       ref={wrapRef}
       onMouseEnter={handleEnter}
       onBlur={handleContainerBlur}
@@ -382,12 +379,12 @@ function DesktopNavDropdown({
         <ChevronDownIcon open={open} className={isHomeHero ? "opacity-90" : ""} />
       </button>
       {open ? (
-        <div className="absolute left-0 top-full z-[60] w-full max-w-[calc(100vw-2rem)] -mt-px pt-[calc(0.375rem+1px)]">
+        <div className="absolute left-0 top-full z-[60] min-w-[min(100vw-2rem,16rem)] max-w-[calc(100vw-2rem)] -mt-px pt-[calc(0.375rem+1px)]">
           <div
             role="menu"
             id={`nav-menu-${entry.id}`}
             aria-labelledby={`nav-trigger-${entry.id}`}
-            className={`min-w-[min(100vw-2rem,16rem)] rounded-xl border border-[var(--border)] bg-white py-1 shadow-[var(--shadow-dropdown)]`}
+            className="w-full min-w-0 rounded-xl border border-[var(--border)] bg-white py-1 shadow-[var(--shadow-dropdown)]"
           >
             {entry.items.map((item) => {
               const isItemActive = leafIsActive(pathname, item);

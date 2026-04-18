@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { AboutPlatformLinks } from "@/components/about/AboutPlatformLinks";
+import { OperationalPillarsRegionsSection } from "@/components/operational-pillars/OperationalPillarsRegionsSection";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -11,7 +12,7 @@ import {
   accountabilityCatalogueNavShort,
 } from "@/config/accountability-catalogue-destinations";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
-import { images, mbkruStrategicContent, pillarImages, heroContent } from "@/lib/site-content";
+import { images, mbkruStrategicContent, heroContent } from "@/lib/site-content";
 
 export const metadata: Metadata = {
   title: "About",
@@ -69,45 +70,6 @@ const stats = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
       </svg>
     ),
-  },
-];
-
-const pillars = [
-  {
-    title: "Digital Platform — MBKRU Voice",
-    description: "Secure national membership portal connecting every Ghanaian directly to the Presidency. Personal dashboards, geo-tagged complaints, and live public statistics.",
-    image: pillarImages[0].image,
-    alt: pillarImages[0].alt,
-    href: "/citizens-voice",
-  },
-  {
-    title: "Physical Engagement Network",
-    description: "Quarterly Town Hall Meetings, Regional Public Forums, and Annual National People's Assembly — bringing citizens face-to-face with decision-makers across all 16 regions.",
-    image: pillarImages[1].image,
-    alt: pillarImages[1].alt,
-    href: "/situational-alerts",
-  },
-  {
-    title: "Legal Empowerment Desk",
-    description: "Panel of volunteer lawyers, step-by-step guidance for CHRAJ, police, and courts. Template letters, FOI requests, and referrals to pro-bono and legal aid organizations.",
-    image: pillarImages[2].image,
-    alt: pillarImages[2].alt,
-    href: "/about",
-  },
-  {
-    title: "Accountability & Electoral Watch",
-    description:
-      "People's Report Cards, a public commitment catalogue with live filters, and Accountability Scorecards. Citizen petition mechanisms for recall of non-performing officials.",
-    image: pillarImages[3].image,
-    alt: pillarImages[3].alt,
-    href: "/parliament-tracker",
-  },
-  {
-    title: "Direct Presidential Interface",
-    description: "Monthly Citizens' Brief to the Presidency, Quarterly Presidential Listening Sessions, and a dedicated liaison office for MBKRU matters at the highest level.",
-    image: pillarImages[4].image,
-    alt: pillarImages[4].alt,
-    href: "/citizens-voice",
   },
 ];
 
@@ -278,8 +240,8 @@ export default async function AboutPage() {
                 <Button href="/methodology" variant="outline">
                   Methodology
                 </Button>
-                <Button href="#platform-pillars" variant="outline">
-                  Platform pillars
+                <Button href="#key-operational-pillars" variant="outline">
+                  Operational pillars
                 </Button>
               </div>
             </div>
@@ -310,12 +272,17 @@ export default async function AboutPage() {
             <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
               <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Explore further</h3>
               <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                Pillar-by-pillar copy and links live below; start here for the busiest public routes.
+                Start here for the busiest public routes; membership and registration follow the pillars section.
               </p>
               <ul className="mt-5 space-y-3 text-sm font-medium text-[var(--foreground)]">
                 <li>
-                  <Link href="#platform-pillars" className="text-[var(--primary)] hover:underline">
-                    About — pillars &amp; objectives
+                  <Link href="#key-operational-pillars" className="text-[var(--primary)] hover:underline">
+                    Operational pillars &amp; regions (map)
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#membership-governance" className="text-[var(--primary)] hover:underline">
+                    Membership, funding &amp; registration
                   </Link>
                 </li>
                 <li>
@@ -349,63 +316,18 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* Section 4: Our Platform Pillars — how we deliver */}
-      <section id="platform-pillars" className="section-spacing section-full bg-[var(--section-light)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <Badge variant="gold">How We Deliver</Badge>
-            <h2 className="mt-3 font-display text-xl font-bold text-[var(--foreground)] sm:text-2xl lg:text-3xl">
-              Our Platform Pillars
-            </h2>
-            <p className="mx-auto mt-2 max-w-2xl text-[var(--muted-foreground)]">
-              MBKRU connects ordinary citizens directly to the highest levels of government through five operational pillars.
-            </p>
-          </div>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:mt-10">
-            {pillars.map((pillar) => (
-              <Link
-                key={pillar.title}
-                href={pillar.href}
-                className="group relative flex overflow-visible rounded-xl bg-white p-4 shadow-[var(--shadow-card)] transition-all duration-[400ms] ease-in-out hover:shadow-[var(--shadow-card-hover)] sm:p-5"
-              >
-                <div className="flex-1 pr-4">
-                  <h3 className="font-display text-base font-bold text-[var(--foreground)] group-hover:text-[var(--primary)] sm:text-lg">
-                    {pillar.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                    {pillar.description}
-                  </p>
-                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)] transition-colors group-hover:text-[var(--primary-dark)]">
-                    Learn More
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </span>
-                </div>
-                <div className="relative -mr-6 flex shrink-0 sm:-mr-8 lg:-mr-10">
-                  <div className="relative h-20 w-20 overflow-hidden rounded-full border-4 border-white shadow-lg sm:h-24 sm:w-24 lg:h-28 lg:w-28">
-                    <Image
-                      src={pillar.image}
-                      alt={pillar.alt}
-                      fill
-                      className="object-cover"
-                      sizes="112px"
-                    />
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      <OperationalPillarsRegionsSection />
 
-      {/* Section 6: Membership & Funding (two-column cards) */}
-      <section className="section-spacing section-full bg-[var(--section-light)]">
+      {/* Membership, funding model, registration status */}
+      <section
+        id="membership-governance"
+        className="section-spacing section-full bg-[var(--section-light)]"
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-2">
             <div className="rounded-xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow-card)] sm:p-5">
               <h2 className="font-display text-lg font-bold text-[var(--foreground)] sm:text-xl">
-                Membership & Governance
+                Membership &amp; Governance
               </h2>
               <ul className="mt-3 space-y-1.5 text-[var(--muted-foreground)]">
                 <li>• Open to all Ghanaian citizens of good character</li>
@@ -420,7 +342,7 @@ export default async function AboutPage() {
                 Funding Model (Proposed)
               </h2>
               <ul className="mt-3 space-y-1.5 text-[var(--muted-foreground)]">
-                <li>• Membership dues (symbolic GH¢10–20 per year)</li>
+                <li>• Membership dues (symbolic GH₵10–20 per year)</li>
                 <li>• Grants from development partners focused on governance and citizen engagement</li>
                 <li>• Corporate social responsibility contributions (accountability & anti-poverty programs)</li>
                 <li>• International foundations supporting democratic accountability</li>
@@ -428,11 +350,11 @@ export default async function AboutPage() {
             </div>
           </div>
 
-          <div className="mt-8 rounded-xl border-2 border-[var(--primary)]/20 bg-[var(--muted)] p-4 sm:p-5">
+          <div className="mt-8 rounded-xl border border-[var(--primary)]/30 bg-[#F0F9F9] p-4 shadow-sm sm:p-5">
             <h2 className="font-display text-lg font-bold text-[var(--foreground)] sm:text-xl">
               Registration Status
             </h2>
-            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
               Formal registration details are being finalised. The registration number will be listed here when issued,
               under the applicable Ghanaian regulator (for example Registrar General or Department of Social Welfare).
               Effective date to be confirmed.

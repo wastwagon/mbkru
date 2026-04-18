@@ -25,6 +25,9 @@ export const metadata: Metadata = {
   description: accountabilityProse.parliamentTrackerMetaDescription,
 };
 
+/** DB-backed roster; skip static prerender so `next build` succeeds without a running Postgres (e.g. CI). */
+export const dynamic = "force-dynamic";
+
 const accountabilityStepIcons = {
   reportCard: (
     <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,9 +52,21 @@ export default async function ParliamentTrackerPage() {
   const partnerDataPage = isPartnerApiTermsPageEnabled();
 
   const dbReady = isDatabaseConfigured();
-  const [trackerStats, mpRoster] = dbReady
-    ? await Promise.all([getCachedPromiseTrackerStats(defaultPromisesApiFilters()), getCachedMpsPublicRoster()])
-    : [null, [] as Awaited<ReturnType<typeof getCachedMpsPublicRoster>>];
+  let trackerStats: Awaited<ReturnType<typeof getCachedPromiseTrackerStats>> | null = null;
+  let mpRoster: Awaited<ReturnType<typeof getCachedMpsPublicRoster>> = [];
+
+  if (dbReady) {
+    try {
+      [trackerStats, mpRoster] = await Promise.all([
+        getCachedPromiseTrackerStats(defaultPromisesApiFilters()),
+        getCachedMpsPublicRoster(),
+      ]);
+    } catch {
+      /* Unreachable DB at runtime or flaky connection — render page without roster strip */
+      trackerStats = null;
+      mpRoster = [];
+    }
+  }
 
   const accountabilityTools = [
     {
