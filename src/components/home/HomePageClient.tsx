@@ -12,6 +12,7 @@ import { GovernmentCommitmentsHomePreview } from "@/components/home/GovernmentCo
 import { HomeDataProvenanceRibbon } from "@/components/home/HomeDataProvenanceRibbon";
 import { HomeParticipateHub } from "@/components/home/HomeParticipateHub";
 import { PromisesBrowseHomePreview } from "@/components/home/PromisesBrowseHomePreview";
+import { OperationalPillarsRegionsSection } from "@/components/operational-pillars/OperationalPillarsRegionsSection";
 import type { HomeAtAGlanceData } from "@/lib/home-at-a-glance-types";
 import type { GovernmentCommitmentsHomePreview as GovernmentCommitmentsHomePreviewData } from "@/lib/home-government-preview-types";
 import type { PromisesBrowseHomePreview as PromisesBrowseHomePreviewData } from "@/lib/home-promises-browse-preview-types";
@@ -163,6 +164,8 @@ export function HomePageClient({
 
       {promisesBrowsePreview ? <PromisesBrowseHomePreview data={promisesBrowsePreview} /> : null}
 
+      <OperationalPillarsRegionsSection />
+
       {/* Programme pathways — stakeholder entry points (replaces quarter roadmap cards on the homepage) */}
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -183,15 +186,16 @@ export function HomePageClient({
               navigation — not a delivery calendar.
             </p>
             <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-[var(--muted-foreground)]">
-              For the five pillars and regional map, see{" "}
-              <Link href="/about#key-operational-pillars" className="font-medium text-[var(--primary)] hover:underline">
-                About — pillars &amp; regions
-              </Link>
-              . For the full programme story and long-range planning narrative, read{" "}
+              Key operational pillars and the regional map are above. For the full programme story and long-range
+              planning narrative, read{" "}
               <Link href="/about" className="font-medium text-[var(--primary)] hover:underline">
                 About
+              </Link>{" "}
+              (including the same pillars section at{" "}
+              <Link href="/about#key-operational-pillars" className="font-medium text-[var(--primary)] hover:underline">
+                #key-operational-pillars
               </Link>
-              . Quarter-by-quarter milestones for funders remain in programme documentation referenced from About and
+              ). Quarter-by-quarter milestones for funders remain in programme documentation referenced from About and
               Data sources.
             </p>
           </motion.div>

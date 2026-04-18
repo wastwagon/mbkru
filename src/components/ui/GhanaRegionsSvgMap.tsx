@@ -59,12 +59,12 @@ export function GhanaRegionsSvgMap({ onSelectRegion, selectedRegionName }: Props
   }, []);
 
   return (
-    <div className="relative mt-8 rounded-xl border border-[var(--border)] bg-gradient-to-b from-[var(--section-light)]/60 to-white p-4 shadow-[var(--shadow-card)] sm:p-6">
+    <div className="relative mt-8 rounded-xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow-card)] sm:p-6">
       <div>
-        <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
+        <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-black">
           Regional map
         </h3>
-        <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-black">
           <span
             className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded bg-[var(--primary)]/10 text-[var(--primary)]"
             aria-hidden
