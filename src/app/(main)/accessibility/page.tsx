@@ -5,7 +5,7 @@ export default function AccessibilityPage() {
     <div className="bg-[var(--section-light)]">
       <PageHeader
         title="Accessibility Statement"
-        subtitle="Inclusive access across keyboard, speech, and readable content experiences."
+        description="Inclusive access across keyboard, speech, and readable content experiences."
       />
       <section className="mx-auto max-w-5xl px-6 pb-16 pt-6 sm:px-8">
         <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">

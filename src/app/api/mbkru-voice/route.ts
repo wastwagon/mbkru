@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getMbkruVoiceFallbackReply } from "@/lib/mbkru-voice-faq";
 import { evaluateMbkruVoiceSafety } from "@/lib/mbkru-voice-guardrails";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
+import { mbkruVoiceChatBodySchema } from "@/lib/validation/mbkru-voice";
 import { findVoiceLanguage, type VoicePreferences } from "@/lib/voice-languages";
 
 type ChatMessage = {
@@ -54,16 +55,14 @@ export async function POST(request: Request) {
   }
 
   try {
-    const body = (await request.json()) as {
-      message?: string;
-      history?: ChatMessage[];
-      languageId?: VoicePreferences["languageId"];
-    };
-    const message = body.message?.trim();
-    const languageId = body.languageId ?? "en-gh";
-    if (!message) {
-      return NextResponse.json({ error: "Message is required" }, { status: 400 });
+    const raw = await request.json();
+    const parsed = mbkruVoiceChatBodySchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
     }
+    const { message: rawMessage, history: rawHistory, languageId: rawLanguageId } = parsed.data;
+    const message = rawMessage.slice(0, 1000);
+    const languageId: VoicePreferences["languageId"] = rawLanguageId ?? "en-gh";
     const safety = evaluateMbkruVoiceSafety(message);
     if (safety.blocked) {
       return NextResponse.json({
@@ -74,10 +73,11 @@ export async function POST(request: Request) {
       });
     }
 
-    const history = Array.isArray(body.history) ? body.history.slice(-8) : [];
-    const sanitizedHistory = history
-      .filter((entry) => (entry.role === "assistant" || entry.role === "user") && typeof entry.content === "string")
-      .map((entry) => ({ role: entry.role, content: entry.content.slice(0, 1000) }));
+    const history = (rawHistory ?? []).slice(-8);
+    const sanitizedHistory = history.map((entry) => ({
+      role: entry.role,
+      content: entry.content.slice(0, 1000),
+    }));
     const promptHistory: ChatMessage[] = [...sanitizedHistory, { role: "user", content: message.slice(0, 1000) }];
 
     const providerReply = await getProviderReply(promptHistory, languageId);

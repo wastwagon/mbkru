@@ -35,6 +35,11 @@ const trackedEvents = [
     signal: "Speech UX friction and support need",
   },
   {
+    name: "mbkru_voice_clear_chat",
+    meaning: "User cleared the chat transcript",
+    signal: "Session reset / privacy-sensitive behavior",
+  },
+  {
     name: "accessibility_read_page_summary",
     meaning: "Accessibility panel read-page action",
     signal: "Text-to-speech usage",
@@ -48,6 +53,11 @@ const trackedEvents = [
     name: "accessibility_stt_start",
     meaning: "Speech-to-text capture started",
     signal: "Accessibility voice input demand",
+  },
+  {
+    name: "accessibility_stt_result",
+    meaning: "Speech-to-text produced text",
+    signal: "Successful assistive capture",
   },
   {
     name: "accessibility_stt_error",

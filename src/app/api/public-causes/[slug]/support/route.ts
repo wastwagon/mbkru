@@ -6,6 +6,7 @@ import { guardMemberAuthApi } from "@/lib/member/auth-api-guard";
 import { getMemberSession } from "@/lib/member/session";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 import { isCivicPetitionsAndPublicCausesEnabled } from "@/lib/reports/accountability-pages";
+import { publicCauseSupportBodySchema } from "@/lib/validation/civic-engagement";
 
 export const dynamic = "force-dynamic";
 
@@ -42,10 +43,11 @@ export async function POST(request: Request, { params }: Props) {
   } catch {
     json = {};
   }
-  const action =
-    typeof json === "object" && json !== null && "action" in json && (json as { action?: string }).action === "remove"
-      ? "remove"
-      : "add";
+  const parsed = publicCauseSupportBodySchema.safeParse(json);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+  }
+  const action = parsed.data.action;
 
   const report = await prisma.citizenReport.findFirst({
     where: {

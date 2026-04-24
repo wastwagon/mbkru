@@ -37,3 +37,7 @@ export const petitionSignBodySchema = z.object({
 export const publicCauseCommentBodySchema = z.object({
   body: z.string().trim().min(2).max(2000),
 });
+
+export const publicCauseSupportBodySchema = z.object({
+  action: z.enum(["add", "remove"]).optional().default("add"),
+});

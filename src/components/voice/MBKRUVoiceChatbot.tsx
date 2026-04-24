@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
+import "@/lib/client/web-speech-recognition";
 import { getMbkruVoiceFallbackReply } from "@/lib/mbkru-voice-faq";
 import { trackUiEvent } from "@/lib/client/analytics-events";
+import type { SpeechRecognitionCtor, SpeechRecognitionEventLike, SpeechRecognitionLike } from "@/lib/client/web-speech-recognition";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
 import {
   defaultVoicePreferences,
@@ -92,7 +94,7 @@ export function MBKRUVoiceChatbot() {
     [messages],
   );
   const selectedLanguage = findVoiceLanguage(preferences.languageId);
-  const recognitionCtor =
+  const recognitionCtor: SpeechRecognitionCtor | null =
     typeof window !== "undefined" ? window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null : null;
 
   useEffect(() => {
@@ -142,10 +144,10 @@ export function MBKRUVoiceChatbot() {
     recognition.maxAlternatives = 1;
     if ("continuous" in recognition) recognition.continuous = false;
     if ("processLocally" in recognition) {
-      (recognition as SpeechRecognition & { processLocally?: boolean }).processLocally = true;
+      (recognition as SpeechRecognitionLike & { processLocally?: boolean }).processLocally = true;
     }
     setIsListening(true);
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
+    recognition.onresult = (event: SpeechRecognitionEventLike) => {
       const transcript = event.results[0]?.[0]?.transcript?.trim() ?? "";
       if (transcript.length > 0) setInput(transcript);
     };

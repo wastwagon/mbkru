@@ -2,30 +2,10 @@ import { NextResponse } from "next/server";
 
 import { recordMbkruVoiceAnalyticsEvent } from "@/lib/server/mbkru-voice-analytics";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
+import { mbkruVoiceAnalyticsBodySchema } from "@/lib/validation/mbkru-voice";
 
-type Body = {
-  name?: string;
-  payload?: Record<string, unknown>;
-  token?: string;
-};
-
-const eventNameRegex = /^[a-z0-9_]{3,120}$/;
 const maxPayloadChars = 2000;
 const maxPayloadEntries = 20;
-const allowedEvents = new Set([
-  "mbkru_voice_open_launcher",
-  "mbkru_voice_send",
-  "mbkru_voice_reply_received",
-  "mbkru_voice_mic_start",
-  "mbkru_voice_mic_error",
-  "mbkru_voice_clear_chat",
-  "accessibility_read_page_summary",
-  "accessibility_read_selected_text",
-  "accessibility_stt_start",
-  "accessibility_stt_result",
-  "accessibility_stt_error",
-  "accessibility_send_transcript_to_chat",
-]);
 
 function sanitizePayload(raw: Record<string, unknown>): Record<string, string | number | boolean | null> {
   const out: Record<string, string | number | boolean | null> = {};
@@ -43,7 +23,8 @@ function isTelemetryTokenValid(request: Request, bodyToken?: string): boolean {
   if (!requiredToken) return true;
   const provided = request.headers.get("x-mbkru-event-token")?.trim();
   if (provided && provided === requiredToken) return true;
-  return Boolean(bodyToken) && bodyToken.trim() === requiredToken;
+  const fromBody = bodyToken?.trim();
+  return Boolean(fromBody) && fromBody === requiredToken;
 }
 
 export async function POST(request: Request) {
@@ -52,16 +33,17 @@ export async function POST(request: Request) {
   }
 
   try {
-    const body = (await request.json()) as Body;
-    if (!isTelemetryTokenValid(request, body.token)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    const name = body.name?.trim().toLowerCase();
-    if (!name || !eventNameRegex.test(name) || !allowedEvents.has(name)) {
+    const raw = await request.json();
+    const parsed = mbkruVoiceAnalyticsBodySchema.safeParse(raw);
+    if (!parsed.success) {
       return NextResponse.json({ error: "Invalid event name" }, { status: 400 });
     }
+    const { name, payload: rawPayload, token } = parsed.data;
+    if (!isTelemetryTokenValid(request, token)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    const payload = sanitizePayload(body.payload ?? {});
+    const payload = sanitizePayload(rawPayload);
     const payloadText = JSON.stringify(payload);
     if (payloadText.length > maxPayloadChars) {
       return NextResponse.json({ error: "Payload too large" }, { status: 413 });

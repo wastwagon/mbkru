@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import "@/lib/client/web-speech-recognition";
 import { trackUiEvent } from "@/lib/client/analytics-events";
+import type { SpeechRecognitionCtor, SpeechRecognitionEventLike, SpeechRecognitionLike } from "@/lib/client/web-speech-recognition";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
 import {
   defaultVoicePreferences,
@@ -11,14 +13,6 @@ import {
   voicePreferencesStorageKey,
   type VoicePreferences,
 } from "@/lib/voice-languages";
-
-declare global {
-  interface Window {
-    webkitSpeechRecognition?: {
-      new (): SpeechRecognition;
-    };
-  }
-}
 
 export function AccessibilityVoiceTools() {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,7 +26,7 @@ export function AccessibilityVoiceTools() {
   const panelRef = useRef<HTMLElement | null>(null);
   const openButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  const recognitionCtor = useMemo(() => {
+  const recognitionCtor = useMemo((): SpeechRecognitionCtor | null => {
     if (typeof window === "undefined") return null;
     return window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
   }, []);
@@ -151,11 +145,11 @@ export function AccessibilityVoiceTools() {
     if ("continuous" in recognition) recognition.continuous = false;
     // Supported in newer engines; keeps speech processing on device where possible.
     if ("processLocally" in recognition) {
-      (recognition as SpeechRecognition & { processLocally?: boolean }).processLocally = true;
+      (recognition as SpeechRecognitionLike & { processLocally?: boolean }).processLocally = true;
     }
     setVoiceNote("");
     setIsListening(true);
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
+    recognition.onresult = (event: SpeechRecognitionEventLike) => {
       const transcript = event.results[0]?.[0]?.transcript?.trim() ?? "";
       setVoiceNote(transcript);
       if (typeof window !== "undefined" && transcript.length > 0) {

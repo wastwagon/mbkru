@@ -57,7 +57,7 @@ flowchart TB
 | `src/app/admin/` | Authenticated admin: login, posts CRUD, media library |
 | `src/app/api/` | Server-only HTTP API; admin login/logout/media upload + public form endpoints |
 | `src/components/` | UI; `forms/` holds client forms aligned with API routes |
-| `src/config/` | **Platform phase**, feature flags — single source of truth; **`public-platform-nav.ts`** drives header, footer “Our Platform”, About/home quick links, **`sitemap.ts`** static paths, and **`/account`** explore links from the same gates |
+| `src/config/` | **Platform phase**, feature flags — single source of truth; **`public-platform-nav.ts`** drives header, footer “Our Platform” + “Useful links” + legal row, About/home quick links, **`sitemap.ts`** static paths, and **`/account`** explore links from the same gates |
 | `src/lib/` | Shared utilities; **`env.server.ts`** is server-only |
 | `src/lib/admin/` | JWT session helpers, `requireSession` for server actions |
 | `prisma/`, **`prisma.config.ts`** | Schema, migrations, **seed** (first admin from env); seed command is configured in **`prisma.config.ts`** (replaces deprecated `package.json#prisma`) |
@@ -118,6 +118,14 @@ Read-only routes for partners and embeds (gated by `platformFeatures` in `src/co
 | `GET /api/report-card/[year]` | Phase ≥ 2 (`publicReportCard`) — published cycle only; **404** uses `private, no-store` |
 
 Admin **CSV import** and **catalogue** mutations call **`revalidateTag`** so JSON and HTML stay in sync without waiting for the TTL.
+
+### 6.2 MBKRU Voice UI telemetry (`mbkru_voice_analytics_events`)
+
+Allow-listed client events post to **`POST /api/analytics/mbkru-voice-event`** (optional **`MBKRU_VOICE_EVENT_TOKEN`** / header **`x-mbkru-event-token`**). Rows land in PostgreSQL table **`mbkru_voice_analytics_events`**, modeled in Prisma as **`MbkruVoiceAnalyticsEvent`** (`prisma/schema.prisma`). Migration **`20260424163000_mbkru_voice_analytics_events`** creates the table and indexes idempotently.
+
+**Bootstrap:** `src/lib/server/mbkru-voice-analytics.ts` still runs **`CREATE TABLE IF NOT EXISTS`** on first write so older deployments that have not yet applied the migration keep working; new environments should rely on **`prisma migrate deploy`**. Inserts use **`prisma.mbkruVoiceAnalyticsEvent.create`**; aggregate admin queries continue to use **raw SQL** for `COUNT`/`GROUP BY` windows.
+
+Event names and request bodies are validated with **Zod** in **`src/lib/validation/mbkru-voice.ts`** and must stay aligned with the admin reference list at **`/admin/analytics/mbkru-voice`**.
 
 ---
 

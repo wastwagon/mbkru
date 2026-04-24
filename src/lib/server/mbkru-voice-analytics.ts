@@ -1,5 +1,7 @@
 import "server-only";
 
+import type { Prisma } from "@prisma/client";
+
 import { prisma } from "@/lib/db/prisma";
 
 type AnalyticsRow = {
@@ -62,16 +64,14 @@ export type MbkruVoiceAnalyticsInsert = {
 
 export async function recordMbkruVoiceAnalyticsEvent(input: MbkruVoiceAnalyticsInsert): Promise<void> {
   await ensureAnalyticsTable();
-  await prisma.$executeRawUnsafe(
-    `
-      INSERT INTO mbkru_voice_analytics_events (event_name, source, language, payload)
-      VALUES ($1, $2, $3, $4::jsonb)
-    `,
-    input.eventName,
-    input.source,
-    input.language,
-    JSON.stringify(input.payload ?? {}),
-  );
+  await prisma.mbkruVoiceAnalyticsEvent.create({
+    data: {
+      eventName: input.eventName,
+      source: input.source,
+      language: input.language,
+      payload: (input.payload ?? {}) as Prisma.InputJsonValue,
+    },
+  });
 }
 
 export async function getMbkruVoiceAnalyticsSummary(days: MbkruVoiceAnalyticsDays = 30) {
