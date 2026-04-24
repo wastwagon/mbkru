@@ -38,7 +38,7 @@ export async function GET(request: Request) {
 
   const rows = await getCachedPromisesExportCsvRows(filters);
   const header =
-    "id,title,description,source_label,source_url,source_date,verification_notes,status,policy_sector,updated_at,election_cycle,party_slug,manifesto_document_id,manifesto_page_ref,is_government_programme,manifesto_title,manifesto_source_url,member_name,member_slug,member_role,member_party,member_constituency";
+    "id,title,description,source_label,source_url,source_date,verification_notes,status,policy_sector,updated_at,election_cycle,party_slug,manifesto_document_id,manifesto_page_ref,catalogue_theme_slug,catalogue_theme_label,is_manifesto_catalogue_row,is_government_programme,manifesto_title,manifesto_source_url,member_name,member_slug,member_role,member_party,member_constituency";
   const lines = [
     header,
     ...rows.map((r) =>
@@ -57,6 +57,9 @@ export async function GET(request: Request) {
         csvCell(r.partySlug),
         csvCell(r.manifestoDocumentId),
         csvCell(r.manifestoPageRef),
+        csvCell(r.catalogueThemeSlug),
+        csvCell(r.catalogueThemeLabel),
+        csvCell(r.isManifestoCatalogueRow ? "true" : "false"),
         csvCell(r.isGovernmentProgramme ? "true" : "false"),
         csvCell(r.manifestoTitle),
         csvCell(r.manifestoSourceUrl),

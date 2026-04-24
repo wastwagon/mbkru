@@ -31,6 +31,9 @@ export const accountabilityHomePreviewCopy = {
   governmentHeading: `${accountabilityCatalogueNavMedium.government} — live`,
   governmentLead:
     "Programme- and executive-tagged pledges only. Same underlying rows as MP pledge sheets when a member is linked — one status everywhere.",
+  /** Shown above live promise tables on the homepage and government commitments page. */
+  promiseCardSurfaceExplainer:
+    "Each card shows a brief summary on the face, citation chips (party · year, manifesto chapter when catalogued), optional page reference, and a link to the official PDF; expand for verification notes and full source buttons.",
   browseHeading: `${accountabilityCatalogueNavMedium.browseAll} — live`,
   browseLead:
     "Full searchable catalogue for sitting MPs — identical data to the dedicated browse page and public export.",

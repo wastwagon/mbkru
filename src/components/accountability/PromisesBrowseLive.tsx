@@ -430,6 +430,11 @@ export function PromisesBrowseLive({
                   sourceDate={p.sourceDate ? new Date(p.sourceDate) : null}
                   sourceUrl={p.sourceUrl}
                   verificationNotes={p.verificationNotes}
+                  manifestoPageRef={p.manifestoPageRef}
+                  electionCycle={p.electionCycle}
+                  partySlug={p.partySlug}
+                  catalogueThemeLabel={p.catalogueThemeLabel}
+                  isManifestoCatalogueRow={p.isManifestoCatalogueRow}
                   manifestoDocument={
                     p.manifesto ? { title: p.manifesto.title, sourceUrl: p.manifesto.sourceUrl } : null
                   }

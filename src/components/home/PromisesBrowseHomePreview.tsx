@@ -69,11 +69,19 @@ export function PromisesBrowseHomePreview({ data }: Props) {
             trackerConstituencies={data.trackerConstituencies}
             csvExportHref="/api/export/promises-csv"
             filterToolbarHeader={
-              <div className="mt-6 flex flex-wrap items-end justify-between gap-3 border-b border-[var(--border)] pb-3 sm:mt-8">
-                <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Filters &amp; results</h3>
-                <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={`${primaryNavLinkClass} text-sm font-semibold`}>
-                  Open full browse page →
-                </Link>
+              <div className="mt-6 space-y-3 border-b border-[var(--border)] pb-3 sm:mt-8">
+                <p className="mx-auto max-w-3xl text-center text-xs leading-relaxed text-[var(--muted-foreground)] sm:text-left">
+                  {accountabilityHomePreviewCopy.promiseCardSurfaceExplainer}
+                </p>
+                <div className="flex flex-wrap items-end justify-between gap-3">
+                  <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Filters &amp; results</h3>
+                  <Link
+                    href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
+                    className={`${primaryNavLinkClass} text-sm font-semibold`}
+                  >
+                    Open full browse page →
+                  </Link>
+                </div>
               </div>
             }
           />

@@ -11,6 +11,14 @@ export type PublicPromiseApiRow = {
   updatedAt: string;
   electionCycle: string | null;
   partySlug: string | null;
+  manifestoDocumentId: string | null;
+  manifestoPageRef: string | null;
+  /** True when `verificationNotes` carries the MBKRU manifesto catalogue seed tag. */
+  isManifestoCatalogueRow: boolean;
+  /** Machine slug from catalogue seed (e.g. `economy`); null when not a catalogue row. */
+  catalogueThemeSlug: string | null;
+  /** Human label for dashboard chips and CSV (`Economy`, etc.). */
+  catalogueThemeLabel: string | null;
   isGovernmentProgramme: boolean;
   policySector: string | null;
   manifesto: {

@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
   accountabilityCatalogueNavMedium,
+  accountabilityHomePreviewCopy,
 } from "@/config/accountability-catalogue-destinations";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { parsePromisesApiFilters } from "@/lib/promises-api-filters";
@@ -133,6 +134,10 @@ export default async function PromisesBrowsePage({ searchParams }: Props) {
           </p>
 
           <PromiseCatalogueSurfacesCallout variant="browse" />
+
+          <p className="mx-auto mt-5 max-w-3xl text-center text-xs leading-relaxed text-[var(--muted-foreground)] sm:text-sm">
+            {accountabilityHomePreviewCopy.promiseCardSurfaceExplainer}
+          </p>
 
           <PromisesBrowseLive
             mode="browse"

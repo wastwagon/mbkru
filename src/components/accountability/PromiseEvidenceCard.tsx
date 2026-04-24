@@ -1,11 +1,16 @@
 import type { ReactNode } from "react";
 
+import { parseManifestoCatalogueRowNotes } from "@/lib/promise-catalogue-display";
 import { policySectorLabel } from "@/lib/promise-policy-sectors";
 import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { primarySourceUrl } from "@/lib/promise-source";
 
 function statusLabel(s: string): string {
   return s.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function partyChipLabel(slug: string): string {
+  return slug.trim().toUpperCase();
 }
 
 function ExternalLinkIcon({ className }: { className?: string }) {
@@ -43,6 +48,12 @@ type Props = {
   /** Optional row under title (e.g. responsible MP). */
   meta?: ReactNode;
   policySector?: string | null;
+  manifestoPageRef?: string | null;
+  electionCycle?: string | null;
+  partySlug?: string | null;
+  /** When set (e.g. from `GET /api/promises`), avoids re-deriving from `verificationNotes` on the client. */
+  catalogueThemeLabel?: string | null;
+  isManifestoCatalogueRow?: boolean;
 };
 
 export function PromiseEvidenceCard({
@@ -56,12 +67,28 @@ export function PromiseEvidenceCard({
   manifestoDocument,
   meta,
   policySector,
+  manifestoPageRef,
+  electionCycle,
+  partySlug,
+  catalogueThemeLabel: catalogueThemeLabelProp,
+  isManifestoCatalogueRow: isManifestoCatalogueRowProp,
 }: Props) {
   const href = primarySourceUrl({ sourceUrl, manifestoDocument });
   const manifestoOnlyHref = manifestoDocument?.sourceUrl?.trim() || null;
   const showSeparateManifestoLink = Boolean(
     manifestoOnlyHref && href && manifestoOnlyHref !== href && manifestoDocument,
   );
+  const parsed = parseManifestoCatalogueRowNotes(verificationNotes);
+  const themeLabel = catalogueThemeLabelProp ?? parsed.themeLabel;
+  const isCatRow = isManifestoCatalogueRowProp ?? parsed.isCatalogueRow;
+  const pageRef = manifestoPageRef?.trim() || null;
+  const brief = description?.trim() || null;
+  const showRefStrip =
+    Boolean(partySlug?.trim() && electionCycle?.trim()) ||
+    Boolean(themeLabel) ||
+    Boolean(pageRef) ||
+    Boolean(href) ||
+    (isCatRow && !pageRef);
 
   return (
     <details className="group rounded-2xl border border-[var(--border)] bg-white shadow-sm">
@@ -78,6 +105,49 @@ export function PromiseEvidenceCard({
             ) : null}
           </div>
           {meta ? <div className="mt-2 text-sm text-[var(--muted-foreground)]">{meta}</div> : null}
+          {brief ? (
+            <p className="mt-2 line-clamp-2 text-sm leading-snug text-[var(--muted-foreground)]">{brief}</p>
+          ) : null}
+          {showRefStrip ? (
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-[var(--muted-foreground)]">
+              {partySlug?.trim() && electionCycle?.trim() ? (
+                <span className="rounded-md border border-[var(--border)] bg-[var(--section-light)] px-2 py-0.5 font-semibold uppercase tracking-wide text-[var(--foreground)]">
+                  {partyChipLabel(partySlug)} · {electionCycle.trim()}
+                </span>
+              ) : null}
+              {themeLabel ? (
+                <span
+                  className="rounded-md border border-[var(--border)] px-2 py-0.5 font-medium text-[var(--foreground)]"
+                  title="Manifesto section grouping"
+                >
+                  {themeLabel}
+                </span>
+              ) : null}
+              {pageRef ? (
+                <span
+                  className="rounded-md border border-dotted border-[var(--border)] px-2 py-0.5 text-[var(--foreground)]"
+                  title="Locator in the cited source"
+                >
+                  Ref · {pageRef}
+                </span>
+              ) : isCatRow ? (
+                <span className="rounded-md border border-dashed border-[var(--border)] px-2 py-0.5 italic text-[var(--foreground)]">
+                  Page ref pending
+                </span>
+              ) : null}
+              {href ? (
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`${primaryNavLinkClass} inline-flex items-center gap-1 font-semibold`}
+                >
+                  <ExternalLinkIcon className="h-3.5 w-3.5 shrink-0 opacity-80" />
+                  Official PDF
+                </a>
+              ) : null}
+            </div>
+          ) : null}
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <span className="rounded-full bg-[var(--primary)]/10 px-3 py-1 text-xs font-medium text-[var(--primary)]">
@@ -92,21 +162,32 @@ export function PromiseEvidenceCard({
         </div>
       </summary>
       <div className="space-y-4 border-t border-[var(--border)] px-5 pb-5 pt-4">
-        {description ? (
-          <p className="whitespace-pre-wrap text-sm text-[var(--muted-foreground)]">{description}</p>
+        {description?.trim() ? (
+          <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--muted-foreground)]">{description.trim()}</p>
         ) : null}
 
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--foreground)]">
             Verification and impact
           </p>
-          {verificationNotes?.trim() ? (
-            <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--muted-foreground)]">
-              {verificationNotes.trim()}
-            </p>
+          {isCatRow ? (
+            <>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
+                Sourced from the party&apos;s published manifesto text. MBKRU treats this as a tracking unit; confirm exact
+                wording against the PDF and add a page reference when editors sign off.
+              </p>
+              {parsed.editorVerification ? (
+                <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--muted-foreground)]">
+                  {parsed.editorVerification}
+                </p>
+              ) : null}
+            </>
+          ) : verificationNotes?.trim() ? (
+            <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--muted-foreground)]">{verificationNotes.trim()}</p>
           ) : (
             <p className="mt-2 text-sm italic text-[var(--muted-foreground)]">
-              Verification details are pending for this commitment. Sources below cite where the pledge was recorded.
+              Verification details are pending for this commitment. Use the source line and manifesto link on the card
+              for the original record.
             </p>
           )}
         </div>

@@ -4,6 +4,7 @@
  * Full MP roster: `prisma/data/parliament-members.seed.json` (bundled; Wikipedia 2024 list). Regenerate: `npm run data:refresh-members-seed-wikipedia`.
  * Traditional-area communities: `prisma/data/communities.seed.json` (public-source citations in descriptions).
  * Town hall / forum / constituency debate programme: `TownHallEvent` after bundled constituencies (see `prisma/data/TOWN_HALL_SEED_SOURCES.txt`). Opt out: `SEED_TOWN_HALL_PROGRAMME=0`.
+ * NDC 2024 manifesto promise catalogue (editorial JSON → `CampaignPromise`): set `SEED_NDC_2024_MANIFESTO_CATALOGUE=1` when running accountability seed (`SEED_ACCOUNTABILITY_DEMO` not `0`). Rows are tagged in `verificationNotes` for idempotent re-seed.
  * Opt out: `SEED_COMMUNITIES_DEMO=0`. Pilot posts need `SEED_MEMBER_DEMO=1`.
  * Optional admin fixtures (Voice + attachment, situational/election rows, contact, verification queue): `SEED_ENGAGEMENT_DEMOS=1` or `SEED_VOICE_DEMO=1`. Internal origin is noted in `CitizenReport.staffNotes` / contact message footer where applicable.
  * With `SEED_ENGAGEMENT_DEMOS=1`, also seeds **10 demo members** (`demo.cohort01@mbkru.local` … `demo.cohort10@mbkru.local`), member-linked Voice/Situational/Election reports (incl. whistleblow-tagged Voice), community memberships/posts, **petitions** (with **signatures** from other cohort members), a **public cause** thread (**supports** + **comments**), extra **community reply** posts, sample **notifications**, and lead captures — password: `SEED_DEMO_COHORT_PASSWORD` or `SEED_MEMBER_PASSWORD` or default `DemoCohort!change-2026`.
@@ -166,6 +167,20 @@ const REPORT_CARD_PILOT_YEAR = 2026;
 
 const NDC_2024_MANIFESTO_URL =
   "https://manifesto.johnmahama.org/files/shares/2024%20Manifesto_Abridged.pdf";
+/** Prefix on `CampaignPromise.verificationNotes` for rows sourced from `prisma/data/ndc-2024-manifesto-promises.catalogue.json`. Keep in sync with `MBKRU_MANIFESTO_CATALOGUE_SEED_PREFIX` in `src/lib/promise-catalogue-display.ts`. */
+const NDC_MANIFESTO_CATALOGUE_SEED_TAG = "mbkru-seed:ndc-2024-catalogue-v1";
+const NDC_MANIFESTO_CATALOGUE_JSON = "ndc-2024-manifesto-promises.catalogue.json";
+const POLICY_SECTOR_SEED_VALUES = new Set([
+  "FISCAL",
+  "GOVERNANCE",
+  "HEALTH",
+  "EDUCATION",
+  "INFRASTRUCTURE",
+  "ENERGY",
+  "AGRICULTURE",
+  "SOCIAL",
+  "OTHER",
+]);
 /** Mirror commonly linked for 2024 NPP programme; verify against party canonical host if URL drifts. */
 const NPP_2024_MANIFESTO_URL = "https://npp-usa.org/wp-content/uploads/2024/08/2024_NPP_Manifesto_Full.pdf";
 
@@ -183,6 +198,70 @@ async function removeLegacyFictionalAccountabilityRows() {
     where: { slug: { in: LEGACY_FICTIONAL_CONSTITUENCY_SLUGS } },
   });
   await prisma.reportCardCycle.deleteMany({ where: { year: 2099 } });
+}
+
+/**
+ * Optional bulk load of editorial NDC 2024 manifesto units from `prisma/data/ndc-2024-manifesto-promises.catalogue.json`.
+ * Opt-in: `SEED_NDC_2024_MANIFESTO_CATALOGUE=1` (with accountability seed enabled). Rows use `verificationNotes` prefix
+ * `NDC_MANIFESTO_CATALOGUE_SEED_TAG` for idempotent cleanup. Linked to JDM so they appear on default MP promise browse.
+ */
+async function seedNdc2024ManifestoCatalogueFromJson({ ndcManifestoId, memberId }) {
+  const raw = process.env.SEED_NDC_2024_MANIFESTO_CATALOGUE;
+  const enabled = raw === "1" || raw?.toLowerCase() === "true";
+  if (!enabled) return 0;
+  if (!memberId) {
+    console.warn("NDC manifesto catalogue: starter MP john-dramani-mahama missing — skip.");
+    return 0;
+  }
+  const cataloguePath = join(__dirname, "data", NDC_MANIFESTO_CATALOGUE_JSON);
+  if (!existsSync(cataloguePath)) {
+    console.warn(`NDC manifesto catalogue: missing ${NDC_MANIFESTO_CATALOGUE_JSON} — skip.`);
+    return 0;
+  }
+  let cat;
+  try {
+    cat = JSON.parse(readFileSync(cataloguePath, "utf8"));
+  } catch (e) {
+    console.warn("NDC manifesto catalogue: JSON parse failed — skip.", e?.message ?? e);
+    return 0;
+  }
+  const rows = Array.isArray(cat.promises) ? cat.promises : [];
+  await prisma.campaignPromise.deleteMany({
+    where: { verificationNotes: { startsWith: NDC_MANIFESTO_CATALOGUE_SEED_TAG } },
+  });
+  const sourceUrl =
+    typeof cat.sourcePdfUrl === "string" && cat.sourcePdfUrl.trim() ? cat.sourcePdfUrl.trim() : NDC_2024_MANIFESTO_URL;
+  let inserted = 0;
+  for (const row of rows) {
+    const title = typeof row.title === "string" ? row.title.trim() : "";
+    if (!title) continue;
+    const sectorRaw = typeof row.policySector === "string" ? row.policySector.trim().toUpperCase() : "";
+    const policySector = POLICY_SECTOR_SEED_VALUES.has(sectorRaw) ? sectorRaw : "OTHER";
+    const cluster = typeof row.cluster === "string" ? row.cluster.trim() : "uncategorised";
+    const description =
+      typeof row.description === "string" && row.description.trim() ? row.description.trim() : null;
+    await prisma.campaignPromise.create({
+      data: {
+        memberId,
+        title,
+        description,
+        sourceLabel: "NDC 2024 — Resetting Ghana (abridged manifesto PDF)",
+        sourceUrl,
+        verificationNotes: `${NDC_MANIFESTO_CATALOGUE_SEED_TAG} cluster=${cluster}`,
+        status: "TRACKING",
+        manifestoDocumentId: ndcManifestoId,
+        partySlug: "ndc",
+        electionCycle: "2024",
+        isGovernmentProgramme: true,
+        policySector,
+      },
+    });
+    inserted += 1;
+  }
+  console.log(
+    `NDC 2024 manifesto catalogue: inserted ${inserted} CampaignPromise rows. Editors: verify exact wording and page refs in the PDF before production comms.`,
+  );
+  return inserted;
 }
 
 async function seedAccountabilityPublicSample() {
@@ -364,20 +443,6 @@ async function seedAccountabilityPublicSample() {
     },
     {
       memberSlug: STARTER_MP_SLUGS[1],
-      title: "24-hour economy — productivity and jobs (NDC 2024 programme theme)",
-      description:
-        "Theme summarised from public NDC 2024 materials. Editors: map this row to exact manifesto wording and page/section in the linked PDF.",
-      sourceLabel: "NDC 2024 manifesto (Resetting Ghana) — verify page reference",
-      sourceUrl: NDC_2024_MANIFESTO_URL,
-      manifestoDocumentId: ndcManifesto.id,
-      partySlug: "ndc",
-      electionCycle: "2024",
-      policySector: "FISCAL",
-      isGovernmentProgramme: true,
-      status: "TRACKING",
-    },
-    {
-      memberSlug: STARTER_MP_SLUGS[1],
       title: "Health access and NHIS sustainability (NDC 2024 theme)",
       description:
         "High-level theme for editorial follow-up against the abridged/full NDC 2024 manifesto.",
@@ -469,6 +534,11 @@ async function seedAccountabilityPublicSample() {
     });
   }
 
+  const catalogueInserted = await seedNdc2024ManifestoCatalogueFromJson({
+    ndcManifestoId: ndcManifesto.id,
+    memberId: bySlug["john-dramani-mahama"],
+  });
+
   const cycle = await prisma.reportCardCycle.upsert({
     where: { year: REPORT_CARD_PILOT_YEAR },
     create: {
@@ -512,8 +582,14 @@ async function seedAccountabilityPublicSample() {
   }
 
   console.log(
-    "Public accountability sample seeded: MPs=3 (verify on parliament.gh), NDC+NPP 2024 manifesto links, promises=9, report-card pilot year=" +
-      REPORT_CARD_PILOT_YEAR,
+    [
+      "Public accountability sample seeded: MPs=3 (verify on parliament.gh), NDC+NPP 2024 manifesto links,",
+      `starter promises=${promiseRows.length},`,
+      catalogueInserted ? `NDC catalogue promises=${catalogueInserted},` : "",
+      "report-card pilot year=" + REPORT_CARD_PILOT_YEAR,
+    ]
+      .filter(Boolean)
+      .join(" "),
   );
 }
 

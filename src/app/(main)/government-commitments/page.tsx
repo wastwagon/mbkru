@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
   accountabilityCatalogueNavMedium,
+  accountabilityHomePreviewCopy,
   accountabilityProse,
 } from "@/config/accountability-catalogue-destinations";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
@@ -134,6 +135,10 @@ export default async function GovernmentCommitmentsPage({ searchParams }: Props)
           </p>
 
           <PromiseCatalogueSurfacesCallout variant="government" />
+
+          <p className="mx-auto mt-5 max-w-3xl text-center text-xs leading-relaxed text-[var(--muted-foreground)] sm:text-sm">
+            {accountabilityHomePreviewCopy.promiseCardSurfaceExplainer}
+          </p>
 
           <PromisesBrowseLive
             mode="government"

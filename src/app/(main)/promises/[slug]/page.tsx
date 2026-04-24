@@ -63,6 +63,9 @@ export default async function PromisesByMemberPage({ params }: Props) {
                   sourceDate={p.sourceDate}
                   sourceUrl={p.sourceUrl}
                   verificationNotes={p.verificationNotes}
+                  manifestoPageRef={p.manifestoPageRef}
+                  electionCycle={p.electionCycle}
+                  partySlug={p.partySlug}
                   policySector={p.policySector}
                   manifestoDocument={
                     p.manifestoDocument

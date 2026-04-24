@@ -14,6 +14,7 @@ import {
   reportCardYearTag,
 } from "@/lib/accountability-tags";
 import { prisma } from "@/lib/db/prisma";
+import { getPromiseCatalogueApiFields } from "@/lib/promise-catalogue-display";
 import { getPromiseTrackerStats } from "@/lib/server/promise-tracker-stats";
 
 export {
@@ -183,7 +184,9 @@ async function loadPromisesApiRows(filters: PromisesApiFilters) {
     },
   });
 
-  return items.map((p) => ({
+  return items.map((p) => {
+    const cat = getPromiseCatalogueApiFields(p.verificationNotes);
+    return {
     id: p.id,
     title: p.title,
     description: p.description,
@@ -197,6 +200,9 @@ async function loadPromisesApiRows(filters: PromisesApiFilters) {
     partySlug: p.partySlug,
     manifestoDocumentId: p.manifestoDocumentId,
     manifestoPageRef: p.manifestoPageRef,
+    isManifestoCatalogueRow: cat.isManifestoCatalogueRow,
+    catalogueThemeSlug: cat.catalogueThemeSlug,
+    catalogueThemeLabel: cat.catalogueThemeLabel,
     isGovernmentProgramme: p.isGovernmentProgramme,
     policySector: p.policySector,
     manifesto: p.manifestoDocument
@@ -219,7 +225,8 @@ async function loadPromisesApiRows(filters: PromisesApiFilters) {
             : null,
         }
       : null,
-  }));
+  };
+  });
 }
 
 /** JSON-safe rows for GET /api/promises (serializable for cache). */
@@ -233,7 +240,7 @@ export async function getCachedPromisesApiRows(filters: PromisesApiFilters) {
 
   return unstable_cache(
     async () => loadPromisesApiRows(filters),
-    ["api-promises-v6", key],
+    ["api-promises-v8", key],
     {
       tags: memberSlug
         ? [PROMISES_INDEX_TAG, promisesMemberTag(memberSlug)]
@@ -285,7 +292,9 @@ async function loadPromisesCsvRows(filters: PromisesApiFilters) {
     },
   });
 
-  return items.map((p) => ({
+  return items.map((p) => {
+    const cat = getPromiseCatalogueApiFields(p.verificationNotes);
+    return {
         id: p.id,
         title: p.title,
         description: p.description,
@@ -299,6 +308,9 @@ async function loadPromisesCsvRows(filters: PromisesApiFilters) {
         partySlug: p.partySlug,
         manifestoDocumentId: p.manifestoDocumentId,
         manifestoPageRef: p.manifestoPageRef,
+        isManifestoCatalogueRow: cat.isManifestoCatalogueRow,
+        catalogueThemeSlug: cat.catalogueThemeSlug,
+        catalogueThemeLabel: cat.catalogueThemeLabel,
         isGovernmentProgramme: p.isGovernmentProgramme,
         policySector: p.policySector,
         manifestoTitle: p.manifestoDocument?.title ?? null,
@@ -312,7 +324,8 @@ async function loadPromisesCsvRows(filters: PromisesApiFilters) {
               constituencyName: p.member.constituency?.name ?? null,
             }
           : null,
-      }));
+      };
+  });
 }
 
 /** Full promise rows for CSV export (no row cap; same filters as JSON API). */
@@ -326,7 +339,7 @@ export async function getCachedPromisesExportCsvRows(filters: PromisesApiFilters
 
   return unstable_cache(
     async () => loadPromisesCsvRows(filters),
-    ["api-promises-csv-export-v6", key],
+    ["api-promises-csv-export-v8", key],
     {
       tags: memberSlug
         ? [PROMISES_INDEX_TAG, promisesMemberTag(memberSlug)]
