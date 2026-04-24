@@ -379,6 +379,14 @@ export function MBKRUVoiceChatbot() {
           </div>
 
           <form onSubmit={onSubmit} className="border-t border-[var(--border)] bg-white p-2.5 sm:p-3">
+            <p className="mb-2 text-[11px] leading-relaxed text-[var(--muted-foreground)]">
+              MBKRU Voice uses AI-assisted responses and accessibility telemetry for service quality. Do not share highly
+              sensitive personal data.{" "}
+              <Link href="/privacy" className={focusRingSmClass}>
+                Privacy policy
+              </Link>
+              .
+            </p>
             <label htmlFor="mbkru-voice-input" className="sr-only">
               Ask MBKRU Voice
             </label>

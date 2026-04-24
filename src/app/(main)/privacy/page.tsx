@@ -14,7 +14,7 @@ export default function PrivacyPage() {
     <div>
       <PageHeader
         title="Privacy Policy"
-        description="Last updated: March 2026"
+        description="Last updated: April 2026"
       />
 
       <section className="section-spacing section-full bg-[var(--section-light)]">
@@ -105,14 +105,32 @@ export default function PrivacyPage() {
             your browser.
           </p>
 
-          <h2>8. Third-Party Services</h2>
+          <h2>8. MBKRU Voice assistant, AI providers, and telemetry</h2>
+          <p>
+            MBKRU Voice can use AI-assisted responses. When configured, user chat prompts and recent message context may be
+            sent to our AI provider for response generation. We apply guardrails and escalation behavior for high-risk
+            prompts (for example emergency or legal-strategy requests), and we may return a safer guidance response instead
+            of model output.
+          </p>
+          <p>
+            We also collect limited operational telemetry for chatbot and accessibility features (for example launcher open,
+            send, reply source, speech-input success/error, and read-aloud actions). Telemetry is used for reliability,
+            abuse prevention, and service improvement, and does not include continuous background listening.
+          </p>
+          <p>
+            To reduce risk, event payloads are allowlisted, size-limited, and rate-limited. In production we may require a
+            telemetry token for ingestion. Analytics may be processed by tools such as Google Analytics and Plausible when
+            enabled by configuration.
+          </p>
+
+          <h2>9. Third-Party Services</h2>
           <p>
             We may use third-party services (e.g., analytics, email providers)
             that process data on our behalf. These providers are bound by
             appropriate data processing agreements.
           </p>
 
-          <h2>9. Member accounts (Phase 2+)</h2>
+          <h2>10. Member accounts (Phase 2+)</h2>
           <p>
             If you create an MBKRU <strong>member</strong> account (separate from newsletter sign-ups and
             from staff admin access), we process your email address and a password stored only as a
@@ -154,7 +172,7 @@ export default function PrivacyPage() {
             the details below.
           </p>
 
-          <h2>10. Contact</h2>
+          <h2>11. Contact</h2>
           <p>
             For privacy-related enquiries, contact us via the Contact page or
             email {content.privacyContact}.

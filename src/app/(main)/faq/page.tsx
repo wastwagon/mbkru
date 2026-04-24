@@ -47,6 +47,14 @@ export default function FAQPage() {
             <Link href="/contact" className={primaryLinkClass}>
               Get in touch
             </Link>
+            . For MBKRU Voice AI assistant and accessibility telemetry details, see{" "}
+            <Link href="/privacy" className={primaryLinkClass}>
+              Privacy Policy
+            </Link>{" "}
+            and{" "}
+            <Link href="/terms" className={primaryLinkClass}>
+              Terms of Use
+            </Link>
             .
           </p>
         </div>

@@ -87,6 +87,24 @@ export default async function AboutPage() {
 
       <AboutPlatformLinks />
 
+      <section className="section-spacing section-full bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] p-4 text-sm text-[var(--muted-foreground)]">
+            MBKRU Voice includes structured reporting and an AI-assisted customer service chat experience. It is not a
+            substitute for emergency services, regulators, or legal counsel. For how we process AI prompts and telemetry,
+            see{" "}
+            <Link href="/privacy" className={primaryLinkClass}>
+              Privacy Policy
+            </Link>{" "}
+            and{" "}
+            <Link href="/terms" className={primaryLinkClass}>
+              Terms of Use
+            </Link>
+            .
+          </div>
+        </div>
+      </section>
+
       {/* Section 1: Executive Summary — who we are (lead with overview) */}
       <section id="executive-summary" className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

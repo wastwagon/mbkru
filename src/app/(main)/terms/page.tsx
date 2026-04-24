@@ -14,7 +14,7 @@ export default function TermsPage() {
     <div>
       <PageHeader
         title="Terms of Use"
-        description="Last updated: March 2026"
+        description="Last updated: April 2026"
       />
 
       <section className="section-spacing section-full bg-[var(--section-light)]">
@@ -53,7 +53,26 @@ export default function TermsPage() {
             your submissions are accurate and do not violate any laws.
           </p>
 
-          <h2>5. Disclaimer</h2>
+          <h2>5. MBKRU Voice assistant and accessibility tools</h2>
+          <p>
+            MBKRU Voice may provide AI-assisted customer service responses and accessibility features such as speech-to-text
+            and text-to-speech. These features are provided to support service navigation and user experience; they are not
+            legal, medical, or emergency services.
+          </p>
+          <p>
+            You agree not to rely on MBKRU Voice for crisis, emergency, or case-specific legal strategy decisions. Where
+            risk-sensitive prompts are detected, we may restrict or redirect responses to safer escalation guidance.
+          </p>
+          <p>
+            To operate and improve these features, we may process limited operational telemetry (for example event counts,
+            reply source, and voice-flow errors) in line with our{" "}
+            <Link href="/privacy" className={primaryLinkClass}>
+              Privacy Policy
+            </Link>
+            .
+          </p>
+
+          <h2>6. Disclaimer</h2>
           <p>
             Our website and services are provided &quot;as is&quot;. We do not
             guarantee accuracy, completeness, or suitability of any content.
@@ -61,32 +80,32 @@ export default function TermsPage() {
             published on our platform.
           </p>
 
-          <h2>6. Limitation of Liability</h2>
+          <h2>7. Limitation of Liability</h2>
           <p>
             To the fullest extent permitted by law, My Brother&apos;s Keeper Restoration United (MBKRU) shall not be
             liable for any indirect, incidental, special, or consequential
             damages arising from your use of our services.
           </p>
 
-          <h2>7. Links to Third-Party Sites</h2>
+          <h2>8. Links to Third-Party Sites</h2>
           <p>
             Our website may contain links to external sites. We are not
             responsible for the content or practices of third-party websites.
           </p>
 
-          <h2>8. Changes</h2>
+          <h2>9. Changes</h2>
           <p>
             We may update these Terms from time to time. Continued use of our
             services after changes constitutes acceptance of the updated Terms.
           </p>
 
-          <h2>9. Governing Law</h2>
+          <h2>10. Governing Law</h2>
           <p>
             These Terms are governed by the laws of Ghana. Any disputes shall be
             subject to the exclusive jurisdiction of the courts of Ghana.
           </p>
 
-          <h2>10. Contact</h2>
+          <h2>11. Contact</h2>
           <p>
             For questions about these Terms, please{" "}
             <Link href="/contact" className={primaryLinkClass}>

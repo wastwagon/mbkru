@@ -69,6 +69,18 @@ export default async function CitizensVoicePage() {
       {/* Hero section — full-width with hero image */}
       <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-6 rounded-xl border border-[var(--border)] bg-white p-4 text-sm text-[var(--muted-foreground)]">
+            MBKRU Voice includes reporting tools and an AI-assisted customer service chat experience. Do not use chat for
+            legal strategy or emergency response. For urgent safety matters, contact local emergency services first. See{" "}
+            <Link href="/privacy" className={primaryLinkClass}>
+              Privacy Policy
+            </Link>{" "}
+            and{" "}
+            <Link href="/terms" className={primaryLinkClass}>
+              Terms of Use
+            </Link>
+            .
+          </div>
           <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-12">
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-[var(--shadow-card)] ring-1 ring-black/5">
               <Image
