@@ -10,8 +10,8 @@ export default async function AccountLayout({ children }: { children: React.Reac
   if (!session) redirect("/login?next=/account");
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-10">
-      <div className="flex flex-col gap-8 lg:flex-row lg:gap-10">
+    <div className="mx-auto max-w-6xl px-4 py-9 sm:px-6 sm:py-10 lg:py-12">
+      <div className="flex flex-col gap-9 lg:flex-row lg:gap-11">
         <AccountSidebar />
         <div className="min-w-0 flex-1">{children}</div>
       </div>

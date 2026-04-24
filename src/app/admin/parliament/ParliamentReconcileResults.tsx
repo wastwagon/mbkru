@@ -1,5 +1,6 @@
 "use client";
 
+import { focusRingSmClass } from "@/lib/primary-link-styles";
 import type {
   ParliamentMemberReconcileDbRow,
   ParliamentReconcileCreate,
@@ -137,7 +138,9 @@ export function ParliamentReconcileResults({
 
       {unchangedSlugs.length > 0 ? (
         <details className="rounded-xl border border-[var(--border)] bg-[var(--section-light)]/30 px-4 py-3">
-          <summary className="cursor-pointer text-xs font-medium text-[var(--primary)]">
+          <summary
+            className={`cursor-pointer rounded-sm text-xs font-medium text-[var(--primary)] ${focusRingSmClass}`}
+          >
             Unchanged in CSV ({unchangedSlugs.length} slugs)
           </summary>
           <p className="mt-2 max-h-40 overflow-y-auto font-mono text-[11px] leading-relaxed text-[var(--muted-foreground)]">

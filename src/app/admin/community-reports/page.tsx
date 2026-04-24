@@ -3,6 +3,7 @@ import Link from "next/link";
 import { updateCommunityPostReportStatusFromQueueAction } from "@/app/admin/communities/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminCommunityReportsPage() {
   await requireAdminSession();
@@ -43,7 +44,7 @@ export default async function AdminCommunityReportsPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={primaryLinkClass}>
           ← Admin
         </Link>
       </p>
@@ -96,13 +97,10 @@ export default async function AdminCommunityReportsPage() {
                   {r.post.body}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-3 text-xs">
-                  <Link href={`/communities/${r.post.community.slug}`} className="text-[var(--primary)] hover:underline">
+                  <Link href={`/communities/${r.post.community.slug}`} className={primaryLinkClass}>
                     Public page
                   </Link>
-                  <Link
-                    href={`/admin/communities/${r.post.community.id}`}
-                    className="text-[var(--primary)] hover:underline"
-                  >
+                  <Link href={`/admin/communities/${r.post.community.id}`} className={primaryLinkClass}>
                     Community moderation
                   </Link>
                 </div>

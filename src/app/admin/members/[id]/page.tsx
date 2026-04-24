@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { updateMemberIdentityVerificationAction } from "@/app/admin/members/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -35,7 +36,7 @@ export default async function AdminMemberDetailPage({ params }: Props) {
   return (
     <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
       <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin/members" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin/members" className={primaryLinkClass}>
           ← Members
         </Link>
       </p>

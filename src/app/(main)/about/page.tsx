@@ -12,6 +12,7 @@ import {
   accountabilityCatalogueNavShort,
 } from "@/config/accountability-catalogue-destinations";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { images, mbkruStrategicContent, heroContent } from "@/lib/site-content";
 
 export const metadata: Metadata = {
@@ -276,17 +277,17 @@ export default async function AboutPage() {
               </p>
               <ul className="mt-5 space-y-3 text-sm font-medium text-[var(--foreground)]">
                 <li>
-                  <Link href="#key-operational-pillars" className="text-[var(--primary)] hover:underline">
+                  <Link href="#key-operational-pillars" className={primaryLinkClass}>
                     Operational pillars &amp; regions (map)
                   </Link>
                 </li>
                 <li>
-                  <Link href="#membership-governance" className="text-[var(--primary)] hover:underline">
+                  <Link href="#membership-governance" className={primaryLinkClass}>
                     Membership, funding &amp; registration
                   </Link>
                 </li>
                 <li>
-                  <Link href="/citizens-voice" className="text-[var(--primary)] hover:underline">
+                  <Link href="/citizens-voice" className={primaryLinkClass}>
                     MBKRU Voice
                   </Link>
                 </li>
@@ -294,19 +295,19 @@ export default async function AboutPage() {
                   <li>
                     <Link
                       href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments}
-                      className="text-[var(--primary)] hover:underline"
+                      className={primaryLinkClass}
                     >
                       {accountabilityCatalogueNavMedium.government}
                     </Link>
                   </li>
                 ) : null}
                 <li>
-                  <Link href="/parliament-tracker" className="text-[var(--primary)] hover:underline">
+                  <Link href="/parliament-tracker" className={primaryLinkClass}>
                     Parliament tracker
                   </Link>
                 </li>
                 <li>
-                  <Link href="/methodology" className="text-[var(--primary)] hover:underline">
+                  <Link href="/methodology" className={primaryLinkClass}>
                     Methodology
                   </Link>
                 </li>

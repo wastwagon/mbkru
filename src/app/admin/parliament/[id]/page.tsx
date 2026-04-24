@@ -12,6 +12,7 @@ import {
 } from "@/config/accountability-catalogue-destinations";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { POLICY_SECTOR_LABELS, POLICY_SECTOR_VALUES } from "@/lib/promise-policy-sectors";
 
 import type { PromiseStatus } from "@prisma/client";
@@ -52,7 +53,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
       <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin/parliament" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin/parliament" className={primaryLinkClass}>
           {accountabilityProse.adminParliamentListBackLink}
         </Link>
       </p>

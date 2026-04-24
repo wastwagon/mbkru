@@ -4,6 +4,7 @@ import Link from "next/link";
 import { MediaUploadForm } from "@/app/admin/media/MediaUploadForm";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminMediaPage() {
   await requireAdminSession();
@@ -40,7 +41,7 @@ export default async function AdminMediaPage() {
         )}
       </ul>
       <p className="mt-10">
-        <Link href="/admin" className="text-sm text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={`${primaryLinkClass} text-sm`}>
           ← Dashboard
         </Link>
       </p>

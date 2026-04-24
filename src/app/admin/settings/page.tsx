@@ -3,6 +3,7 @@ import Link from "next/link";
 import { DatabaseMaintenancePanel } from "@/app/admin/settings/DatabaseMaintenancePanel";
 import { PetitionPendingCleanupPanel } from "@/app/admin/settings/PetitionPendingCleanupPanel";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminSettingsPage() {
   await requireAdminSession();
@@ -16,10 +17,7 @@ export default async function AdminSettingsPage() {
             Database maintenance when deploy-time migrate or seed did not succeed.
           </p>
         </div>
-        <Link
-          href="/admin"
-          className="text-sm font-medium text-[var(--primary)] hover:underline"
-        >
+        <Link href="/admin" className={`${primaryLinkClass} text-sm`}>
           ← Admin home
         </Link>
       </div>

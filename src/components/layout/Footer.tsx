@@ -5,7 +5,15 @@ import { Logo } from "@/components/ui/Logo";
 import { FooterMemberAuth } from "@/components/layout/FooterMemberAuth";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { getFooterPlatformFlowLinks } from "@/config/public-platform-nav";
+import {
+  focusRingOnDark50Class,
+  focusRingOnDark60Class,
+  focusRingOnDark70IconClass,
+  focusRingOnDarkSolidClass,
+} from "@/lib/primary-link-styles";
 import { content, footerGalleryAlts, footerGalleryImages } from "@/lib/site-content";
+
+const footerNavLinkClass = `inline-flex min-h-10 max-w-full items-center rounded-md px-1 py-1.5 -mx-1 text-sm text-white/80 transition-[color,transform] duration-200 ease-out hover:text-white hover:translate-x-0.5 motion-reduce:hover:translate-x-0 ${focusRingOnDark60Class}`;
 
 const footerLinks = {
   organization: [
@@ -20,6 +28,7 @@ const footerLinks = {
     { href: "/partners", label: "Partners & Supporters" },
   ],
   legal: [
+    { href: "/accessibility", label: "Accessibility" },
     { href: "/privacy", label: "Privacy Policy" },
     { href: "/terms", label: "Terms of Use" },
   ],
@@ -47,10 +56,10 @@ export async function Footer() {
   const platformLinksCol2 = platformLinks.slice(platformSplitAt);
 
   const socialLinks = (
-    <div className="flex gap-3">
+    <div className="flex flex-wrap gap-2 sm:gap-3">
       <a
         href={content.social.facebook}
-        className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white hover:text-[var(--accent-warm)]"
+        className={`flex h-11 w-11 touch-manipulation items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white hover:text-[var(--accent-warm)] sm:h-10 sm:w-10 ${focusRingOnDark70IconClass}`}
         aria-label="Facebook"
       >
         <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
@@ -59,7 +68,7 @@ export async function Footer() {
       </a>
       <a
         href={content.social.linkedin}
-        className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white hover:text-[var(--accent-warm)]"
+        className={`flex h-11 w-11 touch-manipulation items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white hover:text-[var(--accent-warm)] sm:h-10 sm:w-10 ${focusRingOnDark70IconClass}`}
         aria-label="LinkedIn"
       >
         <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
@@ -68,7 +77,7 @@ export async function Footer() {
       </a>
       <a
         href={content.social.twitter}
-        className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white hover:text-[var(--accent-warm)]"
+        className={`flex h-11 w-11 touch-manipulation items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white hover:text-[var(--accent-warm)] sm:h-10 sm:w-10 ${focusRingOnDark70IconClass}`}
         aria-label="Twitter"
       >
         <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
@@ -82,19 +91,19 @@ export async function Footer() {
     <footer className="relative bg-[var(--footer-bg)] text-white">
       <div className="mx-auto max-w-7xl px-6 sm:px-8">
         {/* Upper CTA section */}
-        <div className="flex flex-col items-start gap-6 border-b border-white/20 py-10 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+        <div className="flex flex-col items-stretch gap-8 border-b border-white/20 py-11 sm:flex-row sm:items-center sm:justify-between sm:gap-10 sm:py-12">
           <div className="max-w-2xl">
-            <h2 className="font-display text-base font-bold text-white sm:text-lg lg:text-xl">
+            <h2 className="font-display text-base font-bold leading-snug text-white sm:text-lg lg:text-xl">
               Stay close to accountability news and citizen-voice tools
             </h2>
-            <p className="mt-4 text-sm leading-relaxed text-white/85 sm:text-base">
+            <p className="mt-4 text-sm leading-relaxed text-white/85 sm:mt-5 sm:text-base">
               MBKRU is deploying non-partisan tools for Ghanaians to follow public commitments, share concerns safely, and
               access clear information — Voice reporting, accountability datasets, and methodology scale with your
               deployment phase.
             </p>
           </div>
-          <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
-            <Button href="/citizens-voice">
+          <div className="flex w-full shrink-0 flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+            <Button href="/citizens-voice" className="w-full justify-center sm:w-auto">
               Join Voice
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -102,7 +111,7 @@ export async function Footer() {
             </Button>
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-white/50 bg-white px-6 py-3 text-sm font-semibold text-[var(--footer-bg)] transition-all duration-[400ms] hover:border-white hover:bg-white/90"
+              className={`inline-flex w-full touch-manipulation items-center justify-center gap-2 rounded-xl border-2 border-white/50 bg-white px-6 py-3.5 text-sm font-semibold text-[var(--footer-bg)] transition-all duration-[400ms] hover:border-white hover:bg-white/90 sm:w-auto sm:py-3 active:scale-[0.99] motion-reduce:active:scale-100 ${focusRingOnDarkSolidClass}`}
             >
               Get in Touch
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,10 +130,7 @@ export async function Footer() {
                 <FooterMemberAuth />
                 {platformLinksCol1.map((link) => (
                   <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-white/80 transition-colors hover:pl-2 hover:text-white"
-                    >
+                    <Link href={link.href} className={footerNavLinkClass}>
                       {link.label}
                     </Link>
                   </li>
@@ -135,10 +141,7 @@ export async function Footer() {
                 <ul className="space-y-3">
                   {platformLinksCol2.map((link) => (
                     <li key={link.href}>
-                      <Link
-                        href={link.href}
-                        className="text-sm text-white/80 transition-colors hover:pl-2 hover:text-white"
-                      >
+                      <Link href={link.href} className={footerNavLinkClass}>
                         {link.label}
                       </Link>
                     </li>
@@ -154,10 +157,7 @@ export async function Footer() {
             <ul className="mt-5 space-y-3">
               {organizationLinks.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-white/80 transition-colors hover:pl-2 hover:text-white"
-                  >
+                  <Link href={link.href} className={footerNavLinkClass}>
                     {link.label}
                   </Link>
                 </li>
@@ -169,7 +169,10 @@ export async function Footer() {
           <div>
             <h3 className="text-base font-semibold text-white">Contact Us</h3>
             <div className="mt-5 space-y-4">
-              <a href="mailto:info@mbkruadvocates.org" className="flex items-start gap-3 text-sm text-white/80 transition-colors hover:text-white">
+              <a
+                href="mailto:info@mbkruadvocates.org"
+                className={`flex min-h-10 items-start gap-3 rounded-md px-1 py-1.5 -mx-1 text-sm text-white/80 transition-colors hover:text-white ${focusRingOnDark60Class}`}
+              >
                 <svg className="mt-0.5 h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
@@ -193,7 +196,7 @@ export async function Footer() {
                 <a
                   key={i}
                   href="/situational-alerts"
-                  className="group relative aspect-square overflow-hidden rounded-md ring-1 ring-white/10 transition-all hover:ring-white/30"
+                  className={`group relative aspect-square overflow-hidden rounded-md ring-1 ring-white/10 transition-[box-shadow,transform] duration-200 hover:ring-white/30 motion-reduce:transition-none active:scale-[0.98] motion-reduce:active:scale-100 ${focusRingOnDark60Class}`}
                 >
                   <Image
                     src={src}
@@ -219,7 +222,7 @@ export async function Footer() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="text-sm text-white/60 transition-colors hover:text-white"
+                    className={`rounded-md px-1 py-1 text-sm text-white/60 transition-colors hover:text-white ${focusRingOnDark50Class}`}
                   >
                     {link.label}
                   </Link>

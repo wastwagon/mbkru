@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { isTownHallDirectoryPageEnabled } from "@/lib/reports/accountability-pages";
 import { programmeEventKindLabel } from "@/lib/programme-event-labels";
 import { getProgrammeTownHallEvents } from "@/lib/server/town-hall-events";
@@ -46,16 +47,16 @@ export default async function TownHallsPage() {
         <div className="mx-auto max-w-3xl space-y-8 px-4 sm:px-6 lg:px-8">
           <p className="text-sm leading-relaxed text-[var(--muted-foreground)]">
             We maintain a <strong className="text-[var(--foreground)]">programme directory</strong> tied to our{" "}
-            <Link href="/" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/" className={primaryNavLinkClass}>
               public roadmap
             </Link>
             . Rows marked <em>to be confirmed</em> are placeholders until venues and registration open. For data provenance on MPs
             and constituencies, see{" "}
-            <Link href="/data-sources" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/data-sources" className={primaryNavLinkClass}>
               Data sources
             </Link>
             . Constituency-level debate placeholders live on{" "}
-            <Link href="/debates" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/debates" className={primaryNavLinkClass}>
               Constituency debates
             </Link>
             .
@@ -104,7 +105,7 @@ export default async function TownHallsPage() {
                   ) : null}
                   {ev.infoUrl ? (
                     <p className="mt-2 text-sm">
-                      <a href={ev.infoUrl} className="font-medium text-[var(--primary)] hover:underline" rel="noopener noreferrer">
+                      <a href={ev.infoUrl} className={primaryNavLinkClass} rel="noopener noreferrer">
                         More information
                       </a>
                     </p>
@@ -121,11 +122,11 @@ export default async function TownHallsPage() {
           )}
 
           <p className="text-sm text-[var(--muted-foreground)]">
-            <Link href="/news" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/news" className={primaryNavLinkClass}>
               News &amp; Updates
             </Link>{" "}
             for dated announcements, and{" "}
-            <Link href="/contact" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/contact" className={primaryNavLinkClass}>
               Contact
             </Link>{" "}
             to co-host a regional session.

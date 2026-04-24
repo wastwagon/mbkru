@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminContactSubmissionsPage() {
   await requireAdminSession();
@@ -21,10 +22,10 @@ export default async function AdminContactSubmissionsPage() {
       </p>
 
       <p className="mt-4 flex flex-wrap gap-4 text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin/leads" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin/leads" className={primaryLinkClass}>
           Lead capture (newsletter / waitlists)
         </Link>
-        <Link href="/admin/diaspora-feedback" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin/diaspora-feedback" className={primaryLinkClass}>
           Diaspora experience &amp; feedback
         </Link>
       </p>
@@ -61,7 +62,7 @@ export default async function AdminContactSubmissionsPage() {
                   <td className="px-4 py-3 text-[var(--muted-foreground)]">{row.enquiryType ?? "—"}</td>
                   <td className="max-w-md px-4 py-3 text-[var(--muted-foreground)]">
                     <details className="cursor-pointer">
-                      <summary className="text-xs font-medium text-[var(--primary)]">View full message</summary>
+                      <summary className={`${primaryLinkClass} cursor-pointer text-xs`}>View full message</summary>
                       <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--foreground)]">{row.message}</p>
                     </details>
                   </td>
@@ -73,7 +74,7 @@ export default async function AdminContactSubmissionsPage() {
       </div>
 
       <p className="mt-8 text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={primaryLinkClass}>
           ← Dashboard
         </Link>
       </p>

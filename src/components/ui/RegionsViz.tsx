@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { GhanaRegionsSvgMap } from "@/components/ui/GhanaRegionsSvgMap";
 import { RegionModal, type RegionData } from "@/components/ui/RegionModal";
+import { focusRingSmClass } from "@/lib/primary-link-styles";
 import { ghanaRegionsData } from "@/lib/site-content";
 
 /**
@@ -34,7 +35,7 @@ export function RegionsViz() {
               key={region.name}
               type="button"
               onClick={() => setSelectedRegion(region)}
-              className="group relative flex cursor-pointer items-center justify-between gap-3 overflow-hidden rounded-xl border border-[var(--border)] bg-gradient-to-br from-[var(--section-light)] to-white px-4 py-3 text-left text-sm font-medium text-[var(--foreground)] shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--primary)]/30 hover:shadow-md hover:shadow-[var(--primary)]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/20 sm:text-base"
+              className={`group relative flex cursor-pointer items-center justify-between gap-3 overflow-hidden rounded-xl border border-[var(--border)] bg-gradient-to-br from-[var(--section-light)] to-white px-4 py-3 text-left text-sm font-medium text-[var(--foreground)] shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--primary)]/30 hover:shadow-md hover:shadow-[var(--primary)]/10 sm:text-base ${focusRingSmClass}`}
             >
               <span className="relative z-10">{region.name}</span>
               <span className="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[var(--primary)]/10 text-[var(--primary)] transition-all duration-200 group-hover:bg-[var(--primary)] group-hover:text-white">

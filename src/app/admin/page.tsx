@@ -5,6 +5,7 @@ import { accountabilityProse } from "@/config/accountability-catalogue-destinati
 import { logoutAction } from "@/app/admin/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminHomePage() {
   await requireAdminSession();
@@ -94,7 +95,7 @@ export default async function AdminHomePage() {
           <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Public site</p>
           <p className="mt-2 text-sm leading-snug text-[var(--muted-foreground)]">
             Preview live pages from the{" "}
-            <Link href="/" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/" className={primaryLinkClass}>
               homepage
             </Link>
             .
@@ -335,7 +336,7 @@ export default async function AdminHomePage() {
         </li>
       </ul>
       <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
-        <Link href="/" className="text-[var(--primary)] hover:underline">
+        <Link href="/" className={primaryLinkClass}>
           ← Back to website
         </Link>
       </p>

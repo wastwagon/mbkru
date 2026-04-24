@@ -2,10 +2,13 @@ import Link from "next/link";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 import {
   getCitizenReportAnalytics,
   parseCitizenReportAnalyticsMonthsParam,
 } from "@/lib/server/citizen-report-analytics";
+
+const citizenReportMonthWindowLinkActiveClass = `font-semibold text-[var(--foreground)] underline decoration-2 decoration-[var(--primary)] ${focusRingSmClass}`;
 
 type Props = { searchParams?: Promise<{ months?: string | string[] }> };
 
@@ -23,7 +26,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
     return (
       <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
         <p className="text-sm text-[var(--muted-foreground)]">
-          <Link href="/admin" className="text-[var(--primary)] hover:underline">
+          <Link href="/admin" className={primaryLinkClass}>
             ← Admin
           </Link>
         </p>
@@ -51,7 +54,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={primaryLinkClass}>
           ← Admin
         </Link>
       </p>
@@ -70,9 +73,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
             <Link
               href={`/admin/analytics/citizen-reports?months=${m}`}
               className={
-                data.windowMonths === m
-                  ? "font-semibold text-[var(--foreground)] underline decoration-2 decoration-[var(--primary)]"
-                  : "text-[var(--primary)] hover:underline"
+                data.windowMonths === m ? citizenReportMonthWindowLinkActiveClass : primaryLinkClass
               }
             >
               {m} months
@@ -85,7 +86,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
         <span>
           <Link
             href={`/api/admin/analytics/citizen-reports?months=${data.windowMonths}`}
-            className="text-[var(--primary)] hover:underline"
+            className={primaryLinkClass}
           >
             JSON API
           </Link>{" "}
@@ -94,14 +95,14 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
         <span>
           <Link
             href={`/api/admin/analytics/citizen-reports/export?months=${data.windowMonths}`}
-            className="text-[var(--primary)] hover:underline"
+            className={primaryLinkClass}
           >
             Download CSV
           </Link>{" "}
           <span className="text-[var(--muted-foreground)]">(UTF-8, Excel-friendly)</span>
         </span>
         <span>
-          <Link href="/admin/reports" className="text-[var(--primary)] hover:underline">
+          <Link href="/admin/reports" className={primaryLinkClass}>
             ← Report queue
           </Link>
         </span>
@@ -145,7 +146,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Public causes (counts only)</h2>
         <p className="mt-1 text-xs text-[var(--muted-foreground)]">
           Reports with a staff-approved public thread slug — not a substitute for moderation metrics on{" "}
-          <Link href="/admin/public-causes" className="text-[var(--primary)] hover:underline">
+          <Link href="/admin/public-causes" className={primaryLinkClass}>
             Public causes
           </Link>
           .

@@ -7,6 +7,7 @@ import {
 } from "@/app/admin/report-card/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminReportCardPage() {
   await requireAdminSession();
@@ -101,10 +102,7 @@ export default async function AdminReportCardPage() {
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <Link
-                  href={`/admin/report-card/${c.id}`}
-                  className="text-sm font-semibold text-[var(--primary)] hover:underline"
-                >
+                <Link href={`/admin/report-card/${c.id}`} className={`${primaryNavLinkClass} text-sm font-semibold`}>
                   Edit entries
                 </Link>
                 {c.publishedAt ? (
@@ -135,7 +133,7 @@ export default async function AdminReportCardPage() {
       </ul>
 
       <p className="mt-8">
-        <Link href="/admin" className="text-sm text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={`${primaryLinkClass} text-sm`}>
           ← Dashboard
         </Link>
       </p>

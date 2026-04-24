@@ -4,8 +4,9 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { type ButtonHTMLAttributes } from "react";
 
-const baseStyles =
-  "inline-flex touch-manipulation items-center justify-center gap-2 font-semibold transition-all duration-[400ms] ease-in-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+import { focusRingSmClass } from "@/lib/primary-link-styles";
+
+const baseStyles = `inline-flex touch-manipulation items-center justify-center gap-2 font-semibold transition-all duration-[400ms] ease-in-out disabled:opacity-50 disabled:pointer-events-none ${focusRingSmClass}`;
 
 const variants = {
   primary:
@@ -48,6 +49,9 @@ export function Button({
 }: ButtonProps) {
   const sizeClass = variant === "pill" ? pillSizeStyles[size] : sizeStyles[size];
   const classes = `${baseStyles} ${variants[variant]} ${sizeClass} ${className}`;
+  const submitWrapClass = /\bw-full\b/.test(className)
+    ? "flex w-full min-w-0 sm:inline-flex sm:w-auto"
+    : "inline-flex";
 
   if (asChild && href) {
     return (
@@ -66,7 +70,7 @@ export function Button({
   }
 
   return (
-    <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className="inline-flex">
+    <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className={submitWrapClass}>
       <button className={classes} {...(props as ButtonHTMLAttributes<HTMLButtonElement>)}>
         {children}
       </button>

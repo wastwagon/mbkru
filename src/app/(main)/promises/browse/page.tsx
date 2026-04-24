@@ -19,6 +19,7 @@ import {
   parsePromiseListSectorFilter,
   parsePromiseListStatusFilter,
 } from "@/lib/promise-list-filters";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
 import {
   getCachedPromiseTrackerStats,
@@ -104,19 +105,29 @@ export default async function PromisesBrowsePage({ searchParams }: Props) {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="text-sm text-[var(--muted-foreground)]">
-            <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className="text-[var(--primary)] hover:underline">
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm text-[var(--muted-foreground)]">
+            <Link
+              href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp}
+              className={primaryNavLinkClass}
+            >
               ← By MP
             </Link>
-            {" · "}
+            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+              ·
+            </span>
             <Link
               href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments}
-              className="text-[var(--primary)] hover:underline"
+              className={primaryNavLinkClass}
             >
               Government commitments
             </Link>
-            {" · "}
-            <Link href="/parliament-tracker" className="text-[var(--primary)] hover:underline">
+            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+              ·
+            </span>
+            <Link
+              href="/parliament-tracker"
+              className={primaryNavLinkClass}
+            >
               Accountability hub
             </Link>
           </p>

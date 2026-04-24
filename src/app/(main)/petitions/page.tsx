@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
+import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { isCivicPetitionsAndPublicCausesEnabled } from "@/lib/reports/accountability-pages";
 
 export const dynamic = "force-dynamic";
@@ -57,12 +58,14 @@ export default async function PetitionsIndexPage({ searchParams }: IndexProps) {
               {verifyMsg}
             </p>
           ) : null}
-          <p className="flex flex-wrap gap-3 text-sm">
-            <Link href="/petitions/new" className="font-medium text-[var(--primary)] hover:underline">
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm">
+            <Link href="/petitions/new" className={primaryNavLinkClass}>
               Start a petition
             </Link>
-            <span className="text-[var(--muted-foreground)]">·</span>
-            <Link href="/citizens-voice/causes" className="font-medium text-[var(--primary)] hover:underline">
+            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+              ·
+            </span>
+            <Link href="/citizens-voice/causes" className={primaryNavLinkClass}>
               Public causes (Voice threads)
             </Link>
           </p>
@@ -77,7 +80,7 @@ export default async function PetitionsIndexPage({ searchParams }: IndexProps) {
                 <li key={p.id}>
                   <Link
                     href={`/petitions/${encodeURIComponent(p.slug)}`}
-                    className="block rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition-colors hover:border-[var(--primary)]/30"
+                    className={`block rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition-colors hover:border-[var(--primary)]/30 ${focusRingSmClass}`}
                   >
                     <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">{p.title}</h2>
                     {p.summary ? (

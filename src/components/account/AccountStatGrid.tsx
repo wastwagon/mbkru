@@ -27,7 +27,7 @@ function StatCard({
         : "from-[var(--muted-foreground)]/40 to-[var(--muted-foreground)]/20";
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-gradient-to-b from-white to-[var(--section-light)]/40 p-5 shadow-[var(--shadow-card)] transition-shadow duration-300 hover:shadow-[var(--shadow-card-hover)]">
+    <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-gradient-to-b from-white to-[var(--section-light)]/40 p-5 shadow-[var(--shadow-card)] transition-shadow duration-300 hover:shadow-[var(--shadow-card-hover)] motion-reduce:transition-none motion-reduce:hover:shadow-[var(--shadow-card)]">
       <div
         className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${stripeClass}`}
         aria-hidden

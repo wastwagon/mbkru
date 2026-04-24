@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { getPetitionPendingAnalytics } from "@/lib/server/petition-pending-analytics";
 
 export default async function AdminPetitionPendingAnalyticsPage() {
@@ -11,7 +12,7 @@ export default async function AdminPetitionPendingAnalyticsPage() {
     return (
       <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
         <p className="text-sm text-[var(--muted-foreground)]">
-          <Link href="/admin" className="text-[var(--primary)] hover:underline">
+          <Link href="/admin" className={primaryLinkClass}>
             ← Admin
           </Link>
         </p>
@@ -28,7 +29,7 @@ export default async function AdminPetitionPendingAnalyticsPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={primaryLinkClass}>
           ← Admin
         </Link>
       </p>
@@ -42,12 +43,12 @@ export default async function AdminPetitionPendingAnalyticsPage() {
       <p className="mt-1 font-mono text-xs text-[var(--muted-foreground)]">Generated {data.generatedAt}</p>
 
       <p className="mt-2 text-sm">
-        <Link href="/api/admin/analytics/petition-pending" className="text-[var(--primary)] hover:underline">
+        <Link href="/api/admin/analytics/petition-pending" className={primaryLinkClass}>
           JSON API
         </Link>{" "}
         <span className="text-[var(--muted-foreground)]">(same session cookie)</span>
         {" · "}
-        <Link href="/admin/settings" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin/settings" className={primaryLinkClass}>
           Run expired-row cleanup
         </Link>
       </p>
@@ -143,10 +144,7 @@ export default async function AdminPetitionPendingAnalyticsPage() {
                 data.byPetition.map((row) => (
                   <tr key={row.petitionId} className="border-b border-[var(--border)] last:border-0">
                     <td className="px-4 py-3">
-                      <Link
-                        href={`/petitions/${row.slug}`}
-                        className="font-medium text-[var(--primary)] hover:underline"
-                      >
+                      <Link href={`/petitions/${row.slug}`} className={primaryLinkClass}>
                         {row.title}
                       </Link>
                       <p className="mt-0.5 font-mono text-xs text-[var(--muted-foreground)]">{row.slug}</p>

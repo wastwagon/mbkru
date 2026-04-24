@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
+import { focusRingSmClass } from "@/lib/primary-link-styles";
 
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
@@ -21,9 +22,9 @@ const contactSchema = z.object({
 type ContactFormData = z.infer<typeof contactSchema>;
 
 const inputBase =
-  "mt-1 block w-full rounded-xl border bg-white px-4 py-3.5 text-[var(--foreground)] transition-all duration-200 placeholder:text-[var(--muted-foreground)]/70 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/30 focus:border-[var(--primary)] disabled:opacity-60 disabled:cursor-not-allowed";
+  `mt-1 block w-full touch-manipulation rounded-xl border bg-white px-4 py-3.5 text-[var(--foreground)] transition-all duration-200 placeholder:text-[var(--muted-foreground)]/70 focus-visible:border-[var(--primary)]/35 ${focusRingSmClass} disabled:opacity-60 disabled:cursor-not-allowed`;
 
-const inputError = "border-red-400 focus:ring-red-400/30 focus:border-red-400";
+const inputError = "border-red-400 focus-visible:border-red-400 focus-visible:outline-red-400/80";
 const inputNormal = "border-[var(--border)] hover:border-[var(--primary)]/30";
 
 export function ContactForm() {
@@ -233,7 +234,7 @@ export function ContactForm() {
           type="submit"
           disabled={isSubmitting || (isTurnstileWidgetEnabled && !turnstileToken)}
           size="lg"
-          className="w-full sm:w-auto min-w-[180px]"
+          className="w-full min-w-0 justify-center sm:w-auto sm:min-w-[180px]"
         >
           {isSubmitting ? (
             <>

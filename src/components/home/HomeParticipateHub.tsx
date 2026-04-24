@@ -6,7 +6,10 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { getAccountabilityParticipateHubTiles } from "@/config/accountability-catalogue-destinations";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { homeAtAGlanceHasLiveContent, type HomeAtAGlanceData } from "@/lib/home-at-a-glance-types";
+import { sectionRevealTransition } from "@/lib/motion-reveal";
+import { primaryLinkClass, primaryNavLinkClass, resourceTitleLinkClass } from "@/lib/primary-link-styles";
 
 function townHallStatusLabel(status: string): string {
   switch (status) {
@@ -237,23 +240,26 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
     },
   ].filter(Boolean) as { href: string; title: string; body: string }[]);
 
+  const reducedMotion = usePrefersReducedMotion();
+
   return (
     <section
       id="participate"
-      className="section-full border-b border-[var(--border)] bg-gradient-to-b from-[var(--section-light)] to-white py-10 sm:py-12"
+      className="section-full border-b border-[var(--border)] bg-gradient-to-b from-[var(--section-light)] to-white py-12 sm:py-16 lg:py-20"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={reducedMotion ? false : { opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-40px 0px" }}
+          transition={sectionRevealTransition(reducedMotion)}
           className="mx-auto max-w-3xl text-center"
         >
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--primary)]">Participate &amp; explore</p>
-          <h2 className="mt-2 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
+          <h2 className="mt-3 font-display text-2xl font-bold tracking-tight text-[var(--foreground)] sm:mt-4 sm:text-3xl">
             {phase1 ? "Explore MBKRU in Phase 1" : "How to use MBKRU on this deployment"}
           </h2>
-          <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+          <p className="mt-4 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
             {phase1 ? (
               <>
                 This build is in <strong className="text-[var(--foreground)]">Phase 1</strong> (awareness and trust). Use
@@ -270,22 +276,24 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
           </p>
         </motion.div>
 
-        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:mt-12 lg:grid-cols-3 xl:grid-cols-4">
           {actions.map((a, i) => (
             <motion.div
               key={a.href}
-              initial={{ opacity: 0, y: 10 }}
+              initial={reducedMotion ? false : { opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: Math.min(i * 0.03, 0.24) }}
+              viewport={{ once: true, margin: "-28px 0px" }}
+              transition={sectionRevealTransition(reducedMotion, Math.min(i * 0.04, 0.2))}
+              whileHover={reducedMotion ? undefined : { y: -3 }}
+              whileTap={reducedMotion ? undefined : { scale: 0.99 }}
             >
               <Link
                 href={a.href}
-                className="flex h-full flex-col rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[var(--primary)]/35 hover:shadow-md"
+                className="flex h-full flex-col rounded-2xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow-sm)] transition-[border-color,box-shadow,transform] duration-300 ease-out hover:border-[var(--primary)]/30 hover:shadow-[var(--shadow-card)] sm:p-5"
               >
                 <span className="font-display text-sm font-semibold text-[var(--foreground)]">{a.title}</span>
-                <span className="mt-2 text-xs leading-relaxed text-[var(--muted-foreground)]">{a.body}</span>
-                <span className="mt-3 text-xs font-semibold text-[var(--primary)]">Open →</span>
+                <span className="mt-2.5 text-xs leading-relaxed text-[var(--muted-foreground)] sm:text-[13px]">{a.body}</span>
+                <span className="mt-auto pt-3 text-xs font-semibold text-[var(--primary)]">Open →</span>
               </Link>
             </motion.div>
           ))}
@@ -293,10 +301,11 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
 
         {!phase1 && data.voiceTotals != null && data.voiceTotals.totalReports > 0 ? (
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
+            initial={reducedMotion ? false : { opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mt-8 rounded-2xl border border-[var(--primary)]/20 bg-[var(--primary)]/[0.06] px-4 py-4 text-center sm:px-6"
+            viewport={{ once: true, margin: "-24px 0px" }}
+            transition={sectionRevealTransition(reducedMotion, 0.05)}
+            className="mt-10 rounded-2xl border border-[var(--primary)]/20 bg-[var(--primary)]/[0.06] px-4 py-5 text-center sm:mt-12 sm:px-6"
           >
             <p className="text-sm text-[var(--foreground)]">
               <span className="font-display text-2xl font-bold tabular-nums text-[var(--primary)]">
@@ -306,7 +315,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
             </p>
             {voiceStats ? (
               <p className="mt-2 text-xs text-[var(--muted-foreground)]">
-                <Link href="/transparency" className="font-semibold text-[var(--primary)] hover:underline">
+                <Link href="/transparency" className={`${primaryLinkClass} font-semibold`}>
                   View aggregate Voice statistics
                 </Link>
               </p>
@@ -315,35 +324,36 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
         ) : null}
 
         {phase1 ? (
-          <p className="mt-8 text-center text-sm leading-relaxed text-[var(--muted-foreground)]">
+          <p className="mt-10 text-center text-sm leading-relaxed text-[var(--muted-foreground)] sm:mt-12">
             Scroll the roadmap section below for programme milestones. For full narrative and restorative justice context,{" "}
-            <Link href="/about" className="font-semibold text-[var(--primary)] hover:underline">
+            <Link href="/about" className={`${primaryLinkClass} font-semibold`}>
               open About
             </Link>
             .
           </p>
         ) : !showLiveHighlights ? (
-          <p className="mt-8 text-center text-sm text-[var(--muted-foreground)]">
+          <p className="mt-10 text-center text-sm leading-relaxed text-[var(--muted-foreground)] sm:mt-12">
             Use the action cards above for the main routes. Open petitions, public causes, communities, and programme rows
             are also listed on their dedicated index pages.
           </p>
         ) : !live ? (
-          <p className="mt-8 text-center text-sm text-[var(--muted-foreground)]">
+          <p className="mt-10 text-center text-sm leading-relaxed text-[var(--muted-foreground)] sm:mt-12">
             Live highlights (petitions, causes, communities, forums) appear here once editors publish content — action
             cards above are always aligned with your platform phase.
           </p>
         ) : (
-          <div className="mt-10 grid gap-8 lg:grid-cols-2">
+          <div className="mt-12 grid gap-8 sm:gap-10 lg:grid-cols-2">
             {data.petitions != null ? (
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                initial={reducedMotion ? false : { opacity: 0, y: 14 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm"
+                viewport={{ once: true, margin: "-24px 0px" }}
+                transition={sectionRevealTransition(reducedMotion)}
+                className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-sm)] sm:p-6"
               >
                 <div className="flex items-start justify-between gap-3">
                   <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Top petitions</h3>
-                  <Link href="/petitions" className="shrink-0 text-sm font-semibold text-[var(--primary)] hover:underline">
+                  <Link href="/petitions" className={`${primaryNavLinkClass} shrink-0 text-sm font-semibold`}>
                     All →
                   </Link>
                 </div>
@@ -354,7 +364,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
                   <ul className="mt-4 space-y-3">
                     {data.petitions.map((p) => (
                       <li key={p.slug}>
-                        <Link href={`/petitions/${encodeURIComponent(p.slug)}`} className="font-medium text-[var(--foreground)] hover:text-[var(--primary)] hover:underline">
+                        <Link href={`/petitions/${encodeURIComponent(p.slug)}`} className={resourceTitleLinkClass}>
                           {p.title}
                         </Link>
                         <p className="text-xs text-[var(--muted-foreground)]">
@@ -373,17 +383,15 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
 
             {data.publicCauses != null ? (
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                initial={reducedMotion ? false : { opacity: 0, y: 14 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm"
+                viewport={{ once: true, margin: "-24px 0px" }}
+                transition={sectionRevealTransition(reducedMotion, 0.04)}
+                className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-sm)] sm:p-6"
               >
                 <div className="flex items-start justify-between gap-3">
                   <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Public causes</h3>
-                  <Link
-                    href="/citizens-voice/causes"
-                    className="shrink-0 text-sm font-semibold text-[var(--primary)] hover:underline"
-                  >
+                  <Link href="/citizens-voice/causes" className={`${primaryNavLinkClass} shrink-0 text-sm font-semibold`}>
                     All →
                   </Link>
                 </div>
@@ -394,10 +402,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
                   <ul className="mt-4 space-y-3">
                     {data.publicCauses.map((c) => (
                       <li key={c.slug}>
-                        <Link
-                          href={`/citizens-voice/causes/${encodeURIComponent(c.slug)}`}
-                          className="font-medium text-[var(--foreground)] hover:text-[var(--primary)] hover:underline"
-                        >
+                        <Link href={`/citizens-voice/causes/${encodeURIComponent(c.slug)}`} className={resourceTitleLinkClass}>
                           {c.title}
                         </Link>
                         <p className="text-xs text-[var(--muted-foreground)]">
@@ -413,14 +418,15 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
 
             {data.communities != null ? (
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                initial={reducedMotion ? false : { opacity: 0, y: 14 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm"
+                viewport={{ once: true, margin: "-24px 0px" }}
+                transition={sectionRevealTransition(reducedMotion, 0.05)}
+                className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-sm)] sm:p-6"
               >
                 <div className="flex items-start justify-between gap-3">
                   <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Communities</h3>
-                  <Link href="/communities" className="shrink-0 text-sm font-semibold text-[var(--primary)] hover:underline">
+                  <Link href="/communities" className={`${primaryNavLinkClass} shrink-0 text-sm font-semibold`}>
                     Browse →
                   </Link>
                 </div>
@@ -431,10 +437,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
                   <ul className="mt-4 space-y-3">
                     {data.communities.map((c) => (
                       <li key={c.slug}>
-                        <Link
-                          href={`/communities/${encodeURIComponent(c.slug)}`}
-                          className="font-medium text-[var(--foreground)] hover:text-[var(--primary)] hover:underline"
-                        >
+                        <Link href={`/communities/${encodeURIComponent(c.slug)}`} className={resourceTitleLinkClass}>
                           {c.name}
                         </Link>
                         <p className="text-xs text-[var(--muted-foreground)]">
@@ -450,18 +453,19 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
 
             {data.townHalls != null ? (
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                initial={reducedMotion ? false : { opacity: 0, y: 14 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm"
+                viewport={{ once: true, margin: "-24px 0px" }}
+                transition={sectionRevealTransition(reducedMotion, 0.06)}
+                className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-sm)] sm:p-6"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Forums &amp; programme rows</h3>
-                  <div className="flex gap-3 text-sm font-semibold text-[var(--primary)]">
-                    <Link href="/town-halls" className="hover:underline">
+                  <div className="flex flex-wrap gap-3 text-sm font-semibold">
+                    <Link href="/town-halls" className={`${primaryNavLinkClass} text-sm font-semibold`}>
                       Town halls
                     </Link>
-                    <Link href="/debates" className="hover:underline">
+                    <Link href="/debates" className={`${primaryNavLinkClass} text-sm font-semibold`}>
                       Debates
                     </Link>
                   </div>
@@ -490,10 +494,11 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
 
         {!phase1 && data.reportCard != null ? (
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
+            initial={reducedMotion ? false : { opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--section-light)]/80 p-5 text-center sm:p-6"
+            viewport={{ once: true, margin: "-24px 0px" }}
+            transition={sectionRevealTransition(reducedMotion, 0.04)}
+            className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--section-light)]/80 p-5 text-center sm:mt-12 sm:p-6"
           >
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--primary)]">People&apos;s Report Card</p>
             <p className="mt-2 font-display text-xl font-bold text-[var(--foreground)]">

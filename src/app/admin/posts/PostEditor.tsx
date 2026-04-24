@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { deletePostAction, savePostAction } from "@/app/admin/posts/actions";
+import { destructiveTextControlClass, primaryLinkClass } from "@/lib/primary-link-styles";
 import type { Media, Post } from "@prisma/client";
 
 type PostWithOptional = (Post & { featuredMedia: Media | null }) | null;
@@ -67,7 +68,7 @@ export function PostEditor({ post, media }: { post: PostWithOptional; media: Med
             ))}
           </select>
           <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-            <Link href="/admin/media" className="text-[var(--primary)] hover:underline">
+            <Link href="/admin/media" className={primaryLinkClass}>
               Upload images
             </Link>{" "}
             to reuse them here.
@@ -101,7 +102,10 @@ export function PostEditor({ post, media }: { post: PostWithOptional; media: Med
       {isEdit && post ? (
         <form action={deletePostAction} className="mt-10 border-t border-[var(--border)] pt-8">
           <input type="hidden" name="id" value={post.id} />
-          <button type="submit" className="text-sm font-semibold text-red-600 hover:underline">
+          <button
+            type="submit"
+            className={`text-sm font-semibold text-red-600 ${destructiveTextControlClass}`}
+          >
             Delete post
           </button>
         </form>

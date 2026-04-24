@@ -6,6 +6,7 @@ import {
   accountabilityCatalogueNavMedium,
   accountabilityProse,
 } from "@/config/accountability-catalogue-destinations";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import {
   isPartnerApiTermsPageEnabled,
   isPromisesBrowseEnabled,
@@ -35,28 +36,19 @@ export default async function MethodologyPage() {
             <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-[var(--muted-foreground)]">
               {showPromises ? (
                 <>
-                  <Link
-                    href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp}
-                    className="font-medium text-[var(--primary)] hover:underline"
-                  >
+                  <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className={primaryNavLinkClass}>
                     {accountabilityCatalogueNavMedium.byMp}
                   </Link>
                   <span aria-hidden className="text-[var(--muted-foreground)]/50">
                     ·
                   </span>
-                  <Link
-                    href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
-                    className="font-medium text-[var(--primary)] hover:underline"
-                  >
+                  <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={primaryNavLinkClass}>
                     {accountabilityCatalogueNavMedium.browseAll}
                   </Link>
                   <span aria-hidden className="text-[var(--muted-foreground)]/50">
                     ·
                   </span>
-                  <Link
-                    href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments}
-                    className="font-medium text-[var(--primary)] hover:underline"
-                  >
+                  <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments} className={primaryNavLinkClass}>
                     {accountabilityCatalogueNavMedium.government}
                   </Link>
                 </>
@@ -67,7 +59,7 @@ export default async function MethodologyPage() {
                 </span>
               ) : null}
               {showReportCard ? (
-                <Link href="/report-card" className="font-medium text-[var(--primary)] hover:underline">
+                <Link href="/report-card" className={primaryNavLinkClass}>
                   People&apos;s Report Card
                 </Link>
               ) : null}
@@ -139,7 +131,7 @@ export default async function MethodologyPage() {
                 between refreshes.{" "}
                 {showPartnerApi ? (
                   <>
-                    <Link href="/partner-api" className="font-medium text-[var(--primary)] hover:underline">
+                    <Link href="/partner-api" className={primaryNavLinkClass}>
                       Partner data &amp; API
                     </Link>{" "}
                     summarises endpoints, attribution, and fair-use expectations for dashboards and newsrooms.
@@ -154,10 +146,10 @@ export default async function MethodologyPage() {
           </p>
 
           <p className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-sm">
-            <Link href="/whistleblowing" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/whistleblowing" className={primaryNavLinkClass}>
               Whistleblowing guidance
             </Link>
-            <Link href="/parliament-tracker" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/parliament-tracker" className={primaryNavLinkClass}>
               ← Accountability &amp; Electoral Watch
             </Link>
           </p>

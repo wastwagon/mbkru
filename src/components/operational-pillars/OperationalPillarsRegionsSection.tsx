@@ -3,8 +3,11 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { RegionsViz } from "@/components/ui/RegionsViz";
+import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
+import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { sectionRevealTransition } from "@/lib/motion-reveal";
 
 /**
  * Key operational pillars (A–E) + 16 regions map — rendered on About (`#key-operational-pillars`).
@@ -12,6 +15,7 @@ import { RegionsViz } from "@/components/ui/RegionsViz";
 export function OperationalPillarsRegionsSection() {
   const phase = getPublicPlatformPhase();
   const parliamentLive = platformFeatures.parliamentTrackerData(phase);
+  const reducedMotion = usePrefersReducedMotion();
 
   const pillars = useMemo(
     () => [
@@ -43,7 +47,7 @@ export function OperationalPillarsRegionsSection() {
         title: "Accountability & Electoral Watch",
         items: [
           "People's Report Cards",
-          "Campaign promise tracking",
+          accountabilityProse.pillarHomeBullet,
           "Accountability Scorecards",
           "Citizen petition mechanism",
         ],
@@ -70,30 +74,33 @@ export function OperationalPillarsRegionsSection() {
       />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={reducedMotion ? false : { opacity: 0, y: 22 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-48px 0px" }}
+          transition={sectionRevealTransition(reducedMotion)}
           className="mx-auto max-w-3xl text-center"
         >
           <h2 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl xl:text-4xl">
             Key Operational Pillars
           </h2>
-          <p className="mt-3 text-sm text-white/80">
+          <p className="mt-4 text-sm leading-relaxed text-white/80 sm:text-[15px]">
             A direct bridge between citizens and government. Accountability, transparency, and citizen voice.
           </p>
         </motion.div>
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-10 lg:grid-cols-3 lg:gap-5">
+        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:mt-12 lg:grid-cols-3 lg:gap-6">
           {pillars.map((pillar, i) => (
             <motion.div
               key={pillar.title}
-              initial={{ opacity: 0, y: 24 }}
+              initial={reducedMotion ? false : { opacity: 0, y: 26 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
+              viewport={{ once: true, margin: "-32px 0px" }}
+              transition={sectionRevealTransition(reducedMotion, i * 0.06)}
+              whileHover={reducedMotion ? undefined : { y: -3 }}
+              whileTap={reducedMotion ? undefined : { scale: 0.99 }}
             >
               <Link
                 href={pillar.href}
-                className="group flex gap-4 rounded-xl border border-white/20 bg-white/5 p-4 shadow-lg backdrop-blur-md transition-all duration-300 hover:border-[var(--accent-warm)]/50 hover:bg-white/10 sm:p-5"
+                className="group flex gap-4 rounded-xl border border-white/20 bg-white/5 p-4 shadow-lg backdrop-blur-md transition-[border-color,background-color,transform,box-shadow] duration-300 ease-out hover:border-[var(--accent-warm)]/50 hover:bg-white/10 sm:p-5"
               >
                 <div
                   className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg font-display text-lg font-bold ${i % 2 === 0 ? "text-[var(--accent-gold)]" : "text-[var(--accent-warm)]"}`}
@@ -118,10 +125,11 @@ export function OperationalPillarsRegionsSection() {
           ))}
         </div>
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={reducedMotion ? false : { opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-8 lg:mt-10"
+          viewport={{ once: true, margin: "-40px 0px" }}
+          transition={sectionRevealTransition(reducedMotion, 0.06)}
+          className="mt-10 lg:mt-12"
         >
           <RegionsViz />
         </motion.div>

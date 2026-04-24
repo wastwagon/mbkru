@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { policySectorLabel } from "@/lib/promise-policy-sectors";
+import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { primarySourceUrl } from "@/lib/promise-source";
 
 function statusLabel(s: string): string {
@@ -64,7 +65,9 @@ export function PromiseEvidenceCard({
 
   return (
     <details className="group rounded-2xl border border-[var(--border)] bg-white shadow-sm">
-      <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 p-5 [&::-webkit-details-marker]:hidden">
+      <summary
+        className={`flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 rounded-sm p-5 ${focusRingSmClass} [&::-webkit-details-marker]:hidden`}
+      >
         <div className="min-w-0 flex-1 text-left">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">{title}</h2>
@@ -129,7 +132,7 @@ export function PromiseEvidenceCard({
               href={manifestoOnlyHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 text-sm font-medium text-[var(--primary)] hover:underline"
+              className={`${primaryNavLinkClass} justify-center gap-2 text-sm`}
             >
               <ExternalLinkIcon className="shrink-0" />
               Manifesto: {manifestoDocument.title}

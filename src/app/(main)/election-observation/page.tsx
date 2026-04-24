@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
+import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 
 export const dynamic = "force-dynamic";
@@ -36,24 +37,28 @@ export default function ElectionObservationPage() {
             <li>Save your tracking code — staff may follow up only where policy allows.</li>
             <li>
               Read our{" "}
-              <Link href="/methodology" className="text-[var(--primary)] hover:underline">
+              <Link href="/methodology" className={primaryLinkClass}>
                 methodology
               </Link>{" "}
               for how we handle evidence and limitations.
             </li>
           </ul>
           <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <Button href={submitElectionHref}>Submit an election observation report</Button>
-            <Button href="/track-report" variant="secondary">
+            <Button href={submitElectionHref} className="w-full justify-center sm:w-auto">
+              Submit an election observation report
+            </Button>
+            <Button href="/track-report" variant="secondary" className="w-full justify-center sm:w-auto">
               Track a report
             </Button>
           </div>
-          <p className="mt-8 text-center text-sm text-[var(--muted-foreground)]">
-            <Link href="/citizens-voice" className="text-[var(--primary)] hover:underline">
+          <p className="mt-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--muted-foreground)]">
+            <Link href="/citizens-voice" className={primaryNavLinkClass}>
               ← MBKRU Voice
             </Link>
-            {" · "}
-            <Link href="/situational-alerts" className="text-[var(--primary)] hover:underline">
+            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+              ·
+            </span>
+            <Link href="/situational-alerts" className={primaryNavLinkClass}>
               Engagement
             </Link>
           </p>

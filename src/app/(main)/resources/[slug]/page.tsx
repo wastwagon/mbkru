@@ -10,6 +10,7 @@ import {
   resourceCategoryLabel,
 } from "@/lib/content/resource-documents";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -64,7 +65,7 @@ export default async function ResourceDocumentDetailPage({ params }: Props) {
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm text-[var(--muted-foreground)]">
-            <Link href="/resources" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/resources" className={primaryNavLinkClass}>
               ← All resources
             </Link>
           </p>
@@ -91,10 +92,7 @@ export default async function ResourceDocumentDetailPage({ params }: Props) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
             </Button>
-            <Link
-              href="/methodology"
-              className="text-sm font-semibold text-[var(--primary)] hover:underline"
-            >
+            <Link href="/methodology" className={`${primaryNavLinkClass} text-sm font-semibold`}>
               How we cite sources
             </Link>
           </div>

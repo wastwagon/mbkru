@@ -3,6 +3,7 @@ import Link from "next/link";
 import { updatePetitionStatusAction } from "@/app/admin/petitions/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 import type { PetitionStatus } from "@prisma/client";
 
@@ -44,7 +45,7 @@ export default async function AdminPetitionsPage({ searchParams }: Props) {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={primaryLinkClass}>
           ← Admin home
         </Link>
       </p>
@@ -54,10 +55,7 @@ export default async function AdminPetitionsPage({ searchParams }: Props) {
         signatures.
       </p>
       <p className="mt-2 text-sm">
-        <Link
-          href="/admin/analytics/petition-pending"
-          className="font-medium text-[var(--primary)] hover:underline"
-        >
+        <Link href="/admin/analytics/petition-pending" className={primaryLinkClass}>
           Guest email-verification queue (analytics)
         </Link>
       </p>
@@ -129,7 +127,7 @@ export default async function AdminPetitionsPage({ searchParams }: Props) {
                   By {p.author.displayName ?? p.author.email} ·{" "}
                   <Link
                     href={`/petitions/${encodeURIComponent(p.slug)}`}
-                    className="text-[var(--primary)] hover:underline"
+                    className={primaryLinkClass}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

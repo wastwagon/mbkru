@@ -4,6 +4,7 @@ import { createManifestoDocumentAction } from "@/app/admin/manifestos/actions";
 import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminManifestosPage() {
   await requireAdminSession();
@@ -15,14 +16,14 @@ export default async function AdminManifestosPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
       <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={primaryLinkClass}>
           ← Admin
         </Link>
       </p>
       <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">Manifesto registry</h1>
       <p className="mt-2 text-sm text-[var(--muted-foreground)]">
         {accountabilityProse.adminManifestosIntro}{" "}
-        <Link href="/api/manifestos" className="text-[var(--primary)] hover:underline">
+        <Link href="/api/manifestos" className={primaryLinkClass}>
           /api/manifestos
         </Link>
         .
@@ -133,7 +134,7 @@ export default async function AdminManifestosPage() {
                   href={m.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-2 inline-block text-[var(--primary)] hover:underline"
+                  className={`${primaryLinkClass} mt-2 inline-block`}
                 >
                   Source link
                 </a>

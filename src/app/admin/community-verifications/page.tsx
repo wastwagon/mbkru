@@ -4,6 +4,7 @@ import Link from "next/link";
 import { reviewCommunityVerificationAction } from "@/app/admin/communities/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminCommunityVerificationsPage() {
   await requireAdminSession();
@@ -49,7 +50,7 @@ export default async function AdminCommunityVerificationsPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={primaryLinkClass}>
           ← Admin
         </Link>
       </p>
@@ -106,7 +107,7 @@ export default async function AdminCommunityVerificationsPage() {
                                     href={media.storagePath}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="mt-0.5 inline-block text-xs text-[var(--primary)] hover:underline"
+                                    className={`${primaryLinkClass} mt-0.5 inline-block text-xs`}
                                   >
                                     {media.filename}
                                   </a>
@@ -124,15 +125,15 @@ export default async function AdminCommunityVerificationsPage() {
                   <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--foreground)]">{r.reviewNotes}</p>
                 ) : null}
                 <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                  <Link href={`/admin/communities/${r.community.id}`} className="text-[var(--primary)] hover:underline">
+                  <Link href={`/admin/communities/${r.community.id}`} className={primaryLinkClass}>
                     Open community admin
                   </Link>
-                  <Link href={`/communities/${r.community.slug}`} className="text-[var(--primary)] hover:underline">
+                  <Link href={`/communities/${r.community.slug}`} className={primaryLinkClass}>
                     Public community page
                   </Link>
                   <a
                     href={`/api/admin/community-verifications/${r.id}/document-manifest`}
-                    className="text-[var(--primary)] hover:underline"
+                    className={primaryLinkClass}
                   >
                     Download document manifest (CSV)
                   </a>

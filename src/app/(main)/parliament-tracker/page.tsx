@@ -18,6 +18,7 @@ import {
   isReportCardPublicEnabled,
 } from "@/lib/reports/accountability-pages";
 import { defaultPromisesApiFilters } from "@/lib/promises-api-filters";
+import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { getCachedMpsPublicRoster, getCachedPromiseTrackerStats } from "@/lib/server/accountability-cache";
 
 export const metadata: Metadata = {
@@ -118,7 +119,7 @@ export default async function ParliamentTrackerPage() {
                     {partnerDataPage ? (
                       <>
                         see{" "}
-                        <Link href="/partner-api" className="text-[var(--primary)] hover:underline">
+                        <Link href="/partner-api" className={primaryLinkClass}>
                           Partner data &amp; API
                         </Link>{" "}
                         for machine-readable exports of the same roster.
@@ -131,7 +132,7 @@ export default async function ParliamentTrackerPage() {
                 {showPromises ? (
                   <Link
                     href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp}
-                    className="text-sm font-medium text-[var(--primary)] hover:underline"
+                    className={`text-sm ${primaryNavLinkClass}`}
                   >
                     {accountabilityCatalogueNavMedium.byMp} →
                   </Link>
@@ -148,10 +149,7 @@ export default async function ParliamentTrackerPage() {
                     <li key={m.slug} className="flex flex-wrap items-baseline justify-between gap-2 px-3 py-2.5 text-sm hover:bg-[var(--section-light)]/50">
                       <div className="min-w-0">
                         {showPromises && m.promiseCount > 0 ? (
-                          <Link
-                            href={`/promises/${encodeURIComponent(m.slug)}`}
-                            className="font-medium text-[var(--primary)] hover:underline"
-                          >
+                          <Link href={`/promises/${encodeURIComponent(m.slug)}`} className={primaryLinkClass}>
                             {m.name}
                           </Link>
                         ) : (
@@ -266,30 +264,35 @@ export default async function ParliamentTrackerPage() {
                 Get Tracker Notifications
               </h2>
               <p className="mt-2 text-[var(--muted-foreground)]">{accountabilityProse.trackerSignupUpdates}</p>
-              <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
-                <Link href="/methodology" className="font-medium text-[var(--primary)] hover:underline">
+              <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-2 text-sm sm:gap-x-4">
+                <Link href="/methodology" className={primaryNavLinkClass}>
                   Methodology
                 </Link>
                 {showPromises ? (
                   <>
-                    <Link
-                      href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp}
-                      className="font-medium text-[var(--primary)] hover:underline"
-                    >
+                    <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+                      ·
+                    </span>
+                    <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className={primaryNavLinkClass}>
                       {accountabilityCatalogueNavMedium.byMp}
                     </Link>
-                    <Link
-                      href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
-                      className="font-medium text-[var(--primary)] hover:underline"
-                    >
+                    <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+                      ·
+                    </span>
+                    <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={primaryNavLinkClass}>
                       {accountabilityCatalogueNavMedium.browseAll}
                     </Link>
                   </>
                 ) : null}
                 {showReportCard ? (
-                  <Link href="/report-card" className="font-medium text-[var(--primary)] hover:underline">
-                    Report card
-                  </Link>
+                  <>
+                    <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+                      ·
+                    </span>
+                    <Link href="/report-card" className={primaryNavLinkClass}>
+                      Report card
+                    </Link>
+                  </>
                 ) : null}
               </p>
               <TrackerSignupForm />

@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { searchCommunitiesAndPosts } from "@/lib/server/communities-search";
 import { isCommunitiesBrowseEnabled } from "@/lib/reports/accountability-pages";
+import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { normalizeCommunitySearchQuery } from "@/lib/validation/communities";
 
 export const dynamic = "force-dynamic";
@@ -52,12 +53,14 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-[var(--muted-foreground)]">
-            <Link href="/parliament-tracker" className="text-[var(--primary)] hover:underline">
+          <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--muted-foreground)]">
+            <Link href="/parliament-tracker" className={primaryNavLinkClass}>
               Accountability hub
             </Link>
-            {" · "}
-            <Link href="/citizens-voice" className="text-[var(--primary)] hover:underline">
+            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+              ·
+            </span>
+            <Link href="/citizens-voice" className={primaryNavLinkClass}>
               MBKRU Voice
             </Link>
           </p>
@@ -79,11 +82,11 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
               placeholder="Search communities and public posts…"
               minLength={2}
               maxLength={120}
-              className="w-full rounded-xl border border-[var(--border)] bg-white px-4 py-2.5 text-sm text-[var(--foreground)] shadow-sm"
+              className={`w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-2.5 text-sm text-[var(--foreground)] shadow-sm transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`}
             />
             <button
               type="submit"
-              className="shrink-0 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
+              className={`min-h-11 w-full shrink-0 touch-manipulation rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] active:scale-[0.99] motion-reduce:active:scale-100 sm:min-h-0 sm:w-auto ${focusRingSmClass}`}
             >
               Search
             </button>
@@ -94,7 +97,7 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
           {normalized ? (
             <p className="mt-2 text-sm text-[var(--muted-foreground)]">
               Results for &quot;{normalized}&quot; ·{" "}
-              <Link href="/communities" className="text-[var(--primary)] hover:underline">
+              <Link href="/communities" className={primaryNavLinkClass}>
                 Clear
               </Link>
             </p>

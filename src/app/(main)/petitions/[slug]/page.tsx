@@ -9,6 +9,7 @@ import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { getMemberSession } from "@/lib/member/session";
 import { isCivicPetitionsAndPublicCausesEnabled } from "@/lib/reports/accountability-pages";
 import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
+import { primaryNavLinkClass, prosePrimaryAnchorClass } from "@/lib/primary-link-styles";
 import { isPetitionGuestEmailVerificationEnabled } from "@/lib/server/petition-guest-verification";
 
 export const dynamic = "force-dynamic";
@@ -94,7 +95,7 @@ export default async function PetitionDetailPage({ params, searchParams }: Props
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <p className="text-sm text-[var(--muted-foreground)]">
-            <Link href="/petitions" className="text-[var(--primary)] hover:underline">
+            <Link href="/petitions" className={primaryNavLinkClass}>
               ← All petitions
             </Link>
             {p.status === "CLOSED" ? (
@@ -125,7 +126,9 @@ export default async function PetitionDetailPage({ params, searchParams }: Props
               {p.region?.name ? ` · ${p.region.name}` : ""} · Opened{" "}
               <time dateTime={p.createdAt.toISOString()}>{formatSubmissionDateTime(p.createdAt)}</time>
             </p>
-            <div className="prose prose-sm mt-4 max-w-none text-[var(--foreground)]">
+            <div
+              className={`prose prose-sm mt-4 max-w-none text-[var(--foreground)] ${prosePrimaryAnchorClass}`}
+            >
               <pre className="whitespace-pre-wrap font-sans text-sm">{p.body}</pre>
             </div>
           </div>

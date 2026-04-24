@@ -3,6 +3,7 @@ import Link from "next/link";
 import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 
 import { ConstituencyCsvImport } from "./ConstituencyCsvImport";
 import { ParliamentCsvImport } from "./ParliamentCsvImport";
@@ -61,10 +62,7 @@ export default async function AdminParliamentPage() {
                   {m._count.promises} catalogue row{m._count.promises === 1 ? "" : "s"}
                 </p>
               </div>
-              <Link
-                href={`/admin/parliament/${m.id}`}
-                className="shrink-0 text-sm font-semibold text-[var(--primary)] hover:underline"
-              >
+              <Link href={`/admin/parliament/${m.id}`} className={`${primaryNavLinkClass} shrink-0 text-sm font-semibold`}>
                 Edit / catalogue
               </Link>
             </li>
@@ -73,7 +71,7 @@ export default async function AdminParliamentPage() {
       </ul>
 
       <p className="mt-8">
-        <Link href="/admin" className="text-sm text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={`${primaryLinkClass} text-sm`}>
           ← Dashboard
         </Link>
       </p>

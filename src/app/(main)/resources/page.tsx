@@ -12,6 +12,11 @@ import {
   resourceCategoryLabel,
 } from "@/lib/content/resource-documents";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
+import {
+  focusRingSmClass,
+  primaryNavLinkClass,
+  resourceTitleLinkClass,
+} from "@/lib/primary-link-styles";
 import { images, resourcesConceptNote } from "@/lib/site-content";
 
 export const metadata: Metadata = {
@@ -126,10 +131,7 @@ export default async function ResourcesPage() {
                         {rows.map((d) => (
                           <li key={d.id} className="flex flex-col gap-2 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
                             <div className="min-w-0">
-                              <Link
-                                href={`/resources/${d.slug}`}
-                                className="font-medium text-[var(--foreground)] hover:text-[var(--primary)] hover:underline"
-                              >
+                              <Link href={`/resources/${d.slug}`} className={resourceTitleLinkClass}>
                                 {d.title}
                               </Link>
                               {d.summary ? (
@@ -142,7 +144,7 @@ export default async function ResourcesPage() {
                             </div>
                             <a
                               href={d.filePath}
-                              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-[var(--primary-foreground)] transition hover:opacity-95"
+                              className={`inline-flex shrink-0 touch-manipulation items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-[var(--primary-foreground)] transition hover:opacity-95 ${focusRingSmClass}`}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -162,7 +164,7 @@ export default async function ResourcesPage() {
           ) : dbOn ? (
             <p className="mb-16 rounded-xl border border-[var(--border)] bg-white p-6 text-center text-sm text-[var(--muted-foreground)]">
               Published documents will appear here. Editors can upload from{" "}
-              <Link href="/admin/resources" className="font-semibold text-[var(--primary)] hover:underline">
+              <Link href="/admin/resources" className={`${primaryNavLinkClass} font-semibold`}>
                 Admin → Resource library
               </Link>
               .
@@ -185,10 +187,7 @@ export default async function ResourcesPage() {
             <p className="mt-2 text-[var(--muted-foreground)]">
               Visit our FAQ page for answers to common questions about MBKRU, membership, and our platform.
             </p>
-            <Link
-              href="/faq"
-              className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--primary)] hover:underline"
-            >
+            <Link href="/faq" className={`${primaryNavLinkClass} mt-4 gap-2 text-sm font-semibold`}>
               View FAQ
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />

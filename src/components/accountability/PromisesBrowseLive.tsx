@@ -16,6 +16,7 @@ import {
 } from "@/lib/promise-list-filters";
 import { parsePromisesApiFilters, promisesFiltersNarrowCatalogue } from "@/lib/promises-api-filters";
 import type { PromiseTrackerStats } from "@/lib/promise-tracker-public-types";
+import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 import type { PublicPromiseApiRow } from "@/lib/public-promise-api-row";
 import type { TrackerConstituencyOption } from "@/lib/tracker-constituency-public-types";
 
@@ -45,6 +46,12 @@ type Props = {
 const DEBOUNCE_MS = 380;
 
 const MANIFESTO_CYCLE = "2024";
+
+const filterControlClass = `mt-1 w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
+
+const filterSelectClass = `${filterControlClass} cursor-pointer`;
+
+const clearFiltersLinkClass = `inline-flex min-h-9 items-center rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--section-light)] ${focusRingSmClass}`;
 
 function catalogueValueFromState(
   govLocked: boolean,
@@ -273,7 +280,7 @@ export function PromisesBrowseLive({
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Title, source, manifesto, or MP name…"
-            className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            className={filterControlClass}
             autoComplete="off"
           />
         </div>
@@ -286,7 +293,7 @@ export function PromisesBrowseLive({
             id="live-catalogue"
             value={catalogueSelectValue}
             onChange={(e) => onCatalogueChange(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            className={filterSelectClass}
           >
             {govLocked ? (
               <>
@@ -318,7 +325,7 @@ export function PromisesBrowseLive({
             id="live-constituency"
             value={constituencySlug}
             onChange={(e) => setConstituencySlug(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            className={filterSelectClass}
           >
             <option value="">All constituencies</option>
             {constituenciesByRegion.map(([regionName, opts]) => (
@@ -345,7 +352,7 @@ export function PromisesBrowseLive({
             id="live-sector"
             value={sector}
             onChange={(e) => setSector(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            className={filterSelectClass}
           >
             <option value="">All categories</option>
             {POLICY_SECTOR_VALUES.map((v) => (
@@ -363,7 +370,7 @@ export function PromisesBrowseLive({
             id="live-status"
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            className={filterSelectClass}
           >
             <option value="">All statuses</option>
             {PROMISE_LIST_STATUS_FILTER.map((v) => (
@@ -381,10 +388,7 @@ export function PromisesBrowseLive({
             <span className="text-xs text-[var(--muted-foreground)]">Results update as you type</span>
           )}
           {hasActiveFilters ? (
-            <Link
-              href={clearHref}
-              className="rounded-xl border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--foreground)] hover:bg-[var(--section-light)]"
-            >
+            <Link href={clearHref} className={clearFiltersLinkClass}>
               Clear
             </Link>
           ) : null}
@@ -392,7 +396,9 @@ export function PromisesBrowseLive({
       </div>
 
       {error ? (
-        <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">{error}</p>
+        <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
+          {error}
+        </p>
       ) : null}
 
       {rows.length === 0 && !loading ? (
@@ -408,7 +414,7 @@ export function PromisesBrowseLive({
           <p className="mt-6 text-xs text-[var(--muted-foreground)]">
             Showing {rows.length} result{rows.length === 1 ? "" : "s"}
             {rows.length >= 75 ? " (max 75 per request — refine search)" : ""}. Full export:{" "}
-            <Link href={csvHref} className="text-[var(--primary)] hover:underline">
+            <Link href={csvHref} className={primaryLinkClass}>
               CSV export
             </Link>
             .
@@ -431,10 +437,7 @@ export function PromisesBrowseLive({
                   meta={
                     p.member ? (
                       <>
-                        <Link
-                          href={`/promises/${encodeURIComponent(p.member.slug)}`}
-                          className="font-medium text-[var(--primary)] hover:underline"
-                        >
+                        <Link href={`/promises/${encodeURIComponent(p.member.slug)}`} className={primaryLinkClass}>
                           {p.member.name}
                         </Link>
                         <span>
@@ -454,10 +457,7 @@ export function PromisesBrowseLive({
                         {mode === "government" && p.isGovernmentProgramme ? (
                           <span className="mt-1 block text-xs text-[var(--muted-foreground)]">
                             Also on{" "}
-                            <Link
-                              href={`/promises/${encodeURIComponent(p.member.slug)}`}
-                              className="font-medium text-[var(--primary)] hover:underline"
-                            >
+                            <Link href={`/promises/${encodeURIComponent(p.member.slug)}`} className={primaryLinkClass}>
                               this MP’s pledge sheet
                             </Link>
                             .

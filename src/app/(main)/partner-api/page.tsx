@@ -7,6 +7,7 @@ import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
   accountabilityProse,
 } from "@/config/accountability-catalogue-destinations";
+import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import {
   isPartnerApiTermsPageEnabled,
   isPromisesBrowseEnabled,
@@ -65,10 +66,7 @@ export default function PartnerApiPage() {
                   <td className="border-b border-[var(--border)] px-3 py-2">
                     Active MP/minister roster (when{" "}
                     {showMpsPromises ? (
-                      <Link
-                        href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
-                        className="font-medium text-[var(--primary)] hover:underline"
-                      >
+                      <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={primaryLinkClass}>
                         {accountabilityProse.partnerApiMpsCellLinkLabel}
                       </Link>
                     ) : (
@@ -92,7 +90,7 @@ export default function PartnerApiPage() {
                   <td className="border-b border-[var(--border)] px-3 py-2">
                     Published People&apos;s Report Card cycle when{" "}
                     {showReportCard ? (
-                      <Link href="/report-card" className="font-medium text-[var(--primary)] hover:underline">
+                      <Link href="/report-card" className={primaryLinkClass}>
                         the report card
                       </Link>
                     ) : (
@@ -166,23 +164,23 @@ export default function PartnerApiPage() {
           <h2 className="mt-10 font-display text-xl font-bold">Get in touch</h2>
           <p className="mt-4 text-[var(--muted-foreground)]">
             For traffic expectations, attribution assets, or a formal partnership conversation, use our{" "}
-            <Link href="/contact" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/contact" className={primaryNavLinkClass}>
               Contact
             </Link>{" "}
             page and choose a partnership-oriented enquiry where the form allows it.
           </p>
 
           <p className="mt-10 flex flex-wrap gap-x-4 gap-y-2 text-sm">
-            <Link href="/methodology" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/methodology" className={primaryNavLinkClass}>
               Accountability methodology
             </Link>
-            <Link href="/methodology#claims-and-citations" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/methodology#claims-and-citations" className={primaryNavLinkClass}>
               Claims &amp; citations
             </Link>
-            <Link href="/data-sources" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/data-sources" className={primaryNavLinkClass}>
               Data sources
             </Link>
-            <Link href="/terms" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/terms" className={primaryNavLinkClass}>
               Site terms of use
             </Link>
           </p>

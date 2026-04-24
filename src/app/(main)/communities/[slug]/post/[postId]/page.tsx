@@ -9,6 +9,7 @@ import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { getMemberSession } from "@/lib/member/session";
 import { canReadCommunityPosts, findMembership } from "@/lib/server/communities-access";
 import { getCommunityPostForViewer } from "@/lib/server/community-posts-public";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { isCommunitiesBrowseEnabled } from "@/lib/reports/accountability-pages";
 import { isCommunitySlug } from "@/lib/validation/communities";
 
@@ -73,12 +74,14 @@ export default async function CommunityPostDetailPage({ params }: Props) {
       <PageHeader title={c.name} description="Community post" />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="text-sm text-[var(--muted-foreground)]">
-            <Link href={`/communities/${c.slug}`} className="text-[var(--primary)] hover:underline">
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm text-[var(--muted-foreground)]">
+            <Link href={`/communities/${c.slug}`} className={primaryNavLinkClass}>
               ← Back to community
             </Link>
-            {" · "}
-            <Link href="/communities" className="text-[var(--primary)] hover:underline">
+            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+              ·
+            </span>
+            <Link href="/communities" className={primaryNavLinkClass}>
               All communities
             </Link>
           </p>

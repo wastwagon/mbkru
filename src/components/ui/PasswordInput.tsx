@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { focusRingSmClass } from "@/lib/primary-link-styles";
+
 function EyeIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -71,12 +73,12 @@ export function PasswordInput({
         value={value}
         onChange={onChange}
         required={required}
-        className={`${className} pr-11`}
+        className={`${className} pr-12`}
       />
       <button
         type="button"
         onClick={() => setVisible((v) => !v)}
-        className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-[var(--muted-foreground)] transition hover:bg-[var(--section-light)] hover:text-[var(--foreground)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]"
+        className={`absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 touch-manipulation items-center justify-center rounded-lg text-[var(--muted-foreground)] transition hover:bg-[var(--section-light)] hover:text-[var(--foreground)] active:scale-[0.96] motion-reduce:active:scale-100 ${focusRingSmClass}`}
         aria-label={visible ? "Hide password" : "Show password"}
         aria-pressed={visible}
       >

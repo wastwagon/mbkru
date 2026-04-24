@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 const ratingLabel: Record<string, string> = {
   EXCELLENT: "Excellent",
@@ -38,10 +39,10 @@ export default async function AdminDiasporaFeedbackPage() {
       </p>
 
       <p className="mt-4 flex flex-wrap gap-4 text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin/contact-submissions" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin/contact-submissions" className={primaryLinkClass}>
           Contact form
         </Link>
-        <Link href="/diaspora/feedback" className="text-[var(--primary)] hover:underline">
+        <Link href="/diaspora/feedback" className={primaryLinkClass}>
           Open public form
         </Link>
       </p>
@@ -80,7 +81,7 @@ export default async function AdminDiasporaFeedbackPage() {
                     </p>
                   </td>
                   <td className="px-4 py-3">
-                    <a href={`mailto:${row.email}`} className="font-mono text-xs text-[var(--primary)] hover:underline">
+                    <a href={`mailto:${row.email}`} className={`${primaryLinkClass} font-mono text-xs`}>
                       {row.email}
                     </a>
                   </td>
@@ -90,7 +91,7 @@ export default async function AdminDiasporaFeedbackPage() {
                   <td className="px-4 py-3 text-[var(--foreground)]">{returnLabel[row.returnOrInvest] ?? row.returnOrInvest}</td>
                   <td className="max-w-md px-4 py-3 text-[var(--muted-foreground)]">
                     <details className="cursor-pointer">
-                      <summary className="text-xs font-medium text-[var(--primary)]">View responses</summary>
+                      <summary className={`${primaryLinkClass} cursor-pointer text-xs`}>View responses</summary>
                       <div className="mt-3 space-y-3 text-sm text-[var(--foreground)]">
                         <div>
                           <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
@@ -121,7 +122,7 @@ export default async function AdminDiasporaFeedbackPage() {
       </div>
 
       <p className="mt-8 text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={primaryLinkClass}>
           ← Dashboard
         </Link>
       </p>

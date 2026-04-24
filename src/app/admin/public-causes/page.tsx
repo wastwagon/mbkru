@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { reportKindLabel } from "@/lib/report-status-text";
 
 import type { CitizenReportKind } from "@prisma/client";
@@ -90,7 +91,7 @@ export default async function AdminPublicCausesPage({ searchParams }: Props) {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={primaryLinkClass}>
           ← Admin home
         </Link>
       </p>
@@ -161,7 +162,7 @@ export default async function AdminPublicCausesPage({ searchParams }: Props) {
                     <p className="mt-1 text-xs">
                       <Link
                         href={`/citizens-voice/causes/${encodeURIComponent(slug)}`}
-                        className="text-[var(--primary)] hover:underline"
+                        className={primaryLinkClass}
                         target="_blank"
                         rel="noopener noreferrer"
                       >

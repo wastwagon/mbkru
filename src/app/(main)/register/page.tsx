@@ -24,8 +24,10 @@ export default async function RegisterPage() {
         description="Register for a public MBKRU member account (Phase 2). You will use this for MBKRU Voice and related tools as they roll out."
       />
       <section className="section-spacing section-full bg-[var(--section-light)]">
-        <div className="mx-auto max-w-md rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
-          <MemberRegisterForm />
+        <div className="mx-auto max-w-md px-4 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
+            <MemberRegisterForm />
+          </div>
         </div>
       </section>
     </div>

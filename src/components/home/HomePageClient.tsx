@@ -4,6 +4,9 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { sectionRevealTransition } from "@/lib/motion-reveal";
+import { focusRingSmClass, primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { HomeHeroSlider } from "@/components/home/HomeHeroSlider";
 import { LivePlatformStrip } from "@/components/home/LivePlatformStrip";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
@@ -25,7 +28,13 @@ export type HomePageNewsItem = {
   dateLabel: string;
 };
 
-function HomeProgrammePathwaysSection({ phase }: { phase: ReturnType<typeof getPublicPlatformPhase> }) {
+function HomeProgrammePathwaysSection({
+  phase,
+  reducedMotion,
+}: {
+  phase: ReturnType<typeof getPublicPlatformPhase>;
+  reducedMotion: boolean;
+}) {
   const items = homepageEngagementPathways.filter((item) => {
     if (item.href === "/communities" && !platformFeatures.communities(phase)) return false;
     if (item.href === "/town-halls" && !platformFeatures.townHallDirectory(phase)) return false;
@@ -37,14 +46,16 @@ function HomeProgrammePathwaysSection({ phase }: { phase: ReturnType<typeof getP
       {items.map((item, i) => (
         <motion.div
           key={item.href}
-          initial={{ opacity: 0, y: 16 }}
+          initial={reducedMotion ? false : { opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.06 }}
+          viewport={{ once: true, margin: "-32px 0px" }}
+          transition={sectionRevealTransition(reducedMotion, i * 0.05)}
+          whileHover={reducedMotion ? undefined : { y: -4 }}
+          whileTap={reducedMotion ? undefined : { scale: 0.985 }}
         >
           <Link
             href={item.href}
-            className="group flex h-full flex-col rounded-xl border border-[var(--border)] bg-white p-6 text-left shadow-[var(--shadow-card)] transition-all duration-300 hover:border-[var(--primary)]/20 hover:shadow-[var(--shadow-card-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/20"
+            className={`group flex h-full flex-col rounded-xl border border-[var(--border)] bg-white p-5 text-left shadow-[var(--shadow-card)] transition-[box-shadow,transform,border-color] duration-300 ease-out hover:border-[var(--primary)]/25 hover:shadow-[var(--shadow-card-hover)] sm:p-6 ${focusRingSmClass}`}
           >
             <span className="inline-block w-fit rounded-lg bg-[var(--primary)]/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[var(--primary)]">
               {item.tag}
@@ -78,6 +89,7 @@ export function HomePageClient({
   atAGlance: HomeAtAGlanceData;
 }) {
   const phase = getPublicPlatformPhase();
+  const reducedMotion = usePrefersReducedMotion();
 
   return (
     <div>
@@ -91,13 +103,14 @@ export function HomePageClient({
       {/* Who we are — short intro; full story on About (matches Participate / pathways density) */}
       <section
         id="executive-summary"
-        className="section-full border-b border-[var(--border)] bg-gradient-to-b from-[var(--section-light)] to-white py-10 sm:py-12"
+        className="section-full border-b border-[var(--border)] bg-gradient-to-b from-[var(--section-light)] to-white py-12 sm:py-16 lg:py-20"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={reducedMotion ? false : { opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-48px 0px" }}
+            transition={sectionRevealTransition(reducedMotion)}
             className="mx-auto max-w-2xl text-center"
           >
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--primary)]">
@@ -111,12 +124,12 @@ export function HomePageClient({
             </p>
             <p className="mt-4 text-sm text-[var(--muted-foreground)]">
               Executive summary, vision, mission, and pillars are on{" "}
-              <Link href="/about#executive-summary" className="font-semibold text-[var(--primary)] hover:underline">
+              <Link href="/about#executive-summary" className={`${primaryLinkClass} font-semibold`}>
                 About
               </Link>
               .
             </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
               <Button href="/about">About MBKRU</Button>
               <Button href="/contact" variant="outline">
                 Get in touch
@@ -138,38 +151,39 @@ export function HomePageClient({
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={reducedMotion ? false : { opacity: 0, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-40px 0px" }}
+            transition={sectionRevealTransition(reducedMotion)}
             className="text-center"
           >
-            <span className="inline-block rounded bg-[var(--primary)]/10 px-3 py-1.5 text-sm font-medium text-[var(--primary)]">
+            <span className="inline-block rounded-full bg-[var(--primary)]/10 px-3 py-1.5 text-sm font-medium text-[var(--primary)]">
               Explore
             </span>
-            <h2 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl lg:text-4xl">
+            <h2 className="mt-5 font-display text-2xl font-bold tracking-tight text-[var(--foreground)] sm:mt-6 sm:text-3xl lg:text-4xl">
               Programme pathways
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-[var(--muted-foreground)]">
+            <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
               Jump straight into Voice, accountability tools, provenance, methodology, and partnerships. These cards are
               navigation — not a delivery calendar.
             </p>
-            <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-[var(--muted-foreground)]">
+            <p className="mx-auto mt-4 max-w-3xl text-center text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-[15px]">
               Key operational pillars and the regional map are above. For the full programme story and long-range
               planning narrative, read{" "}
-              <Link href="/about" className="font-medium text-[var(--primary)] hover:underline">
+              <Link href="/about" className={primaryLinkClass}>
                 About
               </Link>{" "}
               (including the same pillars section at{" "}
-              <Link href="/about#key-operational-pillars" className="font-medium text-[var(--primary)] hover:underline">
+              <Link href="/about#key-operational-pillars" className={primaryLinkClass}>
                 #key-operational-pillars
               </Link>
               ). Quarter-by-quarter milestones for funders remain in programme documentation referenced from About and
               Data sources.
             </p>
           </motion.div>
-          <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-[var(--muted-foreground)]">
+          <p className="mx-auto mt-4 max-w-2xl text-center text-sm leading-relaxed text-[var(--muted-foreground)]">
             Need a conversation?{" "}
-            <Link href="/contact" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/contact" className={primaryLinkClass}>
               Contact
             </Link>{" "}
             the coordination desk.
@@ -189,8 +203,8 @@ export function HomePageClient({
               calendar.
             </p>
           ) : null}
-          <HomeProgrammePathwaysSection phase={phase} />
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+          <HomeProgrammePathwaysSection phase={phase} reducedMotion={reducedMotion} />
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-3 sm:mt-14 sm:gap-4">
             <Button href="/about" variant="outline">
               Full programme on About
             </Button>
@@ -206,12 +220,13 @@ export function HomePageClient({
 
       {/* News — only published CMS posts (passed from server) */}
       <section className="section-spacing section-full bg-white">
-        <div className="mx-auto max-w-7xl">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={reducedMotion ? false : { opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-8"
+            viewport={{ once: true, margin: "-40px 0px" }}
+            transition={sectionRevealTransition(reducedMotion, 0.04)}
+            className="mb-10 sm:mb-12"
           >
             <span className="inline-block rounded bg-[var(--primary)]/10 px-3 py-1.5 text-sm font-medium text-[var(--primary)]">
               Latest
@@ -228,18 +243,19 @@ export function HomePageClient({
               <p className="text-[var(--muted-foreground)]">No published news posts yet.</p>
               <p className="mt-3 text-sm text-[var(--muted-foreground)]">
                 The{" "}
-                <Link href="/news" className="font-medium text-[var(--primary)] hover:underline">
+                <Link href="/news" className={primaryLinkClass}>
                   News
                 </Link>{" "}
                 page will list updates once editors publish from Admin → Posts.
               </p>
             </div>
           ) : (
-            <div className="grid gap-8 lg:grid-cols-2 lg:items-stretch lg:gap-10">
+            <div className="grid gap-8 sm:gap-10 lg:grid-cols-2 lg:items-stretch">
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
+                initial={reducedMotion ? false : { opacity: 0, x: -24 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "-24px 0px" }}
+                transition={sectionRevealTransition(reducedMotion)}
                 className="group"
               >
                 <Link href={`/news/${cmsPosts[0].slug}`} className="block">
@@ -274,10 +290,11 @@ export function HomePageClient({
                 {cmsPosts.slice(1, 3).map((article, i) => (
                   <motion.div
                     key={article.id}
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={reducedMotion ? false : { opacity: 0, x: 24 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
+                    viewport={{ once: true, margin: "-20px 0px" }}
+                    transition={sectionRevealTransition(reducedMotion, i * 0.07)}
+                    whileHover={reducedMotion ? undefined : { y: -2 }}
                   >
                     <Link
                       href={`/news/${article.slug}`}
@@ -326,7 +343,7 @@ export function HomePageClient({
           <div className="mt-8 text-center">
             <Link
               href="/news"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--primary)] hover:text-[var(--primary-dark)]"
+              className={`${primaryNavLinkClass} gap-2 text-sm font-semibold hover:text-[var(--primary-dark)]`}
             >
               View all news & updates
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

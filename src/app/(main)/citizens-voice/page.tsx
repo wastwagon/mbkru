@@ -4,12 +4,13 @@ import Link from "next/link";
 import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
-import { images } from "@/lib/site-content";
-import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 import {
   isCivicPetitionsAndPublicCausesEnabled,
   isPublicVoiceStatisticsEnabled,
 } from "@/lib/reports/accountability-pages";
+import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
+import { images } from "@/lib/site-content";
 
 export const metadata: Metadata = {
   title: "Digital Platform — MBKRU Voice",
@@ -109,7 +110,7 @@ export default async function CitizensVoicePage() {
                   <span>
                     Public aggregate statistics (counts by kind, status, and region) on{" "}
                     {showStats ? (
-                      <Link href="/transparency" className="font-medium text-[var(--primary)] hover:underline">
+                      <Link href="/transparency" className={primaryLinkClass}>
                         Voice statistics
                       </Link>
                     ) : (

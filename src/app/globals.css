@@ -45,6 +45,8 @@
   --section-dark: #0d6b5c;
   --section-light-cream: #fff9ec;
   --topbar-bg: #1e293b;
+  /* Motion — cubic bezier for “premium” UI (use via arbitrary values or style) */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @theme inline {
@@ -111,6 +113,12 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 /* Premium layout utilities — mobile-first */
 .container-narrow {
   width: 100%;
@@ -158,21 +166,21 @@ html {
   }
 }
 
-/* Section spacing — compact (was 4/5/7.5rem, now 2.5/3/3.5rem) */
+/* Section spacing — mobile-first; slightly roomier on large screens */
 .section-spacing {
-  padding-top: 2.5rem;
-  padding-bottom: 2.5rem;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
 }
 @media (min-width: 640px) {
   .section-spacing {
-    padding-top: 3rem;
-    padding-bottom: 3rem;
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
   }
 }
 @media (min-width: 1024px) {
   .section-spacing {
-    padding-top: 3.5rem;
-    padding-bottom: 3.5rem;
+    padding-top: 4.5rem;
+    padding-bottom: 4.5rem;
   }
 }
 

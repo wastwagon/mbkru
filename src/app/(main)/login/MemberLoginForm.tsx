@@ -5,9 +5,9 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { PasswordInput } from "@/components/ui/PasswordInput";
+import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 
-const inputClass =
-  "mt-1 block w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20";
+const inputClass = `mt-1 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
 
 export function MemberLoginForm() {
   const router = useRouter();
@@ -78,12 +78,12 @@ export function MemberLoginForm() {
           {error}
         </p>
       ) : null}
-      <Button type="submit" disabled={loading} className="w-full sm:w-auto">
+      <Button type="submit" disabled={loading} className="w-full justify-center sm:w-auto">
         {loading ? "Signing in…" : "Sign in"}
       </Button>
       <p className="text-sm text-[var(--muted-foreground)]">
         No account?{" "}
-        <Link href="/register" className="font-semibold text-[var(--primary)] hover:underline">
+        <Link href="/register" className={`${primaryLinkClass} font-semibold`}>
           Create one
         </Link>
       </p>

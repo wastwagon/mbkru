@@ -10,8 +10,8 @@ import {
   getPublishedPostBySlug,
   postHeroImage,
 } from "@/lib/content/posts-db";
-import { prisma } from "@/lib/db/prisma";
-import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
+import { primaryNavLinkTouchClass } from "@/lib/primary-link-styles";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -76,10 +76,7 @@ export default async function NewsArticlePage({ params }: Props) {
               </div>
             </div>
             <div className="mt-10">
-              <Link
-                href="/news"
-                className="inline-flex min-h-[44px] items-center gap-2 text-sm font-semibold text-[var(--primary)] hover:underline"
-              >
+              <Link href="/news" className={`${primaryNavLinkTouchClass} gap-2 text-sm font-semibold`}>
                 ← Back to News
               </Link>
             </div>

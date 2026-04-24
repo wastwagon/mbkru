@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 
 import { PageHeader } from "@/components/ui/PageHeader";
+import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 
 export const metadata: Metadata = {
   title: "Data sources",
@@ -14,7 +15,9 @@ export const metadata: Metadata = {
 function MaintainerDetails({ children }: { children: ReactNode }) {
   return (
     <details className="mt-4 rounded-lg border border-[var(--border)] bg-[var(--section-light)]/70 px-3 py-2 text-[13px] text-[var(--foreground)]">
-      <summary className="cursor-pointer font-medium text-[var(--foreground)]">
+      <summary
+        className={`cursor-pointer rounded-sm font-medium text-[var(--foreground)] ${focusRingSmClass}`}
+      >
         File paths &amp; refresh commands (maintainers)
       </summary>
       <div className="mt-2 space-y-2 leading-relaxed text-[var(--muted-foreground)]">{children}</div>
@@ -31,7 +34,7 @@ const sources: { heading: string; body: ReactNode }[] = [
           Constituency names and structure are cross-checked against the English Wikipedia list{" "}
           <a
             href="https://en.wikipedia.org/wiki/List_of_parliamentary_constituencies_of_Ghana"
-            className="font-medium text-[var(--primary)] underline"
+            className={primaryLinkClass}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -40,14 +43,14 @@ const sources: { heading: string; body: ReactNode }[] = [
           (licensed under{" "}
           <a
             href="https://creativecommons.org/licenses/by-sa/4.0/"
-            className="text-[var(--primary)] underline"
+            className={primaryLinkClass}
             target="_blank"
             rel="noopener noreferrer"
           >
             CC BY-SA 4.0
           </a>
           ). Wikipedia is a convenience for bulk structure; the{" "}
-          <a href="https://ec.gov.gh/" className="text-[var(--primary)] underline" target="_blank" rel="noopener noreferrer">
+          <a href="https://ec.gov.gh/" className={primaryLinkClass} target="_blank" rel="noopener noreferrer">
             Electoral Commission of Ghana
           </a>{" "}
           is the authority for boundaries and seat changes.
@@ -77,7 +80,7 @@ const sources: { heading: string; body: ReactNode }[] = [
           The starting roster is built from the English Wikipedia page{" "}
           <a
             href="https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2024_Ghanaian_general_election"
-            className="font-medium text-[var(--primary)] underline"
+            className={primaryLinkClass}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -85,7 +88,7 @@ const sources: { heading: string; body: ReactNode }[] = [
           </a>{" "}
           (CC BY-SA 4.0). Labels are matched to constituency names where possible; unmatched rows may appear without a
           constituency link. For who currently sits in Parliament, cross-check{" "}
-          <a href="https://www.parliament.gh/members" className="text-[var(--primary)] underline" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.parliament.gh/members" className={primaryLinkClass} target="_blank" rel="noopener noreferrer">
             parliament.gh — members
           </a>
           .
@@ -119,12 +122,12 @@ const sources: { heading: string; body: ReactNode }[] = [
       <>
         <p>
           The public{" "}
-          <Link href="/town-halls" className="font-medium text-[var(--primary)] underline">
+          <Link href="/town-halls" className={primaryLinkClass}>
             Town halls &amp; forums
           </Link>{" "}
           page lists events the team confirms in <strong className="text-[var(--foreground)]">Admin → Town halls &amp; forums</strong>.
           Constituency debate placeholders appear on{" "}
-          <Link href="/debates" className="font-medium text-[var(--primary)] underline">
+          <Link href="/debates" className={primaryLinkClass}>
             Constituency debates
           </Link>
           . There is no separate national “open API” for these programme-specific rows — operational truth is also reflected
@@ -153,14 +156,14 @@ const sources: { heading: string; body: ReactNode }[] = [
           Council&apos;s{" "}
           <a
             href="https://efuajumakotcouncil.com/?page=queens"
-            className="text-[var(--primary)] underline"
+            className={primaryLinkClass}
             target="_blank"
             rel="noopener noreferrer"
           >
             Queen Mothers
           </a>{" "}
           page, and public reporting such as{" "}
-          <a href="https://uenr.edu.gh/" className="text-[var(--primary)] underline" target="_blank" rel="noopener noreferrer">
+          <a href="https://uenr.edu.gh/" className={primaryLinkClass} target="_blank" rel="noopener noreferrer">
             UENR
           </a>{" "}
           news on Sunyani Traditional Council. MBKRU does not claim to represent those councils.
@@ -182,7 +185,7 @@ const sources: { heading: string; body: ReactNode }[] = [
       <>
         <p>
           Sample manifesto metadata and promise themes point to party-published PDFs (see admin and the{" "}
-          <Link href="/methodology" className="font-medium text-[var(--primary)] underline">
+          <Link href="/methodology" className={primaryLinkClass}>
             methodology
           </Link>{" "}
           page). Editors remain responsible for accurate citations and rights.
@@ -226,7 +229,9 @@ export default function DataSourcesPage() {
             ))}
           </ul>
           <details className="rounded-xl border border-[var(--border)] bg-white p-4 text-sm">
-            <summary className="cursor-pointer font-semibold text-[var(--foreground)]">
+            <summary
+              className={`cursor-pointer rounded-sm font-semibold text-[var(--foreground)] ${focusRingSmClass}`}
+            >
               Full technical runbook (repository)
             </summary>
             <p className="mt-3 text-[var(--muted-foreground)]">

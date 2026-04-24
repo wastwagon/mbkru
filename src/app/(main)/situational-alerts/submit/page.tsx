@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { VoiceReportForm } from "@/components/forms/VoiceReportForm";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { isSituationalAlertsIntakeEnabled } from "@/lib/reports/situational-alerts-gate";
 
 export const dynamic = "force-dynamic";
@@ -24,16 +25,29 @@ export default async function SubmitSituationalAlertPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="mb-8 text-center text-sm text-[var(--muted-foreground)]">
-            <Link href="/situational-alerts" className="text-[var(--primary)] hover:underline">
+          <p className="mb-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--muted-foreground)]">
+            <Link
+              href="/situational-alerts"
+              className={primaryNavLinkClass}
+            >
               ← Physical Engagement Network
             </Link>
-            {" · "}
-            <Link href="/track-report" className="text-[var(--primary)] hover:underline">
+            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+              ·
+            </span>
+            <Link
+              href="/track-report"
+              className={primaryNavLinkClass}
+            >
               Track a report
             </Link>
-            {" · "}
-            <Link href="/citizens-voice/submit" className="text-[var(--primary)] hover:underline">
+            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+              ·
+            </span>
+            <Link
+              href="/citizens-voice/submit"
+              className={primaryNavLinkClass}
+            >
               MBKRU Voice (general reports)
             </Link>
           </p>

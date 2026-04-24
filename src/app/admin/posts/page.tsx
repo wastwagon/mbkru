@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminPostsPage() {
   await requireAdminSession();
@@ -30,10 +31,7 @@ export default async function AdminPostsPage() {
                   /{p.slug} · {p.publishedAt ? "Published" : "Draft"}
                 </p>
               </div>
-              <Link
-                href={`/admin/posts/${p.id}`}
-                className="text-sm font-semibold text-[var(--primary)] hover:underline"
-              >
+              <Link href={`/admin/posts/${p.id}`} className={`${primaryNavLinkClass} text-sm font-semibold`}>
                 Edit
               </Link>
             </li>
@@ -41,7 +39,7 @@ export default async function AdminPostsPage() {
         )}
       </ul>
       <p className="mt-8">
-        <Link href="/admin" className="text-sm text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={`${primaryLinkClass} text-sm`}>
           ← Dashboard
         </Link>
       </p>

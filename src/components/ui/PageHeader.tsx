@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { focusRingSmClass } from "@/lib/primary-link-styles";
+
 interface BreadcrumbItem {
   label: string;
   href?: string;
@@ -170,26 +172,30 @@ export function PageHeader({ title, description, breadcrumbs, breadcrumbCurrentL
   return (
     <section className="relative overflow-hidden border-b border-[var(--border)] section-full bg-[var(--section-light-tertiary)]">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,var(--primary)/[0.08),transparent)]" aria-hidden />
-      <div className="relative mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+      <div className="relative mx-auto max-w-4xl px-4 py-9 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
         {crumbs.length > 0 && (
-          <nav aria-label="Breadcrumb" className="mb-4">
-            <ol className="flex flex-wrap items-center gap-2 text-sm">
+          <nav aria-label="Breadcrumb" className="-mx-1 mb-5 overflow-x-auto overscroll-x-contain px-1 sm:mb-6">
+            <ol className="flex min-w-max flex-nowrap items-center gap-x-1.5 gap-y-1 text-[13px] sm:min-w-0 sm:flex-wrap sm:gap-x-2 sm:text-sm">
               {crumbs.map((item, i) => (
-                <li key={i} className="flex items-center gap-2">
+                <li key={i} className="flex shrink-0 items-center gap-x-1.5 sm:gap-x-2">
                   {i > 0 && (
-                    <span className="text-[var(--muted-foreground)]/60" aria-hidden>
+                    <span className="shrink-0 text-[var(--muted-foreground)]/50" aria-hidden>
                       /
                     </span>
                   )}
                   {item.href ? (
                     <Link
                       href={item.href}
-                      className="font-medium text-[var(--muted-foreground)] transition-colors hover:text-[var(--primary)]"
+                      className={`rounded-md px-1 py-1 font-medium text-[var(--muted-foreground)] underline-offset-4 transition-colors hover:text-[var(--primary)] sm:px-0 sm:py-0.5 ${focusRingSmClass}`}
                     >
                       {item.label}
                     </Link>
                   ) : (
-                    <span className="font-semibold text-[var(--foreground)]" aria-current="page">
+                    <span
+                      className="max-w-[min(100vw-3rem,42rem)] truncate font-semibold text-[var(--foreground)] sm:max-w-none sm:overflow-visible sm:whitespace-normal sm:text-clip"
+                      aria-current="page"
+                      title={item.label}
+                    >
                       {item.label}
                     </span>
                   )}

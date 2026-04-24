@@ -6,6 +6,7 @@ import {
 } from "@/app/admin/communities/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminCommunitiesPage() {
   await requireAdminSession();
@@ -23,7 +24,7 @@ export default async function AdminCommunitiesPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
       <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={primaryLinkClass}>
           ← Admin
         </Link>
       </p>
@@ -33,17 +34,17 @@ export default async function AdminCommunitiesPage() {
         <strong>PUBLIC</strong> communities appear on the public directory.
       </p>
       <p className="mt-2 text-sm">
-        <Link href="/admin/community-reports" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin/community-reports" className={primaryLinkClass}>
           Open cross-community reports queue →
         </Link>
       </p>
       <p className="mt-1 text-sm">
-        <Link href="/admin/community-verifications" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin/community-verifications" className={primaryLinkClass}>
           Open community verification queue →
         </Link>
       </p>
       <p className="mt-1 text-sm">
-        <Link href="/admin/communities/moderation" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin/communities/moderation" className={primaryLinkClass}>
           Global pending posts queue →
         </Link>
       </p>
@@ -178,10 +179,7 @@ export default async function AdminCommunitiesPage() {
                 className="flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-white p-4 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div>
-                  <Link
-                    href={`/admin/communities/${c.id}`}
-                    className="font-medium text-[var(--primary)] hover:underline"
-                  >
+                  <Link href={`/admin/communities/${c.id}`} className={primaryLinkClass}>
                     {c.name}
                   </Link>
                   <p className="mt-1 font-mono text-xs text-[var(--muted-foreground)]">{c.slug}</p>

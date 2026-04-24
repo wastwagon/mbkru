@@ -6,6 +6,7 @@ import { MetricsDisplay } from "@/components/accountability/MetricsDisplay";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { getCachedPublishedReportCardYear } from "@/lib/server/accountability-cache";
 import { isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
 
@@ -47,7 +48,7 @@ export default async function ReportCardYearPage({ params }: Props) {
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <p className="text-sm text-[var(--muted-foreground)]">
-            <Link href="/report-card" className="text-[var(--primary)] hover:underline">
+            <Link href="/report-card" className={primaryNavLinkClass}>
               ← All cycles
             </Link>
           </p>
@@ -106,10 +107,7 @@ export default async function ReportCardYearPage({ params }: Props) {
                   ) : null}
                   {e.member._count.promises > 0 ? (
                     <p className="mt-3 text-xs">
-                      <Link
-                        href={`/promises/${encodeURIComponent(e.member.slug)}`}
-                        className="text-[var(--primary)] hover:underline"
-                      >
+                      <Link href={`/promises/${encodeURIComponent(e.member.slug)}`} className={primaryLinkClass}>
                         {accountabilityProse.mpPledgeSheetLink}
                       </Link>
                     </p>

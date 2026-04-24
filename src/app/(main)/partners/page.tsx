@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { images } from "@/lib/site-content";
 
 export const metadata: Metadata = {
@@ -71,10 +72,7 @@ export default function PartnersPage() {
             <p className="mt-3 text-[var(--muted-foreground)] leading-relaxed">
               If your organization shares our commitment to citizen voice, accountability, and poverty eradication in Ghana, we would welcome a conversation. Use our contact form to reach out for partnership enquiries.
             </p>
-            <Link
-              href="/contact"
-              className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--primary)] hover:underline"
-            >
+            <Link href="/contact" className={`${primaryNavLinkClass} mt-4 gap-2 text-sm font-semibold`}>
               Contact us for partnership enquiries
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />

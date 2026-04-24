@@ -2,9 +2,9 @@ import Link from "next/link";
 
 import { getServerPlatformPhase } from "@/config/platform";
 import { getAboutPhaseQuickLinks } from "@/config/public-platform-nav";
+import { focusRingPillClass } from "@/lib/primary-link-styles";
 
-const pill =
-  "inline-flex rounded-full border border-[var(--border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--foreground)] shadow-sm transition hover:border-[var(--primary)]/40 hover:text-[var(--primary)]";
+const pill = `inline-flex rounded-full border border-[var(--border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--foreground)] shadow-sm transition hover:border-[var(--primary)]/40 hover:text-[var(--primary)] ${focusRingPillClass}`;
 
 export async function AboutPlatformLinks() {
   const phase = getServerPlatformPhase();

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { primaryLinkClass, prosePrimaryAnchorClass } from "@/lib/primary-link-styles";
 
 export const metadata: Metadata = {
   title: "Terms of Use",
@@ -17,7 +18,9 @@ export default function TermsPage() {
       />
 
       <section className="section-spacing section-full bg-[var(--section-light)]">
-        <div className="prose prose-slate mx-auto max-w-4xl prose-headings:font-display prose-headings:text-[var(--foreground)] prose-p:text-[var(--muted-foreground)] prose-li:text-[var(--muted-foreground)] prose-a:text-[var(--primary)] prose-a:no-underline hover:prose-a:underline prose-a:transition-all prose-a:duration-[400ms]">
+        <div
+          className={`prose prose-slate mx-auto max-w-4xl prose-headings:font-display prose-headings:text-[var(--foreground)] prose-p:text-[var(--muted-foreground)] prose-li:text-[var(--muted-foreground)] ${prosePrimaryAnchorClass}`}
+        >
           <h2>1. Acceptance of Terms</h2>
           <p>
             By accessing or using the My Brother&apos;s Keeper Restoration United (MBKRU) website and services, you
@@ -86,7 +89,7 @@ export default function TermsPage() {
           <h2>10. Contact</h2>
           <p>
             For questions about these Terms, please{" "}
-            <Link href="/contact" className="text-[var(--primary)] hover:underline">
+            <Link href="/contact" className={primaryLinkClass}>
               contact us
             </Link>
             .

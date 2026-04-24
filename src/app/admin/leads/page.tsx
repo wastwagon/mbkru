@@ -4,6 +4,7 @@ import type { LeadCaptureSource } from "@prisma/client";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 const SOURCE_TABS: { param: string; label: string; source?: LeadCaptureSource }[] = [
   { param: "", label: "All" },
@@ -47,7 +48,7 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
       <p className="mt-1 text-sm text-[var(--muted-foreground)]">
         Newsletter, early access, and Parliament tracker waitlist signups (deduplicated by email per source). Use for
         pilot notifications and exports.{" "}
-        <Link href="/admin/contact-submissions" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin/contact-submissions" className={primaryLinkClass}>
           Contact form messages
         </Link>{" "}
         are stored separately (full text, append-only).
@@ -77,7 +78,7 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
               ? `/api/admin/leads-export?source=${encodeURIComponent(sourceFilter)}`
               : "/api/admin/leads-export"
           }
-          className="font-semibold text-[var(--primary)] hover:underline"
+          className={`${primaryLinkClass} font-semibold`}
         >
           Download CSV
         </a>
@@ -141,7 +142,7 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
       </div>
 
       <p className="mt-8 text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={primaryLinkClass}>
           ← Dashboard
         </Link>
       </p>

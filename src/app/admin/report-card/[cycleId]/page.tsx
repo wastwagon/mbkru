@@ -5,6 +5,7 @@ import { upsertScorecardEntryAction } from "@/app/admin/report-card/actions";
 import { MetricsDisplay } from "@/components/accountability/MetricsDisplay";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 type Props = { params: Promise<{ cycleId: string }> };
 
@@ -33,7 +34,7 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
       <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin/report-card" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin/report-card" className={primaryLinkClass}>
           ← Report card cycles
         </Link>
       </p>

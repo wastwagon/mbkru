@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getMemberSession } from "@/lib/member/session";
-import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 import { prisma } from "@/lib/db/prisma";
 import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
+import { getMemberSession } from "@/lib/member/session";
+import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 
 export default async function AccountReportsPage() {
   if (!isCitizensVoiceEnabled()) notFound();
@@ -43,7 +44,7 @@ export default async function AccountReportsPage() {
       <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">My reports</h1>
       <p className="mt-1 text-sm text-[var(--muted-foreground)]">
         Reports filed while signed in.{" "}
-        <Link href="/account" className="text-[var(--primary)] hover:underline">
+        <Link href="/account" className={primaryLinkClass}>
           Back to account
         </Link>
       </p>
@@ -51,13 +52,13 @@ export default async function AccountReportsPage() {
         {reports.length === 0 ? (
           <li className="py-6 text-sm text-[var(--muted-foreground)]">
             No reports yet.{" "}
-            <Link href="/citizens-voice/submit" className="text-[var(--primary)] hover:underline">
+            <Link href="/citizens-voice/submit" className={primaryLinkClass}>
               Submit one
             </Link>
           </li>
         ) : (
           reports.map((r) => (
-            <li key={r.id} className="py-4">
+            <li key={r.id} className="py-5 sm:py-4">
               <p className="font-medium text-[var(--foreground)]">{r.title}</p>
               <p className="text-xs text-[var(--muted-foreground)]">
                 <span className="font-mono">{r.trackingCode}</span> · {r.kind.replace(/_/g, " ")} ·{" "}
@@ -77,7 +78,7 @@ export default async function AccountReportsPage() {
                 ) : null}
               </p>
               <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
-                <Link href={`/account/reports/${r.id}`} className="text-[var(--primary)] hover:underline">
+                <Link href={`/account/reports/${r.id}`} className={primaryNavLinkClass}>
                   View report
                   {r._count.adminReplies > 0 ? (
                     <span className="ml-1 tabular-nums text-[var(--muted-foreground)]">
@@ -85,10 +86,7 @@ export default async function AccountReportsPage() {
                     </span>
                   ) : null}
                 </Link>
-                <Link
-                  href={`/track-report?code=${encodeURIComponent(r.trackingCode)}`}
-                  className="text-[var(--primary)] hover:underline"
-                >
+                <Link href={`/track-report?code=${encodeURIComponent(r.trackingCode)}`} className={primaryNavLinkClass}>
                   Track by code
                 </Link>
               </div>

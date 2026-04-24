@@ -3,6 +3,8 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { TopBar } from "@/components/layout/TopBar";
 import { BackToTop } from "@/components/ui/BackToTop";
+import { MBKRUVoiceChatbot } from "@/components/voice/MBKRUVoiceChatbot";
+import { AccessibilityVoiceTools } from "@/components/accessibility/AccessibilityVoiceTools";
 
 export default function MainLayout({
   children,
@@ -17,17 +19,23 @@ export default function MainLayout({
       >
         Skip to main content
       </a>
-      <TopBar />
-      <Header />
+      <div className="sticky top-0 z-50">
+        <div className="relative z-[60]">
+          <TopBar />
+        </div>
+        <Header />
+      </div>
       <main
         id="main"
-        className="min-w-0 flex-1 overflow-x-hidden pt-16 pb-[max(1rem,env(safe-area-inset-bottom))]"
+        className="min-w-0 flex-1 overflow-x-hidden pb-[max(1rem,env(safe-area-inset-bottom))]"
         tabIndex={-1}
       >
         {children}
       </main>
       <Footer />
       <BackToTop />
+      <MBKRUVoiceChatbot />
+      <AccessibilityVoiceTools />
       <AnalyticsScripts />
     </>
   );

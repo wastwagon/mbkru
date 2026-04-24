@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminMembersPage() {
   await requireAdminSession();
@@ -52,7 +53,7 @@ export default async function AdminMembersPage() {
                   ) : null}
                 </p>
               </div>
-              <Link href={`/admin/members/${m.id}`} className="shrink-0 text-sm font-semibold text-[var(--primary)] hover:underline">
+              <Link href={`/admin/members/${m.id}`} className={`${primaryNavLinkClass} shrink-0 text-sm font-semibold`}>
                 Edit identity
               </Link>
             </li>
@@ -61,7 +62,7 @@ export default async function AdminMembersPage() {
       </ul>
 
       <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={primaryLinkClass}>
           ← Admin home
         </Link>
       </p>

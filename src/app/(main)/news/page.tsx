@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { formatPostDate, getPublishedPostSummaries, postHeroImage } from "@/lib/content/posts-db";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 export const metadata: Metadata = {
   title: "News",
@@ -25,7 +26,7 @@ export default async function NewsPage() {
             <p className="text-[var(--muted-foreground)]">No published news posts yet.</p>
             <p className="mt-4 text-sm text-[var(--muted-foreground)]">
               Editors with access can create and publish posts from{" "}
-              <Link href="/admin/posts" className="font-semibold text-[var(--primary)] hover:underline">
+              <Link href="/admin/posts" className={`${primaryLinkClass} font-semibold`}>
                 Admin → Posts
               </Link>
               . They appear here and on the homepage automatically.

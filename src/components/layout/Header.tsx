@@ -13,6 +13,7 @@ import {
   getParticipateNavLinks,
 } from "@/config/public-platform-nav";
 import { useMemberMe } from "@/hooks/useMemberMe";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 type NavLeaf = {
   href: string;
@@ -416,6 +417,7 @@ export function Header() {
   const phase = getPublicPlatformPhase();
   const navStructure = buildMainNav(phase);
   const showMemberAuth = platformFeatures.authentication(phase);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const desktopFlyoutLeaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -442,26 +444,38 @@ export function Header() {
   useEffect(() => () => cancelDesktopFlyoutLeaveTimer(), [cancelDesktopFlyoutLeaveTimer]);
 
   useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setMobileMenuOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 100);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const isSticky = scrolled;
   const isHomeHero = pathname === "/" && !scrolled;
+  const useLightChrome = pathname !== "/" || scrolled;
 
   return (
     <header
-      className={`top-0 z-50 w-full transition-all duration-[400ms] ease-in-out ${
-        isSticky
-          ? "fixed bg-white shadow-[var(--shadow-dropdown)]"
-          : isHomeHero
-            ? "relative bg-[var(--section-dark)]"
-            : "relative bg-white/95 backdrop-blur-sm"
+      className={`relative w-full transition-[background-color,box-shadow,backdrop-filter] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        useLightChrome
+          ? "bg-white/95 shadow-[var(--shadow-md)] backdrop-blur-md supports-[backdrop-filter]:bg-white/80"
+          : "bg-[var(--section-dark)] shadow-none backdrop-blur-none"
       }`}
     >
-      <nav className="mx-auto flex max-w-7xl min-h-[60px] items-center justify-between gap-4 overflow-visible px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
+      <nav className="relative z-50 mx-auto flex max-w-7xl min-h-[60px] items-center justify-between gap-4 overflow-visible px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
         <Logo href="/" className="gap-2.5" theme={isHomeHero ? "dark" : "light"} />
 
         <div
@@ -536,15 +550,32 @@ export function Header() {
       </nav>
 
       <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden border-t border-[var(--border)] bg-white lg:hidden"
-          >
-            <div className="max-h-[min(70vh,calc(100dvh-5rem))] space-y-0 overflow-y-auto overscroll-contain px-2 py-3">
+        {mobileMenuOpen ? (
+          <>
+            <motion.button
+              key="mobile-nav-backdrop"
+              type="button"
+              aria-label="Close menu"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: prefersReducedMotion ? 0.01 : 0.24 }}
+              className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-[3px] lg:hidden"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <motion.div
+              key="mobile-nav-panel"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={
+                prefersReducedMotion
+                  ? { duration: 0.15 }
+                  : { type: "spring", stiffness: 460, damping: 34, mass: 0.62 }
+              }
+              className="relative z-50 overflow-hidden border-t border-[var(--border)] bg-white shadow-[var(--shadow-lg)] lg:hidden"
+            >
+            <div className="max-h-[min(72vh,calc(100dvh-6rem))] space-y-0 overflow-y-auto overscroll-contain px-3 py-4 sm:px-4">
               {navStructure.map((entry) => {
                 if (entry.kind === "link") {
                   const active = leafIsActive(pathname, entry.leaf);
@@ -582,7 +613,7 @@ export function Header() {
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2 }}
+                          transition={{ duration: prefersReducedMotion ? 0.01 : 0.22 }}
                           className="overflow-hidden"
                         >
                           <div className="space-y-0 border-l-2 border-[var(--border)] pb-2 pl-3 ml-3">
@@ -626,8 +657,9 @@ export function Header() {
                 </Link>
               </div>
             </div>
-          </motion.div>
-        )}
+            </motion.div>
+          </>
+        ) : null}
       </AnimatePresence>
     </header>
   );

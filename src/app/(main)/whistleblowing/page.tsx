@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/ui/PageHeader";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { isWhistleblowerGuidancePageEnabled } from "@/lib/reports/accountability-pages";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +29,7 @@ export default function WhistleblowingPage() {
             <h2 className="text-lg font-semibold text-[var(--foreground)]">MBKRU Voice</h2>
             <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
               Use{" "}
-              <Link href="/citizens-voice" className="text-[var(--primary)] hover:underline">
+              <Link href="/citizens-voice" className={primaryLinkClass}>
                 MBKRU Voice
               </Link>{" "}
               to submit situational reports, service failures, and wrongdoing tips with optional follow-up. You can track some
@@ -44,7 +45,7 @@ export default function WhistleblowingPage() {
             <h2 className="mt-8 text-lg font-semibold text-[var(--foreground)]">Communities</h2>
             <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
               Local and traditional-area{" "}
-              <Link href="/communities" className="text-[var(--primary)] hover:underline">
+              <Link href="/communities" className={primaryLinkClass}>
                 communities
               </Link>{" "}
               on MBKRU can surface concerns collectively; they complement but do not replace confidential reporting channels
@@ -52,7 +53,7 @@ export default function WhistleblowingPage() {
             </p>
             <p className="mt-8 text-sm text-[var(--muted-foreground)]">
               For how we describe evidence, promises, and score-style outputs on the public site, see{" "}
-              <Link href="/methodology#claims-and-citations" className="font-medium text-[var(--primary)] hover:underline">
+              <Link href="/methodology#claims-and-citations" className={primaryLinkClass}>
                 Accountability methodology — claims &amp; citations
               </Link>
               .

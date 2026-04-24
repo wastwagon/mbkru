@@ -6,6 +6,7 @@ import {
 import { TownHallFormFields } from "@/app/admin/town-halls/TownHallFormFields";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { programmeEventKindLabel } from "@/lib/programme-event-labels";
 
 export default async function AdminTownHallsPage() {
@@ -54,7 +55,7 @@ export default async function AdminTownHallsPage() {
       <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">Town halls &amp; forums</h1>
       <p className="mt-1 text-sm text-[var(--muted-foreground)]">
         Programme rows power the public{" "}
-        <Link href="/town-halls" className="text-[var(--primary)] hover:underline">
+        <Link href="/town-halls" className={primaryLinkClass}>
           /town-halls
         </Link>{" "}
         page. Seed creates roadmap placeholders; edit here when dates and venues are confirmed. Provenance note:{" "}
@@ -95,10 +96,7 @@ export default async function AdminTownHallsPage() {
                   {ev.programmeQuarter ? ` · ${ev.programmeQuarter}` : null}
                 </p>
               </div>
-              <Link
-                href={`/admin/town-halls/${ev.id}`}
-                className="shrink-0 text-sm font-semibold text-[var(--primary)] hover:underline"
-              >
+              <Link href={`/admin/town-halls/${ev.id}`} className={`${primaryNavLinkClass} shrink-0 text-sm font-semibold`}>
                 Edit
               </Link>
             </li>
@@ -107,7 +105,7 @@ export default async function AdminTownHallsPage() {
       </ul>
 
       <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={primaryLinkClass}>
           ← Admin home
         </Link>
       </p>

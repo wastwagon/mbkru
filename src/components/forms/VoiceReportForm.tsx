@@ -7,6 +7,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
+import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
+import { nearestRegionSlug } from "@/lib/geo/ghana-region-centroids";
+import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 import {
   enqueueReportDraft,
   isRetryableReportSubmitResponse,
@@ -15,8 +18,6 @@ import {
   type ReportQueueItem,
   removeReportQueueItem,
 } from "@/lib/client/report-submit-queue";
-import { nearestRegionSlug } from "@/lib/geo/ghana-region-centroids";
-import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
 
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
@@ -40,8 +41,7 @@ const ALL_KINDS = [
   { value: "ELECTION_OBSERVATION", label: "Election observation" },
 ] as const;
 
-const inputClass =
-  "mt-1 block w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20";
+const inputClass = `mt-1 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
 
 type LocalDraftResult = "saved" | "not_saved" | "storage_full";
 
@@ -437,7 +437,7 @@ export function VoiceReportForm({
           <span>{localDraftNotice}</span>
           <button
             type="button"
-            className="shrink-0 text-sm font-medium text-[var(--primary)] underline"
+            className={`shrink-0 ${primaryLinkClass}`}
             onClick={() => setLocalDraftNotice(null)}
           >
             Dismiss
@@ -448,7 +448,7 @@ export function VoiceReportForm({
       {lockKind && queueItems.length > visibleQueueItems.length ? (
         <p className="text-xs text-[var(--muted-foreground)]">
           You have other saved drafts on this device for different report types. Open{" "}
-          <Link href="/citizens-voice/submit" className="font-medium text-[var(--primary)] underline">
+          <Link href="/citizens-voice/submit" className={primaryLinkClass}>
             Citizens Voice submit
           </Link>{" "}
           to restore them.
@@ -528,12 +528,14 @@ export function VoiceReportForm({
             </p>
           ) : null}
           <p className="mt-2 text-sm">
-            <Link href={`/track-report?code=${encodeURIComponent(trackingCode)}`} className="underline">
+            <Link href={`/track-report?code=${encodeURIComponent(trackingCode)}`} className={primaryLinkClass}>
               Check status
             </Link>
           </p>
           <details className="mt-4 rounded-lg border border-green-200/80 bg-white/60 px-3 py-2 text-sm text-green-950">
-            <summary className="cursor-pointer font-medium text-green-900 outline-none marker:text-green-700">
+            <summary
+              className={`cursor-pointer rounded-sm font-medium text-green-900 outline-none marker:text-green-700 ${focusRingSmClass}`}
+            >
               How we use your report
             </summary>
             <ul className="mt-2 list-inside list-disc space-y-1.5 text-green-900/90">
@@ -695,7 +697,9 @@ export function VoiceReportForm({
           className="rounded-xl border border-[var(--border)] bg-white/60 px-4 py-3 open:pb-4"
           onToggle={(e) => setMapSectionOpen((e.target as HTMLDetailsElement).open)}
         >
-          <summary className="cursor-pointer text-sm font-medium text-[var(--foreground)]">
+          <summary
+            className={`cursor-pointer rounded-sm text-sm font-medium text-[var(--foreground)] ${focusRingSmClass}`}
+          >
             Map: tap or drag pin <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
           </summary>
           <p className="mt-2 text-xs text-[var(--muted-foreground)]">
@@ -788,6 +792,7 @@ export function VoiceReportForm({
         type="submit"
         disabled={loading || (isTurnstileWidgetEnabled && !turnstileToken)}
         size="lg"
+        className="w-full min-w-0 justify-center sm:w-auto"
       >
         {loading ? "Submitting…" : "Submit report"}
       </Button>

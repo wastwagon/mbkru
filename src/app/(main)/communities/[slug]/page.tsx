@@ -8,13 +8,14 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { getMemberSession } from "@/lib/member/session";
+import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { isCommunitiesBrowseEnabled } from "@/lib/reports/accountability-pages";
 import {
   canReadCommunityFullDetail,
   canReadCommunityPosts,
   findMembership,
 } from "@/lib/server/communities-access";
 import { listCommunityPostsVisibleToViewer } from "@/lib/server/community-posts-public";
-import { isCommunitiesBrowseEnabled } from "@/lib/reports/accountability-pages";
 import { isCommunitySlug } from "@/lib/validation/communities";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -70,7 +71,7 @@ export default async function CommunityDetailPage({ params }: Props) {
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <p className="text-sm text-[var(--muted-foreground)]">
-            <Link href="/communities" className="text-[var(--primary)] hover:underline">
+            <Link href="/communities" className={primaryNavLinkClass}>
               ← All communities
             </Link>
           </p>
@@ -150,10 +151,7 @@ export default async function CommunityDetailPage({ params }: Props) {
                     </div>
                     <p className="mt-3 whitespace-pre-wrap text-sm text-[var(--foreground)]">{p.body}</p>
                     <p className="mt-2 text-xs">
-                      <Link
-                        href={`/communities/${c.slug}/post/${p.id}`}
-                        className="text-[var(--primary)] hover:underline"
-                      >
+                      <Link href={`/communities/${c.slug}/post/${p.id}`} className={primaryLinkClass}>
                         Permalink
                       </Link>
                     </p>
@@ -171,11 +169,11 @@ export default async function CommunityDetailPage({ params }: Props) {
 
           <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
             For urgent wrongdoing, see{" "}
-            <Link href="/whistleblowing" className="text-[var(--primary)] hover:underline">
+            <Link href="/whistleblowing" className={primaryLinkClass}>
               whistleblowing guidance
             </Link>{" "}
             and{" "}
-            <Link href="/citizens-voice" className="text-[var(--primary)] hover:underline">
+            <Link href="/citizens-voice" className={primaryLinkClass}>
               MBKRU Voice
             </Link>
             .

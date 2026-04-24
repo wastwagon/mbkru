@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getMemberSession } from "@/lib/member/session";
-import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 import { prisma } from "@/lib/db/prisma";
 import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
+import { getMemberSession } from "@/lib/member/session";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -40,12 +41,14 @@ export default async function AccountReportDetailPage({ params }: Props) {
 
   return (
     <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
-      <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/account/reports" className="text-[var(--primary)] hover:underline">
+      <p className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm text-[var(--muted-foreground)]">
+        <Link href="/account/reports" className={`${primaryNavLinkClass} rounded-md`}>
           ← My reports
         </Link>
-        {" · "}
-        <Link href={`/track-report?code=${encodeURIComponent(report.trackingCode)}`} className="text-[var(--primary)] hover:underline">
+        <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+          ·
+        </span>
+        <Link href={`/track-report?code=${encodeURIComponent(report.trackingCode)}`} className={`${primaryNavLinkClass} rounded-md`}>
           Track by code
         </Link>
       </p>

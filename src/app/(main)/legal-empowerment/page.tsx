@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/ui/PageHeader";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { isLegalEmpowermentPageEnabled } from "@/lib/reports/accountability-pages";
 
 /** Respect server `PLATFORM_PHASE` without requiring a rebuild for gating. */
@@ -34,12 +35,12 @@ export default function LegalEmpowermentPage() {
             process applies. We will expand curated guides and FAQs as the programme matures.
           </p>
           <p>
-            Use <Link href="/citizens-voice/submit" className="font-medium text-[var(--primary)] hover:underline">MBKRU Voice</Link>{" "}
+            Use <Link href="/citizens-voice/submit" className={primaryLinkClass}>MBKRU Voice</Link>{" "}
             to document issues for our accountability work; it is <strong className="text-[var(--foreground)]">not</strong> a
             filing with CHRAJ, the EC, or the judiciary.
           </p>
           <p>
-            <Link href="/contact" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/contact" className={primaryLinkClass}>
               Contact us
             </Link>{" "}
             for partnerships or to suggest resources we should list for your community.

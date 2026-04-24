@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 type MembershipRow = { state: string; role: string };
 type VerificationRow = {
@@ -250,7 +251,7 @@ export function CommunityMemberPanel({
 
       {authRequired ? (
         <p className="mt-3 text-sm text-[var(--muted-foreground)]">
-          <Link href={`/login?next=${next}`} className="font-medium text-[var(--primary)] hover:underline">
+          <Link href={`/login?next=${next}`} className={primaryLinkClass}>
             Sign in
           </Link>{" "}
           to join or post in this community.

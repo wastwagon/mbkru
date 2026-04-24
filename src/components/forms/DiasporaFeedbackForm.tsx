@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
+import { focusRingSmClass, focusRingWithinSmClass } from "@/lib/primary-link-styles";
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
 const schema = z.object({
@@ -25,13 +26,11 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const inputBase =
-  "mt-1.5 block w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition placeholder:text-[var(--muted-foreground)]/70 focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/25 hover:border-[var(--primary)]/25 disabled:opacity-60";
+const inputBase = `mt-1.5 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition-shadow placeholder:text-[var(--muted-foreground)]/70 hover:border-[var(--primary)]/25 focus-visible:border-[var(--primary)]/35 ${focusRingSmClass} disabled:opacity-60`;
 
 const labelClass = "block text-sm font-medium text-[var(--foreground)]";
 const sectionTitle = "font-display text-lg font-semibold text-[var(--foreground)]";
-const radioCard =
-  "flex cursor-pointer items-center gap-3 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm font-medium transition has-[:checked]:border-[var(--primary)] has-[:checked]:bg-[var(--primary)]/5 has-[:checked]:text-[var(--foreground)]";
+const radioCard = `flex cursor-pointer items-center gap-3 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm font-medium transition-shadow ${focusRingWithinSmClass} has-[:checked]:border-[var(--primary)] has-[:checked]:bg-[var(--primary)]/5 has-[:checked]:text-[var(--foreground)]`;
 
 function todayIsoDate() {
   const d = new Date();
@@ -412,7 +411,7 @@ export function DiasporaFeedbackForm() {
           type="submit"
           disabled={isSubmitting || (isTurnstileWidgetEnabled && !turnstileToken)}
           size="lg"
-          className="min-w-[200px]"
+          className="w-full min-w-0 justify-center sm:w-auto sm:min-w-[200px]"
         >
           {isSubmitting ? (
             <>

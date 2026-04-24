@@ -3,6 +3,7 @@
 import type { TurnstileInstance } from "@marsidev/react-turnstile";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { focusRingSmClass } from "@/lib/primary-link-styles";
 
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
@@ -50,12 +51,13 @@ export function TrackerSignupForm() {
           placeholder="Your email address"
           required
           disabled={status === "loading"}
-          className="flex-1 min-h-[48px] rounded-xl border border-[var(--border)] bg-white px-4 py-3.5 text-[var(--foreground)] transition-all duration-[400ms] ease-in-out placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20"
+          className={`min-h-[48px] w-full flex-1 touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3.5 text-[var(--foreground)] transition-shadow duration-200 placeholder:text-[var(--muted-foreground)] focus-visible:border-[var(--primary)]/35 sm:min-w-0 ${focusRingSmClass}`}
           aria-label="Email for tracker notifications"
         />
         <Button
           type="submit"
           disabled={status === "loading" || (isTurnstileWidgetEnabled && !turnstileToken)}
+          className="w-full justify-center sm:w-auto"
         >
           {status === "loading" ? "Signing up…" : "Sign Up"}
         </Button>

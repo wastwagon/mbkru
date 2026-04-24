@@ -4,13 +4,18 @@ import {
   markAllNotificationsReadAction,
   markOneNotificationReadAction,
 } from "@/app/(main)/account/notifications/actions";
+import { prisma } from "@/lib/db/prisma";
 import {
   memberNotificationHref,
   memberNotificationLinkLabel,
   memberNotificationSummary,
 } from "@/lib/member/notification-labels";
-import { prisma } from "@/lib/db/prisma";
 import { getMemberSession } from "@/lib/member/session";
+import {
+  focusRingSmClass,
+  primaryNavLinkClass,
+  primaryNavLinkTouchClass,
+} from "@/lib/primary-link-styles";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +43,7 @@ export default async function AccountNotificationsPage() {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm text-[var(--muted-foreground)]">
-            <Link href="/account" className="text-[var(--primary)] hover:underline">
+            <Link href="/account" className={`${primaryNavLinkTouchClass} rounded-md`}>
               ← Your account
             </Link>
           </p>
@@ -51,7 +56,7 @@ export default async function AccountNotificationsPage() {
           <form action={markAllNotificationsReadAction}>
             <button
               type="submit"
-              className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-2 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--muted)]"
+              className={`min-h-11 touch-manipulation rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-2.5 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--muted)] active:scale-[0.99] motion-reduce:active:scale-100 ${focusRingSmClass}`}
             >
               Mark all read
             </button>
@@ -69,8 +74,8 @@ export default async function AccountNotificationsPage() {
             return (
               <li
                 key={n.id}
-                className={`rounded-xl border border-[var(--border)] p-4 ${
-                  unread ? "bg-[var(--section-light)]/60" : "bg-white"
+                className={`rounded-xl border border-[var(--border)] p-4 transition-shadow duration-200 ${
+                  unread ? "bg-[var(--section-light)]/60 shadow-sm" : "bg-white"
                 }`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -83,7 +88,7 @@ export default async function AccountNotificationsPage() {
                     </p>
                     {href ? (
                       <p className="mt-2">
-                        <Link href={href} className="text-sm font-medium text-[var(--primary)] hover:underline">
+                        <Link href={href} className={`${primaryNavLinkClass} rounded-md text-sm`}>
                           {memberNotificationLinkLabel(n.type)}
                         </Link>
                       </p>
@@ -94,7 +99,7 @@ export default async function AccountNotificationsPage() {
                       <input type="hidden" name="notificationId" value={n.id} />
                       <button
                         type="submit"
-                        className="shrink-0 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium hover:bg-[var(--muted)]"
+                        className={`min-h-9 shrink-0 touch-manipulation rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-medium transition-colors hover:bg-[var(--muted)] active:scale-[0.98] motion-reduce:active:scale-100 ${focusRingSmClass}`}
                       >
                         Mark read
                       </button>

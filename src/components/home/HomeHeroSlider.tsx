@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { heroContent, images } from "@/lib/site-content";
 
 const AUTO_MS = 7500;
@@ -35,18 +36,6 @@ function buildSlides(news: HeroNewsSlide[]): Slide[] {
   ];
 }
 
-function usePrefersReducedMotion(): boolean {
-  return useSyncExternalStore(
-    (onChange) => {
-      const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-      mq.addEventListener("change", onChange);
-      return () => mq.removeEventListener("change", onChange);
-    },
-    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    () => false,
-  );
-}
-
 export function HomeHeroSlider({ newsForSlides }: { newsForSlides: HeroNewsSlide[] }) {
   const slides = useMemo(() => buildSlides(newsForSlides), [newsForSlides]);
   const [active, setActive] = useState(0);
@@ -73,7 +62,7 @@ export function HomeHeroSlider({ newsForSlides }: { newsForSlides: HeroNewsSlide
   const slide = slides[active];
 
   return (
-    <section className="relative -mt-[8.5rem] min-h-[55vh] overflow-hidden pt-[8.5rem]">
+    <section className="relative -mt-[9.25rem] min-h-[min(55vh,40rem)] overflow-hidden pt-[9.25rem] sm:-mt-[8.75rem] sm:pt-[8.75rem] lg:-mt-[8.25rem] lg:pt-[8.25rem]">
       {/* Background layers — crossfade per slide */}
       <div className="absolute inset-0">
         {slides.map((s, i) => {

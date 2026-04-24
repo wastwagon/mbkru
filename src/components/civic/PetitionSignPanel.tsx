@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { FormTurnstile, isTurnstileWidgetEnabled } from "@/components/forms/FormTurnstile";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 type Me = { email: string; displayName: string | null };
 
@@ -155,10 +156,7 @@ export function PetitionSignPanel({
 
       {!me ? (
         <p className="mt-4 text-sm text-[var(--muted-foreground)]">
-          <a
-            href={`/login?next=/petitions/${encodeURIComponent(slug)}`}
-            className="font-medium text-[var(--primary)] hover:underline"
-          >
+          <a href={`/login?next=/petitions/${encodeURIComponent(slug)}`} className={primaryLinkClass}>
             Sign in
           </a>{" "}
           for a quicker flow, or sign below as a guest when Turnstile is off or complete the challenge.

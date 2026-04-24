@@ -5,6 +5,7 @@ import type { CitizenReportKind } from "@prisma/client";
 import { isCitizenReportSlaOverdue } from "@/lib/admin/report-operations-datetime";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 
 const KIND_TABS: { param: string; label: string; description: string }[] = [
   { param: "", label: "All", description: "Every report kind" },
@@ -52,10 +53,7 @@ export default async function AdminReportsPage({ searchParams }: Props) {
         configured.
       </p>
       <p className="mt-3 text-sm">
-        <Link
-          href="/admin/analytics/citizen-reports"
-          className="font-medium text-[var(--primary)] hover:underline"
-        >
+        <Link href="/admin/analytics/citizen-reports" className={primaryLinkClass}>
           Aggregate analytics
         </Link>
         <span className="text-[var(--muted-foreground)]"> — counts by kind, status, region, playbook; no personal data.</span>
@@ -124,10 +122,7 @@ export default async function AdminReportsPage({ searchParams }: Props) {
                   </p>
                 ) : null}
               </div>
-              <Link
-                href={`/admin/reports/${r.id}`}
-                className="shrink-0 text-sm font-semibold text-[var(--primary)] hover:underline"
-              >
+              <Link href={`/admin/reports/${r.id}`} className={`${primaryNavLinkClass} shrink-0 text-sm font-semibold`}>
                 Review
               </Link>
             </li>
@@ -137,7 +132,7 @@ export default async function AdminReportsPage({ searchParams }: Props) {
       </ul>
 
       <p className="mt-8">
-        <Link href="/admin" className="text-sm text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={`${primaryLinkClass} text-sm`}>
           ← Dashboard
         </Link>
       </p>

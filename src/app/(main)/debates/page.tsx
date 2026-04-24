@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { isTownHallDirectoryPageEnabled } from "@/lib/reports/accountability-pages";
 import { programmeEventKindLabel } from "@/lib/programme-event-labels";
 import { getProgrammeTownHallEvents } from "@/lib/server/town-hall-events";
@@ -49,12 +50,12 @@ export default async function ConstituencyDebatesPage() {
           <p className="text-sm leading-relaxed text-[var(--muted-foreground)]">
             This index lists only <strong className="text-[var(--foreground)]">constituency debate</strong> programme types. Regional town halls
             and broadcast forums are on{" "}
-            <Link href="/town-halls" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/town-halls" className={primaryNavLinkClass}>
               Town halls &amp; forums
             </Link>
             . Citations:{" "}
             <code className="rounded bg-white px-1 text-xs shadow-sm">prisma/data/TOWN_HALL_SEED_SOURCES.txt</code> and{" "}
-            <Link href="/data-sources" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/data-sources" className={primaryNavLinkClass}>
               Data sources
             </Link>
             .
@@ -96,11 +97,11 @@ export default async function ConstituencyDebatesPage() {
           )}
 
           <p className="text-sm text-[var(--muted-foreground)]">
-            <Link href="/news" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/news" className={primaryNavLinkClass}>
               News
             </Link>{" "}
             for confirmed dates ·{" "}
-            <Link href="/contact" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/contact" className={primaryNavLinkClass}>
               Contact
             </Link>{" "}
             for media partnerships.

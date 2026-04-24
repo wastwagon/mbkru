@@ -39,18 +39,18 @@ export function AccountSidebar() {
 
   const linkClass = (active: boolean) =>
     [
-      "block rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+      "flex min-h-[44px] items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-[background-color,color,transform] duration-200 ease-out motion-reduce:transition-colors",
       active
-        ? "bg-[var(--primary)]/12 text-[var(--primary)]"
-        : "text-[var(--muted-foreground)] hover:bg-[var(--section-light)] hover:text-[var(--foreground)]",
+        ? "bg-[var(--primary)]/12 text-[var(--primary)] shadow-sm ring-1 ring-[var(--primary)]/15"
+        : "text-[var(--muted-foreground)] hover:bg-[var(--section-light)] hover:text-[var(--foreground)] active:scale-[0.99] motion-reduce:active:scale-100",
     ].join(" ");
 
   return (
-    <aside className="lg:w-56 lg:shrink-0">
-      <nav aria-label="Account" className="space-y-6">
+    <aside className="lg:w-60 lg:shrink-0">
+      <nav aria-label="Account" className="space-y-8">
         <div>
-          <p className="px-3 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--muted-foreground)]">Account</p>
-          <ul className="mt-2 space-y-0.5">
+          <p className="px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--muted-foreground)]">Account</p>
+          <ul className="mt-3 space-y-1">
             {main.map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className={linkClass(accountNavActive(pathname, item.href))}>
@@ -62,8 +62,8 @@ export function AccountSidebar() {
         </div>
         {externalVoice.length > 0 ? (
           <div>
-            <p className="px-3 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--muted-foreground)]">Voice</p>
-            <ul className="mt-2 space-y-0.5">
+            <p className="px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--muted-foreground)]">Voice</p>
+            <ul className="mt-3 space-y-1">
               {externalVoice.map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className={linkClass(pathname === item.href)}>
@@ -75,8 +75,8 @@ export function AccountSidebar() {
           </div>
         ) : null}
         <div>
-          <p className="px-3 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--muted-foreground)]">Explore</p>
-          <ul className="mt-2 space-y-0.5">
+          <p className="px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--muted-foreground)]">Explore</p>
+          <ul className="mt-3 space-y-1">
             {explore.map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className={linkClass(exploreNavActive(pathname, item.href))}>

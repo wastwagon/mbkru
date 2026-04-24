@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
+import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 import { images } from "@/lib/site-content";
 
 export const metadata: Metadata = {
@@ -147,8 +148,7 @@ const brainstorm = [
   },
 ];
 
-const ctaClass =
-  "inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]";
+const ctaClass = `inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition ${focusRingSmClass}`;
 
 export default function DiasporaPage() {
   return (
@@ -443,7 +443,7 @@ export default function DiasporaPage() {
                         href={s.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex items-start gap-3 text-sm text-[var(--primary)] sm:text-[15px]"
+                        className={`group flex items-start gap-3 text-sm font-medium text-[var(--primary)] underline-offset-4 transition-colors sm:text-[15px] ${focusRingSmClass}`}
                       >
                         <span className="mt-0.5 shrink-0 text-[var(--primary)]" aria-hidden>
                           <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -485,7 +485,7 @@ export default function DiasporaPage() {
             <div className="border-t border-[var(--border)] bg-[var(--section-light)]/50 px-6 py-4 lg:hidden">
               <p className="text-center text-xs text-[var(--muted-foreground)]">
                 Imagery on this page is curated stock-style photography for readability; it does not depict official MBKRU events. Public data citations are on{" "}
-                <Link href="/data-sources" className="font-medium text-[var(--primary)] underline">
+                <Link href="/data-sources" className={primaryLinkClass}>
                   Data sources
                 </Link>
                 .

@@ -6,6 +6,7 @@ import {
 } from "@/app/admin/communities/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminCommunityPostsModerationPage() {
   await requireAdminSession();
@@ -23,11 +24,11 @@ export default async function AdminCommunityPostsModerationPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin/communities" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin/communities" className={primaryLinkClass}>
           ← Communities
         </Link>
         {" · "}
-        <Link href="/admin" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={primaryLinkClass}>
           Admin
         </Link>
       </p>
@@ -46,11 +47,11 @@ export default async function AdminCommunityPostsModerationPage() {
               <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
                 {p.community.name}
                 <span className="ml-2 font-normal normal-case text-[var(--muted-foreground)]">
-                  <Link href={`/communities/${p.community.slug}/post/${p.id}`} className="text-[var(--primary)] hover:underline">
+                  <Link href={`/communities/${p.community.slug}/post/${p.id}`} className={primaryLinkClass}>
                     View permalink
                   </Link>
                   {" · "}
-                  <Link href={`/admin/communities/${p.community.id}`} className="text-[var(--primary)] hover:underline">
+                  <Link href={`/admin/communities/${p.community.id}`} className={primaryLinkClass}>
                     Community admin
                   </Link>
                 </span>

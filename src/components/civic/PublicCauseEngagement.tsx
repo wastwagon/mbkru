@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+import { primaryLinkClass } from "@/lib/primary-link-styles";
+
 type Comment = { id: string; body: string; createdAt: string; authorLabel: string };
 
 type Props = {
@@ -116,7 +118,7 @@ export function PublicCauseEngagement({
           <p className="mt-4 text-sm text-amber-800">This cause thread is closed for new support and comments.</p>
         ) : !signedIn ? (
           <p className="mt-4 text-sm text-[var(--muted-foreground)]">
-            <a href={`/login?next=/citizens-voice/causes/${encodeURIComponent(slug)}`} className="font-medium text-[var(--primary)] hover:underline">
+            <a href={`/login?next=/citizens-voice/causes/${encodeURIComponent(slug)}`} className={primaryLinkClass}>
               Sign in
             </a>{" "}
             to support or comment.

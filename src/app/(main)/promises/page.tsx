@@ -9,6 +9,7 @@ import {
   accountabilityProse,
 } from "@/config/accountability-catalogue-destinations";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { focusRingInsetRowClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { getCachedPromisesIndexMembers } from "@/lib/server/accountability-cache";
 import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
 
@@ -32,26 +33,26 @@ export default async function PromisesIndexPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-[var(--muted-foreground)]">
-            <Link
-              href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
-              className="text-[var(--primary)] hover:underline"
-            >
+          <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--muted-foreground)]">
+            <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={primaryNavLinkClass}>
               {accountabilityCatalogueNavMedium.browseAll}
             </Link>
-            {" · "}
-            <Link
-              href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments}
-              className="text-[var(--primary)] hover:underline"
-            >
+            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+              ·
+            </span>
+            <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments} className={primaryNavLinkClass}>
               {accountabilityCatalogueNavMedium.government}
             </Link>
-            {" · "}
-            <Link href="/methodology" className="text-[var(--primary)] hover:underline">
+            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+              ·
+            </span>
+            <Link href="/methodology" className={primaryNavLinkClass}>
               Accountability methodology
             </Link>
-            {" · "}
-            <Link href="/parliament-tracker" className="text-[var(--primary)] hover:underline">
+            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+              ·
+            </span>
+            <Link href="/parliament-tracker" className={primaryNavLinkClass}>
               Accountability hub
             </Link>
           </p>
@@ -66,7 +67,7 @@ export default async function PromisesIndexPage() {
                 <li key={m.id}>
                   <Link
                     href={`/promises/${encodeURIComponent(m.slug)}`}
-                    className="flex flex-col gap-1 px-4 py-4 transition-colors hover:bg-[var(--section-light)]/60 sm:flex-row sm:items-center sm:justify-between"
+                    className={`flex flex-col gap-1 px-4 py-4 touch-manipulation transition-colors hover:bg-[var(--section-light)]/60 sm:flex-row sm:items-center sm:justify-between ${focusRingInsetRowClass}`}
                   >
                     <div className="min-w-0">
                       <p className="font-semibold text-[var(--foreground)]">{m.name}</p>

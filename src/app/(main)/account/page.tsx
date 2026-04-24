@@ -15,6 +15,7 @@ import {
   memberIdentityStatusDescription,
   memberIdentityStatusLabel,
 } from "@/lib/member-identity-labels";
+import { focusRingSmClass } from "@/lib/primary-link-styles";
 import { requestIdentityReviewAction } from "./actions";
 import { SignOutButton } from "./SignOutButton";
 
@@ -100,8 +101,9 @@ export default async function AccountPage() {
     lastSubmittedAt = latest?.createdAt ?? null;
   }
 
-  const tileClass =
-    "group relative flex flex-col rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-card)] transition-all duration-300 hover:border-[var(--primary)]/30 hover:shadow-[var(--shadow-card-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]";
+  const tileClass = `group relative flex touch-manipulation flex-col rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-card)] transition-all duration-300 hover:border-[var(--primary)]/30 hover:shadow-[var(--shadow-card-hover)] active:scale-[0.99] motion-reduce:transition-colors motion-reduce:active:scale-100 ${focusRingSmClass}`;
+
+  const compactLinkClass = `flex min-h-11 touch-manipulation items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--primary)] shadow-sm transition hover:border-[var(--primary)]/25 hover:shadow-md active:scale-[0.99] motion-reduce:active:scale-100 ${focusRingSmClass}`;
 
   return (
     <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
@@ -175,11 +177,11 @@ export default async function AccountPage() {
                 rows={3}
                 maxLength={2000}
                 placeholder="Optional context for staff (max 2000 characters)"
-                className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--foreground)]"
+                className={`w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`}
               />
               <button
                 type="submit"
-                className="rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
+                className={`min-h-11 touch-manipulation rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] active:scale-[0.99] motion-reduce:active:scale-100 ${focusRingSmClass}`}
               >
                 Request verification review
               </button>
@@ -223,7 +225,7 @@ export default async function AccountPage() {
               </span>
               <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)]">
                 Start
-                <ChevronIcon className="transition-transform group-hover:translate-x-0.5" />
+                <ChevronIcon className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" />
               </span>
             </Link>
             <Link href="/account/reports" className={tileClass}>
@@ -238,7 +240,7 @@ export default async function AccountPage() {
               </span>
               <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)]">
                 Open list
-                <ChevronIcon className="transition-transform group-hover:translate-x-0.5" />
+                <ChevronIcon className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" />
               </span>
             </Link>
             <Link href="/track-report" className={tileClass}>
@@ -254,7 +256,7 @@ export default async function AccountPage() {
               </span>
               <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)]">
                 Track
-                <ChevronIcon className="transition-transform group-hover:translate-x-0.5" />
+                <ChevronIcon className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" />
               </span>
             </Link>
           </div>
@@ -287,7 +289,7 @@ export default async function AccountPage() {
           </span>
           <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)]">
             Open inbox
-            <ChevronIcon className="transition-transform group-hover:translate-x-0.5" />
+            <ChevronIcon className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" />
           </span>
         </Link>
       </section>
@@ -325,7 +327,7 @@ export default async function AccountPage() {
                       </span>
                       <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)]">
                         Open
-                        <ChevronIcon className="transition-transform group-hover:translate-x-0.5" />
+                        <ChevronIcon className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" />
                       </span>
                     </Link>
                   ))}
@@ -334,35 +336,23 @@ export default async function AccountPage() {
             ) : null}
             <div className={`grid gap-3 sm:grid-cols-2 lg:grid-cols-3 ${showPromises ? "mt-8" : "mt-5"}`}>
               {showReportCard ? (
-                <Link
-                  href="/report-card"
-                  className="flex items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--primary)] shadow-sm transition hover:border-[var(--primary)]/25 hover:shadow-md"
-                >
+                <Link href="/report-card" className={compactLinkClass}>
                   Report card
                   <ChevronIcon />
                 </Link>
               ) : null}
-              <Link
-                href="/methodology"
-                className="flex items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--primary)] shadow-sm transition hover:border-[var(--primary)]/25 hover:shadow-md"
-              >
+              <Link href="/methodology" className={compactLinkClass}>
                 Methodology
                 <ChevronIcon />
               </Link>
               {showLegal ? (
-                <Link
-                  href="/legal-empowerment"
-                  className="flex items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--primary)] shadow-sm transition hover:border-[var(--primary)]/25 hover:shadow-md"
-                >
+                <Link href="/legal-empowerment" className={compactLinkClass}>
                   Legal
                   <ChevronIcon />
                 </Link>
               ) : null}
               {showTownHalls ? (
-                <Link
-                  href="/town-halls"
-                  className="flex items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm font-semibold text-[var(--primary)] shadow-sm transition hover:border-[var(--primary)]/25 hover:shadow-md"
-                >
+                <Link href="/town-halls" className={compactLinkClass}>
                   Forums
                   <ChevronIcon />
                 </Link>

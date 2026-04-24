@@ -4,6 +4,7 @@ import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
   accountabilityCatalogueNavMedium,
 } from "@/config/accountability-catalogue-destinations";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 type Props = {
   /** Which surface the reader is on — copy points to the sibling view. */
@@ -24,11 +25,11 @@ export function PromiseCatalogueSurfacesCallout({ variant }: Props) {
           This page shows only rows tagged as <strong className="text-[var(--foreground)]">government programmes</strong>{" "}
           in our editorial system — the same underlying records as MP pledge sheets when a member is linked, with one
           shared status. For the full searchable list for sitting MPs, open{" "}
-          <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className="font-semibold text-[var(--primary)] hover:underline">
+          <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={`${primaryLinkClass} font-semibold`}>
             {accountabilityCatalogueNavMedium.browseAll}
           </Link>
           . Methodology:{" "}
-          <Link href="/methodology" className="font-semibold text-[var(--primary)] hover:underline">
+          <Link href="/methodology" className={`${primaryLinkClass} font-semibold`}>
             Accountability methodology
           </Link>
           .
@@ -37,10 +38,7 @@ export function PromiseCatalogueSurfacesCallout({ variant }: Props) {
         <p>
           By default this page lists commitments we track for <strong className="text-[var(--foreground)]">active MPs</strong>{" "}
           (plus your filters). Rows tagged as government programmes also appear on{" "}
-          <Link
-            href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments}
-            className="font-semibold text-[var(--primary)] hover:underline"
-          >
+          <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments} className={`${primaryLinkClass} font-semibold`}>
             {accountabilityCatalogueNavMedium.government}
           </Link>{" "}
           — same data, national programme lens. Exports and{" "}

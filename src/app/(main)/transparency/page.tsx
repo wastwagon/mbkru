@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { isPublicVoiceStatisticsEnabled } from "@/lib/reports/accountability-pages";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { getCitizenReportAnalytics } from "@/lib/server/citizen-report-analytics";
 import { reportKindLabel, reportStatusLabel } from "@/lib/report-status-text";
 
@@ -32,16 +33,20 @@ export default async function TransparencyPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-4xl space-y-10 px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-[var(--muted-foreground)]">
-            <Link href="/citizens-voice" className="font-medium text-[var(--primary)] hover:underline">
+          <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--muted-foreground)]">
+            <Link href="/citizens-voice" className={primaryNavLinkClass}>
               MBKRU Voice
             </Link>
-            {" · "}
-            <Link href="/methodology" className="font-medium text-[var(--primary)] hover:underline">
+            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+              ·
+            </span>
+            <Link href="/methodology" className={primaryNavLinkClass}>
               Methodology
             </Link>
-            {" · "}
-            <Link href="/data-sources" className="font-medium text-[var(--primary)] hover:underline">
+            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+              ·
+            </span>
+            <Link href="/data-sources" className={primaryNavLinkClass}>
               Data sources
             </Link>
           </p>

@@ -7,6 +7,7 @@ import { ShareTopicButton } from "@/components/civic/ShareTopicButton";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { getMemberSession } from "@/lib/member/session";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { reportKindLabel } from "@/lib/report-status-text";
 import { isCivicPetitionsAndPublicCausesEnabled } from "@/lib/reports/accountability-pages";
 
@@ -92,7 +93,7 @@ export default async function PublicCauseDetailPage({ params }: Props) {
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <p className="text-sm text-[var(--muted-foreground)]">
-            <Link href="/citizens-voice/causes" className="text-[var(--primary)] hover:underline">
+            <Link href="/citizens-voice/causes" className={primaryNavLinkClass}>
               ← All causes
             </Link>
             {" · "}

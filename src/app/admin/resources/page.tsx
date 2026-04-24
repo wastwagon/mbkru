@@ -9,6 +9,7 @@ import { DeleteResourceDocumentForm } from "@/components/admin/DeleteResourceDoc
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { resourceCategoryLabel } from "@/lib/content/resource-documents";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminResourcesPage() {
   await requireAdminSession();
@@ -20,14 +21,14 @@ export default async function AdminResourcesPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
       <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin" className={primaryLinkClass}>
           ← Admin
         </Link>
       </p>
       <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">Resource library</h1>
       <p className="mt-2 text-sm text-[var(--muted-foreground)]">
         Upload PDFs and documents for the public{" "}
-        <Link href="/resources" className="text-[var(--primary)] hover:underline">
+        <Link href="/resources" className={primaryLinkClass}>
           Resources
         </Link>{" "}
         page. Drafts stay hidden until you publish.

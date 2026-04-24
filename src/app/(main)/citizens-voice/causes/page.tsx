@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
+import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { reportKindLabel } from "@/lib/report-status-text";
 import { isCivicPetitionsAndPublicCausesEnabled } from "@/lib/reports/accountability-pages";
 
@@ -45,16 +46,20 @@ export default async function PublicCausesIndexPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="text-sm text-[var(--muted-foreground)]">
-            <Link href="/citizens-voice" className="text-[var(--primary)] hover:underline">
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm text-[var(--muted-foreground)]">
+            <Link href="/citizens-voice" className={primaryNavLinkClass}>
               MBKRU Voice
             </Link>
-            {" · "}
-            <Link href="/petitions" className="text-[var(--primary)] hover:underline">
+            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+              ·
+            </span>
+            <Link href="/petitions" className={primaryNavLinkClass}>
               Petitions
             </Link>
-            {" · "}
-            <Link href="/transparency" className="text-[var(--primary)] hover:underline">
+            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+              ·
+            </span>
+            <Link href="/transparency" className={primaryNavLinkClass}>
               Voice statistics
             </Link>
           </p>
@@ -69,7 +74,7 @@ export default async function PublicCausesIndexPage() {
                 <li key={c.id}>
                   <Link
                     href={`/citizens-voice/causes/${encodeURIComponent(c.publicCauseSlug!)}`}
-                    className="block rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition-colors hover:border-[var(--primary)]/30"
+                    className={`block rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition-colors hover:border-[var(--primary)]/30 ${focusRingSmClass}`}
                   >
                     <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">
                       {c.publicCauseTitle}

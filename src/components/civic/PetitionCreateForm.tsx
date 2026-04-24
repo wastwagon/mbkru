@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Button } from "@/components/ui/Button";
+import { focusRingSmClass } from "@/lib/primary-link-styles";
 
 type Region = { id: string; name: string };
 
@@ -14,6 +16,8 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
   const [regionId, setRegionId] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const fieldClass = `mt-1 w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -45,9 +49,11 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+    <form onSubmit={onSubmit} className="space-y-5 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm sm:p-8">
       {error ? (
-        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">{error}</p>
+        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
+          {error}
+        </p>
       ) : null}
       <div>
         <label htmlFor="pt-title" className="block text-sm font-medium text-[var(--foreground)]">
@@ -59,7 +65,7 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
           onChange={(e) => setTitle(e.target.value)}
           required
           maxLength={280}
-          className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+          className={fieldClass}
           placeholder="Short headline for your petition"
         />
       </div>
@@ -72,7 +78,7 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
           value={summary}
           onChange={(e) => setSummary(e.target.value)}
           maxLength={500}
-          className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+          className={fieldClass}
           placeholder="One line for listings"
         />
       </div>
@@ -87,7 +93,7 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
           required
           rows={10}
           maxLength={50_000}
-          className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+          className={`${fieldClass} min-h-[200px] resize-y`}
           placeholder="Context, asks, and what success looks like. Be factual and respectful."
         />
         <p className="mt-1 text-xs text-[var(--muted-foreground)]">
@@ -106,7 +112,7 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
             max={10_000_000}
             value={targetSignatures}
             onChange={(e) => setTargetSignatures(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            className={fieldClass}
             placeholder="e.g. 500"
           />
         </div>
@@ -118,7 +124,7 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
             id="pt-region"
             value={regionId}
             onChange={(e) => setRegionId(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            className={`${fieldClass} cursor-pointer`}
           >
             <option value="">All / national</option>
             {regions.map((r) => (
@@ -129,13 +135,9 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
           </select>
         </div>
       </div>
-      <button
-        type="submit"
-        disabled={busy}
-        className="rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[var(--primary-dark)] disabled:opacity-60"
-      >
+      <Button type="submit" disabled={busy} className="w-full min-w-0 justify-center sm:w-auto">
         {busy ? "Publishing…" : "Publish petition"}
-      </button>
+      </Button>
     </form>
   );
 }

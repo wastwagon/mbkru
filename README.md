@@ -10,6 +10,7 @@ Civic Accountability & Citizens Engagement Platform for Ghana.
 - **Phase task backlog (checkboxes):** [`docs/PHASE_TASKS.md`](docs/PHASE_TASKS.md)
 - **Ops & CSV import:** [`docs/OPS_RUNBOOK.md`](docs/OPS_RUNBOOK.md) · [`docs/CSV_IMPORT_RUNBOOK.md`](docs/CSV_IMPORT_RUNBOOK.md) · **Public data sources (MPs, constituencies, manifestos):** [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md)
 - **Security & observability:** [`docs/SECURITY_CHECKLIST.md`](docs/SECURITY_CHECKLIST.md) · [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md)
+- **Voice + accessibility rollout guide:** [`docs/VOICE_AND_ACCESSIBILITY_GUIDE.md`](docs/VOICE_AND_ACCESSIBILITY_GUIDE.md)
 - **Full write-up:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — Phase 1 vs 2 vs 3 boundaries, Postgres + built-in admin, Docker build args, extension checklist.
 - **Vision expansion (data, manifestos, Queen Mothers communities, backlog):** [`docs/PLATFORM_EXPANSION_PLAN.md`](docs/PLATFORM_EXPANSION_PLAN.md)  
 - **Full implementation plan (schema, APIs, UI, workstreams A–O, no MVP trim):** [`docs/FULL_PLATFORM_IMPLEMENTATION_PLAN.md`](docs/FULL_PLATFORM_IMPLEMENTATION_PLAN.md)
@@ -99,6 +100,7 @@ Copy `.env.example` to `.env.local` (or `.env` for Docker Compose) and fill in. 
 | `REDIS_URL` | Optional; **shared rate limits** for public form APIs when set; health check pings Redis |
 | `RATE_LIMIT_WINDOW_MS` | Optional; default `60000` (ms window per IP + route) |
 | `RATE_LIMIT_MAX` | Optional; default `30` requests per window |
+| `OPENAI_API_KEY` | Optional; enables provider-backed MBKRU Voice chatbot responses on `POST /api/mbkru-voice` (fallback replies still work without it) |
 
 **Docker / Coolify:** `NEXT_PUBLIC_*` variables must be passed as **build arguments** when building the image (see `Dockerfile` and `docker-compose.yml`), not only at container runtime.
 

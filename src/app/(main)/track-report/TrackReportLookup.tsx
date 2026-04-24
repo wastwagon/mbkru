@@ -4,9 +4,10 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
+import { focusRingSmClass } from "@/lib/primary-link-styles";
 
 const inputClass =
-  "mt-1 block w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 font-mono uppercase tracking-wide text-[var(--foreground)] focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20";
+  `mt-1 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 font-mono uppercase tracking-wide text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
 
 type AdminReplyPayload = {
   id: string;
@@ -80,7 +81,7 @@ function Inner() {
         </p>
       ) : null}
       {result ? (
-        <div className="rounded-xl border border-[var(--border)] bg-white p-4 text-sm shadow-sm">
+        <div className="rounded-xl border border-[var(--border)] bg-white p-4 text-sm shadow-sm transition-shadow duration-200 motion-reduce:transition-none">
           <p className="font-mono text-[var(--foreground)]">{result.trackingCode}</p>
           <p className="mt-2 text-[var(--muted-foreground)]">
             <span className="font-medium text-[var(--foreground)]">Status:</span>{" "}
@@ -134,7 +135,7 @@ function Inner() {
           ) : null}
         </div>
       ) : null}
-      <Button type="submit" disabled={loading}>
+      <Button type="submit" disabled={loading} className="w-full justify-center sm:w-auto">
         {loading ? "Checking…" : "Check status"}
       </Button>
     </form>

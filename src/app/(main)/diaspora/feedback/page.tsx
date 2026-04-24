@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { DiasporaFeedbackForm } from "@/components/forms/DiasporaFeedbackForm";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 export const metadata: Metadata = {
   title: "Diaspora experience & feedback",
@@ -24,7 +25,7 @@ export default function DiasporaFeedbackPage() {
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm text-[var(--muted-foreground)]">
             Prefer context first?{" "}
-            <Link href="/diaspora" className="font-medium text-[var(--primary)] hover:underline">
+            <Link href="/diaspora" className={primaryLinkClass}>
               Read the diaspora overview
             </Link>
             .

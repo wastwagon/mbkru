@@ -18,6 +18,7 @@ import {
 } from "@/lib/admin/report-operations-datetime";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { destructiveTextControlClass, primaryLinkClass } from "@/lib/primary-link-styles";
 
 import type { CitizenReportStatus } from "@prisma/client";
 
@@ -129,13 +130,13 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
       ) : null}
 
       <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin/reports" className="text-[var(--primary)] hover:underline">
+        <Link href="/admin/reports" className={primaryLinkClass}>
           ← All reports
         </Link>
         {report.publicCauseOpenedAt != null || (report.publicCauseSlug?.trim() ?? "").length > 0 ? (
           <>
             {" · "}
-            <Link href="/admin/public-causes" className="text-[var(--primary)] hover:underline">
+            <Link href="/admin/public-causes" className={primaryLinkClass}>
               Public causes queue
             </Link>
             {report.publicCauseOpenedAt != null && report.publicCauseSlug?.trim() ? (
@@ -143,7 +144,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
                 {" · "}
                 <Link
                   href={`/citizens-voice/causes/${encodeURIComponent(report.publicCauseSlug.trim())}`}
-                  className="text-[var(--primary)] hover:underline"
+                  className={primaryLinkClass}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -380,7 +381,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
                     ) : null}
                     <button
                       type="submit"
-                      className="block text-xs font-medium text-[var(--primary)] hover:underline"
+                      className={`${primaryLinkClass} block text-xs`}
                     >
                       {r.visibleToSubmitter ? "Hide from submitter (track + account)" : "Show to submitter again"}
                     </button>
@@ -507,7 +508,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
                     href={a.path}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-2 block text-sm text-[var(--primary)] underline break-all"
+                    className={`${primaryLinkClass} mt-2 block text-sm break-all`}
                   >
                     {a.mimeType === "application/pdf"
                       ? "Open PDF"
@@ -621,7 +622,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
                     <input type="hidden" name="reportId" value={report.id} />
                     <button
                       type="submit"
-                      className="text-xs font-medium text-red-700 hover:underline"
+                      className={`text-xs font-medium text-red-700 ${destructiveTextControlClass}`}
                     >
                       Hide comment
                     </button>

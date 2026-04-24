@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { focusRingOnDark80TileClass, focusRingOnDark85PillClass } from "@/lib/primary-link-styles";
 import { content, getTopBarSocialLinks } from "@/lib/site-content";
 
 const contactInfo = {
@@ -33,8 +34,7 @@ function SocialIcon({ icon }: { icon: "facebook" | "linkedin" | "twitter" }) {
   );
 }
 
-const contactLinkClass =
-  "flex min-h-[44px] min-w-0 items-center justify-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs text-white/95 transition-colors hover:bg-white/20 hover:text-white sm:min-h-0 sm:justify-start sm:bg-transparent sm:px-0 sm:py-0 sm:text-sm";
+const contactLinkClass = `flex min-h-[44px] min-w-0 touch-manipulation items-center justify-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs text-white/95 transition-colors duration-200 hover:bg-white/20 hover:text-white sm:min-h-0 sm:justify-start sm:bg-transparent sm:px-0 sm:py-0 sm:text-sm ${focusRingOnDark85PillClass}`;
 
 export function TopBar() {
   return (
@@ -89,8 +89,7 @@ export function TopBar() {
           </span>
           <div className="flex shrink-0 items-center justify-center gap-2.5 sm:gap-2">
             {socialLinks.map(({ href, label, icon, external }) => {
-              const className =
-                "flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 text-white transition-all duration-300 hover:bg-white hover:text-[var(--section-dark)] sm:h-8 sm:w-8 sm:rounded-lg";
+              const className = `flex h-11 w-11 touch-manipulation items-center justify-center rounded-xl bg-white/20 text-white transition-all duration-300 hover:bg-white hover:text-[var(--section-dark)] active:scale-[0.96] motion-reduce:active:scale-100 sm:h-8 sm:w-8 sm:rounded-lg ${focusRingOnDark80TileClass}`;
               const inner = <SocialIcon icon={icon} />;
               if (external) {
                 return (

@@ -5,8 +5,8 @@ import { VoiceReportForm } from "@/components/forms/VoiceReportForm";
 export const dynamic = "force-dynamic";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
-import { prisma } from "@/lib/db/prisma";
-import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 
 export default async function SubmitVoiceReportPage() {
   if (!isCitizensVoiceEnabled()) notFound();
@@ -25,12 +25,20 @@ export default async function SubmitVoiceReportPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="mb-8 text-center text-sm text-[var(--muted-foreground)]">
-            <Link href="/citizens-voice" className="text-[var(--primary)] hover:underline">
+          <p className="mb-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--muted-foreground)]">
+            <Link
+              href="/citizens-voice"
+              className={primaryNavLinkClass}
+            >
               ← Back to MBKRU Voice
             </Link>
-            {" · "}
-            <Link href="/track-report" className="text-[var(--primary)] hover:underline">
+            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+              ·
+            </span>
+            <Link
+              href="/track-report"
+              className={primaryNavLinkClass}
+            >
               Track an existing report
             </Link>
           </p>
