@@ -13,6 +13,11 @@ interface BreadcrumbItem {
 interface PageHeaderProps {
   title: string;
   description?: string;
+  /**
+   * Same as `description` — supported so older pages (or merges) that used `subtitle` still typecheck and render.
+   * Prefer `description` for new code.
+   */
+  subtitle?: string;
   breadcrumbs?: BreadcrumbItem[];
   /** Override last breadcrumb label (e.g. article title for /news/[slug]) */
   breadcrumbCurrentLabel?: string;
@@ -166,9 +171,10 @@ function buildBreadcrumbs(pathname: string, currentLabel?: string): BreadcrumbIt
   return items;
 }
 
-export function PageHeader({ title, description, breadcrumbs, breadcrumbCurrentLabel }: PageHeaderProps) {
+export function PageHeader({ title, description, subtitle, breadcrumbs, breadcrumbCurrentLabel }: PageHeaderProps) {
   const pathname = usePathname();
   const crumbs = breadcrumbs ?? buildBreadcrumbs(pathname, breadcrumbCurrentLabel);
+  const blurb = description ?? subtitle;
 
   return (
     <section className="relative overflow-hidden border-b border-[var(--border)] section-full bg-[var(--section-light-tertiary)]">
@@ -209,9 +215,9 @@ export function PageHeader({ title, description, breadcrumbs, breadcrumbCurrentL
           <h1 className="font-display text-xl font-bold tracking-tight text-[var(--foreground)] sm:text-2xl lg:text-3xl lg:leading-[1.2]">
             {title}
           </h1>
-          {description && (
+          {blurb && (
             <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
-              {description}
+              {blurb}
             </p>
           )}
         </div>
