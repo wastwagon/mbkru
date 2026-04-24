@@ -245,6 +245,7 @@ export function getPublicSitemapStaticPaths(phase: PlatformPhase): string[] {
     "/faq",
     "/data-sources",
     "/contact",
+    "/accessibility",
     "/privacy",
     "/terms",
   ];
