@@ -1,6 +1,7 @@
 /**
  * Public site navigation — single source of truth for header dropdowns, footer “Our Platform”,
- * About / homepage quick links, **`sitemap.ts`** static paths, and **`/account`** sidebar explore links.
+ * footer “Useful links” + legal row, About / homepage quick links, **`sitemap.ts`** static paths,
+ * and **`/account`** sidebar explore links.
  * Promise catalogue hrefs and medium labels come from **`accountability-catalogue-destinations.ts`**
  * so nav, account tiles, and metadata stay aligned.
  *
@@ -172,6 +173,42 @@ export function getFooterPlatformFlowLinks(phase: PlatformPhase): PublicNavLink[
   }
 
   return links;
+}
+
+/**
+ * Footer “Useful links” column — stable org and reference URLs. Keep hrefs aligned with
+ * `getPublicSitemapStaticPaths` so anything linked here is discoverable to crawlers when published.
+ */
+export function getFooterOrganizationLinks(phase: PlatformPhase): PublicNavLink[] {
+  const links: PublicNavLink[] = [
+    { href: "/methodology", label: "Accountability methodology" },
+    { href: "/about", label: "About" },
+    { href: "/news", label: "News" },
+    { href: "/diaspora", label: "Diaspora (17th Region)" },
+    { href: "/diaspora/feedback", label: "Diaspora visit feedback" },
+    { href: "/resources", label: "Resources" },
+    { href: "/faq", label: "FAQ" },
+    { href: "/data-sources", label: "Data sources" },
+    { href: "/partners", label: "Partners & Supporters" },
+  ];
+  if (platformFeatures.partnerJsonProgramme(phase)) {
+    const idx = links.findIndex((l) => l.href === "/data-sources");
+    if (idx >= 0) {
+      links.splice(idx + 1, 0, { href: "/partner-api", label: "Partner data & API" });
+    } else {
+      links.push({ href: "/partner-api", label: "Partner data & API" });
+    }
+  }
+  return links;
+}
+
+/** Footer legal row — trust pages; paths mirror `getPublicSitemapStaticPaths`. */
+export function getFooterLegalLinks(): PublicNavLink[] {
+  return [
+    { href: "/accessibility", label: "Accessibility" },
+    { href: "/privacy", label: "Privacy Policy" },
+    { href: "/terms", label: "Terms of Use" },
+  ];
 }
 
 /**

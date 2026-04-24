@@ -3,8 +3,12 @@ import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { Logo } from "@/components/ui/Logo";
 import { FooterMemberAuth } from "@/components/layout/FooterMemberAuth";
-import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
-import { getFooterPlatformFlowLinks } from "@/config/public-platform-nav";
+import { getServerPlatformPhase } from "@/config/platform";
+import {
+  getFooterLegalLinks,
+  getFooterOrganizationLinks,
+  getFooterPlatformFlowLinks,
+} from "@/config/public-platform-nav";
 import {
   focusRingOnDark50Class,
   focusRingOnDark60Class,
@@ -15,41 +19,12 @@ import { content, footerGalleryAlts, footerGalleryImages } from "@/lib/site-cont
 
 const footerNavLinkClass = `inline-flex min-h-10 max-w-full items-center rounded-md px-1 py-1.5 -mx-1 text-sm text-white/80 transition-[color,transform] duration-200 ease-out hover:text-white hover:translate-x-0.5 motion-reduce:hover:translate-x-0 ${focusRingOnDark60Class}`;
 
-const footerLinks = {
-  organization: [
-    { href: "/methodology", label: "Accountability methodology" },
-    { href: "/about", label: "About" },
-    { href: "/news", label: "News" },
-    { href: "/diaspora", label: "Diaspora (17th Region)" },
-    { href: "/diaspora/feedback", label: "Diaspora visit feedback" },
-    { href: "/resources", label: "Resources" },
-    { href: "/faq", label: "FAQ" },
-    { href: "/data-sources", label: "Data sources" },
-    { href: "/partners", label: "Partners & Supporters" },
-  ],
-  legal: [
-    { href: "/accessibility", label: "Accessibility" },
-    { href: "/privacy", label: "Privacy Policy" },
-    { href: "/terms", label: "Terms of Use" },
-  ],
-};
-
 export async function Footer() {
   const currentYear = new Date().getFullYear();
   const phase = getServerPlatformPhase();
   const platformLinks = getFooterPlatformFlowLinks(phase);
-  const organizationLinks = (() => {
-    const links = [...footerLinks.organization];
-    if (platformFeatures.partnerJsonProgramme(phase)) {
-      const idx = links.findIndex((l) => l.href === "/data-sources");
-      if (idx >= 0) {
-        links.splice(idx + 1, 0, { href: "/partner-api", label: "Partner data & API" });
-      } else {
-        links.push({ href: "/partner-api", label: "Partner data & API" });
-      }
-    }
-    return links;
-  })();
+  const organizationLinks = getFooterOrganizationLinks(phase);
+  const legalLinks = getFooterLegalLinks();
 
   const platformSplitAt = Math.ceil(platformLinks.length / 2);
   const platformLinksCol1 = platformLinks.slice(0, platformSplitAt);
@@ -218,7 +193,7 @@ export async function Footer() {
               <Logo href="/" theme="dark" className="w-fit scale-90 origin-left opacity-90 sm:scale-95" />
               {socialLinks}
               <nav className="flex flex-wrap items-center gap-x-5 gap-y-2" aria-label="Legal">
-                {footerLinks.legal.map((link) => (
+                {legalLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
