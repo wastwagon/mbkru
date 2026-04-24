@@ -125,7 +125,7 @@ Allow-listed client events post to **`POST /api/analytics/mbkru-voice-event`** (
 
 **Bootstrap:** `src/lib/server/mbkru-voice-analytics.ts` still runs **`CREATE TABLE IF NOT EXISTS`** on first write so older deployments that have not yet applied the migration keep working; new environments should rely on **`prisma migrate deploy`**. Inserts use **`prisma.mbkruVoiceAnalyticsEvent.create`**; aggregate admin queries continue to use **raw SQL** for `COUNT`/`GROUP BY` windows.
 
-Event names, human-readable definitions, and request bodies are governed by **`src/lib/mbkru-voice-analytics-taxonomy.ts`** and validated with **Zod** in **`src/lib/validation/mbkru-voice.ts`** (same data drives **`/admin/analytics/mbkru-voice`**).
+Event names, human-readable definitions, and request bodies are governed by **`src/lib/mbkru-voice-analytics-taxonomy.ts`** and validated with **Zod** in **`src/lib/validation/mbkru-voice.ts`** (same data drives **`/admin/analytics/mbkru-voice`**). Client beacons use **`trackUiEvent`** in **`src/lib/client/analytics-events.ts`**, typed to **`MbkruVoiceAnalyticsEventName`** so new UI events must extend the taxonomy before shipping.
 
 ---
 

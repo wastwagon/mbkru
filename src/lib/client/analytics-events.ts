@@ -1,5 +1,7 @@
 "use client";
 
+import type { MbkruVoiceAnalyticsEventName } from "@/lib/mbkru-voice-analytics-taxonomy";
+
 type EventPayload = Record<string, string | number | boolean | null | undefined>;
 
 declare global {
@@ -9,7 +11,7 @@ declare global {
   }
 }
 
-export function trackUiEvent(name: string, payload: EventPayload = {}) {
+export function trackUiEvent(name: MbkruVoiceAnalyticsEventName, payload: EventPayload = {}) {
   if (typeof window === "undefined") return;
 
   if (typeof window.gtag === "function") {
