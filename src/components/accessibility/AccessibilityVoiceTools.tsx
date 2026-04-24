@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { trackUiEvent } from "@/lib/client/analytics-events";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
 import {
   defaultVoicePreferences,
@@ -95,6 +96,7 @@ export function AccessibilityVoiceTools() {
   function speakPageSummary() {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     setLastError(null);
+    trackUiEvent("accessibility_read_page_summary", { language: preferences.languageId });
     const title = document.title || "MBKRU website";
     const firstHeading = document.querySelector("h1")?.textContent?.trim();
     const summary = firstHeading
@@ -121,6 +123,7 @@ export function AccessibilityVoiceTools() {
       return;
     }
     window.speechSynthesis.cancel();
+    trackUiEvent("accessibility_read_selected_text", { language: preferences.languageId });
     const utterance = new SpeechSynthesisUtterance(selected.slice(0, 1600));
     utterance.lang = selectedLanguage.synthesisLang;
     utterance.rate = preferences.speechRate;
@@ -140,6 +143,7 @@ export function AccessibilityVoiceTools() {
   function startListening() {
     if (!recognitionCtor || typeof window === "undefined") return;
     setLastError(null);
+    trackUiEvent("accessibility_stt_start", { language: preferences.languageId });
     const recognition = new recognitionCtor();
     recognition.lang = selectedLanguage.recognitionLang;
     recognition.interimResults = false;
@@ -155,6 +159,7 @@ export function AccessibilityVoiceTools() {
       const transcript = event.results[0]?.[0]?.transcript?.trim() ?? "";
       setVoiceNote(transcript);
       if (typeof window !== "undefined" && transcript.length > 0) {
+        trackUiEvent("accessibility_stt_result", { language: preferences.languageId });
         window.dispatchEvent(
           new CustomEvent("mbkru-voice-transcript", {
             detail: { transcript, languageId: preferences.languageId },
@@ -165,6 +170,7 @@ export function AccessibilityVoiceTools() {
     recognition.onerror = () => {
       setIsListening(false);
       setLastError("Speech recognition did not complete. You can continue with keyboard typing.");
+      trackUiEvent("accessibility_stt_error", { language: preferences.languageId });
     };
     recognition.onend = () => setIsListening(false);
     recognition.start();
@@ -313,6 +319,7 @@ export function AccessibilityVoiceTools() {
             type="button"
             onClick={() => {
               if (typeof window !== "undefined" && voiceNote.trim().length > 0) {
+                trackUiEvent("accessibility_send_transcript_to_chat", { language: preferences.languageId });
                 window.dispatchEvent(
                   new CustomEvent("mbkru-voice-transcript", {
                     detail: { transcript: voiceNote.trim(), languageId: preferences.languageId },

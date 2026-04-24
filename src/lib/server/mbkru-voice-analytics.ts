@@ -1,0 +1,128 @@
+import "server-only";
+
+import { prisma } from "@/lib/db/prisma";
+
+type AnalyticsRow = {
+  event_name: string;
+  count: bigint | number;
+};
+
+type SourceRow = {
+  source: string;
+  count: bigint | number;
+};
+
+export type MbkruVoiceAnalyticsDays = 7 | 30 | 90;
+
+export function parseMbkruVoiceAnalyticsDaysParam(raw: string | null): MbkruVoiceAnalyticsDays {
+  if (!raw) return 30;
+  const n = Number.parseInt(raw, 10);
+  if (n === 7 || n === 30 || n === 90) return n;
+  return 30;
+}
+
+function toNumber(value: bigint | number): number {
+  return typeof value === "bigint" ? Number(value) : value;
+}
+
+let initPromise: Promise<void> | null = null;
+
+async function ensureAnalyticsTable(): Promise<void> {
+  if (!initPromise) {
+    initPromise = (async () => {
+      await prisma.$executeRawUnsafe(`
+        CREATE TABLE IF NOT EXISTS mbkru_voice_analytics_events (
+          id BIGSERIAL PRIMARY KEY,
+          event_name VARCHAR(120) NOT NULL,
+          source VARCHAR(32) NOT NULL DEFAULT 'client',
+          language VARCHAR(16),
+          payload JSONB,
+          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        );
+      `);
+      await prisma.$executeRawUnsafe(`
+        CREATE INDEX IF NOT EXISTS idx_mbkru_voice_analytics_events_created_at
+        ON mbkru_voice_analytics_events (created_at);
+      `);
+      await prisma.$executeRawUnsafe(`
+        CREATE INDEX IF NOT EXISTS idx_mbkru_voice_analytics_events_event_name
+        ON mbkru_voice_analytics_events (event_name);
+      `);
+    })();
+  }
+  await initPromise;
+}
+
+export type MbkruVoiceAnalyticsInsert = {
+  eventName: string;
+  source: "client" | "server";
+  language: string | null;
+  payload: unknown;
+};
+
+export async function recordMbkruVoiceAnalyticsEvent(input: MbkruVoiceAnalyticsInsert): Promise<void> {
+  await ensureAnalyticsTable();
+  await prisma.$executeRawUnsafe(
+    `
+      INSERT INTO mbkru_voice_analytics_events (event_name, source, language, payload)
+      VALUES ($1, $2, $3, $4::jsonb)
+    `,
+    input.eventName,
+    input.source,
+    input.language,
+    JSON.stringify(input.payload ?? {}),
+  );
+}
+
+export async function getMbkruVoiceAnalyticsSummary(days: MbkruVoiceAnalyticsDays = 30) {
+  await ensureAnalyticsTable();
+
+  const [windowRows, bySourceRows] = await Promise.all([
+    prisma.$queryRawUnsafe<AnalyticsRow[]>(
+      `
+        SELECT event_name, COUNT(*)::bigint AS count
+        FROM mbkru_voice_analytics_events
+        WHERE created_at >= NOW() - ($1::int || ' days')::interval
+        GROUP BY event_name
+        ORDER BY count DESC, event_name ASC
+      `,
+      days,
+    ),
+    prisma.$queryRawUnsafe<SourceRow[]>(
+      `
+        SELECT source, COUNT(*)::bigint AS count
+        FROM mbkru_voice_analytics_events
+        WHERE created_at >= NOW() - ($1::int || ' days')::interval
+        GROUP BY source
+        ORDER BY count DESC, source ASC
+      `,
+      days,
+    ),
+  ]);
+
+  return {
+    windowDays: days,
+    windowRows: windowRows.map((row) => ({ eventName: row.event_name, count: toNumber(row.count) })),
+    bySourceWindow: bySourceRows.map((row) => ({ source: row.source, count: toNumber(row.count) })),
+  };
+}
+
+function csvCell(value: string | number): string {
+  const text = String(value ?? "");
+  if (/[",\n]/.test(text)) return `"${text.replaceAll('"', '""')}"`;
+  return text;
+}
+
+export function mbkruVoiceAnalyticsSummaryToCsv(summary: Awaited<ReturnType<typeof getMbkruVoiceAnalyticsSummary>>): string {
+  const lines: string[] = [];
+  lines.push("section,key,count");
+
+  for (const row of summary.windowRows) {
+    lines.push([csvCell(`window_${summary.windowDays}_days`), csvCell(row.eventName), csvCell(row.count)].join(","));
+  }
+  for (const row of summary.bySourceWindow) {
+    lines.push([csvCell(`by_source_${summary.windowDays}_days`), csvCell(row.source), csvCell(row.count)].join(","));
+  }
+
+  return lines.join("\n");
+}

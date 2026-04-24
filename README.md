@@ -101,6 +101,8 @@ Copy `.env.example` to `.env.local` (or `.env` for Docker Compose) and fill in. 
 | `RATE_LIMIT_WINDOW_MS` | Optional; default `60000` (ms window per IP + route) |
 | `RATE_LIMIT_MAX` | Optional; default `30` requests per window |
 | `OPENAI_API_KEY` | Optional; enables provider-backed MBKRU Voice chatbot responses on `POST /api/mbkru-voice` (fallback replies still work without it) |
+| `MBKRU_VOICE_EVENT_TOKEN` | Optional; when set, `/api/analytics/mbkru-voice-event` requires matching token for telemetry ingestion |
+| `NEXT_PUBLIC_MBKRU_VOICE_EVENT_TOKEN` | Optional; client telemetry token (must match `MBKRU_VOICE_EVENT_TOKEN` when token mode is enabled) |
 
 **Docker / Coolify:** `NEXT_PUBLIC_*` variables must be passed as **build arguments** when building the image (see `Dockerfile` and `docker-compose.yml`), not only at container runtime.
 

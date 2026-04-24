@@ -158,6 +158,17 @@ export default async function AdminHomePage() {
         </li>
         <li>
           <Link
+            href="/admin/analytics/mbkru-voice"
+            className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
+          >
+            <span className="font-semibold text-[var(--foreground)]">MBKRU Voice analytics</span>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              Chatbot and accessibility event taxonomy for GA4/Plausible monitoring.
+            </p>
+          </Link>
+        </li>
+        <li>
+          <Link
             href="/admin/petitions"
             className="block rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[var(--primary)]/30"
           >

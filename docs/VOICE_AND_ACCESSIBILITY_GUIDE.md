@@ -27,6 +27,8 @@ This guide covers the production setup and QA checklist for:
 | Variable | Required | Purpose |
 |----------|----------|---------|
 | `OPENAI_API_KEY` | Optional (recommended) | Enables provider-backed AI responses for `POST /api/mbkru-voice` |
+| `MBKRU_VOICE_EVENT_TOKEN` | Optional (recommended in production) | Server-side token for accepting telemetry ingestion |
+| `NEXT_PUBLIC_MBKRU_VOICE_EVENT_TOKEN` | Optional (with token mode) | Client token sent with telemetry ingestion requests |
 | `REDIS_URL` | Optional (recommended in production) | Shared rate-limit state across multiple instances |
 | `RATE_LIMIT_WINDOW_MS` / `RATE_LIMIT_MAX` | Optional | Chat and public API throttling behavior |
 
@@ -63,6 +65,8 @@ If `OPENAI_API_KEY` is not set, MBKRU Voice stays available via built-in intent 
 ## Security and resilience notes
 
 - Chat endpoint is rate-limited (`mbkru-voice-chat` bucket).
+- Event ingestion endpoint is rate-limited (`mbkru-voice-analytics` bucket).
 - History sent to provider is clipped and sanitized.
 - Provider failure falls back to deterministic local responses.
+- Safety guardrails block emergency/self-harm/legal-strategy prompts and route users to support pages.
 - Avoid sending sensitive secrets or personal data in prompts.

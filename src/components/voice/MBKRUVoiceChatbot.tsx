@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { getMbkruVoiceFallbackReply } from "@/lib/mbkru-voice-faq";
+import { trackUiEvent } from "@/lib/client/analytics-events";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
 import {
   defaultVoicePreferences,
@@ -134,6 +135,7 @@ export function MBKRUVoiceChatbot() {
   function startListeningForChat() {
     if (!recognitionCtor || typeof window === "undefined") return;
     setListeningError(null);
+    trackUiEvent("mbkru_voice_mic_start", { language: preferences.languageId });
     const recognition = new recognitionCtor();
     recognition.lang = selectedLanguage.recognitionLang;
     recognition.interimResults = false;
@@ -149,6 +151,7 @@ export function MBKRUVoiceChatbot() {
     };
     recognition.onerror = () => {
       setListeningError("Microphone capture was interrupted. You can still type your message.");
+      trackUiEvent("mbkru_voice_mic_error", { language: preferences.languageId });
       setIsListening(false);
     };
     recognition.onend = () => setIsListening(false);
@@ -193,6 +196,7 @@ export function MBKRUVoiceChatbot() {
     setMessages(currentHistory);
     setInput("");
     setIsLoading(true);
+    trackUiEvent("mbkru_voice_send", { language: preferences.languageId });
 
     try {
       const response = await fetch("/api/mbkru-voice", {
@@ -209,6 +213,8 @@ export function MBKRUVoiceChatbot() {
       const data = (await response.json()) as {
         answer?: string;
         suggestedLinks?: Array<{ label: string; href: string }>;
+        source?: string;
+        safetyReason?: string;
       };
 
       setMessages((prev) => [
@@ -223,6 +229,11 @@ export function MBKRUVoiceChatbot() {
       if (preferences.autoReadReplies) {
         speakAssistantReply(data.answer?.trim() || "I could not generate a response right now.");
       }
+      trackUiEvent("mbkru_voice_reply_received", {
+        language: preferences.languageId,
+        source: data.source ?? "unknown",
+        safety_reason: data.safetyReason ?? null,
+      });
     } catch {
       const fallback = getMbkruVoiceFallbackReply(trimmed, preferences.languageId);
       setMessages((prev) => [
@@ -237,6 +248,7 @@ export function MBKRUVoiceChatbot() {
       if (preferences.autoReadReplies) {
         speakAssistantReply(fallback.answer);
       }
+      trackUiEvent("mbkru_voice_reply_received", { language: preferences.languageId, source: "client-fallback" });
     } finally {
       setIsLoading(false);
     }
@@ -252,6 +264,7 @@ export function MBKRUVoiceChatbot() {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
     }
+    trackUiEvent("mbkru_voice_clear_chat", { language: preferences.languageId });
   }
 
   return (
@@ -410,6 +423,7 @@ export function MBKRUVoiceChatbot() {
           ref={openButtonRef}
           type="button"
           onClick={() => setIsOpen(true)}
+          onMouseDown={() => trackUiEvent("mbkru_voice_open_launcher")}
           className={`rounded-full bg-[var(--primary)] px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-[var(--primary-dark)] ${focusRingSmClass}`}
           aria-label="Open MBKRU Voice chatbot"
         >

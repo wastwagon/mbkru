@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getMbkruVoiceFallbackReply } from "@/lib/mbkru-voice-faq";
+import { evaluateMbkruVoiceSafety } from "@/lib/mbkru-voice-guardrails";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 import { findVoiceLanguage, type VoicePreferences } from "@/lib/voice-languages";
 
@@ -23,7 +24,7 @@ async function getProviderReply(
   const selectedLanguage = findVoiceLanguage(languageId);
 
   const systemPrompt =
-    `You are MBKRU Voice, an intelligent, always-online customer service assistant for MBKRU Advocates in Ghana. Reply in ${selectedLanguage.label} when possible. Be concise, factual, civic-safe, non-partisan, and helpful. If unsure, recommend contact or official MBKRU pages.`;
+    `You are MBKRU Voice, an intelligent, always-online customer service assistant for MBKRU Advocates in Ghana. Reply in ${selectedLanguage.label} when possible. Be concise, factual, civic-safe, non-partisan, and helpful. Never provide legal strategy, medical instructions, self-harm guidance, or violence instructions. If unsafe or unclear, route users to official support pages.`;
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -62,6 +63,15 @@ export async function POST(request: Request) {
     const languageId = body.languageId ?? "en-gh";
     if (!message) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
+    }
+    const safety = evaluateMbkruVoiceSafety(message);
+    if (safety.blocked) {
+      return NextResponse.json({
+        answer: safety.answer,
+        source: "safety-guardrail",
+        suggestedLinks: safety.suggestedLinks,
+        safetyReason: safety.reason,
+      });
     }
 
     const history = Array.isArray(body.history) ? body.history.slice(-8) : [];
