@@ -46,6 +46,7 @@ const PATH_BREADCRUMBS: Record<string, string> = {
   "/diaspora/feedback": "Diaspora feedback",
   "/privacy": "Privacy Policy",
   "/terms": "Terms of Use",
+  "/accessibility": "Accessibility",
   "/track-report": "Track a report",
   "/login": "Sign in",
   "/register": "Register",

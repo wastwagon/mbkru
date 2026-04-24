@@ -1,5 +1,17 @@
 import { z } from "zod";
 
+import {
+  isMbkruVoiceAnalyticsEventName,
+  type MbkruVoiceAnalyticsEventName,
+} from "@/lib/mbkru-voice-analytics-taxonomy";
+
+/** Re-export allowlist for tests and tooling. */
+export {
+  MBKRU_VOICE_ANALYTICS_EVENT_NAMES,
+  MBKRU_VOICE_ANALYTICS_TAXONOMY,
+  type MbkruVoiceAnalyticsEventName,
+} from "@/lib/mbkru-voice-analytics-taxonomy";
+
 /** Keep in sync with `voiceLanguageOptions` ids in `@/lib/voice-languages`. */
 export const mbkruVoiceChatLanguageIds = ["en-gh", "twi", "ga", "hausa", "ewe"] as const;
 
@@ -16,26 +28,11 @@ export const mbkruVoiceChatBodySchema = z.object({
   history: z.array(chatTurnSchema).max(24).optional(),
 });
 
-export const MBKRU_VOICE_ANALYTICS_EVENT_NAMES = [
-  "mbkru_voice_open_launcher",
-  "mbkru_voice_send",
-  "mbkru_voice_reply_received",
-  "mbkru_voice_mic_start",
-  "mbkru_voice_mic_error",
-  "mbkru_voice_clear_chat",
-  "accessibility_read_page_summary",
-  "accessibility_read_selected_text",
-  "accessibility_stt_start",
-  "accessibility_stt_result",
-  "accessibility_stt_error",
-  "accessibility_send_transcript_to_chat",
-] as const;
-
-export type MbkruVoiceAnalyticsEventName = (typeof MBKRU_VOICE_ANALYTICS_EVENT_NAMES)[number];
-
 const analyticsEventNameSchema = z.preprocess(
   (v) => (typeof v === "string" ? v.trim().toLowerCase() : v),
-  z.enum(MBKRU_VOICE_ANALYTICS_EVENT_NAMES),
+  z.custom<MbkruVoiceAnalyticsEventName>(
+    (val): val is MbkruVoiceAnalyticsEventName => typeof val === "string" && isMbkruVoiceAnalyticsEventName(val),
+  ),
 );
 
 export const mbkruVoiceAnalyticsBodySchema = z.object({

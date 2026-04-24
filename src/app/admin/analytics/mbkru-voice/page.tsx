@@ -3,73 +3,13 @@ import Link from "next/link";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
+import { MBKRU_VOICE_ANALYTICS_TAXONOMY } from "@/lib/mbkru-voice-analytics-taxonomy";
 import {
   getMbkruVoiceAnalyticsSummary,
   parseMbkruVoiceAnalyticsDaysParam,
 } from "@/lib/server/mbkru-voice-analytics";
 
-const trackedEvents = [
-  {
-    name: "mbkru_voice_open_launcher",
-    meaning: "User opens chatbot launcher",
-    signal: "Top-of-funnel engagement",
-  },
-  {
-    name: "mbkru_voice_send",
-    meaning: "User sends a chatbot message",
-    signal: "Active conversation intent",
-  },
-  {
-    name: "mbkru_voice_reply_received",
-    meaning: "Assistant response received",
-    signal: "Use source prop to split provider/fallback/safety-guardrail",
-  },
-  {
-    name: "mbkru_voice_mic_start",
-    meaning: "User starts chat microphone input",
-    signal: "Voice-first interaction",
-  },
-  {
-    name: "mbkru_voice_mic_error",
-    meaning: "Chat microphone failed/interrupted",
-    signal: "Speech UX friction and support need",
-  },
-  {
-    name: "mbkru_voice_clear_chat",
-    meaning: "User cleared the chat transcript",
-    signal: "Session reset / privacy-sensitive behavior",
-  },
-  {
-    name: "accessibility_read_page_summary",
-    meaning: "Accessibility panel read-page action",
-    signal: "Text-to-speech usage",
-  },
-  {
-    name: "accessibility_read_selected_text",
-    meaning: "Accessibility panel read-selection action",
-    signal: "Long-form reading assist usage",
-  },
-  {
-    name: "accessibility_stt_start",
-    meaning: "Speech-to-text capture started",
-    signal: "Accessibility voice input demand",
-  },
-  {
-    name: "accessibility_stt_result",
-    meaning: "Speech-to-text produced text",
-    signal: "Successful assistive capture",
-  },
-  {
-    name: "accessibility_stt_error",
-    meaning: "Speech-to-text failed/interrupted",
-    signal: "Browser/device capability gaps",
-  },
-  {
-    name: "accessibility_send_transcript_to_chat",
-    meaning: "Transcript handed to chatbot",
-    signal: "Assistive-to-chat workflow success",
-  },
-] as const;
+const trackedEvents = MBKRU_VOICE_ANALYTICS_TAXONOMY;
 
 type Props = { searchParams?: Promise<{ days?: string | string[] }> };
 
