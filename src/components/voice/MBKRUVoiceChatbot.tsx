@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { type ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import "@/lib/client/web-speech-recognition";
 import { getMbkruVoiceFallbackReply } from "@/lib/mbkru-voice-faq";
@@ -55,7 +55,7 @@ const quickPromptsByLanguage: Record<
 };
 
 const helperTextByLanguage: Record<VoicePreferences["languageId"], string> = {
-  "en-gh": "Type, use the mic, or the access icon in the header for more voice options.",
+  "en-gh": "Type, use the mic or image icons, or the access icon in the header for more voice options.",
   twi: "Wubetumi akyerɛw, Mic, anaasɛ a access icon a header mu.",
   ga: "Kpee: Osha nyɛŋ, Mic, alo access icon header ni.",
   hausa: "Rubutu, mic, ko alamar dama a cikin header don ƙarin ayyukan murya.",
@@ -85,8 +85,11 @@ export function MBKRUVoiceChatbot() {
   const [preferences, setPreferences] = useState<VoicePreferences>(defaultVoicePreferences);
   const [isListening, setIsListening] = useState(false);
   const [listeningError, setListeningError] = useState<string | null>(null);
+  const [imageAttachment, setImageAttachment] = useState<{ previewUrl: string; name: string } | null>(null);
+  const [attachmentNotice, setAttachmentNotice] = useState<string | null>(null);
   const openButtonRef = useRef<HTMLButtonElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
 
   const historyForApi = useMemo(
     () => messages.slice(-8).map((msg) => ({ role: msg.role, content: msg.content })),
@@ -119,6 +122,12 @@ export function MBKRUVoiceChatbot() {
       setPrefsLoaded(true);
     }
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (imageAttachment?.previewUrl) URL.revokeObjectURL(imageAttachment.previewUrl);
+    };
+  }, [imageAttachment?.previewUrl]);
 
   useEffect(() => {
     if (!isOpen || typeof window === "undefined") return;
@@ -187,15 +196,45 @@ export function MBKRUVoiceChatbot() {
     window.speechSynthesis.speak(utterance);
   }
 
+  function onImageFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    setAttachmentNotice(null);
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setAttachmentNotice("Please choose an image file.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setAttachmentNotice("Images must be under 5 MB.");
+      return;
+    }
+    setImageAttachment((prev) => {
+      if (prev?.previewUrl) URL.revokeObjectURL(prev.previewUrl);
+      return { name: file.name, previewUrl: URL.createObjectURL(file) };
+    });
+  }
+
+  function clearImageAttachment() {
+    setImageAttachment((prev) => {
+      if (prev?.previewUrl) URL.revokeObjectURL(prev.previewUrl);
+      return null;
+    });
+    setAttachmentNotice(null);
+  }
+
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const trimmed = input.trim();
-    if (!trimmed || isLoading) return;
+    const imageLine = imageAttachment ? `[Photo: ${imageAttachment.name}]` : "";
+    const combined = [imageLine, trimmed].filter(Boolean).join("\n").trim();
+    if (!combined || isLoading) return;
 
-    const nextUser: ChatEntry = { role: "user", content: trimmed };
+    const nextUser: ChatEntry = { role: "user", content: combined };
     const currentHistory = [...messages, nextUser];
     setMessages(currentHistory);
     setInput("");
+    clearImageAttachment();
     setIsLoading(true);
     trackUiEvent("mbkru_voice_send", { language: preferences.languageId });
 
@@ -204,7 +243,7 @@ export function MBKRUVoiceChatbot() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: trimmed,
+          message: combined.slice(0, 1000),
           history: historyForApi,
           languageId: preferences.languageId,
         }),
@@ -236,7 +275,7 @@ export function MBKRUVoiceChatbot() {
         safety_reason: data.safetyReason ?? null,
       });
     } catch {
-      const fallback = getMbkruVoiceFallbackReply(trimmed, preferences.languageId);
+      const fallback = getMbkruVoiceFallbackReply(combined, preferences.languageId);
       setMessages((prev) => [
         ...prev,
         {
@@ -262,6 +301,7 @@ export function MBKRUVoiceChatbot() {
   function clearConversation() {
     setMessages([introMessage]);
     setInput("");
+    clearImageAttachment();
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
     }
@@ -277,9 +317,8 @@ export function MBKRUVoiceChatbot() {
           role="dialog"
           aria-modal="false"
         >
-          <header className="flex flex-col gap-2.5 border-b border-white/10 bg-[var(--primary)] px-3 py-2.5 text-white sm:flex-row sm:items-center sm:justify-between sm:gap-2 sm:px-3.5 sm:py-2.5">
-            <p className="text-sm font-bold">MBKRU Voice</p>
-            <div className="flex flex-wrap items-center justify-end gap-1.5 sm:shrink-0 sm:gap-1">
+          <header className="relative border-b border-white/10 bg-[var(--primary)] px-3 py-2.5 pr-11 text-white sm:px-3.5 sm:pr-12 sm:py-2.5">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-1.5">
               <label htmlFor="mbkru-voice-lang" className="sr-only">
                 Chat language
               </label>
@@ -320,14 +359,17 @@ export function MBKRUVoiceChatbot() {
               >
                 Clear
               </button>
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className={`rounded-md px-2 py-1 text-xs font-semibold text-white/95 hover:bg-white/15 ${focusRingSmClass}`}
-              >
-                Close
-              </button>
             </div>
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              className={`absolute right-2 top-2 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 ${focusRingSmClass}`}
+              aria-label="Close chat"
+            >
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </header>
 
           <div className="max-h-[min(52vh,22rem)] space-y-3 overflow-y-auto bg-[var(--section-light)] p-3.5 sm:p-4" aria-live="polite">
@@ -390,16 +432,31 @@ export function MBKRUVoiceChatbot() {
             <label htmlFor="mbkru-voice-input" className="sr-only">
               Ask MBKRU Voice
             </label>
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              <button
-                type="button"
-                onClick={startListeningForChat}
-                disabled={isListening || !recognitionCtor}
-                className={`h-11 shrink-0 rounded-xl border border-[var(--border)] bg-[var(--muted)] px-2.5 text-[11px] font-semibold text-[var(--foreground)] disabled:opacity-55 sm:px-3 sm:text-xs ${focusRingSmClass}`}
-                aria-label={isListening ? "Listening to microphone input" : "Use microphone voice input"}
-              >
-                {isListening ? "Listening..." : "Mic"}
-              </button>
+            <input ref={imageInputRef} type="file" accept="image/*" className="sr-only" onChange={onImageFileChange} />
+            {imageAttachment ? (
+              <div className="mb-2 flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--muted)]/40 p-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={imageAttachment.previewUrl}
+                  alt=""
+                  className="h-12 w-12 shrink-0 rounded-lg object-cover"
+                />
+                <span className="min-w-0 flex-1 truncate text-xs text-[var(--foreground)]">{imageAttachment.name}</span>
+                <button
+                  type="button"
+                  onClick={clearImageAttachment}
+                  className={`shrink-0 rounded-lg border border-[var(--border)] px-2 py-1 text-xs font-semibold text-[var(--foreground)] ${focusRingSmClass}`}
+                >
+                  Remove
+                </button>
+              </div>
+            ) : null}
+            {attachmentNotice ? (
+              <p className="mb-2 text-xs text-amber-800" role="status">
+                {attachmentNotice}
+              </p>
+            ) : null}
+            <div className="flex min-w-0 items-center gap-1 sm:gap-1.5">
               <input
                 ref={inputRef}
                 id="mbkru-voice-input"
@@ -407,12 +464,44 @@ export function MBKRUVoiceChatbot() {
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
                 placeholder="Ask a question…"
-                className={`h-11 w-full min-w-0 rounded-xl border border-[var(--border)] px-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] ${focusRingSmClass}`}
+                className={`h-11 min-w-0 flex-1 rounded-xl border border-[var(--border)] px-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] ${focusRingSmClass}`}
                 maxLength={300}
               />
               <button
+                type="button"
+                onClick={startListeningForChat}
+                disabled={isListening || !recognitionCtor}
+                className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--muted)] text-[var(--foreground)] disabled:opacity-45 ${focusRingSmClass} ${isListening ? "animate-pulse border-[var(--primary)]/40" : ""}`}
+                aria-label={isListening ? "Listening to microphone input" : "Use microphone voice input"}
+                title={isListening ? "Listening…" : "Voice input"}
+              >
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"
+                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 11v1a7 7 0 01-14 0v-1M12 18v4M8 22h8" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={() => imageInputRef.current?.click()}
+                className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--muted)] text-[var(--foreground)] ${focusRingSmClass}`}
+                aria-label="Attach image"
+                title="Attach image"
+              >
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </button>
+              <button
                 type="submit"
-                disabled={isLoading || input.trim().length === 0}
+                disabled={isLoading || (!input.trim() && !imageAttachment)}
                 className={`h-11 shrink-0 rounded-xl bg-[var(--primary)] px-3 text-sm font-semibold text-white disabled:opacity-55 sm:px-4 ${focusRingSmClass}`}
               >
                 Send

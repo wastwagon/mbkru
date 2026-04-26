@@ -33,8 +33,8 @@ export default function MainLayout({
         {children}
       </main>
       <Footer />
-      <div className="pointer-events-none fixed bottom-[max(6.5rem,calc(env(safe-area-inset-bottom)+1rem))] right-3 z-40 flex max-w-full flex-col-reverse items-end gap-2.5 sm:right-6">
-        <div className="pointer-events-auto">
+      <div className="pointer-events-none fixed bottom-[max(6.5rem,calc(env(safe-area-inset-bottom)+1rem))] right-3 z-40 flex max-w-full flex-col-reverse items-end gap-3 sm:right-6 sm:gap-4">
+        <div className="pointer-events-auto translate-y-2.5 sm:translate-y-3">
           <BackToTop />
         </div>
         <div className="pointer-events-auto">
