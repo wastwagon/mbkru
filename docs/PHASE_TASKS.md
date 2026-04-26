@@ -115,7 +115,7 @@
 
 ## Suggested execution order (next 4–6 weeks)
 
-Work **top to bottom** within your target phase; do not skip legal/ops items if going live.
+Phased rollout detail and **automated** preflight: [`SAFE_IMPLEMENTATION_PHASES.md`](./SAFE_IMPLEMENTATION_PHASES.md) (`npm run verify:release-gates`). Work **top to bottom** within your target phase; do not skip legal/ops items if going live.
 
 1. **Phase 1 verify** — run quarterly checklist in [`OPS_RUNBOOK.md`](./OPS_RUNBOOK.md) + content/legal pass  
 2. **Phase 2 tests** — `/api/health` + partner JSON routes in Vitest *(done — `src/app/api/**/route.test.ts`)*  

@@ -8,6 +8,7 @@ Civic Accountability & Citizens Engagement Platform for Ghana.
 
 - **Sprint plan (Phase 1 polish → Phase 3):** [`docs/SPRINT_BACKLOG.md`](docs/SPRINT_BACKLOG.md)
 - **Phase task backlog (checkboxes):** [`docs/PHASE_TASKS.md`](docs/PHASE_TASKS.md)
+- **Safe phased rollout (ops + legal + data order):** [`docs/SAFE_IMPLEMENTATION_PHASES.md`](docs/SAFE_IMPLEMENTATION_PHASES.md) — automated slice: `npm run verify:release-gates`
 - **Ops & CSV import:** [`docs/OPS_RUNBOOK.md`](docs/OPS_RUNBOOK.md) · [`docs/CSV_IMPORT_RUNBOOK.md`](docs/CSV_IMPORT_RUNBOOK.md) · **Public data sources (MPs, constituencies, manifestos):** [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md)
 - **Security & observability:** [`docs/SECURITY_CHECKLIST.md`](docs/SECURITY_CHECKLIST.md) · [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md)
 - **Voice + accessibility rollout guide:** [`docs/VOICE_AND_ACCESSIBILITY_GUIDE.md`](docs/VOICE_AND_ACCESSIBILITY_GUIDE.md)
@@ -66,10 +67,11 @@ npm run build
 npm start
 ```
 
-### Unit tests
+### Unit tests & release gates
 
 ```bash
 npm run test
+npm run verify:release-gates   # Prisma validate + tsc --noEmit + vitest (CI runs this after lint)
 ```
 
 Vitest runs fast unit tests for shared helpers (no database).

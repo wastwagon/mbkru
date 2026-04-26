@@ -24,13 +24,10 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Unit tests
-        run: npm run test
-
-      - name: Validate Prisma schema
+      - name: Release gates (Prisma + typecheck + unit tests)
         env:
           DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
-        run: npx prisma validate
+        run: npm run verify:release-gates
 
       - name: Production build
         env:

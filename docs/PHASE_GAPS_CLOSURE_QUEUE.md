@@ -3,7 +3,8 @@
 **Rule:** Work **this queue top to bottom** for Phases **1 → 2 → 3**. Do **not** start Phase **4+** (`F–M` communities depth, PMO stretch, Prisma 7 spike) until items here are either **done** or **explicitly waived in writing** by programme lead — otherwise “recognition launch” and “full platform” get mixed.
 
 **Living backlog with checkboxes:** [`PHASE_TASKS.md`](./PHASE_TASKS.md)  
-**Earlier public launch:** [`EARLY_RECOGNITION_LAUNCH_PLAN.md`](./EARLY_RECOGNITION_LAUNCH_PLAN.md)
+**Earlier public launch:** [`EARLY_RECOGNITION_LAUNCH_PLAN.md`](./EARLY_RECOGNITION_LAUNCH_PLAN.md)  
+**Safe phased rollout (ops + legal + data order, automation):** [`SAFE_IMPLEMENTATION_PHASES.md`](./SAFE_IMPLEMENTATION_PHASES.md) — run `npm run verify:release-gates` for the automated slice.
 
 ---
 

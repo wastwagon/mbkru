@@ -2,7 +2,7 @@
 
 Short checklist for production Docker / Coolify hosts. Complements `README.md` and `docker-entrypoint.sh`.
 
-**Related:** [`PHASE_TASKS.md`](./PHASE_TASKS.md) (phase backlog) · [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md) (MP roster import) · [`PARTNER_API.md`](./PARTNER_API.md) (embed JSON draft) · [`OBSERVABILITY.md`](./OBSERVABILITY.md) · [`SECURITY_CHECKLIST.md`](./SECURITY_CHECKLIST.md)
+**Related:** [`PHASE_TASKS.md`](./PHASE_TASKS.md) (phase backlog) · [`SAFE_IMPLEMENTATION_PHASES.md`](./SAFE_IMPLEMENTATION_PHASES.md) (phased rollout + `npm run verify:release-gates`) · [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md) (MP roster import) · [`PARTNER_API.md`](./PARTNER_API.md) (embed JSON draft) · [`OBSERVABILITY.md`](./OBSERVABILITY.md) · [`SECURITY_CHECKLIST.md`](./SECURITY_CHECKLIST.md)
 
 ---
 
@@ -10,6 +10,7 @@ Short checklist for production Docker / Coolify hosts. Complements `README.md` a
 
 Use before major traffic (e.g. election window) or after infra changes:
 
+- [ ] **Automated gates:** `npm run verify:release-gates` (Prisma validate, TypeScript, Vitest) — same sequence as CI after lint.
 - [ ] **Backups:** restore a `pg_dump` (or volume snapshot) to a scratch instance — confirm app boots and admin login works.
 - [ ] **`SKIP_DB_SEED=1`** on production after first stable deploy (see below).
 - [ ] **`GET /api/health`:** HTTP **200** (or **503** only if Postgres intentionally down in a test); JSON **`dependencies`** and **`accountability`** flags match the phase you intend.
