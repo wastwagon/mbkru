@@ -40,6 +40,7 @@ describe("GET /api/accountability/promise-tracker-stats", () => {
       publishedReportCardCycles: 0,
       reportCardEntriesPublished: 0,
       byStatus: { TRACKING: 3 },
+      topPolicySectors: [],
     });
   });
 

@@ -88,9 +88,9 @@ export const accountabilityProse = {
   partnerApiPageIntro:
     "Read-only endpoints for MPs, the public commitment catalogue, the People's Report Card, and research exports. This page is a public summary of how we expect partners to use them — not a substitute for legal advice or a signed agreement.",
   statsStripBrowseSubtitle: `Use ${accountabilityCatalogueNavMedium.browseAll} for live filters; the roster below lists every active MP in the catalogue (including members with no catalogue rows yet).`,
-  /** Shown on live tracker snapshot — explains why counts may be far below a full party manifesto. */
+  /** Shown on live tracker snapshot — explains editorial DB scope vs. manifesto PDFs. */
   statsStripDatabaseScopeNote:
-    "Headline totals are editorial rows stored in this site’s database, not an automatic full extract of a PDF. A larger NDC 2024 theme list is bundled in the project for operators to load when running the database seed; until then you may only see a small sample plus any rows added in admin.",
+    "Headline totals are editorial rows in this database, not a rights-cleared full PDF dump. A larger NDC 2024 theme set can be loaded by operators when running the database seed; the live site can also add rows in admin at any time.",
   statsStripDatabaseScopeDataSourcesLink: "Data sources",
   statsStripGovernmentKpiFootnote: `Also on ${accountabilityCatalogueNavMedium.government}`,
   hubBrowseCardTitle: accountabilityCatalogueNavMedium.browseAll,
@@ -143,8 +143,9 @@ export const accountabilityProse = {
   browseCatalogueSelectAllTracked: "All tracked commitments",
   /** Homepage teaser (no on-page filters) — nudge to `/promises/browse`. */
   browseHomeTeaserCaption: (shown: number, total: number) =>
-    `Previewing ${shown} of ${total} in this first page of results. `,
-  browseHomeTeaserCta: "Open Browse all for live filters, search, and CSV export.",
+    `Previewing ${shown} of ${total} rows in this first page of results. `,
+  browseHomeTeaserCta: "Learn more — full list & tools",
+  governmentHomeTeaserCta: "Learn more — full list & tools",
   /** Helper under constituency filter — same roster as imports; “catalogue” not “every utterance”. */
   browseConstituencyFilterHelp:
     "Uses the same constituency and MP records as parliament.gh imports — filter catalogue rows for whoever holds that seat in this database.",

@@ -45,12 +45,16 @@ type Props = {
   /** Merge headline + status into one card (homepage government embed). */
   statsStripCompact?: boolean;
   /**
-   * Home browse embed only — keep KPIs, hide live filters, show a short slice of the result list.
-   * (Government home embed uses full filters; browse home uses this to keep the homepage scannable.)
+   * Home embed only — keep KPIs, hide live filters, show a short slice of the result list and a CTA to the full dashboard.
    */
   homeTeaser?: boolean;
   /** Defaults to 5. */
   homeTeaserMaxRows?: number;
+  /**
+   * Where the homepage “Learn more” button goes. Defaults: `/promises/browse` (browse) or
+   * `/government-commitments` (government).
+   */
+  homeTeaserCtaHref?: string;
 };
 
 const DEBOUNCE_MS = 380;
@@ -97,6 +101,7 @@ export function PromisesBrowseLive({
   statsStripCompact = false,
   homeTeaser = false,
   homeTeaserMaxRows = 5,
+  homeTeaserCtaHref,
 }: Props) {
   const [stats, setStats] = useState<PromiseTrackerStats>(initialStats);
   const [rows, setRows] = useState<PublicPromiseApiRow[]>(initialRows);
@@ -278,6 +283,21 @@ export function PromisesBrowseLive({
     }
   };
 
+  function quickPreset(v: "all" | "gov" | "ndc2024" | "npp2024") {
+    setQ("");
+    setSector("");
+    setStatus("");
+    setConstituencySlug("");
+    onCatalogueChange(v);
+  }
+
+  const homeTeaserDestination =
+    homeTeaserCtaHref ?? (mode === "government" ? "/government-commitments" : "/promises/browse");
+  const homeTeaserButtonLabel =
+    mode === "government" ? accountabilityProse.governmentHomeTeaserCta : accountabilityProse.browseHomeTeaserCta;
+
+  const quickChipClass = `inline-flex min-h-9 items-center rounded-full border border-[var(--border)] bg-[var(--section-light)]/50 px-3.5 py-1.5 text-xs font-medium text-[var(--foreground)] transition hover:bg-[var(--section-light)] ${focusRingSmClass}`;
+
   return (
     <>
       <PromiseTrackerStatsStrip stats={stats} subtitle={statsSubtitle} compact={statsStripCompact} />
@@ -285,10 +305,53 @@ export function PromisesBrowseLive({
       {filterToolbarHeader}
 
       {homeTeaser ? null : (
+        <>
+        <div
+          className={`flex flex-col gap-2 ${filterToolbarHeader ? "mt-4" : "mt-6"}`}
+          role="group"
+          aria-label="Quick filter presets for the catalogue"
+        >
+          <p className="text-xs font-medium text-[var(--muted-foreground)]">Quick filters (same as Catalogue &amp; manifesto above)</p>
+          <div className="flex flex-wrap gap-2">
+            {govLocked ? (
+              <>
+                <button type="button" className={quickChipClass} onClick={() => quickPreset("all")}>
+                  All government
+                </button>
+                <button type="button" className={quickChipClass} onClick={() => quickPreset("ndc2024")}>
+                  NDC 2024
+                </button>
+                <button type="button" className={quickChipClass} onClick={() => quickPreset("npp2024")}>
+                  NPP 2024
+                </button>
+              </>
+            ) : (
+              <>
+                <button type="button" className={quickChipClass} onClick={() => quickPreset("all")}>
+                  All tracked
+                </button>
+                <button type="button" className={quickChipClass} onClick={() => quickPreset("gov")}>
+                  Government only
+                </button>
+                <button type="button" className={quickChipClass} onClick={() => quickPreset("ndc2024")}>
+                  NDC 2024
+                </button>
+                <button type="button" className={quickChipClass} onClick={() => quickPreset("npp2024")}>
+                  NPP 2024
+                </button>
+              </>
+            )}
+            {hasActiveFilters ? (
+              <Link href={clearHref} className={clearFiltersLinkClass}>
+                Clear
+              </Link>
+            ) : null}
+          </div>
+        </div>
         <div
         role="search"
         aria-label="Filter the commitment catalogue by search, source slice, and category"
-        className={`flex flex-col gap-4 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-end ${filterToolbarHeader ? "mt-4" : "mt-8"}`}
+        className={`flex flex-col gap-4 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-end ${filterToolbarHeader ? "mt-4" : "mt-3"}`}
       >
         <div className="min-w-0 flex-1 sm:max-w-xs">
           <label htmlFor="live-q" className="block text-xs font-medium text-[var(--foreground)]">
@@ -407,13 +470,9 @@ export function PromisesBrowseLive({
           ) : (
             <span className="text-xs text-[var(--muted-foreground)]">Results update as you type</span>
           )}
-          {hasActiveFilters ? (
-            <Link href={clearHref} className={clearFiltersLinkClass}>
-              Clear
-            </Link>
-          ) : null}
         </div>
       </div>
+        </>
       )}
 
       {error ? (
@@ -433,12 +492,20 @@ export function PromisesBrowseLive({
       {rows.length > 0 ? (
         <>
           {homeTeaser ? (
-            <p className="mt-6 text-xs text-[var(--muted-foreground)]">
-              {accountabilityProse.browseHomeTeaserCaption(displayRows.length, rows.length)}
-              <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={primaryLinkClass}>
-                {accountabilityProse.browseHomeTeaserCta}
-              </Link>
-            </p>
+            <div className="mt-6 flex flex-col items-center gap-4 sm:items-stretch">
+              <p className="text-center text-xs text-[var(--muted-foreground)] sm:text-left">
+                {accountabilityProse.browseHomeTeaserCaption(displayRows.length, rows.length)}
+                Use the full dashboard for search, all filters, and export.
+              </p>
+              <div className="flex justify-center sm:justify-start">
+                <Link
+                  href={homeTeaserDestination}
+                  className={`inline-flex min-h-10 items-center justify-center rounded-full bg-[var(--primary)] px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--primary-dark)] ${focusRingSmClass}`}
+                >
+                  {homeTeaserButtonLabel} →
+                </Link>
+              </div>
+            </div>
           ) : (
             <p className="mt-6 text-xs text-[var(--muted-foreground)]">
               Showing {rows.length} result{rows.length === 1 ? "" : "s"}

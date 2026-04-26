@@ -11,13 +11,13 @@ import {
   accountabilityHomePreviewCopy,
 } from "@/config/accountability-catalogue-destinations";
 import type { GovernmentCommitmentsHomePreview as GovPreviewData } from "@/lib/home-government-preview-types";
-import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 type Props = {
   data: GovPreviewData;
 };
 
-/** Homepage block — same live filters and KPI strip as `/government-commitments`. */
+/** Homepage block — same KPIs as the full page, with a five-row preview and CTA to `/government-commitments`. */
 export function GovernmentCommitmentsHomePreview({ data }: Props) {
   const { stats, initialRows, trackerConstituencies } = data;
   const reducedMotion = usePrefersReducedMotion();
@@ -57,6 +57,8 @@ export function GovernmentCommitmentsHomePreview({ data }: Props) {
         >
           <PromisesBrowseLive
             mode="government"
+            homeTeaser
+            homeTeaserMaxRows={5}
             initialStats={stats}
             initialRows={initialRows}
             initialQ=""
@@ -69,20 +71,18 @@ export function GovernmentCommitmentsHomePreview({ data }: Props) {
             trackerConstituencies={trackerConstituencies}
             csvExportHref="/api/export/promises-csv"
             statsStripCompact
+            homeTeaserCtaHref={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments}
             filterToolbarHeader={
-              <div className="mt-6 space-y-3 border-b border-[var(--border)] pb-3 sm:mt-8">
+              <div className="mt-6 space-y-2 border-b border-[var(--border)] pb-3 sm:mt-8">
                 <p className="mx-auto max-w-3xl text-center text-xs leading-relaxed text-[var(--muted-foreground)] sm:text-left">
                   {accountabilityHomePreviewCopy.promiseCardSurfaceExplainerShort}
                 </p>
-                <div className="flex flex-wrap items-end justify-between gap-3">
-                  <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Filters &amp; results</h3>
-                  <Link
-                    href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments}
-                    className={`${primaryNavLinkClass} text-sm font-semibold`}
-                  >
-                    Open full tracker →
-                  </Link>
-                </div>
+                <h3 className="text-center font-display text-base font-semibold text-[var(--foreground)] sm:text-left">
+                  Preview (five rows)
+                </h3>
+                <p className="text-center text-xs text-[var(--muted-foreground)] sm:text-left">
+                  Open the full page for the interactive dashboard, search, and export.
+                </p>
               </div>
             }
           />

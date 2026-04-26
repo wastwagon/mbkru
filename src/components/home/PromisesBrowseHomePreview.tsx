@@ -11,7 +11,7 @@ import {
   accountabilityHomePreviewCopy,
 } from "@/config/accountability-catalogue-destinations";
 import type { PromisesBrowseHomePreview as BrowsePreviewData } from "@/lib/home-promises-browse-preview-types";
-import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 type Props = {
   data: BrowsePreviewData;
@@ -59,6 +59,7 @@ export function PromisesBrowseHomePreview({ data }: Props) {
             mode="browse"
             homeTeaser
             homeTeaserMaxRows={5}
+            homeTeaserCtaHref={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
             initialStats={stats}
             initialRows={initialRows}
             initialQ=""
@@ -75,17 +76,11 @@ export function PromisesBrowseHomePreview({ data }: Props) {
                 <p className="mx-auto max-w-3xl text-center text-xs leading-relaxed text-[var(--muted-foreground)] sm:text-left">
                   {accountabilityHomePreviewCopy.promiseCardSurfaceExplainerShort}
                 </p>
-                <h3 className="font-display text-center text-base font-semibold text-[var(--foreground)] sm:text-left">
-                  Preview
+                <h3 className="text-center font-display text-base font-semibold text-[var(--foreground)] sm:text-left">
+                  Preview (five rows)
                 </h3>
                 <p className="text-center text-xs text-[var(--muted-foreground)] sm:text-left">
-                  <Link
-                    href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
-                    className={`${primaryNavLinkClass} font-semibold`}
-                  >
-                    Browse all commitments
-                  </Link>{" "}
-                  for the full table, filters, and export.
+                  Use the full browse page (button below) for the interactive dashboard, all filters, and export.
                 </p>
               </div>
             }
