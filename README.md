@@ -9,6 +9,7 @@ Civic Accountability & Citizens Engagement Platform for Ghana.
 - **Sprint plan (Phase 1 polish → Phase 3):** [`docs/SPRINT_BACKLOG.md`](docs/SPRINT_BACKLOG.md)
 - **Phase task backlog (checkboxes):** [`docs/PHASE_TASKS.md`](docs/PHASE_TASKS.md)
 - **Safe phased rollout (ops + legal + data order):** [`docs/SAFE_IMPLEMENTATION_PHASES.md`](docs/SAFE_IMPLEMENTATION_PHASES.md) — automated slice: `npm run verify:release-gates`
+- **Safe UI/UX phases (copy, less duplication, hub orientation):** [`docs/SAFE_UI_UX_PHASES.md`](docs/SAFE_UI_UX_PHASES.md)
 - **Ops & CSV import:** [`docs/OPS_RUNBOOK.md`](docs/OPS_RUNBOOK.md) · [`docs/CSV_IMPORT_RUNBOOK.md`](docs/CSV_IMPORT_RUNBOOK.md) · **Public data sources (MPs, constituencies, manifestos):** [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md)
 - **Security & observability:** [`docs/SECURITY_CHECKLIST.md`](docs/SECURITY_CHECKLIST.md) · [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md)
 - **Voice + accessibility rollout guide:** [`docs/VOICE_AND_ACCESSIBILITY_GUIDE.md`](docs/VOICE_AND_ACCESSIBILITY_GUIDE.md)

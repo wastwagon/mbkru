@@ -102,6 +102,14 @@ export default async function ParliamentTrackerPage() {
         description={`Accountability & Electoral Watch — ${accountabilityProse.parliamentPageHeaderDescription}`}
       />
 
+      <div className="section-spacing border-b border-[var(--border)] bg-white pb-8">
+        <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
+          <p className="text-sm leading-relaxed text-[var(--muted-foreground)]">
+            {accountabilityProse.parliamentTrackerHubOrientation}
+          </p>
+        </div>
+      </div>
+
       {dbReady && trackerStats ? (
         <section className="section-spacing section-full bg-[var(--section-light)] pb-10">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -114,8 +122,8 @@ export default async function ParliamentTrackerPage() {
                 <div>
                   <h2 className="font-display text-lg font-bold text-[var(--foreground)]">Parliamentary roster</h2>
                   <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-                    {mpRoster.length} active MP{mpRoster.length === 1 ? "" : "s"} in this catalogue. Open promise pages from
-                    the list, or{" "}
+                    {mpRoster.length} active MP{mpRoster.length === 1 ? "" : "s"} in this catalogue. Open a member’s
+                    catalogue sheet from the list when we publish rows, or{" "}
                     {partnerDataPage ? (
                       <>
                         see{" "}
@@ -163,7 +171,10 @@ export default async function ParliamentTrackerPage() {
                         </span>
                       </div>
                       <span className="shrink-0 tabular-nums text-xs text-[var(--muted-foreground)]">
-                        {m.promiseCount} promise{m.promiseCount === 1 ? "" : "s"}
+                        {m.promiseCount}{" "}
+                        {m.promiseCount === 1
+                          ? accountabilityProse.mpRosterListCountLabelSingular
+                          : accountabilityProse.mpRosterListCountLabelPlural}
                       </span>
                     </li>
                   ))}

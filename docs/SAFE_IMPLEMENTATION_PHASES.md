@@ -4,6 +4,8 @@
 
 **Automated slice (run locally or in CI):** `npm run verify:release-gates` — Prisma validate, `tsc --noEmit`, Vitest. It does **not** cover backups, counsel review, or data truth.
 
+**UI/UX (copy, duplication, navigation clarity):** [`SAFE_UI_UX_PHASES.md`](./SAFE_UI_UX_PHASES.md) — phased, reversible; Phase 1 is copy-only in config + small components.
+
 ---
 
 ## Phase 0 — Engineering & schema safety (repeat every release)

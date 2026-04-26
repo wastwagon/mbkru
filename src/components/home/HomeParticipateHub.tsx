@@ -44,7 +44,7 @@ const PHASE_1_PARTICIPATE_ACTIONS: { href: string; title: string; body: string }
   {
     href: "/parliament-tracker",
     title: "Accountability hub",
-    body: "How we approach MPs, promises, and report cards — preview content in Phase 1.",
+    body: "How we approach the public commitment catalogue, the People's Report Card, and our accountability tools when Phase 1 is marketing-only on this build.",
   },
   {
     href: "/situational-alerts",
@@ -79,7 +79,7 @@ const PHASE_1_PARTICIPATE_ACTIONS: { href: string; title: string; body: string }
   {
     href: "/methodology",
     title: "Methodology",
-    body: "How we cite sources, score promises, and describe limitations.",
+    body: "How we cite sources, track documented commitments, and describe limitations — aligned with the public catalogue language.",
   },
   {
     href: "/resources",

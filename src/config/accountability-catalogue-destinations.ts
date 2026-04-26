@@ -34,6 +34,9 @@ export const accountabilityHomePreviewCopy = {
   /** Shown above live promise tables on the homepage and government commitments page. */
   promiseCardSurfaceExplainer:
     "Each card shows a brief summary on the face, citation chips (party · year, manifesto chapter when catalogued), optional page reference, and a link to the official PDF; expand for verification notes and full source buttons.",
+  /** Homepage live sections only — avoids repeating the long explainer above two embeds. */
+  promiseCardSurfaceExplainerShort:
+    "Each card shows a short summary and citation line on the face; expand the card for full text, verification notes, and source buttons. Open the full tracker page below for the complete how-to read.",
   browseHeading: `${accountabilityCatalogueNavMedium.browseAll} — live`,
   browseLead:
     "Full searchable catalogue for sitting MPs — identical data to the dedicated browse page and public export.",
@@ -106,6 +109,12 @@ export const accountabilityProse = {
   adminMemberCatalogueEmpty: "No catalogue rows yet.",
   /** Stats strip KPI — sitting MPs with at least one published catalogue row in the current slice. */
   statsStripMpsWithCatalogueRowsLabel: "MPs w/ catalogue rows",
+  /** Under `/parliament-tracker` PageHeader — orients users vs Government commitments and Browse all. */
+  parliamentTrackerHubOrientation:
+    "Start from this hub for the MP roster, the People's Report Card entry point, and catalogue tools. For programme- and executive-tagged rows only, use Government commitments; for the full filterable list tied to sitting MPs, use Browse all commitments.",
+  /** Roster list — count suffix next to each MP (same language as the By MP index). */
+  mpRosterListCountLabelSingular: "catalogue row",
+  mpRosterListCountLabelPlural: "catalogue rows",
 } as const;
 
 export type AccountabilityCatalogueCard = {
