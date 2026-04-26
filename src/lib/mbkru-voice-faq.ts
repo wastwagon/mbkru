@@ -58,6 +58,19 @@ const intentRules: IntentRule[] = [
     },
   },
   {
+    keywords: ["diaspora", "passport", "ghana card", "nia", "nationality", "citizenship", "dual citizen", "17th region", "abroad", "mission", "consulate"],
+    reply: {
+      answer:
+        "MBKRU does not process passports or ID—we signpost to official sources. The Diaspora support page has NIA, Foreign Affairs, and Immigration links, plus a News briefing for the 17th Region policy context. Use MBKRU Voice for platform questions; confirm time-sensitive rules on .gov.gh and at your mission.",
+      suggestedLinks: [
+        { label: "Diaspora support", href: "/diaspora" },
+        { label: "Diaspora feedback", href: "/diaspora/feedback" },
+        { label: "17th Region briefing (News)", href: "/news/diaspora-17th-region-2025" },
+        { label: "FAQ", href: "/faq" },
+      ],
+    },
+  },
+  {
     keywords: ["contact", "email", "office", "support", "help"],
     reply: {
       answer:
@@ -100,12 +113,13 @@ export function getMbkruVoiceFallbackReply(
   }
 
   return {
-    answer: `${getLanguagePrefix(languageId)}I am MBKRU Voice, your always-online customer service assistant. I can help with reports, petitions, promises tracking, communities, and support contacts. Ask me what you want to do and I will guide you.`.trim(),
+    answer: `${getLanguagePrefix(languageId)}I am MBKRU Voice, your always-online assistant. I can help with reports, petitions, promise tracking, diaspora signposting, communities, and support contacts. Ask me what you want to do and I will guide you.`.trim(),
     suggestedLinks: [
+      { label: "Diaspora support", href: "/diaspora" },
       { label: "Citizens Voice", href: "/citizens-voice" },
       { label: "Petitions", href: "/petitions" },
       { label: "Track Report", href: "/track-report" },
-      { label: "Contact Support", href: "/contact" },
+      { label: "Contact", href: "/contact" },
     ],
   };
 }

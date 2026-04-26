@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { MbkruVoiceCallout } from "@/components/voice/MbkruVoiceCallout";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 import { faqContent } from "@/lib/site-content";
 
 export const metadata: Metadata = {
   title: "Frequently Asked Questions",
   description:
-    "Common questions about MBKRU — membership, complaints, political affiliation, People's Report Card, funding, and platform launch.",
+    "Common questions about MBKRU — membership, diaspora signposting, MBKRU Voice, complaints, political affiliation, People's Report Card, funding, and platform launch.",
 };
 
 export default function FAQPage() {
@@ -19,8 +20,9 @@ export default function FAQPage() {
       />
 
       <section className="section-spacing section-full bg-[var(--section-light)]">
-        <div className="mx-auto max-w-3xl">
-          <div className="space-y-6">
+        <div className="mx-auto max-w-3xl px-4 sm:px-0">
+          <MbkruVoiceCallout />
+          <div className="mt-8 space-y-6 sm:mt-10">
             {faqContent.map((item, i) => (
               <details
                 key={i}

@@ -194,8 +194,9 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
       ) : null}
 
       <p className="mt-4 text-xs text-[var(--muted-foreground)]">
-        Tip: `mbkru_voice_reply_received` includes `source` and `safety_reason` properties. Use these to monitor provider
-        performance and safety-guardrail frequency.
+        Tip: <code className="text-xs">mbkru_voice_reply_received</code> payloads include <code>source</code>,{" "}
+        <code>safety_reason</code> (when applicable), <code>site_context</code> (comma‑separated in‑app paths from curated
+        site knowledge), and <code>web_search_used</code> (when live search augmented the turn).
       </p>
     </div>
   );

@@ -26,7 +26,11 @@ export default function DiasporaFeedbackPage() {
           <p className="text-center text-sm text-[var(--muted-foreground)]">
             Prefer context first?{" "}
             <Link href="/diaspora" className={primaryLinkClass}>
-              Read the diaspora overview
+              Back to diaspora support hub
+            </Link>{" "}
+            ·{" "}
+            <Link href="/news/diaspora-17th-region-2025" className={primaryLinkClass}>
+              17th Region policy briefing
             </Link>
             .
           </p>

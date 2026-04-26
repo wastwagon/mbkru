@@ -202,6 +202,16 @@ export function PromiseTrackerStatsStrip({ stats, subtitle, compact }: Props) {
           </KpiCard>
         </dl>
 
+        <p className="mt-5 max-w-3xl text-xs leading-relaxed text-slate-400/95 sm:text-sm">
+          {accountabilityProse.statsStripDatabaseScopeNote}{" "}
+          <Link
+            href="/data-sources"
+            className="font-medium text-sky-200/95 underline decoration-sky-200/30 underline-offset-2 hover:text-white"
+          >
+            {accountabilityProse.statsStripDatabaseScopeDataSourcesLink}
+          </Link>
+        </p>
+
         {totalPromises > 0 && compact ? (
           <StatusBreakdownBlock
             met={met}

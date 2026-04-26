@@ -11,6 +11,30 @@ export const metadata: Metadata = {
     "News, press releases, and advocacy updates from MBKRU.",
 };
 
+function NewsBriefingCallout() {
+  return (
+    <div className="mb-10 overflow-hidden rounded-2xl border border-[var(--border)] bg-gradient-to-r from-[var(--primary)]/[0.08] to-[var(--accent-gold)]/[0.1] p-5 sm:p-6">
+      <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">Policy briefing</p>
+      <h2 className="mt-2 font-display text-lg font-bold text-[var(--foreground)] sm:text-xl">
+        Diaspora &amp; the 17th Region (context and references)
+      </h2>
+      <p className="mt-2 text-sm text-[var(--muted-foreground)] sm:text-base">
+        Summit background, remittances, and what citizens can monitor—moved from the main diaspora hub so we can focus
+        the diaspora page on documentation support. Includes external source links.
+      </p>
+      <Link
+        href="/news/diaspora-17th-region-2025"
+        className={`${primaryLinkClass} mt-4 inline-flex font-semibold`}
+      >
+        Open the briefing
+        <span aria-hidden className="ml-1">
+          →
+        </span>
+      </Link>
+    </div>
+  );
+}
+
 export default async function NewsPage() {
   const cmsPosts = await getPublishedPostSummaries();
 
@@ -22,6 +46,9 @@ export default async function NewsPage() {
           description="Latest news, press releases, and advocacy updates from My Brother's Keeper Restoration United (MBKRU)."
         />
         <section className="section-spacing section-full bg-[var(--section-light)]">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <NewsBriefingCallout />
+          </div>
           <div className="mx-auto max-w-lg px-4 text-center sm:px-6 lg:px-8">
             <p className="text-[var(--muted-foreground)]">No published news posts yet.</p>
             <p className="mt-4 text-sm text-[var(--muted-foreground)]">
@@ -50,6 +77,7 @@ export default async function NewsPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <NewsBriefingCallout />
           <div className="grid gap-8 lg:grid-cols-2 lg:items-stretch lg:gap-10">
             <div className="group">
               <Link href={`/news/${featured.slug}`} className="block">

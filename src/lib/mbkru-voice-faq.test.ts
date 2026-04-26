@@ -9,6 +9,12 @@ describe("getMbkruVoiceFallbackReply", () => {
     expect(result.suggestedLinks?.some((link) => link.href === "/track-report")).toBe(true);
   });
 
+  it("returns diaspora signposting when passport or diaspora is mentioned", () => {
+    const result = getMbkruVoiceFallbackReply("How do I renew my Ghanaian passport in London?");
+    expect(result.answer.toLowerCase()).toContain("diaspora");
+    expect(result.suggestedLinks?.some((link) => link.href === "/diaspora")).toBe(true);
+  });
+
   it("applies language profile prefix for Twi", () => {
     const result = getMbkruVoiceFallbackReply("help me", "twi");
     expect(result.answer.startsWith("Twi guidance:")).toBe(true);

@@ -2,169 +2,112 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { MbkruVoiceCallout } from "@/components/voice/MbkruVoiceCallout";
 import { Card } from "@/components/ui/Card";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 import { images } from "@/lib/site-content";
+import { ACCOUNTABILITY_CATALOGUE_ROUTES, accountabilityCatalogueNavMedium } from "@/config/accountability-catalogue-destinations";
+import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 
 export const metadata: Metadata = {
-  title: "The Diaspora as Ghana’s 17th Region",
+  title: "Diaspora support — pathways to documentation & accountability",
   description:
-    "Summit context, reported activities, and how MBKRU supports diaspora-related civic education, accountability, and collaboration in Phase 1.",
+    "Practical signposting for Ghanaians in the diaspora: Ghana Card, passport, nationality, and how to collaborate with MBKRU on citizen accountability. Not legal advice—verify on official government channels.",
 };
 
-const sources = [
-  {
-    label: "Ghana Information Services Department — economic plan & 17th Region framing",
-    href: "https://isd.gov.gh/ghana-declares-global-diaspora-its-17th-region-unveils-new-economic-plan/",
-  },
-  {
-    label: "Diplomatic Times — full text, President Mahama at Diaspora Summit 2025",
-    href: "https://www.diplomatictimesonline.com/full-text-speech-of-president-mahama-at-diaspora-summit-2025/",
-  },
-  {
-    label: "Ghana News Agency — Accra Summit coverage (Dec 2025)",
-    href: "https://gna.org.gh/2025/12/mahama-urges-africa-diaspora-unity-as-reparations-debate-takes-centre-stage-at-accra-summit/",
-  },
-];
+const ctaClass = `inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition ${focusRingSmClass}`;
 
-const policyHighlights = [
-  {
-    title: "Policy, not only symbolism",
-    body: "Public reporting describes the “17th Region” as a strategic repositioning of how the state engages Ghanaians abroad—not merely a slogan. Official communications frame diaspora communities as part of Ghana’s development architecture.",
-  },
-  {
-    title: "Diaspora Summit 2025",
-    body: "The initiative was advanced at a Diaspora Summit in Accra (19–20 December 2025), under the theme “Resetting Ghana: The Diaspora as the 17th Region,” bringing together government, missions abroad, and diaspora stakeholders.",
-  },
-  {
-    title: "Economic weight of remittances",
-    body: "Government and press reporting have highlighted that remittance inflows compare in scale to major export categories—underscoring why structured diaspora engagement matters for jobs, skills, and household welfare at home.",
-  },
-  {
-    title: "Institutional follow-through",
-    body: "Reporting on the Summit references plans for stronger diaspora institutions, clearer national policy, consular and mobility measures (including references to modernised visa pathways), and performance expectations for missions in mobilising investment and skills transfer.",
-  },
-];
+const official = {
+  nia: { label: "National Identification Authority (Ghana Card)", href: "https://www.nia.gov.gh/" },
+  gis: { label: "Ghana Immigration Service", href: "https://www.gis.gov.gh/" },
+  mfa: { label: "Ministry of Foreign Affairs & Regional Integration", href: "https://mfa.gov.gh/" },
+  ghanaGov: { label: "Ghana government portal (verify current services)", href: "https://www.ghana.gov.gh/" },
+} as const;
 
-const mbkruConnections = [
+const collaborate = [
   {
-    title: "Voice beyond borders",
-    body: "MBKRU exists to amplify citizen voice—including Ghanaians overseas who fund families, invest, and carry ideas home. Treating diaspora as a “region” aligns with our belief that accountability must include everyone who holds a stake in Ghana’s future.",
+    title: "Track government promises",
+    body: "Use the public catalogue to see documented commitments and evidence—diaspora voices can push for the same transparency as at home.",
+    href: ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments,
+    label: accountabilityCatalogueNavMedium.government,
   },
   {
-    title: "Transparency on impact",
-    body: "Large remittance flows deserve public conversation on how they translate into jobs, infrastructure, and services—not only consumption. Our accountability pillar supports informed debate on whether policy and spending match citizens’ expectations.",
+    title: "Petitions & campaigns",
+    body: "When enabled for your build, start or support citizen-led campaigns on issues that matter to you and to communities in Ghana.",
+    href: "/petitions",
+    label: "Petitions",
   },
   {
-    title: "Citizens’ empowerment",
-    body: "Empowerment means accessible information, safe channels to speak, and institutions that respond. Diaspora inclusion, if implemented with integrity, can expand skills, capital, and scrutiny—strengthening domestic accountability rather than replacing it.",
+    title: "Report & feedback",
+    body: "Share structured experience through our diaspora feedback form so we can improve signposting and programmes.",
+    href: "/diaspora/feedback",
+    label: "Diaspora feedback",
   },
   {
-    title: "National development",
-    body: "Development is not top-down alone. Connecting diaspora skills, capital, and networks to local priorities—while protecting land, labour, and environment—fits MBKRU’s mission to bridge presidency and people through evidence and engagement.",
+    title: "Partners & media",
+    body: "Associations, professionals, and faith groups aligned with non-partisan accountability can reach us for collaboration.",
+    href: "/partners",
+    label: "Partners",
   },
-];
-
-const announcementAndActivities = {
-  headline:
-    "Under the banner “Resetting Ghana: The Diaspora as the 17th Region,” government and media reporting described a Diaspora Summit in Accra (19–20 December 2025) as a focal point for reframing how the state engages Ghanaians abroad.",
-  activities: [
-    "High-level speeches and policy framing positioning the global diaspora as integral to national renewal—not only as remittance senders but as partners in investment, skills, and ideas.",
-    "Discourse on Africa–diaspora unity, historical justice, and reparations in line with wider Pan-African debates (widely reported in connection with the Summit).",
-    "Emphasis on remittances and economic contribution alongside references to institutional follow-up: diaspora policy, missions’ performance, consular services, and mobility measures discussed in official and press summaries.",
-    "References to heritage, culture, and tourism linkages as part of reconnecting diaspora communities with Ghana (as reported in coverage of government communications).",
-  ],
-  phaseNote:
-    "MBKRU does not duplicate government events. We summarise public information so citizens and partners can discuss outcomes critically. Confirm dates, programmes, and figures on official portals and the references below.",
-};
-
-const supportIcons = [
-  (k: string) => (
-    <svg key={k} className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-    </svg>
-  ),
-  (k: string) => (
-    <svg key={k} className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-    </svg>
-  ),
-  (k: string) => (
-    <svg key={k} className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-    </svg>
-  ),
-  (k: string) => (
-    <svg key={k} className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-    </svg>
-  ),
-  (k: string) => (
-    <svg key={k} className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-    </svg>
-  ),
-];
-
-const mbkruSupportAndCollaboration = [
-  {
-    title: "Civic education & clarity",
-    body: "We publish balanced explainers—like this page—so Ghanaians at home and abroad understand what “17th Region” means in policy terms, what was said in public, and what questions to ask next.",
-  },
-  {
-    title: "Accountability & transparency",
-    body: "We encourage tracking of public commitments: institutions promised, timelines, remittance-linked outcomes, and service improvements for diaspora and returnees. Silence on metrics is also a signal worth scrutiny.",
-  },
-  {
-    title: "Voice & engagement (roadmap)",
-    body: "Phase 1 prepares MBKRU Voice and engagement channels so that, when launched, structured input—including from diaspora networks—can complement town halls and media debate. Early access sign-ups help us design responsibly.",
-  },
-  {
-    title: "Collaboration pathways",
-    body: "We welcome dialogue with diaspora associations, professional bodies, faith and community groups, media, and CSOs on non-partisan programmes: briefings, forums, situational awareness, and (where appropriate) joint advocacy for citizen-centred governance.",
-  },
-  {
-    title: "Partners & supporters",
-    body: "Organisations aligned with accountability and citizen empowerment can explore partnership through our Partners page and direct contact—without compromising MBKRU’s independence from party politics.",
-  },
-];
-
-const brainstorm = [
-  {
-    q: "How can diaspora engagement stay accountable?",
-    a: "Publish clear metrics: remittance-linked projects, consular turnaround times, investment facilitation outcomes, and feedback loops for diaspora communities—so promises can be tracked like any other public commitment.",
-  },
-  {
-    q: "What should citizens monitor?",
-    a: "Whether new institutions and policies improve service delivery at home, reduce exploitation of returnees, and protect workers and communities receiving investment—not only ribbon-cutting announcements.",
-  },
-  {
-    q: "Where does MBKRU add value?",
-    a: "By hosting non-partisan education, situational awareness, and (in later phases) structured voice—so diaspora and domestic citizens alike can demand evidence-backed governance.",
-  },
-  {
-    q: "Who can collaborate with MBKRU on diaspora-related work?",
-    a: "Groups that share our values—transparency, non-partisanship, citizen dignity—can reach out for briefings, co-hosted dialogues, or partnership enquiries. We prioritise initiatives that strengthen accountability, not partisan campaigns.",
-  },
-];
-
-const ctaClass = `inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition ${focusRingSmClass}`;
+] as const;
 
 export default function DiasporaPage() {
+  const phase = getServerPlatformPhase();
+  const accountabilityOn = platformFeatures.parliamentTrackerData(phase);
+  const petitionsOn = platformFeatures.citizensVoicePlatform(phase);
+  const legalDeskOn = platformFeatures.legalEmpowermentDesk(phase);
+
+  const journeys = [
+    {
+      title: "Ghana Card (NIA)",
+      summary:
+        "The national ID underpins many services. Requirements and locations change—use NIA for eligibility, foreign missions, and registration steps.",
+      steps: [
+        "Start on the NIA site for the latest registration categories, fees, and mission coverage.",
+        "If you are abroad, confirm which steps can be done at a mission or require travel to Ghana.",
+        "Keep personal documents secure; never share one-time pins or pay unofficial “agents” without verification.",
+      ],
+      primary: official.nia,
+    },
+    {
+      title: "Passport & travel documents",
+      summary:
+        "Passport applications and renewals are handled through official immigration and foreign-affairs channels. Processing times and forms change—always use current portals.",
+      steps: [
+        "Use the Ministry of Foreign Affairs and Ghana Immigration Service for authoritative instructions.",
+        "Book appointments only through official links; verify mission addresses and hours on government sites.",
+        "For urgent or complex cases, consular staff are the first point of contact—not social media offers.",
+      ],
+      primary: official.mfa,
+      secondary: official.gis,
+    },
+    {
+      title: "Nationality, citizenship & dual status",
+      summary: "Rules depend on your situation, parentage, and when you obtained other nationalities. MBKRU does not provide legal advice.",
+      steps: [
+        "Read high-level guidance on official sites, then consult a qualified professional for your case.",
+        legalDeskOn
+          ? "Our Legal empowerment section lists signposting resources; it does not replace a lawyer for individual advice."
+          : "When your site build enables it, we link a Legal empowerment desk for signposting—not a substitute for a lawyer.",
+        "Document timelines and keep copies of submissions when you deal with public institutions.",
+      ],
+      primary: official.mfa,
+    },
+  ] as const;
+
   return (
     <div className="overflow-x-hidden">
       <PageHeader
-        title="The Diaspora as Ghana’s 17th Region"
-        description="Announcement context, reported Summit activities, and how MBKRU supports civic education, accountability, and collaboration in Phase 1."
+        title="Diaspora support"
+        description="For Ghanaians abroad and returnees: signposting to official channels for Ghana Card, passport, and nationality—plus how to join MBKRU’s citizen accountability work. The “17th Region” policy context lives in our News briefing."
       />
 
       <div className="border-b border-[var(--primary)]/20 bg-gradient-to-r from-[var(--primary)]/[0.08] via-white to-[var(--accent-gold)]/[0.12]">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-4 py-5 sm:flex-row sm:items-center sm:px-6 lg:px-8">
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">Visiting Ghana?</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">Visiting or reconnecting with Ghana?</p>
             <p className="mt-1 max-w-2xl text-sm text-[var(--muted-foreground)]">
-              Share your experience in our structured feedback form — responses are saved to the MBKRU admin for
-              programme records.
+              Tell us about your experience—submissions are stored for programme planning and help us improve this hub.
             </p>
           </div>
           <Link
@@ -179,318 +122,182 @@ export default function DiasporaPage() {
         </div>
       </div>
 
-      {/* Hero: mobile-first — image stacks above copy; premium card + imagery */}
+      <section className="section-spacing section-full border-b border-[var(--border)] bg-[var(--section-light-tertiary)]">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <h2 className="font-display text-lg font-bold text-[var(--foreground)]">Important</h2>
+          <p className="mt-2 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+            MBKRU <strong className="text-[var(--foreground)]">signposts and educates</strong>. We are not a government
+            office, law firm, or consulate. <strong className="text-[var(--foreground)]">Fees, rules, and processing times</strong>{" "}
+            are set by official institutions and can change. Always{" "}
+            <strong className="text-[var(--foreground)]">verify on .gov.gh and mission websites</strong> before you pay or
+            travel.
+          </p>
+          <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+            For policy background on the “17th Region” and the Diaspora Summit, read the{" "}
+            <Link href="/news/diaspora-17th-region-2025" className={primaryLinkClass}>
+              newsroom briefing
+            </Link>{" "}
+            (with external references). Common questions about diaspora and Voice are on the{" "}
+            <Link href="/faq" className={primaryLinkClass}>
+              FAQ
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
+
       <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid items-stretch gap-8 lg:grid-cols-12 lg:gap-10">
-            <div className="relative lg:col-span-7">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-[var(--shadow-card)] ring-1 ring-black/5 sm:aspect-[16/10] lg:aspect-auto lg:min-h-[320px]">
+            <div className="relative lg:col-span-6">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-[var(--shadow-card)] ring-1 ring-black/5 sm:aspect-[16/10]">
                 <Image
                   src={images.diaspora}
-                  alt="Diverse group in discussion — representing global Ghanaian connection and dialogue"
+                  alt="Diverse group in discussion — global Ghanaian connection"
                   fill
                   className="object-cover object-center"
-                  sizes="(max-width: 1024px) 100vw, 58vw"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   priority
                 />
-                <div
-                  className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent"
-                  aria-hidden
-                />
-                <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-8">
-                  <p className="font-display text-lg font-bold text-white drop-shadow-sm sm:text-xl">
-                    Global citizens. One nation.
-                  </p>
-                  <p className="mt-1 max-w-md text-sm text-white/90">
-                    Policy that recognises the diaspora strengthens accountability at home and abroad.
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" aria-hidden />
+                <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
+                  <p className="font-display text-lg font-bold text-white sm:text-xl">The global Ghanaian community</p>
+                  <p className="mt-1 text-sm text-white/90">
+                    Ghana’s sixteen regions on the map, plus a policy “17th region” for citizens abroad—see the briefing for
+                    context.
                   </p>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col justify-center lg:col-span-5">
-              <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
-                <span className="inline-flex items-center rounded-full bg-[var(--primary)]/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[var(--primary)]">
-                  Phase 1 · Civic context
-                </span>
-                <h2 className="mt-4 font-display text-xl font-bold text-balance text-[var(--foreground)] sm:text-2xl">
-                  Sixteen regions on the map — plus a policy “region” abroad
-                </h2>
-                <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
-                  Ghana has{" "}
-                  <strong className="font-semibold text-[var(--foreground)]">sixteen administrative regions</strong>.
-                  The phrase{" "}
-                  <strong className="font-semibold text-[var(--foreground)]">“17th Region”</strong> names the{" "}
-                  <strong className="font-semibold text-[var(--foreground)]">global Ghanaian diaspora</strong> as a
-                  policy constituency. Content on this page draws on{" "}
-                  <strong className="font-semibold text-[var(--foreground)]">public reporting</strong> around the 2025
-                  Diaspora Summit; verify details on primary sources as policies evolve.
-                </p>
-              </div>
+            <div className="flex flex-col justify-center lg:col-span-6">
+              <h2 className="font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">Ask MBKRU Voice on this site</h2>
+              <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+                Use the{" "}
+                <strong className="text-[var(--foreground)]">MBKRU Voice</strong> control (bottom of the screen) to ask
+                in plain language about this platform, accountability, and public signposting. You can attach a short text
+                or PDF. When your host enables it, answers may use live web search—always double-check time-sensitive
+                government rules on official sites.
+              </p>
+              <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+                More input options:{" "}
+                <Link href="/accessibility" className={primaryLinkClass}>
+                  Accessibility &amp; voice options
+                </Link>
+                . Citizens at home and abroad are welcome to use the same tool. This page’s topics are also summarised
+                for the assistant (site-first) when your question matches.
+              </p>
+              <MbkruVoiceCallout />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Announcement & activities — image + list for scanability */}
       <section className="section-spacing section-full border-y border-[var(--border)] bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-12">
-            <div className="order-2 lg:order-1 lg:col-span-7">
-              <h2 className="font-display text-2xl font-bold text-balance text-[var(--foreground)] sm:text-3xl">
-                The announcement &amp; reported Summit activities
-              </h2>
-              <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
-                {announcementAndActivities.headline}
-              </p>
-              <h3 className="mt-10 font-display text-lg font-semibold text-[var(--foreground)]">
-                Themes and activities in public reporting
-              </h3>
-              <ul className="mt-4 space-y-4 text-[15px] text-[var(--muted-foreground)] sm:text-base">
-                {announcementAndActivities.activities.map((line) => (
-                  <li key={line} className="flex gap-3">
-                    <span
-                      className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--accent-gold)]"
-                      aria-hidden
-                    />
-                    <span className="leading-relaxed">{line}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-4 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                {announcementAndActivities.phaseNote}
-              </p>
-            </div>
-            <div className="order-1 lg:order-2 lg:col-span-5">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-[var(--shadow-card)] ring-1 ring-black/5 lg:sticky lg:top-24">
-                <Image
-                  src={images.diasporaSummit}
-                  alt="Community gathering — symbolic of Summit-style dialogue and engagement"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 40vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-tr from-[var(--primary)]/20 to-transparent" aria-hidden />
-              </div>
-              <p className="mt-3 text-center text-xs text-[var(--muted-foreground)]">
-                Imagery is illustrative; see official sources for event photography.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Policy cards */}
-      <section className="section-spacing section-full bg-[var(--section-light)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center lg:mx-auto lg:max-w-3xl">
-            <h2 className="font-display text-2xl font-bold text-balance text-[var(--foreground)] sm:text-3xl">
-              Policy highlights (public record)
-            </h2>
-            <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
-              Summaries reflect widely reported themes from the Summit and related communications.
-              Figures and programmes may change—use the references below.
-            </p>
-          </div>
-          <div className="mt-12 grid gap-6 sm:grid-cols-2">
-            {policyHighlights.map((item) => (
-              <Card key={item.title} title={item.title} description={item.body} className="h-full" />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* MBKRU support — icon cards, mobile-first grid */}
-      <section className="section-spacing section-full bg-gradient-to-b from-white via-[var(--section-light)]/40 to-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="font-display text-2xl font-bold text-balance text-[var(--foreground)] sm:text-3xl">
-              How MBKRU can support, assist &amp; collaborate
-            </h2>
-            <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
-              Phase 1 is our civic platform—not a government programme. Here is what we offer and how we invite
-              collaboration, without blurring non-partisan boundaries.
-            </p>
-          </div>
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {mbkruSupportAndCollaboration.map((item, i) => (
-              <div
-                key={item.title}
-                className="group flex flex-col rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] transition duration-300 hover:border-[var(--primary)]/25 hover:shadow-[var(--shadow-card-hover)] sm:p-7"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--primary)]/15 to-[var(--accent)]/10 text-[var(--primary)] transition group-hover:from-[var(--primary)]/20">
-                  {supportIcons[i]?.(`icon-${i}`)}
-                </div>
-                <h3 className="mt-5 font-display text-base font-semibold text-[var(--foreground)] sm:text-lg">
-                  {item.title}
-                </h3>
-                <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-[15px]">
-                  {item.body}
-                </p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4">
-            <Link href="/partners" className={`${ctaClass} border-2 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)]/5`}>
-              Partners &amp; supporters
-            </Link>
-            <Link href="/contact" className={`${ctaClass} bg-[var(--primary)] text-white shadow-md hover:bg-[var(--primary-dark)]`}>
-              Propose a collaboration
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Why MBKRU — split with imagery */}
-      <section className="section-spacing section-full bg-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
-            <div className="relative aspect-[16/11] overflow-hidden rounded-2xl shadow-[var(--shadow-card)] ring-1 ring-black/5 lg:aspect-[4/3]">
-              <Image
-                src={images.partnership}
-                alt="Collaboration and partnership — aligned with MBKRU’s mission"
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 45vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/25 to-transparent" aria-hidden />
-            </div>
-            <div>
-              <h2 className="font-display text-2xl font-bold text-balance text-[var(--foreground)] sm:text-3xl">
-                Why this matters to MBKRU
-              </h2>
-              <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
-                MBKRU Advocates is <strong className="text-[var(--foreground)]">non-partisan</strong>: we do not campaign
-                for parties. We care whether public narratives translate into{" "}
-                <strong className="text-[var(--foreground)]">measurable inclusion, transparency, and citizen power</strong>.
-              </p>
-              <div className="mt-8 space-y-5">
-                {mbkruConnections.map((item) => (
-                  <div
-                    key={item.title}
-                    className="border-l-4 border-[var(--accent-gold)] bg-[var(--section-light)]/80 py-4 pl-5 pr-4"
-                  >
-                    <h3 className="font-semibold text-[var(--foreground)]">{item.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-[15px]">
-                      {item.body}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Brainstorm — premium dark band */}
-      <section className="section-spacing section-full relative bg-[var(--section-dark)] text-white">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.07]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }}
-          aria-hidden
-        />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="font-display text-2xl font-bold text-balance sm:text-3xl">
-            Questions for citizens &amp; diaspora
+          <h2 className="font-display text-2xl font-bold text-balance text-[var(--foreground)] sm:text-3xl">
+            Common documentation journeys
           </h2>
-          <p className="mt-3 max-w-2xl text-[15px] text-white/85 sm:text-base">
-            Use these prompts in community discussions, town halls, and media—grounding emotion in evidence.
+          <p className="mt-3 max-w-3xl text-[15px] text-[var(--muted-foreground)] sm:text-base">
+            These are starting points, not checklists for every case. Follow the official source for your situation.
           </p>
-          <ul className="mt-10 grid gap-4 sm:grid-cols-2">
-            {brainstorm.map((item) => (
-              <li
-                key={item.q}
-                className="rounded-2xl border border-white/15 bg-white/[0.06] p-5 backdrop-blur-sm sm:p-6"
+          <div className="mt-10 space-y-10">
+            {journeys.map((j) => (
+              <article
+                key={j.title}
+                className="rounded-2xl border border-[var(--border)] bg-[var(--section-light)]/50 p-6 sm:p-8"
               >
-                <p className="font-display text-sm font-semibold text-[var(--accent-gold)] sm:text-base">{item.q}</p>
-                <p className="mt-3 text-sm leading-relaxed text-white/90 sm:text-[15px]">{item.a}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* References + CTA */}
-      <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-white pb-16 sm:pb-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-[var(--shadow-card)]">
-            <div className="grid lg:grid-cols-5">
-              <div className="relative hidden min-h-[200px] lg:block lg:col-span-2">
-                <Image
-                  src={images.accountability}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="40vw"
-                />
-                <div className="absolute inset-0 bg-[var(--primary)]/35" aria-hidden />
-                <div className="relative flex h-full flex-col justify-end p-8">
-                  <p className="font-display text-lg font-bold text-white">Sources &amp; next steps</p>
-                  <p className="mt-2 text-sm text-white/90">
-                    Verify facts on official portals. MBKRU is here for civic dialogue—not partisan spin.
-                  </p>
-                </div>
-              </div>
-              <div className="p-6 sm:p-8 lg:col-span-3">
-                <h2 className="font-display text-xl font-bold text-[var(--foreground)] sm:text-2xl">
-                  References (external)
-                </h2>
-                <ul className="mt-6 space-y-4">
-                  {sources.map((s) => (
-                    <li key={s.href}>
-                      <a
-                        href={s.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`group flex items-start gap-3 text-sm font-medium text-[var(--primary)] underline-offset-4 transition-colors sm:text-[15px] ${focusRingSmClass}`}
-                      >
-                        <span className="mt-0.5 shrink-0 text-[var(--primary)]" aria-hidden>
-                          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                            />
-                          </svg>
-                        </span>
-                        <span className="leading-snug underline-offset-4 group-hover:underline">{s.label}</span>
-                      </a>
+                <h3 className="font-display text-xl font-bold text-[var(--foreground)]">{j.title}</h3>
+                <p className="mt-2 text-[15px] leading-relaxed text-[var(--muted-foreground)]">{j.summary}</p>
+                <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-[var(--muted-foreground)] sm:text-[15px]">
+                  {j.steps.map((s) => (
+                    <li key={s} className="leading-relaxed">
+                      {s}
                     </li>
                   ))}
-                </ul>
-                <div className="mt-8 flex flex-col gap-3 border-t border-[var(--border)] pt-8 sm:flex-row sm:flex-wrap">
-                  <Link
-                    href="/citizens-voice"
-                    className={`${ctaClass} bg-[var(--primary)] text-white shadow-md hover:bg-[var(--primary-dark)]`}
+                </ol>
+                <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+                  <a
+                    href={j.primary.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`text-sm font-semibold text-[var(--primary)] underline-offset-2 hover:underline ${focusRingSmClass}`}
                   >
-                    MBKRU Voice — early access
-                  </Link>
-                  <Link
-                    href="/partners"
-                    className={`${ctaClass} border-2 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)]/5`}
-                  >
-                    Partners
-                  </Link>
-                  <Link
-                    href="/contact"
-                    className={`${ctaClass} border-2 border-[var(--border)] text-[var(--foreground)] hover:border-[var(--primary)]/40`}
-                  >
-                    Contact us
-                  </Link>
+                    {j.primary.label} (opens new tab)
+                  </a>
+                  {"secondary" in j && j.secondary ? (
+                    <a
+                      href={j.secondary.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`text-sm font-semibold text-[var(--primary)] underline-offset-2 hover:underline ${focusRingSmClass}`}
+                    >
+                      {j.secondary.label} (opens new tab)
+                    </a>
+                  ) : null}
                 </div>
-              </div>
-            </div>
-            <div className="border-t border-[var(--border)] bg-[var(--section-light)]/50 px-6 py-4 lg:hidden">
-              <p className="text-center text-xs text-[var(--muted-foreground)]">
-                Imagery on this page is curated stock-style photography for readability; it does not depict official MBKRU events. Public data citations are on{" "}
-                <Link href="/data-sources" className={primaryLinkClass}>
-                  Data sources
+              </article>
+            ))}
+          </div>
+          <p className="mt-8 text-sm text-[var(--muted-foreground)]">
+            Other official hubs (verify currency):{" "}
+            <a href={official.ghanaGov.href} target="_blank" rel="noopener noreferrer" className={primaryLinkClass}>
+              {official.ghanaGov.label}
+            </a>
+            .             {legalDeskOn ? (
+              <>
+                For rights and signposting (not personal legal advice), see{" "}
+                <Link href="/legal-empowerment" className={primaryLinkClass}>
+                  Legal empowerment
                 </Link>
                 .
+              </>
+            ) : (
+              <span>Legal empowerment signposting is available when this deployment enables the desk in a later phase.</span>
+            )}
+          </p>
+        </div>
+      </section>
+
+      <section className="section-spacing section-full bg-[var(--section-light)]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h2 className="font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">Collaborate on accountability</h2>
+          <p className="mt-3 max-w-3xl text-[15px] text-[var(--muted-foreground)] sm:text-base">
+            Diaspora skills, remittances, and networks can strengthen scrutiny of how government serves citizens—when
+            channelled through non-partisan, evidence-based engagement.
+          </p>
+          <div className="mt-10 grid gap-5 sm:grid-cols-2">
+            {collaborate
+              .filter((c) => {
+                if (c.href === ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments) return accountabilityOn;
+                if (c.href === "/petitions") return petitionsOn;
+                return true;
+              })
+              .map((c) => (
+                <Card key={c.href} href={c.href} title={c.label} description={c.body} className="h-full" />
+              ))}
+            {accountabilityOn ? null : (
+              <p className="col-span-full text-sm text-[var(--muted-foreground)]">
+                Government commitments and promise browsing appear when this deployment enables the accountability
+                catalogue.
               </p>
-            </div>
+            )}
+            {!petitionsOn ? (
+              <p className="col-span-full text-sm text-[var(--muted-foreground)]">Petitions appear in later platform phases for this build.</p>
+            ) : null}
+          </div>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
+            <Link href="/contact" className={`${ctaClass} bg-[var(--primary)] text-white shadow-md hover:bg-[var(--primary-dark)]`}>
+              Contact MBKRU
+            </Link>
+            <Link
+              href="/news/diaspora-17th-region-2025"
+              className={`${ctaClass} border-2 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)]/5`}
+            >
+              17th Region — full briefing
+            </Link>
+            <Link href="/news" className={`${ctaClass} border-2 border-[var(--border)] text-[var(--foreground)] hover:border-[var(--primary)]/40`}>
+              All news
+            </Link>
           </div>
         </div>
       </section>

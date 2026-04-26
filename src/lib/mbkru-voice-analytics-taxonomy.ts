@@ -17,7 +17,7 @@ export const MBKRU_VOICE_ANALYTICS_TAXONOMY = [
   {
     name: "mbkru_voice_reply_received",
     meaning: "Assistant response received",
-    signal: "Use source prop to split provider/fallback/safety-guardrail",
+    signal: "source (provider, fallback, safety…); site_context; web_search_used; safety_reason",
   },
   {
     name: "mbkru_voice_mic_start",

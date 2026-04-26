@@ -13,6 +13,7 @@ import { evaluateMbkruVoiceSafety } from "@/lib/mbkru-voice-guardrails";
 import { extractPdfText, pdfBufferFromPayload } from "@/lib/server/extract-pdf-text";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 import { getWebContextForMbkruVoice } from "@/lib/server/mbkru-voice-web-search";
+import { getMbkruVoiceSiteKnowledgeForMessage } from "@/lib/mbkru-voice-site-knowledge";
 import { mbkruVoiceChatBodySchema } from "@/lib/validation/mbkru-voice";
 import type { VoicePreferences } from "@/lib/voice-languages";
 
@@ -105,7 +106,14 @@ export async function POST(request: Request) {
       content: entry.content.slice(0, 2000),
     }));
 
-    const webSnippet = [fileText?.slice(0, 1_200), pdfExtractedText.slice(0, 1_200)].filter(Boolean).join("\n");
+    const siteKnowledge = getMbkruVoiceSiteKnowledgeForMessage(rawMessage);
+    const webSnippet = [
+      siteKnowledge.block ? siteKnowledge.block.slice(0, 1_200) : "",
+      fileText?.slice(0, 1_200),
+      pdfExtractedText.slice(0, 1_200),
+    ]
+      .filter(Boolean)
+      .join("\n");
 
     const web = wantWeb
       ? await getWebContextForMbkruVoice(fullTextForModel, webSnippet)
@@ -114,6 +122,7 @@ export async function POST(request: Request) {
     const systemPrompt = buildMbkruVoiceSystemPrompt(
       languageId,
       web.hasResults && web.block ? web.block : "",
+      siteKnowledge.block,
     );
 
     const lastUser: ChatMessage = {
@@ -140,6 +149,8 @@ export async function POST(request: Request) {
           source: wantWeb && web.hasResults ? "ai-provider+web" : "ai-provider",
           suggestedLinks: [],
           webSearchUsed: wantWeb && web.hasResults,
+          siteContextUsed: siteKnowledge.pagePaths.length > 0,
+          sitePagePaths: siteKnowledge.pagePaths,
           imageUsed: Boolean(imageBase64),
           pdfUsed: Boolean(rawPdf?.trim()),
         });
@@ -159,6 +170,8 @@ export async function POST(request: Request) {
       source: "fallback",
       suggestedLinks: fallback.suggestedLinks ?? [],
       webSearchUsed: false,
+      siteContextUsed: siteKnowledge.pagePaths.length > 0,
+      sitePagePaths: siteKnowledge.pagePaths,
       imageUsed: Boolean(imageBase64),
       pdfUsed: Boolean(rawPdf?.trim()),
     });

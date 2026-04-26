@@ -78,6 +78,22 @@ describe("POST /api/mbkru-voice", () => {
     expect(res.status).toBe(400);
   });
 
+  it("returns siteContextUsed when the message matches curated site knowledge", async () => {
+    const req = new Request("http://localhost/api/mbkru-voice", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: "Where do I get a passport abroad?",
+        webSearch: false,
+      }),
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+    const json = (await res.json()) as { siteContextUsed?: boolean; sitePagePaths?: string[] };
+    expect(json.siteContextUsed).toBe(true);
+    expect(json.sitePagePaths).toContain("/diaspora");
+  });
+
   it("returns model answer with pdfUsed when PDF parses and OpenAI succeeds", async () => {
     vi.mocked(pdfBufferFromPayload).mockReturnValue(Buffer.from("fakepdf"));
     vi.mocked(extractPdfText).mockResolvedValue({ text: "Chapter one body text." });

@@ -105,7 +105,7 @@ export function getDiscoverNavLinks(phase: PlatformPhase): PublicNavLink[] {
   const links: PublicNavLink[] = [
     { href: "/news", label: "News", activeWhenPathStartsWith: "/news" },
     { href: "/resources", label: "Resources", activeWhenPathStartsWith: "/resources" },
-    { href: "/diaspora", label: "Diaspora" },
+    { href: "/diaspora", label: "Diaspora support" },
   ];
   if (platformFeatures.partnerJsonProgramme(phase)) {
     links.push({ href: "/partner-api", label: "Partner data", activeWhenPathStartsWith: "/partner-api" });
@@ -184,8 +184,8 @@ export function getFooterOrganizationLinks(phase: PlatformPhase): PublicNavLink[
     { href: "/methodology", label: "Accountability methodology" },
     { href: "/about", label: "About" },
     { href: "/news", label: "News" },
-    { href: "/diaspora", label: "Diaspora (17th Region)" },
-    { href: "/diaspora/feedback", label: "Diaspora visit feedback" },
+    { href: "/diaspora", label: "Diaspora support" },
+    { href: "/diaspora/feedback", label: "Diaspora feedback" },
     { href: "/resources", label: "Resources" },
     { href: "/faq", label: "FAQ" },
     { href: "/data-sources", label: "Data sources" },
@@ -275,6 +275,7 @@ export function getPublicSitemapStaticPaths(phase: PlatformPhase): string[] {
     "/parliament-tracker",
     "/methodology",
     "/news",
+    "/news/diaspora-17th-region-2025",
     "/diaspora",
     "/diaspora/feedback",
     "/resources",

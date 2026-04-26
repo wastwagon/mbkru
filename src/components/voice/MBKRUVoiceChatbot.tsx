@@ -7,7 +7,7 @@ import "@/lib/client/web-speech-recognition";
 import { getMbkruVoiceFallbackReply } from "@/lib/mbkru-voice-faq";
 import { trackUiEvent } from "@/lib/client/analytics-events";
 import type { SpeechRecognitionCtor, SpeechRecognitionEventLike, SpeechRecognitionLike } from "@/lib/client/web-speech-recognition";
-import { focusRingSmClass } from "@/lib/primary-link-styles";
+import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 import {
   defaultVoicePreferences,
   findVoiceLanguage,
@@ -16,11 +16,19 @@ import {
   type VoicePreferences,
 } from "@/lib/voice-languages";
 
+/** Provenance and when the turn was received (client clock). Assistant messages only. */
+type MbkruVoiceAssistantMeta = {
+  answeredAt: string;
+  sitePagePaths?: string[];
+  webSearchUsed?: boolean;
+};
+
 type ChatEntry = {
   role: "user" | "assistant";
   content: string;
   links?: Array<{ label: string; href: string }>;
   languageId?: VoicePreferences["languageId"];
+  meta?: MbkruVoiceAssistantMeta;
 };
 
 const quickPromptsByLanguage: Record<
@@ -29,26 +37,31 @@ const quickPromptsByLanguage: Record<
 > = {
   "en-gh": [
     { label: "Track report", prompt: "Help me track my report status." },
+    { label: "Diaspora", prompt: "I need the diaspora support hub: Ghana Card, passport, and official signposting." },
     { label: "Petition", prompt: "How do I start a new petition?" },
     { label: "Contact", prompt: "How can I contact MBKRU support?" },
   ],
   twi: [
     { label: "Track report", prompt: "Boa me ma menhwe me report no status." },
+    { label: "Diaspora", prompt: "I need the diaspora support hub: Ghana Card, passport, and official signposting." },
     { label: "Start petition", prompt: "Mɛyɛ dɛn ahyɛ petition foforo ase?" },
     { label: "Support", prompt: "Mɛyɛ dɛn akasa akyerɛ MBKRU support?" },
   ],
   ga: [
     { label: "Track report", prompt: "Nyɛ mi boi ni mi kɛ mi report status." },
+    { label: "Diaspora", prompt: "I need the diaspora support hub: Ghana Card, passport, and official signposting." },
     { label: "Start petition", prompt: "Mitsɛ ni maba petition tsui?" },
     { label: "Support", prompt: "Mitsɛ ni mika MBKRU support hewalɛ?" },
   ],
   hausa: [
     { label: "Track report", prompt: "Taimaka min duba matsayin rahotona." },
+    { label: "Diaspora", prompt: "I need the diaspora support hub: Ghana Card, passport, and official signposting." },
     { label: "Start petition", prompt: "Ta yaya zan fara sabon petition?" },
     { label: "Support", prompt: "Ta yaya zan tuntubi MBKRU support?" },
   ],
   ewe: [
     { label: "Track report", prompt: "Kpe ɖe ŋunye be maƒo report status." },
+    { label: "Diaspora", prompt: "I need the diaspora support hub: Ghana Card, passport, and official signposting." },
     { label: "Start petition", prompt: "Aleke maɖe petition yeye gɔme?" },
     { label: "Support", prompt: "Aleke maate ŋu akpa nu kple MBKRU support?" },
   ],
@@ -367,7 +380,10 @@ export function MBKRUVoiceChatbot() {
         suggestedLinks?: Array<{ label: string; href: string }>;
         source?: string;
         safetyReason?: string;
+        sitePagePaths?: string[];
+        webSearchUsed?: boolean;
       };
+      const answeredAt = new Date().toISOString();
 
       setMessages((prev) => [
         ...prev,
@@ -376,6 +392,11 @@ export function MBKRUVoiceChatbot() {
           content: data.answer?.trim() || "I could not generate a response right now.",
           links: data.suggestedLinks ?? [],
           languageId: preferences.languageId,
+          meta: {
+            answeredAt,
+            sitePagePaths: data.sitePagePaths,
+            webSearchUsed: data.webSearchUsed === true,
+          },
         },
       ]);
       if (preferences.autoReadReplies) {
@@ -385,6 +406,8 @@ export function MBKRUVoiceChatbot() {
         language: preferences.languageId,
         source: data.source ?? "unknown",
         safety_reason: data.safetyReason ?? null,
+        site_context: (data.sitePagePaths ?? []).join(",").slice(0, 500) || null,
+        web_search_used: data.webSearchUsed === true,
       });
     } catch {
       const fallback = getMbkruVoiceFallbackReply(combined, preferences.languageId);
@@ -395,12 +418,18 @@ export function MBKRUVoiceChatbot() {
           content: fallback.answer,
           links: fallback.suggestedLinks,
           languageId: preferences.languageId,
+          meta: { answeredAt: new Date().toISOString() },
         },
       ]);
       if (preferences.autoReadReplies) {
         speakAssistantReply(fallback.answer);
       }
-      trackUiEvent("mbkru_voice_reply_received", { language: preferences.languageId, source: "client-fallback" });
+      trackUiEvent("mbkru_voice_reply_received", {
+        language: preferences.languageId,
+        source: "client-fallback",
+        site_context: null,
+        web_search_used: false,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -518,6 +547,39 @@ export function MBKRUVoiceChatbot() {
                         {link.label}
                       </Link>
                     ))}
+                  </div>
+                ) : null}
+                {message.role === "assistant" && message.meta ? (
+                  <div
+                    className={`mt-2 text-[10px] leading-relaxed text-[var(--muted-foreground)] ${
+                      message.meta.sitePagePaths?.length || message.meta.webSearchUsed
+                        ? "border-t border-[var(--border)]/80 pt-2"
+                        : "pt-0.5"
+                    }`}
+                  >
+                    {message.meta.sitePagePaths && message.meta.sitePagePaths.length > 0 ? (
+                      <p className="text-[11px]">
+                        <span className="font-semibold text-[var(--foreground)]/85">This site: </span>
+                        {message.meta.sitePagePaths.map((path, i) => (
+                          <span key={path}>
+                            {i > 0 ? " · " : null}
+                            <Link
+                              href={path}
+                              className={`${primaryLinkClass} break-all font-medium`}
+                              title={path}
+                            >
+                              {path}
+                            </Link>
+                          </span>
+                        ))}
+                      </p>
+                    ) : null}
+                    {message.meta.webSearchUsed ? (
+                      <p className="mt-1">Live web search was used for this reply; verify time-sensitive facts.</p>
+                    ) : null}
+                    <p className="mt-1 opacity-95" title={message.meta.answeredAt}>
+                      As of {new Date(message.meta.answeredAt).toLocaleString()}
+                    </p>
                   </div>
                 ) : null}
                 {message.role === "assistant" ? (

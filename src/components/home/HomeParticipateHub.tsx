@@ -68,8 +68,8 @@ const PHASE_1_PARTICIPATE_ACTIONS: { href: string; title: string; body: string }
   },
   {
     href: "/diaspora",
-    title: "Diaspora",
-    body: "How the African diaspora can connect with the accountability mission.",
+    title: "Diaspora support",
+    body: "Signposting for Ghana Card, passport, and nationality, plus how to work with MBKRU on accountability.",
   },
   {
     href: "/diaspora/feedback",

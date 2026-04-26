@@ -284,6 +284,21 @@ export const faqContent = [
     answer:
       "Full Voice features switch on when the programme enables member accounts and reporting on this domain (self-serve registration). Until then, use early access on the Citizens Voice page and the contact form so the team can reach you.",
   },
+  {
+    question: "I live abroad — can MBKRU help with a Ghana Card, passport, or citizenship?",
+    answer:
+      "MBKRU does not process ID or passports; we signpost to official channels. The Diaspora support page explains how to use NIA, the Ministry of Foreign Affairs, and Ghana Immigration Service, and when to get individual legal advice. For policy context on the “17th Region” framing, see the News briefing linked from that page.",
+  },
+  {
+    question: "What is the “17th Region” and where is that explained?",
+    answer:
+      "It is a policy name for the global Ghanaian diaspora (alongside the sixteen regions on the map). A civic summary with public references is on the News section as the Diaspora & 17th Region briefing; the main Diaspora page focuses on practical support.",
+  },
+  {
+    question: "Can MBKRU Voice answer questions if I am in the diaspora?",
+    answer:
+      "Yes. MBKRU Voice is for everyone on this site. It can guide you to our diaspora support content, accountability tools, and contact options. For fees, rules, and appointments, always confirm on official .gov.gh sites and at embassies or consulates.",
+  },
 ] as const;
 
 /**
