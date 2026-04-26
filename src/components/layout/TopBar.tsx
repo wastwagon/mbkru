@@ -84,6 +84,15 @@ export function TopBar() {
           </Link>
         </div>
         <div className="flex w-full flex-col items-center gap-3 border-t border-white/20 pt-3 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end sm:border-t-0 sm:pt-0 sm:gap-x-4 sm:gap-y-2">
+          <Link
+            href="/contact"
+            className={`inline-flex min-h-11 w-full min-w-0 max-w-sm touch-manipulation items-center justify-center gap-1.5 rounded-full border-2 border-white/90 bg-white/15 px-4 py-2.5 text-center text-xs font-bold uppercase tracking-wide text-white transition hover:bg-white/25 sm:min-h-0 sm:max-w-none sm:w-auto sm:py-2 ${focusRingOnDark85PillClass}`}
+          >
+            Get in touch
+            <span aria-hidden className="text-base leading-none">
+              →
+            </span>
+          </Link>
           <span className="w-full max-w-md px-1 text-center text-[10px] font-semibold uppercase leading-relaxed tracking-wide text-white/95 sm:w-auto sm:max-w-none sm:px-0 sm:text-left sm:text-xs">
             {content.topBarTagline}
           </span>

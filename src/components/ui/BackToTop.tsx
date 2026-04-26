@@ -31,7 +31,7 @@ export function BackToTop() {
           exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
           transition={motionTransition}
           onClick={scrollToTop}
-          className={`fixed bottom-4 right-4 z-40 flex h-12 w-12 touch-manipulation items-center justify-center rounded-full bg-[var(--primary)] text-white shadow-lg ring-1 ring-black/5 transition-[background-color,box-shadow,transform] duration-300 ease-out hover:bg-[var(--primary-dark)] hover:shadow-xl active:scale-[0.96] motion-reduce:active:scale-100 sm:bottom-8 sm:right-8 sm:h-14 sm:w-14 ${focusRingSmClass}`}
+          className={`flex h-12 w-12 touch-manipulation items-center justify-center rounded-full bg-[var(--primary)] text-white shadow-lg ring-1 ring-black/5 transition-[background-color,box-shadow,transform] duration-300 ease-out hover:bg-[var(--primary-dark)] hover:shadow-xl active:scale-[0.96] motion-reduce:active:scale-100 sm:h-14 sm:w-14 ${focusRingSmClass}`}
           aria-label="Back to top"
         >
           <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>

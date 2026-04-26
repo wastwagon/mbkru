@@ -33,8 +33,14 @@ export default function MainLayout({
         {children}
       </main>
       <Footer />
-      <BackToTop />
-      <MBKRUVoiceChatbot />
+      <div className="pointer-events-none fixed bottom-[max(6.5rem,calc(env(safe-area-inset-bottom)+1rem))] right-3 z-40 flex max-w-full flex-col-reverse items-end gap-2.5 sm:right-6">
+        <div className="pointer-events-auto">
+          <BackToTop />
+        </div>
+        <div className="pointer-events-auto">
+          <MBKRUVoiceChatbot />
+        </div>
+      </div>
       <AccessibilityVoiceTools />
       <AnalyticsScripts />
     </>

@@ -14,6 +14,9 @@ import {
 } from "@/config/public-platform-nav";
 import { useMemberMe } from "@/hooks/useMemberMe";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { AccessibilityMenuIcon } from "@/components/ui/AccessibilityMenuIcon";
+import { openAccessibilityTools } from "@/lib/a11y-voice-dispatch";
+import { focusRingSmClass } from "@/lib/primary-link-styles";
 
 type NavLeaf = {
   href: string;
@@ -44,6 +47,13 @@ function leafIsActive(pathname: string, leaf: NavLeaf): boolean {
 
 function groupIsActive(pathname: string, items: NavLeaf[]): boolean {
   return items.some((item) => leafIsActive(pathname, item));
+}
+
+function headerA11yButtonClass(isHomeHero: boolean) {
+  const base = `inline-flex h-11 w-11 items-center justify-center rounded-xl border-2 transition ${focusRingSmClass} touch-manipulation `;
+  return isHomeHero
+    ? `${base} border-white/50 bg-white/10 text-white hover:bg-white/20`
+    : `${base} border-[var(--primary)]/35 bg-[var(--primary)]/10 text-[var(--section-dark)] hover:border-[var(--primary)]/50 hover:bg-[var(--primary)]/[0.12]`;
 }
 
 function buildMainNav(phase: ReturnType<typeof getPublicPlatformPhase>): NavEntry[] {
@@ -511,42 +521,51 @@ export function Header() {
           })}
         </div>
 
-        <div className="hidden shrink-0 items-center gap-3 lg:flex xl:gap-4">
+        <div className="hidden shrink-0 items-center gap-2.5 lg:flex xl:gap-3">
           {showMemberAuth ? (
             <MemberAuthNav isHomeHero={isHomeHero} pathname={pathname} variant="desktop" />
           ) : null}
-          <Link
-            href="/contact"
-            className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold shadow-md transition-all duration-[400ms] ease-in-out xl:px-5 ${
-              isHomeHero
-                ? "bg-white text-[var(--section-dark)] hover:bg-white/90 hover:shadow-lg"
-                : "bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] hover:shadow-lg"
-            }`}
+          <button
+            type="button"
+            data-mbkru-a11y-trigger
+            onClick={() => openAccessibilityTools()}
+            className={headerA11yButtonClass(isHomeHero)}
+            title="Accessibility and voice tools"
+            aria-label="Open accessibility and voice tools"
           >
-            Get in Touch
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </Link>
+            <AccessibilityMenuIcon className="h-6 w-6" />
+          </button>
         </div>
 
-        <button
-          type="button"
-          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl lg:hidden touch-manipulation ${
-            isHomeHero ? "text-white hover:bg-white/10" : "text-[var(--foreground)] hover:bg-[var(--muted)]"
-          }`}
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-expanded={mobileMenuOpen}
-          aria-label="Toggle menu"
-        >
-          <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            {mobileMenuOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
-        </button>
+        <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2 lg:ml-0">
+          <button
+            type="button"
+            data-mbkru-a11y-trigger
+            onClick={() => openAccessibilityTools()}
+            className={`${headerA11yButtonClass(isHomeHero)} lg:hidden`}
+            title="Accessibility and voice tools"
+            aria-label="Open accessibility and voice tools"
+          >
+            <AccessibilityMenuIcon className="h-6 w-6" />
+          </button>
+          <button
+            type="button"
+            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl touch-manipulation lg:hidden ${
+              isHomeHero ? "text-white hover:bg-white/10" : "text-[var(--foreground)] hover:bg-[var(--muted)]"
+            }`}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-expanded={mobileMenuOpen}
+            aria-label="Toggle menu"
+          >
+            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {mobileMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
+        </div>
       </nav>
 
       <AnimatePresence>
@@ -647,14 +666,17 @@ export function Header() {
                   onNavigate={() => setMobileMenuOpen(false)}
                 />
               ) : null}
-              <div className="sticky bottom-0 bg-white pt-3 pb-1">
+              <div className="sticky bottom-0 border-t border-[var(--border)]/60 bg-white pt-3 pb-1">
                 <Link
                   href="/contact"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex min-h-[48px] items-center justify-center rounded-xl bg-[var(--primary)] px-6 font-semibold text-white touch-manipulation"
+                  className="flex min-h-[48px] items-center justify-center rounded-xl border-2 border-[var(--primary)]/25 bg-white px-6 text-sm font-semibold text-[var(--primary)] touch-manipulation"
                 >
-                  Get in Touch
+                  Contact
                 </Link>
+                <p className="mt-2 text-center text-[11px] text-[var(--muted-foreground)]">
+                  Or use <strong>Get in touch</strong> in the gold top bar
+                </p>
               </div>
             </div>
             </motion.div>

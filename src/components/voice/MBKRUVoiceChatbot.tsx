@@ -28,9 +28,9 @@ const quickPromptsByLanguage: Record<
   Array<{ label: string; prompt: string }>
 > = {
   "en-gh": [
-    { label: "Track my report", prompt: "Help me track my report status." },
-    { label: "Start a petition", prompt: "How do I start a new petition?" },
-    { label: "Contact support", prompt: "How can I contact MBKRU support?" },
+    { label: "Track report", prompt: "Help me track my report status." },
+    { label: "Petition", prompt: "How do I start a new petition?" },
+    { label: "Contact", prompt: "How can I contact MBKRU support?" },
   ],
   twi: [
     { label: "Track report", prompt: "Boa me ma menhwe me report no status." },
@@ -55,17 +55,16 @@ const quickPromptsByLanguage: Record<
 };
 
 const helperTextByLanguage: Record<VoicePreferences["languageId"], string> = {
-  "en-gh": "Tip: You can type, use Mic, or send transcript from Accessibility Tools.",
-  twi: "Afotuo: Wubetumi akyerɛw, de Mic adi dwuma, anaasɛ wode transcript bɛma chat no.",
-  ga: "Kpee: Osha nyɛŋ, lɛ Mic kɛ, alo lɛ transcript shi Accessibility Tools kɛ.",
-  hausa: "Shawara: Za ka iya rubutu, amfani da Mic, ko tura transcript daga Accessibility Tools.",
-  ewe: "Tadede: Àte ŋu aŋlɔ nu, azã Mic, alo aɖo transcript ɖa tso Accessibility Tools me.",
+  "en-gh": "Type, use the mic, or the access icon in the header for more voice options.",
+  twi: "Wubetumi akyerɛw, Mic, anaasɛ a access icon a header mu.",
+  ga: "Kpee: Osha nyɛŋ, Mic, alo access icon header ni.",
+  hausa: "Rubutu, mic, ko alamar dama a cikin header don ƙarin ayyukan murya.",
+  ewe: "Aŋlɔ nu, Mic, alo access icon a header la.",
 };
 
 const introMessage: ChatEntry = {
   role: "assistant",
-  content:
-    "Hello, I am MBKRU Voice. I am always online to help with support, reports, petitions, and accountability tools. How can I help you today?",
+  content: "Hello. How can I help today?",
   languageId: "en-gh",
 };
 
@@ -152,7 +151,7 @@ export function MBKRUVoiceChatbot() {
       if (transcript.length > 0) setInput(transcript);
     };
     recognition.onerror = () => {
-      setListeningError("Microphone capture was interrupted. You can still type your message.");
+      setListeningError("Mic interrupted. You can type instead.");
       trackUiEvent("mbkru_voice_mic_error", { language: preferences.languageId });
       setIsListening(false);
     };
@@ -270,20 +269,17 @@ export function MBKRUVoiceChatbot() {
   }
 
   return (
-    <div className="fixed bottom-[max(6.5rem,env(safe-area-inset-bottom)+5rem)] right-3 z-40 sm:bottom-8 sm:right-8">
+    <>
       {isOpen ? (
         <section
-          className="w-[min(23rem,94vw)] max-h-[min(78vh,42rem)] overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-xl"
+          className="w-[min(22rem,94vw)] max-h-[min(78vh,42rem)] overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-xl"
           aria-label="MBKRU Voice chatbot"
           role="dialog"
           aria-modal="false"
         >
-          <header className="flex items-center justify-between gap-3 bg-[var(--primary)] px-4 py-3 text-white">
-            <div>
-              <p className="text-sm font-bold">MBKRU Voice</p>
-              <p className="text-xs text-white/90">Always online customer service agent</p>
-            </div>
-            <div className="flex items-center gap-2">
+          <header className="flex flex-col gap-2.5 border-b border-white/10 bg-[var(--primary)] px-3 py-2.5 text-white sm:flex-row sm:items-center sm:justify-between sm:gap-2 sm:px-3.5 sm:py-2.5">
+            <p className="text-sm font-bold">MBKRU Voice</p>
+            <div className="flex flex-wrap items-center justify-end gap-1.5 sm:shrink-0 sm:gap-1">
               <label htmlFor="mbkru-voice-lang" className="sr-only">
                 Chat language
               </label>
@@ -296,7 +292,7 @@ export function MBKRUVoiceChatbot() {
                     languageId: event.target.value as VoicePreferences["languageId"],
                   }))
                 }
-                className={`h-8 max-w-28 rounded-md border border-white/40 bg-transparent px-1.5 text-[11px] font-semibold text-white ${focusRingSmClass}`}
+                className={`h-8 max-w-[9.5rem] rounded-md border border-white/40 bg-white/10 px-1.5 text-[11px] font-medium text-white ${focusRingSmClass}`}
                 aria-label="Chat language"
               >
                 {voiceLanguageOptions.map((option) => (
@@ -308,10 +304,14 @@ export function MBKRUVoiceChatbot() {
               <button
                 type="button"
                 onClick={() => setPreferences((prev) => ({ ...prev, autoReadReplies: !prev.autoReadReplies }))}
-                className={`rounded-md border border-white/40 px-2 py-1 text-[11px] font-semibold text-white/95 hover:bg-white/15 ${focusRingSmClass}`}
+                className={`inline-flex h-8 w-8 items-center justify-center rounded-md border border-white/40 text-white/95 hover:bg-white/15 ${focusRingSmClass}`}
                 aria-pressed={preferences.autoReadReplies}
+                title={preferences.autoReadReplies ? "Read-aloud is on" : "Read-aloud is off"}
+                aria-label={preferences.autoReadReplies ? "Read assistant replies aloud: on" : "Read assistant replies aloud: off"}
               >
-                {preferences.autoReadReplies ? "Read replies: On" : "Read replies: Off"}
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                  <path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />
+                </svg>
               </button>
               <button
                 type="button"
@@ -375,19 +375,17 @@ export function MBKRUVoiceChatbot() {
             ))}
             {isLoading ? (
               <p className="text-xs font-medium text-[var(--muted-foreground)]" role="status">
-                MBKRU Voice is typing...
+                Thinking…
               </p>
             ) : null}
           </div>
 
           <form onSubmit={onSubmit} className="border-t border-[var(--border)] bg-white p-2.5 sm:p-3">
-            <p className="mb-2 text-[11px] leading-relaxed text-[var(--muted-foreground)]">
-              MBKRU Voice uses AI-assisted responses and accessibility telemetry for service quality. Do not share highly
-              sensitive personal data.{" "}
+            <p className="mb-2 text-[10px] leading-snug text-[var(--muted-foreground)]">
+              AI-assisted. Avoid highly sensitive data.{" "}
               <Link href="/privacy" className={focusRingSmClass}>
-                Privacy policy
+                Privacy
               </Link>
-              .
             </p>
             <label htmlFor="mbkru-voice-input" className="sr-only">
               Ask MBKRU Voice
@@ -408,7 +406,7 @@ export function MBKRUVoiceChatbot() {
                 type="text"
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
-                placeholder="Ask about reports, petitions, and support..."
+                placeholder="Ask a question…"
                 className={`h-11 w-full min-w-0 rounded-xl border border-[var(--border)] px-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] ${focusRingSmClass}`}
                 maxLength={300}
               />
@@ -434,12 +432,12 @@ export function MBKRUVoiceChatbot() {
           type="button"
           onClick={() => setIsOpen(true)}
           onMouseDown={() => trackUiEvent("mbkru_voice_open_launcher")}
-          className={`rounded-full bg-[var(--primary)] px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-[var(--primary-dark)] ${focusRingSmClass}`}
+          className={`shrink-0 rounded-full bg-[var(--primary)] px-4 py-2.5 text-sm font-bold text-white shadow-lg transition hover:bg-[var(--primary-dark)] ${focusRingSmClass}`}
           aria-label="Open MBKRU Voice chatbot"
         >
           MBKRU Voice
         </button>
       )}
-    </div>
+    </>
   );
 }

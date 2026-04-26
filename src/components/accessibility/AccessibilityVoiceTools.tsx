@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import "@/lib/client/web-speech-recognition";
+import { MBKRU_A11Y_OPEN_EVENT } from "@/lib/a11y-voice-dispatch";
 import { trackUiEvent } from "@/lib/client/analytics-events";
 import type { SpeechRecognitionCtor, SpeechRecognitionEventLike, SpeechRecognitionLike } from "@/lib/client/web-speech-recognition";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
@@ -24,7 +25,6 @@ export function AccessibilityVoiceTools() {
   const [preferences, setPreferences] = useState<VoicePreferences>(defaultVoicePreferences);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const panelRef = useRef<HTMLElement | null>(null);
-  const openButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const recognitionCtor = useMemo((): SpeechRecognitionCtor | null => {
     if (typeof window === "undefined") return null;
@@ -75,15 +75,32 @@ export function AccessibilityVoiceTools() {
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onOpen = () => setIsOpen(true);
+    window.addEventListener(MBKRU_A11Y_OPEN_EVENT, onOpen);
+    return () => window.removeEventListener(MBKRU_A11Y_OPEN_EVENT, onOpen);
+  }, []);
+
+  useEffect(() => {
     if (!isOpen) return;
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsOpen(false);
-        openButtonRef.current?.focus();
+        requestAnimationFrame(() => {
+          const list = document.querySelectorAll<HTMLElement>("[data-mbkru-a11y-trigger]");
+          for (const el of list) {
+            if (el.offsetParent !== null) {
+              el.focus();
+              return;
+            }
+          }
+        });
       }
     };
     window.addEventListener("keydown", handleKey);
-    panelRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
+    window.requestAnimationFrame(() => {
+      panelRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
+    });
     return () => window.removeEventListener("keydown", handleKey);
   }, [isOpen]);
 
@@ -179,15 +196,15 @@ export function AccessibilityVoiceTools() {
   }
 
   return (
-    <div className="fixed bottom-[max(1rem,env(safe-area-inset-bottom)+0.5rem)] left-3 z-40 sm:bottom-8 sm:left-8">
+    <>
       {showOnboarding ? (
         <aside
-          className="mb-2 w-[min(22rem,92vw)] rounded-2xl border border-[var(--border)] bg-white p-3 shadow-xl"
+          className="fixed left-3 right-3 top-20 z-[95] mx-auto w-auto max-w-md rounded-2xl border border-[var(--border)] bg-white p-3 shadow-xl sm:left-auto sm:right-4 sm:top-24"
           aria-label="Accessibility onboarding"
         >
-          <p className="text-sm font-semibold text-[var(--foreground)]">Accessibility & Voice Help</p>
+          <p className="text-sm font-semibold text-[var(--foreground)]">Accessibility &amp; voice</p>
           <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-            Use this icon for text-to-speech, speech-to-text, and local language voice support.
+            Use the access symbol in the header (next to the menu) for read-aloud and dictation.
           </p>
           <button
             type="button"
@@ -203,36 +220,15 @@ export function AccessibilityVoiceTools() {
           </button>
         </aside>
       ) : null}
-      <button
-        ref={openButtonRef}
-        type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
-        className={`group inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--section-dark)] text-white shadow-lg transition hover:bg-[var(--primary-dark)] ${focusRingSmClass}`}
-        aria-expanded={isOpen}
-        aria-controls="mbkru-accessibility-tools"
-        aria-label={isOpen ? "Close accessibility tools" : "Open accessibility tools"}
-      >
-        <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" aria-hidden>
-          <circle cx="12" cy="4.75" r="1.85" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M5.3 9.2h13.4M12 8.2v11.4M8.8 19.6l3.2-5.2 3.2 5.2M8.6 9.2l1.6 4.1M15.4 9.2l-1.6 4.1" />
-        </svg>
-        <span className="sr-only">Accessibility tools</span>
-      </button>
-
       {isOpen ? (
         <section
           ref={panelRef}
           id="mbkru-accessibility-tools"
-          className="mt-3 w-[min(22rem,92vw)] max-h-[min(72vh,34rem)] overflow-y-auto rounded-2xl border border-[var(--border)] bg-white p-3.5 shadow-xl sm:p-4"
+          className="fixed left-3 right-3 top-[4.75rem] z-[100] mx-auto mt-0 w-auto max-w-[22rem] max-h-[min(72vh,36rem)] overflow-y-auto rounded-2xl border border-[var(--border)] bg-white p-3.5 shadow-xl sm:left-auto sm:right-4 sm:top-24 sm:p-4"
           aria-label="Accessibility voice tools"
         >
-          <p className="text-sm font-semibold text-[var(--foreground)]">Text and voice support</p>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-            Use read-aloud for page context, and speech-to-text for quick dictation. Press Escape to close this panel.
-          </p>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-            For speech users: after dictation, use the send button to pass transcript directly into MBKRU Voice chat.
-          </p>
+          <p className="text-sm font-semibold text-[var(--foreground)]">Voice &amp; reading</p>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">Escape closes this panel. Dictation can be sent to MBKRU Voice.</p>
 
           <div className="mt-3 grid gap-2">
             <label className="text-xs font-semibold text-[var(--foreground)]" htmlFor="accessibility-language-select">
@@ -328,10 +324,10 @@ export function AccessibilityVoiceTools() {
           </button>
           <p className="mt-2 text-xs text-[var(--muted-foreground)]" aria-live="polite">
             {lastError ??
-              "If voice features are unavailable in your browser, all actions remain fully available via keyboard and standard forms. Some local language voice engines depend on device/browser support."}
+              "If voice is unavailable, use the keyboard and regular forms. Language packs vary by device."}
           </p>
         </section>
       ) : null}
-    </div>
+    </>
   );
 }
