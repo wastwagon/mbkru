@@ -88,8 +88,7 @@ export default async function ParliamentTrackerPage() {
     {
       icon: accountabilityStepIcons.scorecards,
       title: "Accountability Scorecards",
-      description:
-        "Published 90 days before every general election. Pre-election debates and town halls in every constituency.",
+      description: accountabilityProse.hubAccountabilityScorecardsCardDescription,
       href: "/methodology",
       badge: undefined,
     },
@@ -99,7 +98,7 @@ export default async function ParliamentTrackerPage() {
     <div>
       <PageHeader
         title="Accountability & Electoral Watch"
-        description={`Accountability & Electoral Watch — ${accountabilityProse.parliamentPageHeaderDescription}`}
+        description={`${accountabilityProse.parliamentPageHeaderMenuAlias}The full programme title is Accountability & Electoral Watch — ${accountabilityProse.parliamentPageHeaderDescription}`}
       />
 
       <div className="section-spacing border-b border-[var(--border)] bg-white pb-8">
@@ -245,7 +244,7 @@ export default async function ParliamentTrackerPage() {
               Accountability Tools
             </h2>
             <p className="mx-auto mt-2 max-w-2xl text-[var(--muted-foreground)]">
-              Data-driven tools to hold elected officials accountable to their promises.
+              {accountabilityProse.parliamentTrackerToolsSubline}
             </p>
           </div>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

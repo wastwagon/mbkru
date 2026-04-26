@@ -12,6 +12,34 @@ export const ACCOUNTABILITY_CATALOGUE_ROUTES = {
   promisesByMp: "/promises",
 } as const;
 
+/** Glossary for `/methodology#key-terms` — one place for public-facing word choices. */
+export const methodologyKeyTerms: readonly { term: string; body: string }[] = [
+  {
+    term: "Commitment (catalogue row)",
+    body: "A single editorial record: title, optional narrative, source label, and status. The same record appears in Browse all, Government commitments (when tagged), and on a member’s sheet if linked.",
+  },
+  {
+    term: "Government programme (tag)",
+    body: "Editorial flag for rows that also appear on the Government commitments page. It is not a government seal of approval — it marks programme- or executive-typed items we follow in the same catalogue.",
+  },
+  {
+    term: "Parliament tracker",
+    body: "The name we use in the main navigation for the Accountability & Electoral Watch hub — roster, tool links, and how the programme fits together.",
+  },
+  {
+    term: "Browse all commitments",
+    body: "The wide, filterable view of the catalogue (default: sitting MPs). Same underlying rows as other surfaces; filters and exports mirror the public JSON/CSV with the same meaning.",
+  },
+  {
+    term: "People's Report Card (published cycle)",
+    body: "A published year under the Report card menu with narrative and scores when MBKRU has released a cycle. Not every methodology concept on this page implies a live scored year is already published.",
+  },
+  {
+    term: "Accountability scorecards (programme language)",
+    body: "Pre-election and engagement language used in the roadmap and methodology, including the 90-day run-up. Distinct in UI from a published PRC year until a cycle is released under Report card.",
+  },
+] as const;
+
 /** Short labels for dense nav (header dropdown). */
 export const accountabilityCatalogueNavShort = {
   government: "Commitments",
@@ -73,6 +101,10 @@ export const accountabilityProse = {
   apiPromisesTableRow:
     "Tracked commitments via GET /api/promises with optional filters; JSON responses are capped — use CSV for full exports.",
   reportCardStatsStripSubtitle: `Cross-links the public commitment catalogue, MPs, and published scorecard rows — same aggregates as ${accountabilityCatalogueNavMedium.browseAll}.`,
+  /** `/methodology#key-terms` — H2. */
+  methodologyKeyTermsSectionHeading: "Key public terms",
+  methodologyKeyTermsSectionIntro:
+    "These phrases appear in the menu, on data exports, and in the catalogue — use this list to read them consistently.",
   /** `/methodology` — aligns page meta and in-page H2 with public catalogue language. */
   methodologyPageMetaDescription:
     "How MBKRU approaches tracked commitments, the public catalogue, and score-style accountability — independent, transparent, and adapted for Ghana.",
@@ -110,8 +142,18 @@ export const accountabilityProse = {
   /** Stats strip KPI — sitting MPs with at least one published catalogue row in the current slice. */
   statsStripMpsWithCatalogueRowsLabel: "MPs w/ catalogue rows",
   /** Under `/parliament-tracker` PageHeader — orients users vs Government commitments and Browse all. */
+  /** First sentence of hub `PageHeader` so the menu label matches the long programme title. */
+  parliamentPageHeaderMenuAlias: "In the main site menu, this page is called Parliament tracker. ",
   parliamentTrackerHubOrientation:
     "Start from this hub for the MP roster, the People's Report Card entry point, and catalogue tools. For programme- and executive-tagged rows only, use Government commitments; for the full filterable list tied to sitting MPs, use Browse all commitments.",
+  /** Blurb for the pre-election scorecards tool card (links to /methodology). */
+  hubAccountabilityScorecardsCardDescription:
+    "The programme’s pre-election accountability scorecard roll-out (90 days before general elections), described in methodology. This is not the same as the published People's Report Card cycles — use Report card in the menu for those.",
+  /** Tools grid intro line — "promises" avoided as a standalone public noun. */
+  parliamentTrackerToolsSubline: "Data-driven tools to connect documented commitments, report-style views, and where we publish cycles.",
+  /** /report-card index — one line so visitors don't confuse PRC with pre-election scorecards. */
+  reportCardIndexDisambiguation:
+    "The People's Report Card (this section) is where we publish report-card cycles when they exist. Pre-election \"Accountability scorecards\" as a named programme and methodology live on Accountability methodology, not in place of the cycles list below.",
   /** Roster list — count suffix next to each MP (same language as the By MP index). */
   mpRosterListCountLabelSingular: "catalogue row",
   mpRosterListCountLabelPlural: "catalogue rows",

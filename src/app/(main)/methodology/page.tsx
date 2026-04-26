@@ -5,6 +5,7 @@ import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
   accountabilityCatalogueNavMedium,
   accountabilityProse,
+  methodologyKeyTerms,
 } from "@/config/accountability-catalogue-destinations";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import {
@@ -81,6 +82,21 @@ export default async function MethodologyPage() {
             </li>
           </ul>
 
+          <h2 id="key-terms" className="mt-12 font-display text-xl font-bold">
+            {accountabilityProse.methodologyKeyTermsSectionHeading}
+          </h2>
+          <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+            {accountabilityProse.methodologyKeyTermsSectionIntro}
+          </p>
+          <dl className="mt-5 space-y-4 border-t border-[var(--border)] pt-6">
+            {methodologyKeyTerms.map((row) => (
+              <div key={row.term}>
+                <dt className="font-semibold text-[var(--foreground)]">{row.term}</dt>
+                <dd className="mt-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{row.body}</dd>
+              </div>
+            ))}
+          </dl>
+
           <h2 className="mt-12 font-display text-xl font-bold">
             {accountabilityProse.methodologyCatalogueSectionHeading}
           </h2>
@@ -150,7 +166,7 @@ export default async function MethodologyPage() {
               Whistleblowing guidance
             </Link>
             <Link href="/parliament-tracker" className={primaryNavLinkClass}>
-              ← Accountability &amp; Electoral Watch
+              ← Parliament tracker (Accountability &amp; Electoral Watch)
             </Link>
           </p>
         </div>

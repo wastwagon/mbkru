@@ -1,9 +1,20 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  methodologyKeyTerms,
   pathnameIsPromisesBrowseAccountability,
   pathnameIsPromisesByMpAccountability,
 } from "./accountability-catalogue-destinations";
+
+describe("methodologyKeyTerms", () => {
+  it("has a stable public glossary for /methodology#key-terms", () => {
+    expect(methodologyKeyTerms.length).toBeGreaterThanOrEqual(4);
+    for (const row of methodologyKeyTerms) {
+      expect(row.term.trim().length).toBeGreaterThan(0);
+      expect(row.body.trim().length).toBeGreaterThan(0);
+    }
+  });
+});
 
 describe("pathnameIsPromisesByMpAccountability", () => {
   it("treats roster index and member slug paths as the By MP surface", () => {

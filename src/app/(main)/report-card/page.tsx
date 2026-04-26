@@ -101,6 +101,16 @@ export default async function ReportCardIndexPage() {
               Accountability hub
             </Link>
           </p>
+          <p
+            className="mx-auto mt-6 max-w-2xl text-center text-sm leading-relaxed text-[var(--muted-foreground)]"
+            id="prc-disambiguation"
+          >
+            {accountabilityProse.reportCardIndexDisambiguation}{" "}
+            <Link href="/methodology#key-terms" className={primaryNavLinkClass}>
+              Glossary
+            </Link>
+            .
+          </p>
 
           <PromiseTrackerStatsStrip
             stats={trackerStats}

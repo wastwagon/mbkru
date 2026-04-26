@@ -20,12 +20,13 @@
 
 ## Phase 2 — Deeper unification (optional, product-led)
 
-| Item | Notes |
+| Item | Status |
 |------|--------|
-| **Glossary** in `/methodology` or `/faq` | One table: *Commitment row*, *Government programme tag*, *People’s Report Card* vs *Accountability Scorecard*, *Parliament tracker* vs *Accountability & Electoral Watch* (page title). |
-| **Nav / H1 alignment** | Consider making the hub H1 **“Parliament tracker”** with a subtitle “Accountability & Electoral Watch” — **SEO and brand review first**. |
-| **Homepage density** | If two live accountability blocks feel heavy, demote one to a **compact** teaser (stats + few rows) — design pass. |
-| **Report card / scorecards** | Clarify the third hub tile (links to `/methodology`) vs **Report card** nav item — may need a one-line disambiguation on `/report-card` and hub. |
+| **Glossary** in `/methodology#key-terms` | **Shipped** — `methodologyKeyTerms` in `accountability-catalogue-destinations.ts` (dl on methodology page). |
+| **Parliament hub `PageHeader`** | **Shipped** — first sentence names **Parliament tracker**; then long programme title (no H1/SEO change). |
+| **Report card vs scorecards** | **Shipped** — disambiguation on `/report-card` + link to glossary; third hub tool card text points to methodology and distinguishes PRC. |
+| **Nav / H1 = “Parliament tracker”** | **Deferred** — needs SEO/brand sign-off; menu label already matches glossary. |
+| **Homepage density** (one compact block) | **Backlog** — design pass when you want a shorter home. |
 
 ---
 
@@ -41,3 +42,4 @@
 | Date | Note |
 |------|------|
 | 2026-04 | Phase 1 copy + callout + hub orientation |
+| 2026-04 | Phase 2 glossary, hub header alias, report-card disambiguation, tool card copy |
