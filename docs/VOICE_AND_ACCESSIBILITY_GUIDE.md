@@ -12,6 +12,8 @@ This guide covers the production setup and QA checklist for:
 - Chatbot panel with:
   - language selector
   - microphone input
+  - optional image + `.txt` attachments (vision + file text sent to the model when `OPENAI_API_KEY` is set)
+  - optional live web context when `TAVILY_API_KEY` is set and “Search the web” is enabled
   - localized quick prompts
   - optional read-aloud assistant replies
   - clear-chat action
@@ -26,7 +28,8 @@ This guide covers the production setup and QA checklist for:
 
 | Variable | Required | Purpose |
 |----------|----------|---------|
-| `OPENAI_API_KEY` | Optional (recommended) | Enables provider-backed AI responses for `POST /api/mbkru-voice` |
+| `OPENAI_API_KEY` | Optional (recommended) | `gpt-4o-mini` for `POST /api/mbkru-voice` (text, image data URLs, and `.txt` in the same request) |
+| `TAVILY_API_KEY` | Optional | Live web context when the user leaves “Search the web” on (server-only; [Tavily](https://tavily.com)) |
 | `MBKRU_VOICE_EVENT_TOKEN` | Optional (recommended in production) | Server-side token for accepting telemetry ingestion |
 | `NEXT_PUBLIC_MBKRU_VOICE_EVENT_TOKEN` | Optional (with token mode) | Client token sent with telemetry ingestion requests |
 | `REDIS_URL` | Optional (recommended in production) | Shared rate-limit state across multiple instances |

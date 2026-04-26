@@ -86,7 +86,10 @@ export function MBKRUVoiceChatbot() {
   const [isListening, setIsListening] = useState(false);
   const [listeningError, setListeningError] = useState<string | null>(null);
   const [imageAttachment, setImageAttachment] = useState<{ previewUrl: string; name: string } | null>(null);
+  const [textFileAttachment, setTextFileAttachment] = useState<{ name: string; text: string } | null>(null);
+  const [useWebSearch, setUseWebSearch] = useState(true);
   const [attachmentNotice, setAttachmentNotice] = useState<string | null>(null);
+  const pendingImageFileRef = useRef<File | null>(null);
   const openButtonRef = useRef<HTMLButtonElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
@@ -196,26 +199,60 @@ export function MBKRUVoiceChatbot() {
     window.speechSynthesis.speak(utterance);
   }
 
-  function onImageFileChange(event: ChangeEvent<HTMLInputElement>) {
+  const MAX_IMAGE_BYTES = 1.25 * 1024 * 1024; // keep JSON body within typical limits
+  const MAX_TEXT_FILE_CHARS = 40_000;
+
+  function readFileAsDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => (typeof r.result === "string" ? resolve(r.result) : reject());
+      r.onerror = () => reject();
+      r.readAsDataURL(file);
+    });
+  }
+
+  function onAttachmentFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     event.target.value = "";
     setAttachmentNotice(null);
     if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      setAttachmentNotice("Please choose an image file.");
+    if (file.type.startsWith("image/")) {
+      if (file.size > MAX_IMAGE_BYTES) {
+        setAttachmentNotice("Images must be about 1.25 MB or smaller for the AI to accept them.");
+        return;
+      }
+      setTextFileAttachment(null);
+      pendingImageFileRef.current = file;
+      setImageAttachment((prev) => {
+        if (prev?.previewUrl) URL.revokeObjectURL(prev.previewUrl);
+        return { name: file.name, previewUrl: URL.createObjectURL(file) };
+      });
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      setAttachmentNotice("Images must be under 5 MB.");
+    if (file.type === "text/plain" || file.name.toLowerCase().endsWith(".txt")) {
+      if (file.size > MAX_TEXT_FILE_CHARS) {
+        setAttachmentNotice("Text file is too large — try a smaller .txt (under 40,000 characters).");
+        return;
+      }
+      pendingImageFileRef.current = null;
+      if (imageAttachment?.previewUrl) {
+        URL.revokeObjectURL(imageAttachment.previewUrl);
+        setImageAttachment(null);
+      }
+      const r = new FileReader();
+      r.onload = () => {
+        const t = (typeof r.result === "string" ? r.result : "").slice(0, MAX_TEXT_FILE_CHARS);
+        setTextFileAttachment({ name: file.name, text: t });
+      };
+      r.readAsText(file);
       return;
     }
-    setImageAttachment((prev) => {
-      if (prev?.previewUrl) URL.revokeObjectURL(prev.previewUrl);
-      return { name: file.name, previewUrl: URL.createObjectURL(file) };
-    });
+    setAttachmentNotice("Use an image (JPEG, PNG, etc.) or a .txt file.");
   }
 
-  function clearImageAttachment() {
+  function clearAttachments() {
+    pendingImageFileRef.current = null;
+    setTextFileAttachment(null);
     setImageAttachment((prev) => {
       if (prev?.previewUrl) URL.revokeObjectURL(prev.previewUrl);
       return null;
@@ -225,16 +262,43 @@ export function MBKRUVoiceChatbot() {
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isLoading) return;
     const trimmed = input.trim();
-    const imageLine = imageAttachment ? `[Photo: ${imageAttachment.name}]` : "";
-    const combined = [imageLine, trimmed].filter(Boolean).join("\n").trim();
-    if (!combined || isLoading) return;
+    const hasImage = Boolean(pendingImageFileRef.current && imageAttachment);
+    const hasTextFile = Boolean(textFileAttachment?.text);
+    if (!trimmed && !hasImage && !hasTextFile) return;
+
+    const linePhoto = hasImage && imageAttachment ? `[Photo: ${imageAttachment.name}]` : "";
+    const lineFile = hasTextFile && textFileAttachment ? `[File: ${textFileAttachment.name}]` : "";
+    const combined = [linePhoto, lineFile, trimmed].filter(Boolean).join("\n").trim() || "Help with my attachment(s).";
+    const apiText =
+      trimmed ||
+      (hasTextFile && hasImage
+        ? "Use the image and the attached file as context."
+        : hasImage
+          ? "Describe what is in the image. Relate to MBKRU, Ghana, or public accountability if relevant."
+          : hasTextFile
+            ? "Read and use the attached text. Summarise or answer my question in context."
+            : "");
+
+    let imageBase64: string | undefined;
+    if (pendingImageFileRef.current) {
+      try {
+        imageBase64 = await readFileAsDataUrl(pendingImageFileRef.current);
+      } catch {
+        setAttachmentNotice("Could not read the image. Try a smaller file.");
+        return;
+      }
+    }
+
+    const fileTextForApi = textFileAttachment?.text;
+    const fileNameForApi = textFileAttachment?.name;
 
     const nextUser: ChatEntry = { role: "user", content: combined };
     const currentHistory = [...messages, nextUser];
     setMessages(currentHistory);
     setInput("");
-    clearImageAttachment();
+    clearAttachments();
     setIsLoading(true);
     trackUiEvent("mbkru_voice_send", { language: preferences.languageId });
 
@@ -243,9 +307,13 @@ export function MBKRUVoiceChatbot() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: combined.slice(0, 1000),
+          message: apiText.slice(0, 4000),
           history: historyForApi,
           languageId: preferences.languageId,
+          imageBase64,
+          fileText: fileTextForApi,
+          fileName: fileNameForApi,
+          webSearch: useWebSearch,
         }),
       });
 
@@ -301,7 +369,7 @@ export function MBKRUVoiceChatbot() {
   function clearConversation() {
     setMessages([introMessage]);
     setInput("");
-    clearImageAttachment();
+    clearAttachments();
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
     }
@@ -432,7 +500,13 @@ export function MBKRUVoiceChatbot() {
             <label htmlFor="mbkru-voice-input" className="sr-only">
               Ask MBKRU Voice
             </label>
-            <input ref={imageInputRef} type="file" accept="image/*" className="sr-only" onChange={onImageFileChange} />
+            <input
+              ref={imageInputRef}
+              type="file"
+              accept="image/*,.txt,text/plain"
+              className="sr-only"
+              onChange={onAttachmentFileChange}
+            />
             {imageAttachment ? (
               <div className="mb-2 flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--muted)]/40 p-2">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -444,8 +518,22 @@ export function MBKRUVoiceChatbot() {
                 <span className="min-w-0 flex-1 truncate text-xs text-[var(--foreground)]">{imageAttachment.name}</span>
                 <button
                   type="button"
-                  onClick={clearImageAttachment}
+                  onClick={clearAttachments}
                   className={`shrink-0 rounded-lg border border-[var(--border)] px-2 py-1 text-xs font-semibold text-[var(--foreground)] ${focusRingSmClass}`}
+                >
+                  Remove
+                </button>
+              </div>
+            ) : null}
+            {textFileAttachment ? (
+              <div className="mb-2 flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--muted)]/40 p-2 text-xs text-[var(--foreground)]">
+                <span className="line-clamp-2 min-w-0 flex-1" title={textFileAttachment.name}>
+                  {textFileAttachment.name} — {textFileAttachment.text.length.toLocaleString()} characters
+                </span>
+                <button
+                  type="button"
+                  onClick={clearAttachments}
+                  className={`shrink-0 rounded-lg border border-[var(--border)] px-2 py-1 text-xs font-semibold ${focusRingSmClass}`}
                 >
                   Remove
                 </button>
@@ -465,7 +553,7 @@ export function MBKRUVoiceChatbot() {
                 onChange={(event) => setInput(event.target.value)}
                 placeholder="Ask a question…"
                 className={`h-11 min-w-0 flex-1 rounded-xl border border-[var(--border)] px-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] ${focusRingSmClass}`}
-                maxLength={300}
+                maxLength={2000}
               />
               <button
                 type="button"
@@ -488,8 +576,8 @@ export function MBKRUVoiceChatbot() {
                 type="button"
                 onClick={() => imageInputRef.current?.click()}
                 className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--muted)] text-[var(--foreground)] ${focusRingSmClass}`}
-                aria-label="Attach image"
-                title="Attach image"
+                aria-label="Attach image or text file"
+                title="Photo or .txt"
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
                   <path
@@ -501,11 +589,22 @@ export function MBKRUVoiceChatbot() {
               </button>
               <button
                 type="submit"
-                disabled={isLoading || (!input.trim() && !imageAttachment)}
+                disabled={isLoading || (!input.trim() && !imageAttachment && !textFileAttachment)}
                 className={`h-11 shrink-0 rounded-xl bg-[var(--primary)] px-3 text-sm font-semibold text-white disabled:opacity-55 sm:px-4 ${focusRingSmClass}`}
               >
                 Send
               </button>
+            </div>
+            <div className="mt-2 flex items-center justify-between gap-2">
+              <label className="flex cursor-pointer select-none items-center gap-1.5 text-xs text-[var(--muted-foreground)]">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-[var(--border)] text-[var(--primary)]"
+                  checked={useWebSearch}
+                  onChange={(e) => setUseWebSearch(e.target.checked)}
+                />
+                <span>Search the web (live) when supported</span>
+              </label>
             </div>
             <p className="mt-1 text-xs text-[var(--muted-foreground)]">{helperTextByLanguage[preferences.languageId]}</p>
             {listeningError ? (

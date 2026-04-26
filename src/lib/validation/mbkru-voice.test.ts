@@ -31,6 +31,23 @@ describe("mbkruVoiceChatBodySchema", () => {
   it("keeps language ids aligned with voiceLanguageOptions", () => {
     expect(voiceLanguageOptions.map((o) => o.id)).toEqual([...mbkruVoiceChatLanguageIds]);
   });
+
+  it("accepts webSearch and file fields", () => {
+    const r = mbkruVoiceChatBodySchema.safeParse({
+      message: "Hello",
+      webSearch: false,
+      fileText: "a".repeat(100),
+      fileName: "doc.txt",
+      imageBase64: "data:image/png;base64,aa",
+    });
+    expect(r.success).toBe(true);
+  });
+
+  it("defaults webSearch to true", () => {
+    const r = mbkruVoiceChatBodySchema.safeParse({ message: "Hi" });
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.webSearch).toBe(true);
+  });
 });
 
 describe("mbkruVoiceAnalyticsBodySchema", () => {
