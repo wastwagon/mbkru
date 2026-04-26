@@ -43,6 +43,27 @@ describe("mbkruVoiceChatBodySchema", () => {
     expect(r.success).toBe(true);
   });
 
+  it("accepts optional pdfBase64 (raw or data URL)", () => {
+    const r = mbkruVoiceChatBodySchema.safeParse({
+      message: "Summarise this",
+      pdfBase64: "JVBERi0xLjQKJeLjz9MK",
+    });
+    expect(r.success).toBe(true);
+    const r2 = mbkruVoiceChatBodySchema.safeParse({
+      message: "x",
+      pdfBase64: "data:application/pdf;base64,JVBERi0xLjQKJeLjz9MK",
+    });
+    expect(r2.success).toBe(true);
+  });
+
+  it("rejects pdfBase64 over size cap", () => {
+    const r = mbkruVoiceChatBodySchema.safeParse({
+      message: "x",
+      pdfBase64: "a".repeat(1_800_001),
+    });
+    expect(r.success).toBe(false);
+  });
+
   it("defaults webSearch to true", () => {
     const r = mbkruVoiceChatBodySchema.safeParse({ message: "Hi" });
     expect(r.success).toBe(true);

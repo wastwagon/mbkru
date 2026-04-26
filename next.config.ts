@@ -24,6 +24,8 @@ if (isHttpsCanonical) {
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Native PDF parser — keep out of the server bundle graph for reliable tracing.
+  serverExternalPackages: ["pdf-parse"],
   // Pin tracing to this app directory (avoids picking a parent-folder lockfile as root).
   outputFileTracingRoot: path.resolve(process.cwd()),
   async headers() {

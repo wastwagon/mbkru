@@ -55,11 +55,11 @@ const quickPromptsByLanguage: Record<
 };
 
 const helperTextByLanguage: Record<VoicePreferences["languageId"], string> = {
-  "en-gh": "Type, use the mic or image icons, or the access icon in the header for more voice options.",
-  twi: "Wubetumi akyerɛw, Mic, anaasɛ a access icon a header mu.",
-  ga: "Kpee: Osha nyɛŋ, Mic, alo access icon header ni.",
-  hausa: "Rubutu, mic, ko alamar dama a cikin header don ƙarin ayyukan murya.",
-  ewe: "Aŋlɔ nu, Mic, alo access icon a header la.",
+  "en-gh": "Type, mic, or attach a photo, .txt, or PDF. Toggle live web search below when your host supports it.",
+  twi: "Wubetumi akyerɛw, mic, fa foto, .txt, anaa PDF ka ho. Web nhwehwɛmu no wɔ ase ha. Access icon a header mu ma murya foforo.",
+  ga: "Kpee: osha nyɛŋ, mic, alo fa foto, .txt, alo PDF shwɛɛ. Web nhwehwɛmu ase ha. Access icon header ni ma murya.",
+  hausa: "Rubutu, mic, ko haɗa hoto, .txt, ko PDF. Kunna binciken yanar gizo a ƙasa idan mai masaukin bada goyan baya. Alamar dama a cikin header don ƙarin ayyukan murya.",
+  ewe: "Aŋlɔ nu, mic, alo na foto, .txt, alo PDF ɖo eme. Web search la anyi gɔme la. Access icon a header la na murya bubuwo.",
 };
 
 const introMessage: ChatEntry = {
@@ -87,9 +87,11 @@ export function MBKRUVoiceChatbot() {
   const [listeningError, setListeningError] = useState<string | null>(null);
   const [imageAttachment, setImageAttachment] = useState<{ previewUrl: string; name: string } | null>(null);
   const [textFileAttachment, setTextFileAttachment] = useState<{ name: string; text: string } | null>(null);
+  const [pdfAttachment, setPdfAttachment] = useState<{ name: string } | null>(null);
   const [useWebSearch, setUseWebSearch] = useState(true);
   const [attachmentNotice, setAttachmentNotice] = useState<string | null>(null);
   const pendingImageFileRef = useRef<File | null>(null);
+  const pendingPdfFileRef = useRef<File | null>(null);
   const openButtonRef = useRef<HTMLButtonElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
@@ -200,6 +202,7 @@ export function MBKRUVoiceChatbot() {
   }
 
   const MAX_IMAGE_BYTES = 1.25 * 1024 * 1024; // keep JSON body within typical limits
+  const MAX_PDF_BYTES = 1 * 1024 * 1024;
   const MAX_TEXT_FILE_CHARS = 40_000;
 
   function readFileAsDataUrl(file: File): Promise<string> {
@@ -222,6 +225,8 @@ export function MBKRUVoiceChatbot() {
         return;
       }
       setTextFileAttachment(null);
+      setPdfAttachment(null);
+      pendingPdfFileRef.current = null;
       pendingImageFileRef.current = file;
       setImageAttachment((prev) => {
         if (prev?.previewUrl) URL.revokeObjectURL(prev.previewUrl);
@@ -235,6 +240,8 @@ export function MBKRUVoiceChatbot() {
         return;
       }
       pendingImageFileRef.current = null;
+      pendingPdfFileRef.current = null;
+      setPdfAttachment(null);
       if (imageAttachment?.previewUrl) {
         URL.revokeObjectURL(imageAttachment.previewUrl);
         setImageAttachment(null);
@@ -247,11 +254,28 @@ export function MBKRUVoiceChatbot() {
       r.readAsText(file);
       return;
     }
-    setAttachmentNotice("Use an image (JPEG, PNG, etc.) or a .txt file.");
+    if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
+      if (file.size > MAX_PDF_BYTES) {
+        setAttachmentNotice("PDFs must be 1 MB or smaller.");
+        return;
+      }
+      pendingImageFileRef.current = null;
+      if (imageAttachment?.previewUrl) {
+        URL.revokeObjectURL(imageAttachment.previewUrl);
+        setImageAttachment(null);
+      }
+      setTextFileAttachment(null);
+      pendingPdfFileRef.current = file;
+      setPdfAttachment({ name: file.name });
+      return;
+    }
+    setAttachmentNotice("Use an image, a .txt file, or a PDF.");
   }
 
   function clearAttachments() {
     pendingImageFileRef.current = null;
+    pendingPdfFileRef.current = null;
+    setPdfAttachment(null);
     setTextFileAttachment(null);
     setImageAttachment((prev) => {
       if (prev?.previewUrl) URL.revokeObjectURL(prev.previewUrl);
@@ -266,20 +290,29 @@ export function MBKRUVoiceChatbot() {
     const trimmed = input.trim();
     const hasImage = Boolean(pendingImageFileRef.current && imageAttachment);
     const hasTextFile = Boolean(textFileAttachment?.text);
-    if (!trimmed && !hasImage && !hasTextFile) return;
+    const hasPdf = Boolean(pendingPdfFileRef.current && pdfAttachment);
+    if (!trimmed && !hasImage && !hasTextFile && !hasPdf) return;
 
     const linePhoto = hasImage && imageAttachment ? `[Photo: ${imageAttachment.name}]` : "";
     const lineFile = hasTextFile && textFileAttachment ? `[File: ${textFileAttachment.name}]` : "";
-    const combined = [linePhoto, lineFile, trimmed].filter(Boolean).join("\n").trim() || "Help with my attachment(s).";
+    const linePdf = hasPdf && pdfAttachment ? `[PDF: ${pdfAttachment.name}]` : "";
+    const combined =
+      [linePhoto, lineFile, linePdf, trimmed].filter(Boolean).join("\n").trim() || "Help with my attachment(s).";
     const apiText =
       trimmed ||
       (hasTextFile && hasImage
         ? "Use the image and the attached file as context."
-        : hasImage
-          ? "Describe what is in the image. Relate to MBKRU, Ghana, or public accountability if relevant."
-          : hasTextFile
-            ? "Read and use the attached text. Summarise or answer my question in context."
-            : "");
+        : hasImage && hasPdf
+          ? "Use the image and the attached PDF as context. Summarise or answer as relevant."
+          : hasTextFile && hasPdf
+            ? "Use the attached text file and PDF as context. Summarise or answer as relevant."
+            : hasImage
+              ? "Describe what is in the image. Relate to MBKRU, Ghana, or public accountability if relevant."
+              : hasPdf
+                ? "Summarise or answer using the attached PDF text. Note if anything is unclear."
+                : hasTextFile
+                  ? "Read and use the attached text. Summarise or answer my question in context."
+                  : "");
 
     let imageBase64: string | undefined;
     if (pendingImageFileRef.current) {
@@ -292,7 +325,17 @@ export function MBKRUVoiceChatbot() {
     }
 
     const fileTextForApi = textFileAttachment?.text;
-    const fileNameForApi = textFileAttachment?.name;
+    const fileNameForApi = textFileAttachment?.name ?? pdfAttachment?.name ?? "attachment";
+
+    let pdfBase64: string | undefined;
+    if (pendingPdfFileRef.current) {
+      try {
+        pdfBase64 = await readFileAsDataUrl(pendingPdfFileRef.current);
+      } catch {
+        setAttachmentNotice("Could not read the PDF. Try a smaller file.");
+        return;
+      }
+    }
 
     const nextUser: ChatEntry = { role: "user", content: combined };
     const currentHistory = [...messages, nextUser];
@@ -313,6 +356,7 @@ export function MBKRUVoiceChatbot() {
           imageBase64,
           fileText: fileTextForApi,
           fileName: fileNameForApi,
+          pdfBase64,
           webSearch: useWebSearch,
         }),
       });
@@ -503,7 +547,7 @@ export function MBKRUVoiceChatbot() {
             <input
               ref={imageInputRef}
               type="file"
-              accept="image/*,.txt,text/plain"
+              accept="image/*,.txt,text/plain,.pdf,application/pdf"
               className="sr-only"
               onChange={onAttachmentFileChange}
             />
@@ -530,6 +574,19 @@ export function MBKRUVoiceChatbot() {
                 <span className="line-clamp-2 min-w-0 flex-1" title={textFileAttachment.name}>
                   {textFileAttachment.name} — {textFileAttachment.text.length.toLocaleString()} characters
                 </span>
+                <button
+                  type="button"
+                  onClick={clearAttachments}
+                  className={`shrink-0 rounded-lg border border-[var(--border)] px-2 py-1 text-xs font-semibold ${focusRingSmClass}`}
+                >
+                  Remove
+                </button>
+              </div>
+            ) : null}
+            {pdfAttachment ? (
+              <div className="mb-2 flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--muted)]/40 p-2 text-xs text-[var(--foreground)]">
+                <span className="min-w-0 flex-1 font-medium">{pdfAttachment.name}</span>
+                <span className="shrink-0 text-[var(--muted-foreground)]">PDF</span>
                 <button
                   type="button"
                   onClick={clearAttachments}
@@ -576,8 +633,8 @@ export function MBKRUVoiceChatbot() {
                 type="button"
                 onClick={() => imageInputRef.current?.click()}
                 className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--muted)] text-[var(--foreground)] ${focusRingSmClass}`}
-                aria-label="Attach image or text file"
-                title="Photo or .txt"
+                aria-label="Attach image, text file, or PDF"
+                title="Photo, .txt, or PDF"
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
                   <path
@@ -589,7 +646,7 @@ export function MBKRUVoiceChatbot() {
               </button>
               <button
                 type="submit"
-                disabled={isLoading || (!input.trim() && !imageAttachment && !textFileAttachment)}
+                disabled={isLoading || (!input.trim() && !imageAttachment && !textFileAttachment && !pdfAttachment)}
                 className={`h-11 shrink-0 rounded-xl bg-[var(--primary)] px-3 text-sm font-semibold text-white disabled:opacity-55 sm:px-4 ${focusRingSmClass}`}
               >
                 Send

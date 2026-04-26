@@ -34,15 +34,27 @@ export const mbkruVoiceChatBodySchema = z.object({
   /** Plain text from a user-selected .txt (current turn) */
   fileText: z.string().max(48_000).optional(),
   fileName: z.string().max(220).optional(),
+  /**
+   * Base64 PDF bytes (raw or `data:application/pdf;base64,...`). Parsed server-side with `pdf-parse`.
+   */
+  pdfBase64: z.string().max(1_800_000).optional(),
   /** When true, server fetches real-time web context (requires `TAVILY_API_KEY`). */
   webSearch: z.boolean().optional().default(true),
-}).refine(
-  (data) => {
-    if (!data.imageBase64) return true;
-    return data.imageBase64.length <= 2_200_000;
-  },
-  { message: "imageBase64 too large" },
-);
+})
+  .refine(
+    (data) => {
+      if (!data.imageBase64) return true;
+      return data.imageBase64.length <= 2_200_000;
+    },
+    { message: "imageBase64 too large" },
+  )
+  .refine(
+    (data) => {
+      if (!data.pdfBase64) return true;
+      return data.pdfBase64.length <= 1_800_000;
+    },
+    { message: "pdfBase64 too large" },
+  );
 
 const analyticsEventNameSchema = z.preprocess(
   (v) => (typeof v === "string" ? v.trim().toLowerCase() : v),
