@@ -88,7 +88,10 @@ export default async function MethodologyPage() {
           <p className="mt-3 text-sm text-[var(--muted-foreground)]">
             {accountabilityProse.methodologyKeyTermsSectionIntro}
           </p>
-          <dl className="mt-5 space-y-4 border-t border-[var(--border)] pt-6">
+          <dl
+            className="mt-5 space-y-4 border-t border-[var(--border)] pt-6"
+            aria-labelledby="key-terms"
+          >
             {methodologyKeyTerms.map((row) => (
               <div key={row.term}>
                 <dt className="font-semibold text-[var(--foreground)]">{row.term}</dt>

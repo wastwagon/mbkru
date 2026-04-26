@@ -68,6 +68,9 @@ export const accountabilityHomePreviewCopy = {
   browseHeading: `${accountabilityCatalogueNavMedium.browseAll} — live`,
   browseLead:
     "Full searchable catalogue for sitting MPs — identical data to the dedicated browse page and public export.",
+  /** Homepage `PromisesBrowseHomePreview` in teaser mode — one compact block next to the full government embed. */
+  browseTeaserLead:
+    "A short live preview of the first catalogue rows. Open the full page for search, filters, and the public CSV export.",
 } as const;
 
 /**
@@ -134,6 +137,10 @@ export const accountabilityProse = {
     "When checked, the row appears on the public Government commitments page. You can change this later under Save source & verification for each row.",
   /** Browse `/promises/browse` — default “all” option in the manifesto slice control. */
   browseCatalogueSelectAllTracked: "All tracked commitments",
+  /** Homepage teaser (no on-page filters) — nudge to `/promises/browse`. */
+  browseHomeTeaserCaption: (shown: number, total: number) =>
+    `Previewing ${shown} of ${total} in this first page of results. `,
+  browseHomeTeaserCta: "Open Browse all for live filters, search, and CSV export.",
   /** Helper under constituency filter — same roster as imports; “catalogue” not “every utterance”. */
   browseConstituencyFilterHelp:
     "Uses the same constituency and MP records as parliament.gh imports — filter catalogue rows for whoever holds that seat in this database.",
@@ -141,9 +148,15 @@ export const accountabilityProse = {
   adminMemberCatalogueEmpty: "No catalogue rows yet.",
   /** Stats strip KPI — sitting MPs with at least one published catalogue row in the current slice. */
   statsStripMpsWithCatalogueRowsLabel: "MPs w/ catalogue rows",
-  /** Under `/parliament-tracker` PageHeader — orients users vs Government commitments and Browse all. */
-  /** First sentence of hub `PageHeader` so the menu label matches the long programme title. */
+  /** `PageHeader` and `<title>` on `/parliament-tracker` — same label as the main site menu. */
+  parliamentPageDocumentTitle: "Parliament tracker",
+  /**
+   * Legacy hub hero sentence when the H1 was the long programme name.
+   * Kept for any tests or off-site copy; the hub now uses `parliamentPageDocumentTitle` as the visible H1.
+   */
   parliamentPageHeaderMenuAlias: "In the main site menu, this page is called Parliament tracker. ",
+  /** Hub PageHeader: subtitle after the H1, naming the full programme. */
+  parliamentPageHeaderFullProgrammeLead: "Accountability & Electoral Watch",
   parliamentTrackerHubOrientation:
     "Start from this hub for the MP roster, the People's Report Card entry point, and catalogue tools. For programme- and executive-tagged rows only, use Government commitments; for the full filterable list tied to sitting MPs, use Browse all commitments.",
   /** Blurb for the pre-election scorecards tool card (links to /methodology). */

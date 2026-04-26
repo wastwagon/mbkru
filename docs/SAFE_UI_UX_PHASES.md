@@ -25,15 +25,16 @@
 | **Glossary** in `/methodology#key-terms` | **Shipped** — `methodologyKeyTerms` in `accountability-catalogue-destinations.ts` (dl on methodology page). |
 | **Parliament hub `PageHeader`** | **Shipped** — first sentence names **Parliament tracker**; then long programme title (no H1/SEO change). |
 | **Report card vs scorecards** | **Shipped** — disambiguation on `/report-card` + link to glossary; third hub tool card text points to methodology and distinguishes PRC. |
-| **Nav / H1 = “Parliament tracker”** | **Deferred** — needs SEO/brand sign-off; menu label already matches glossary. |
-| **Homepage density** (one compact block) | **Backlog** — design pass when you want a shorter home. |
+| **Nav / H1 = “Parliament tracker”** | **Shipped** — `PageHeader` and `<title>` on `/parliament-tracker` use `parliamentPageDocumentTitle` (root layout `template` appends the site name). |
+| **Homepage density** (one compact block) | **Shipped (browse only)** — home “Live catalogue” block uses `homeTeaser` in `PromisesBrowseLive` (KPIs + 5 rows + CTA; government block stays full filters). |
 
 ---
 
 ## Phase 3 — Internationalisation & A11Y (when needed)
 
-- Screen-reader order for filter toolbars and stats strip.  
-- Consider shorter `summary` strings for any future `<details>` blocks.
+- Glossary `dl` on `/methodology` is `aria-labelledby` the section heading.  
+- Full `PromisesBrowseLive` filter panel is exposed as a `search` region with a concise `aria-label`.  
+- Deeper: screen-reader order for filter toolbars and stats strip; shorter `summary` for future `<details>`.
 
 ---
 
@@ -43,3 +44,4 @@
 |------|------|
 | 2026-04 | Phase 1 copy + callout + hub orientation |
 | 2026-04 | Phase 2 glossary, hub header alias, report-card disambiguation, tool card copy |
+| 2026-04 | H1 = Parliament tracker, home browse teaser, a11y pass on glossary + filter region |

@@ -1,10 +1,18 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  accountabilityProse,
   methodologyKeyTerms,
   pathnameIsPromisesBrowseAccountability,
   pathnameIsPromisesByMpAccountability,
 } from "./accountability-catalogue-destinations";
+
+describe("parliament and home teaser copy", () => {
+  it("exposes a stable page title and teaser caption for safe UI/UX", () => {
+    expect(accountabilityProse.parliamentPageDocumentTitle).toBe("Parliament tracker");
+    expect(accountabilityProse.browseHomeTeaserCaption(2, 5)).toContain("2 of 5");
+  });
+});
 
 describe("methodologyKeyTerms", () => {
   it("has a stable public glossary for /methodology#key-terms", () => {

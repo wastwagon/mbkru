@@ -17,7 +17,7 @@ type Props = {
   data: BrowsePreviewData;
 };
 
-/** Homepage block — same live catalogue + stats pattern as `/promises/browse`, styled like Government commitments preview. */
+/** Homepage “Live catalogue” block — compact teaser (5 rows) next to the full government embed. */
 export function PromisesBrowseHomePreview({ data }: Props) {
   const { stats, initialRows } = data;
   const reducedMotion = usePrefersReducedMotion();
@@ -40,9 +40,9 @@ export function PromisesBrowseHomePreview({ data }: Props) {
             {accountabilityHomePreviewCopy.browseHeading}
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
-            {accountabilityHomePreviewCopy.browseLead}{" "}
+            {accountabilityHomePreviewCopy.browseTeaserLead}{" "}
             <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={`${primaryLinkClass} font-semibold`}>
-              Open full page
+              Browse all
             </Link>
             .
           </p>
@@ -57,6 +57,8 @@ export function PromisesBrowseHomePreview({ data }: Props) {
         >
           <PromisesBrowseLive
             mode="browse"
+            homeTeaser
+            homeTeaserMaxRows={5}
             initialStats={stats}
             initialRows={initialRows}
             initialQ=""
@@ -69,19 +71,22 @@ export function PromisesBrowseHomePreview({ data }: Props) {
             trackerConstituencies={data.trackerConstituencies}
             csvExportHref="/api/export/promises-csv"
             filterToolbarHeader={
-              <div className="mt-6 space-y-3 border-b border-[var(--border)] pb-3 sm:mt-8">
+              <div className="mt-6 space-y-2 border-b border-[var(--border)] pb-3 sm:mt-8">
                 <p className="mx-auto max-w-3xl text-center text-xs leading-relaxed text-[var(--muted-foreground)] sm:text-left">
                   {accountabilityHomePreviewCopy.promiseCardSurfaceExplainerShort}
                 </p>
-                <div className="flex flex-wrap items-end justify-between gap-3">
-                  <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Filters &amp; results</h3>
+                <h3 className="font-display text-center text-base font-semibold text-[var(--foreground)] sm:text-left">
+                  Preview
+                </h3>
+                <p className="text-center text-xs text-[var(--muted-foreground)] sm:text-left">
                   <Link
                     href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
-                    className={`${primaryNavLinkClass} text-sm font-semibold`}
+                    className={`${primaryNavLinkClass} font-semibold`}
                   >
-                    Open full browse page →
-                  </Link>
-                </div>
+                    Browse all commitments
+                  </Link>{" "}
+                  for the full table, filters, and export.
+                </p>
               </div>
             }
           />

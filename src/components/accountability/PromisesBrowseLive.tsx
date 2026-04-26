@@ -5,7 +5,10 @@ import Link from "next/link";
 
 import { PromiseEvidenceCard } from "@/components/accountability/PromiseEvidenceCard";
 import { PromiseTrackerStatsStrip } from "@/components/accountability/PromiseTrackerStatsStrip";
-import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
+import {
+  ACCOUNTABILITY_CATALOGUE_ROUTES,
+  accountabilityProse,
+} from "@/config/accountability-catalogue-destinations";
 import {
   POLICY_SECTOR_LABELS,
   POLICY_SECTOR_VALUES,
@@ -41,6 +44,13 @@ type Props = {
   filterToolbarHeader?: ReactNode;
   /** Merge headline + status into one card (homepage government embed). */
   statsStripCompact?: boolean;
+  /**
+   * Home browse embed only — keep KPIs, hide live filters, show a short slice of the result list.
+   * (Government home embed uses full filters; browse home uses this to keep the homepage scannable.)
+   */
+  homeTeaser?: boolean;
+  /** Defaults to 5. */
+  homeTeaserMaxRows?: number;
 };
 
 const DEBOUNCE_MS = 380;
@@ -85,6 +95,8 @@ export function PromisesBrowseLive({
   csvExportHref,
   filterToolbarHeader,
   statsStripCompact = false,
+  homeTeaser = false,
+  homeTeaserMaxRows = 5,
 }: Props) {
   const [stats, setStats] = useState<PromiseTrackerStats>(initialStats);
   const [rows, setRows] = useState<PublicPromiseApiRow[]>(initialRows);
@@ -225,6 +237,11 @@ export function PromisesBrowseLive({
 
   const clearHref = mode === "government" ? "/government-commitments" : "/promises/browse";
 
+  const displayRows = useMemo(
+    () => (homeTeaser ? rows.slice(0, homeTeaserMaxRows) : rows),
+    [homeTeaser, homeTeaserMaxRows, rows],
+  );
+
   const catalogueSelectValue = catalogueValueFromState(govLocked, governmentOnly, partyFilter, cycleFilter);
 
   const onCatalogueChange = (v: string) => {
@@ -267,7 +284,10 @@ export function PromisesBrowseLive({
 
       {filterToolbarHeader}
 
-      <div
+      {homeTeaser ? null : (
+        <div
+        role="search"
+        aria-label="Filter the commitment catalogue by search, source slice, and category"
         className={`flex flex-col gap-4 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-end ${filterToolbarHeader ? "mt-4" : "mt-8"}`}
       >
         <div className="min-w-0 flex-1 sm:max-w-xs">
@@ -394,6 +414,7 @@ export function PromisesBrowseLive({
           ) : null}
         </div>
       </div>
+      )}
 
       {error ? (
         <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
@@ -411,16 +432,25 @@ export function PromisesBrowseLive({
 
       {rows.length > 0 ? (
         <>
-          <p className="mt-6 text-xs text-[var(--muted-foreground)]">
-            Showing {rows.length} result{rows.length === 1 ? "" : "s"}
-            {rows.length >= 75 ? " (max 75 per request — refine search)" : ""}. Full export:{" "}
-            <Link href={csvHref} className={primaryLinkClass}>
-              CSV export
-            </Link>
-            .
-          </p>
+          {homeTeaser ? (
+            <p className="mt-6 text-xs text-[var(--muted-foreground)]">
+              {accountabilityProse.browseHomeTeaserCaption(displayRows.length, rows.length)}
+              <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={primaryLinkClass}>
+                {accountabilityProse.browseHomeTeaserCta}
+              </Link>
+            </p>
+          ) : (
+            <p className="mt-6 text-xs text-[var(--muted-foreground)]">
+              Showing {rows.length} result{rows.length === 1 ? "" : "s"}
+              {rows.length >= 75 ? " (max 75 per request — refine search)" : ""}. Full export:{" "}
+              <Link href={csvHref} className={primaryLinkClass}>
+                CSV export
+              </Link>
+              .
+            </p>
+          )}
           <ul className="mt-4 space-y-6">
-            {rows.map((p) => (
+            {displayRows.map((p) => (
               <li key={p.id}>
                 <PromiseEvidenceCard
                   title={p.title}

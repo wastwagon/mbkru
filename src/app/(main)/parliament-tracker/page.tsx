@@ -22,7 +22,7 @@ import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles
 import { getCachedMpsPublicRoster, getCachedPromiseTrackerStats } from "@/lib/server/accountability-cache";
 
 export const metadata: Metadata = {
-  title: "Accountability & Electoral Watch",
+  title: accountabilityProse.parliamentPageDocumentTitle,
   description: accountabilityProse.parliamentTrackerMetaDescription,
 };
 
@@ -97,8 +97,8 @@ export default async function ParliamentTrackerPage() {
   return (
     <div>
       <PageHeader
-        title="Accountability & Electoral Watch"
-        description={`${accountabilityProse.parliamentPageHeaderMenuAlias}The full programme title is Accountability & Electoral Watch — ${accountabilityProse.parliamentPageHeaderDescription}`}
+        title={accountabilityProse.parliamentPageDocumentTitle}
+        description={`${accountabilityProse.parliamentPageHeaderFullProgrammeLead} — ${accountabilityProse.parliamentPageHeaderDescription}`}
       />
 
       <div className="section-spacing border-b border-[var(--border)] bg-white pb-8">
