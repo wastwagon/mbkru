@@ -123,7 +123,7 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
         ) : (
           <ul className="mt-4 space-y-5">
             {openPostReports.map((r) => (
-              <li key={r.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
+              <li id={`mod-report-${r.id}`} key={r.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
                 <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
                   Reporter: {r.reporter.displayName ?? r.reporter.email}
                   <span className="ml-2 font-normal normal-case text-[var(--muted-foreground)]">{r.reporter.email}</span>
@@ -332,7 +332,7 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
         ) : (
           <ul className="mt-4 space-y-6">
             {pendingPosts.map((p) => (
-              <li key={p.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
+              <li id={`mod-post-${p.id}`} key={p.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
                 <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
                   {p.kind} · {p.author.displayName ?? p.author.email}
                 </p>

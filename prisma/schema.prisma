@@ -619,11 +619,29 @@ model Community {
   updatedAt           DateTime            @updatedAt
 
   memberships    CommunityMembership[]
+  forums         CommunityForum[]
   posts          CommunityPost[]
   verifications  CommunityVerificationRequest[]
 
   @@index([regionId])
   @@index([status])
+}
+
+/// Discussion area inside a community (e.g. General, Projects). Threads are root-level posts with optional title.
+model CommunityForum {
+  id          String   @id @default(cuid())
+  communityId String
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  slug        String
+  name        String
+  description String?  @db.Text
+  locked      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  posts       CommunityPost[]
+
+  @@unique([communityId, slug])
+  @@index([communityId])
 }
 
 model CommunityMembership {
@@ -648,9 +666,15 @@ model CommunityPost {
   id                   String                        @id @default(cuid())
   communityId          String
   community            Community                     @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  communityForumId     String?
+  communityForum       CommunityForum?               @relation(fields: [communityForumId], references: [id], onDelete: SetNull)
+  parentPostId         String?
+  parentPost           CommunityPost?                @relation("CommunityPostReplies", fields: [parentPostId], references: [id], onDelete: Cascade)
+  replies              CommunityPost[]               @relation("CommunityPostReplies")
   authorMemberId       String
   author               Member                        @relation(fields: [authorMemberId], references: [id], onDelete: Cascade)
   kind                 CommunityPostKind
+  title                String?                       @db.VarChar(200)
   body                 String                        @db.Text
   moderationStatus     CommunityPostModerationStatus @default(PENDING)
   pinned               Boolean                       @default(false)
@@ -659,6 +683,8 @@ model CommunityPost {
   moderatedBy          Admin?                        @relation("CommunityPostModerator", fields: [moderatedByAdminId], references: [id], onDelete: SetNull)
   rejectionReason      String?                       @db.Text
   createdAt            DateTime                      @default(now())
+  /** For root posts (`parentPostId` null): bumped when a published reply lands — forum sort uses this. */
+  lastActivityAt       DateTime                      @default(now())
   updatedAt            DateTime                      @updatedAt
 
   reports CommunityPostReport[]
@@ -666,6 +692,9 @@ model CommunityPost {
   @@index([communityId, createdAt])
   @@index([communityId, moderationStatus])
   @@index([authorMemberId])
+  @@index([communityForumId, createdAt])
+  @@index([communityForumId, lastActivityAt])
+  @@index([parentPostId, createdAt])
 }
 
 model CommunityPostReport {

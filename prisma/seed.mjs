@@ -951,7 +951,7 @@ async function seedCommunitiesFromBundledJson() {
       console.warn(`Community "${r.slug}": unknown region_slug "${r.region_slug}" — skipping.`);
       continue;
     }
-    await prisma.community.upsert({
+    const saved = await prisma.community.upsert({
       where: { slug: r.slug },
       create: {
         slug: r.slug,
@@ -972,6 +972,16 @@ async function seedCommunitiesFromBundledJson() {
         visibility: r.visibility || "PUBLIC",
         status: r.status || "ACTIVE",
       },
+    });
+    await prisma.communityForum.upsert({
+      where: { communityId_slug: { communityId: saved.id, slug: "general" } },
+      create: {
+        communityId: saved.id,
+        slug: "general",
+        name: "General discussion",
+        description: "Open conversations and local updates for this community.",
+      },
+      update: {},
     });
     n++;
   }
@@ -998,6 +1008,27 @@ async function seedCommunityPilotInteractions() {
     console.log("Community pilot interactions skipped — seeded communities missing.");
     return;
   }
+
+  const forumAj = await prisma.communityForum.upsert({
+    where: { communityId_slug: { communityId: aj.id, slug: "general" } },
+    create: {
+      communityId: aj.id,
+      slug: "general",
+      name: "General discussion",
+      description: "Open conversations and local updates for this community.",
+    },
+    update: {},
+  });
+  const forumSu = await prisma.communityForum.upsert({
+    where: { communityId_slug: { communityId: su.id, slug: "general" } },
+    create: {
+      communityId: su.id,
+      slug: "general",
+      name: "General discussion",
+      description: "Open conversations and local updates for this community.",
+    },
+    update: {},
+  });
 
   await prisma.communityMembership.upsert({
     where: { communityId_memberId: { communityId: aj.id, memberId: m1.id } },
@@ -1044,6 +1075,7 @@ async function seedCommunityPilotInteractions() {
     await prisma.communityPost.create({
       data: {
         communityId: aj.id,
+        communityForumId: forumAj.id,
         authorMemberId: m1.id,
         kind: "ANNOUNCEMENT",
         body: annBody,
@@ -1066,6 +1098,7 @@ async function seedCommunityPilotInteractions() {
     await prisma.communityPost.create({
       data: {
         communityId: su.id,
+        communityForumId: forumSu.id,
         authorMemberId: m2.id,
         kind: "GENERAL",
         body: modBody,

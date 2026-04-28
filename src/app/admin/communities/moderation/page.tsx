@@ -35,7 +35,8 @@ export default async function AdminCommunityPostsModerationPage() {
       <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">Community posts — global queue</h1>
       <p className="mt-2 text-sm text-[var(--muted-foreground)]">
         Pending posts across all communities, oldest first. Publishing or rejecting also updates the community page and
-        the post permalink.
+        the post permalink. Rows use <code className="rounded bg-[var(--section-light)] px-1 font-mono text-xs">#mod-post-</code>
+        plus the post id (from “View permalink”) so you can share a direct link to one queue item.
       </p>
 
       {pendingPosts.length === 0 ? (
@@ -43,7 +44,7 @@ export default async function AdminCommunityPostsModerationPage() {
       ) : (
         <ul className="mt-8 space-y-6">
           {pendingPosts.map((p) => (
-            <li key={p.id} className="rounded-xl border border-[var(--border)] bg-white p-5">
+            <li id={`mod-post-${p.id}`} key={p.id} className="rounded-xl border border-[var(--border)] bg-white p-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
                 {p.community.name}
                 <span className="ml-2 font-normal normal-case text-[var(--muted-foreground)]">

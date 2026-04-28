@@ -4,11 +4,7 @@ import type { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/db/prisma";
 
-/** Published posts plus the viewer's own pending/rejected rows (for transparency). */
-export async function listCommunityPostsVisibleToViewer(
-  communityId: string,
-  viewerMemberId: string | null,
-) {
+function visibilityOrClause(viewerMemberId: string | null): Prisma.CommunityPostWhereInput[] {
   const or: Prisma.CommunityPostWhereInput[] = [{ moderationStatus: "PUBLISHED" }];
   if (viewerMemberId) {
     or.push({
@@ -16,13 +12,41 @@ export async function listCommunityPostsVisibleToViewer(
       moderationStatus: { in: ["PENDING", "REJECTED"] },
     });
   }
+  return or;
+}
+
+/** Root posts only (threads). Optionally filter to one forum. */
+export async function listCommunityPostsVisibleToViewer(
+  communityId: string,
+  viewerMemberId: string | null,
+  opts?: { forumId?: string | null },
+) {
+  const forumFilter: Prisma.CommunityPostWhereInput =
+    opts?.forumId === undefined
+      ? {}
+      : opts.forumId === null
+        ? { communityForumId: null }
+        : { communityForumId: opts.forumId };
 
   return prisma.communityPost.findMany({
-    where: { communityId, OR: or },
-    orderBy: [{ pinned: "desc" }, { createdAt: "desc" }],
+    where: {
+      communityId,
+      parentPostId: null,
+      ...forumFilter,
+      OR: visibilityOrClause(viewerMemberId),
+    },
+    orderBy: [{ pinned: "desc" }, { lastActivityAt: "desc" }, { createdAt: "desc" }],
     take: 100,
     include: {
       author: { select: { id: true, displayName: true } },
+      communityForum: { select: { slug: true, name: true } },
+      _count: {
+        select: {
+          replies: {
+            where: { moderationStatus: "PUBLISHED" },
+          },
+        },
+      },
     },
   });
 }
@@ -44,6 +68,14 @@ export async function getCommunityPostForViewer(
     where: { id: postId, communityId },
     include: {
       author: { select: { id: true, displayName: true } },
+      communityForum: { select: { slug: true, name: true } },
+      _count: {
+        select: {
+          replies: {
+            where: { moderationStatus: "PUBLISHED" },
+          },
+        },
+      },
     },
   });
   if (!post) return null;
@@ -57,3 +89,27 @@ export async function getCommunityPostForViewer(
   if (!published && !ownNonPublic) return null;
   return post;
 }
+
+/** Flat replies under a root thread (same visibility rules as feed). */
+export async function listCommunityPostRepliesVisibleToViewer(
+  communityId: string,
+  rootPostId: string,
+  viewerMemberId: string | null,
+) {
+  return prisma.communityPost.findMany({
+    where: {
+      communityId,
+      parentPostId: rootPostId,
+      OR: visibilityOrClause(viewerMemberId),
+    },
+    orderBy: { createdAt: "asc" },
+    take: 200,
+    include: {
+      author: { select: { id: true, displayName: true } },
+    },
+  });
+}
+
+export type CommunityPostReplyForViewer = Awaited<
+  ReturnType<typeof listCommunityPostRepliesVisibleToViewer>
+>[number];

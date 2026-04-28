@@ -4,9 +4,18 @@ import { Prisma, type ResourceDocument } from "@prisma/client";
 
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 
-/** DB URL set but migrations not applied, or schema drift — treat as empty. */
-function isRecoverableSchemaError(err: unknown): boolean {
-  return err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2021";
+/**
+ * Treat missing table/schema drift or temporarily unreachable DB as "no documents"
+ * so static page generation can still complete.
+ */
+function isRecoverableResourceReadError(err: unknown): boolean {
+  if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2021") {
+    return true;
+  }
+  if (err instanceof Prisma.PrismaClientInitializationError) {
+    return true;
+  }
+  return false;
 }
 
 export async function getPublishedResourceDocuments(): Promise<ResourceDocument[]> {
@@ -17,7 +26,7 @@ export async function getPublishedResourceDocuments(): Promise<ResourceDocument[
       orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }],
     });
   } catch (e) {
-    if (isRecoverableSchemaError(e)) return [];
+    if (isRecoverableResourceReadError(e)) return [];
     throw e;
   }
 }
@@ -36,7 +45,7 @@ export async function getPublishedResourceDocumentBySlug(
       },
     });
   } catch (e) {
-    if (isRecoverableSchemaError(e)) return null;
+    if (isRecoverableResourceReadError(e)) return null;
     throw e;
   }
 }

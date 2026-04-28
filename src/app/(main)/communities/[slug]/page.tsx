@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { CommunityMemberPanel } from "@/components/communities/CommunityMemberPanel";
-import { ReportCommunityPostButton } from "@/components/communities/ReportCommunityPostButton";
+import { CommunityThreadCard } from "@/components/communities/CommunityThreadCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
@@ -15,6 +15,7 @@ import {
   canReadCommunityPosts,
   findMembership,
 } from "@/lib/server/communities-access";
+import { listCommunityForums } from "@/lib/server/community-forums-public";
 import { listCommunityPostsVisibleToViewer } from "@/lib/server/community-posts-public";
 import { isCommunitySlug } from "@/lib/validation/communities";
 
@@ -58,6 +59,9 @@ export default async function CommunityDetailPage({ params }: Props) {
   const posts = showPosts
     ? await listCommunityPostsVisibleToViewer(c.id, session?.memberId ?? null)
     : [];
+
+  const showForumsList = showFullAbout || showPosts;
+  const forums = showForumsList ? await listCommunityForums(c.id) : [];
 
   const memberAccountsEnabled = platformFeatures.authentication(getServerPlatformPhase());
 
@@ -110,58 +114,90 @@ export default async function CommunityDetailPage({ params }: Props) {
             )}
           </div>
 
+          {forums.length > 0 ? (
+            <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <h2 className="text-sm font-semibold text-[var(--foreground)]">Forums</h2>
+                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                    Discussion spaces — open a forum for threads and replies. Moderators can add new forums.
+                  </p>
+                </div>
+                <Link
+                  href={`/communities/${encodeURIComponent(c.slug)}/forums`}
+                  className={`${primaryNavLinkClass} text-xs font-semibold`}
+                >
+                  Manage and browse →
+                </Link>
+              </div>
+              <ul className="mt-4 space-y-3">
+                {forums.map((f) => (
+                  <li key={f.id} className="rounded-xl border border-[var(--border)] bg-[var(--section-light)]/30 px-3 py-2.5">
+                    <Link
+                      href={`/communities/${encodeURIComponent(c.slug)}/forums/${encodeURIComponent(f.slug)}`}
+                      className={`${primaryLinkClass} text-sm font-semibold`}
+                    >
+                      {f.name}
+                    </Link>
+                    {f.locked ? (
+                      <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-amber-900">
+                        Locked
+                      </span>
+                    ) : null}
+                    <p className="mt-1 text-[11px] text-[var(--muted-foreground)]">
+                      <span className="tabular-nums font-medium text-[var(--foreground)]">{f.publishedThreadCount}</span>{" "}
+                      published thread{f.publishedThreadCount === 1 ? "" : "s"}
+                      {f.lastActivityAt ? (
+                        <>
+                          {" "}
+                          · last activity{" "}
+                          <time dateTime={f.lastActivityAt.toISOString()}>
+                            {f.lastActivityAt.toLocaleDateString(undefined, { dateStyle: "medium" })}
+                          </time>
+                        </>
+                      ) : null}
+                    </p>
+                    {f.description ? (
+                      <p className="mt-1 text-xs text-[var(--muted-foreground)]">{f.description}</p>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
           <CommunityMemberPanel
             communitySlug={c.slug}
             joinPolicy={c.joinPolicy}
             visibility={c.visibility}
             restrictedDetail={!showFullAbout}
             memberAccountsEnabled={memberAccountsEnabled}
+            postForumSlug="general"
+            showThreadTitleField
           />
 
           <section className="mt-10">
-            <h2 className="text-sm font-semibold text-[var(--foreground)]">Posts</h2>
+            <h2 className="text-sm font-semibold text-[var(--foreground)]">Recent threads</h2>
+            <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+              Root posts across forums — pinned first, then by latest activity. Use a forum page for the full list in
+              one space; open a thread for replies.
+            </p>
             {!showPosts ? (
               <p className="mt-2 text-sm text-[var(--muted-foreground)]">
                 Posts are visible to active members only.
               </p>
             ) : posts.length === 0 ? (
-              <p className="mt-2 text-sm text-[var(--muted-foreground)]">No posts yet.</p>
+              <p className="mt-2 text-sm text-[var(--muted-foreground)]">No threads yet.</p>
             ) : (
               <ul className="mt-4 space-y-4">
                 {posts.map((p) => (
-                  <li key={p.id} className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm">
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--muted-foreground)]">
-                      <span className="font-medium uppercase tracking-wide text-[var(--foreground)]">{p.kind}</span>
-                      <span>·</span>
-                      <span>{p.author.displayName ?? "Member"}</span>
-                      <span>·</span>
-                      <time dateTime={p.createdAt.toISOString()}>
-                        {p.createdAt.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
-                      </time>
-                      {p.moderationStatus !== "PUBLISHED" ? (
-                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-amber-900">
-                          {p.moderationStatus.toLowerCase()}
-                        </span>
-                      ) : null}
-                      {p.pinned ? (
-                        <span className="rounded-full bg-[var(--section-light)] px-2 py-0.5 text-[10px] font-semibold uppercase">
-                          Pinned
-                        </span>
-                      ) : null}
-                    </div>
-                    <p className="mt-3 whitespace-pre-wrap text-sm text-[var(--foreground)]">{p.body}</p>
-                    <p className="mt-2 text-xs">
-                      <Link href={`/communities/${c.slug}/post/${p.id}`} className={primaryLinkClass}>
-                        Permalink
-                      </Link>
-                    </p>
-                    <ReportCommunityPostButton
-                      communitySlug={c.slug}
-                      postId={p.id}
-                      authorMemberId={p.author.id}
-                      viewerMemberId={session?.memberId ?? null}
-                    />
-                  </li>
+                  <CommunityThreadCard
+                    key={p.id}
+                    communitySlug={c.slug}
+                    post={p}
+                    viewerMemberId={session?.memberId ?? null}
+                    showForumBadge
+                  />
                 ))}
               </ul>
             )}

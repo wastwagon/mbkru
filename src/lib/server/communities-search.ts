@@ -85,6 +85,7 @@ export async function searchCommunitiesAndPosts(normalizedQuery: string): Promis
     WHERE c.status = 'ACTIVE'
       AND c.visibility = 'PUBLIC'
       AND p."moderationStatus" = 'PUBLISHED'
+      AND p."parentPostId" IS NULL
       AND to_tsvector('simple', coalesce(p.body, '')) @@ plainto_tsquery('simple', ${q})
     ORDER BY rank DESC, p."createdAt" DESC
     LIMIT ${LIMIT_POSTS}

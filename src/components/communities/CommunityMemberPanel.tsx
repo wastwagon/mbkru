@@ -24,6 +24,10 @@ type Props = {
   restrictedDetail?: boolean;
   /** Phase 2+ member accounts (still needs MEMBER_SESSION_SECRET at runtime). */
   memberAccountsEnabled: boolean;
+  /** Target forum for new root threads (omit to let the API default to `general`). */
+  postForumSlug?: string;
+  /** Optional thread title for new root posts (forums / structured discussion). */
+  showThreadTitleField?: boolean;
 };
 
 export function CommunityMemberPanel({
@@ -32,6 +36,8 @@ export function CommunityMemberPanel({
   visibility = "PUBLIC",
   restrictedDetail = false,
   memberAccountsEnabled,
+  postForumSlug,
+  showThreadTitleField = false,
 }: Props) {
   const router = useRouter();
   const [membership, setMembership] = useState<MembershipRow | null | undefined>(undefined);
@@ -41,6 +47,7 @@ export function CommunityMemberPanel({
   const [message, setMessage] = useState<string | null>(null);
   const [postKind, setPostKind] = useState<"GENERAL" | "CONCERN" | "ANNOUNCEMENT">("GENERAL");
   const [postBody, setPostBody] = useState("");
+  const [threadTitle, setThreadTitle] = useState("");
   const [verification, setVerification] = useState<VerificationRow | null>(null);
   const [verificationBusy, setVerificationBusy] = useState(false);
   const [verificationMessage, setVerificationMessage] = useState<string | null>(null);
@@ -147,11 +154,15 @@ export function CommunityMemberPanel({
     setBusy(true);
     setMessage(null);
     try {
+      const payload: Record<string, unknown> = { kind: postKind, body: postBody };
+      if (postForumSlug) payload.forumSlug = postForumSlug;
+      if (showThreadTitleField && threadTitle.trim()) payload.title = threadTitle.trim();
+
       const res = await fetch(`${base}/posts`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ kind: postKind, body: postBody }),
+        body: JSON.stringify(payload),
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) {
@@ -159,6 +170,7 @@ export function CommunityMemberPanel({
         return;
       }
       setPostBody("");
+      setThreadTitle("");
       setPostKind("GENERAL");
       router.refresh();
     } finally {
@@ -298,7 +310,32 @@ export function CommunityMemberPanel({
           </Button>
 
           <form onSubmit={(e) => void onPost(e)} className="mt-6 border-t border-[var(--border)] pt-6">
-            <h3 className="text-sm font-semibold text-[var(--foreground)]">New post</h3>
+            <h3 className="text-sm font-semibold text-[var(--foreground)]">New thread</h3>
+            {postForumSlug ? (
+              <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                Posting in forum <span className="font-mono font-medium text-[var(--foreground)]">{postForumSlug}</span>
+                .
+              </p>
+            ) : (
+              <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                Threads go to the <strong>general</strong> forum unless you open another forum from the community page.
+              </p>
+            )}
+            {showThreadTitleField ? (
+              <>
+                <label htmlFor="thread-title" className="mt-3 block text-xs font-medium text-[var(--foreground)]">
+                  Thread title (optional)
+                </label>
+                <input
+                  id="thread-title"
+                  value={threadTitle}
+                  onChange={(e) => setThreadTitle(e.target.value)}
+                  maxLength={200}
+                  className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                  placeholder="Short headline for this thread"
+                />
+              </>
+            ) : null}
             <label htmlFor="post-kind" className="mt-3 block text-xs font-medium text-[var(--foreground)]">
               Kind
             </label>

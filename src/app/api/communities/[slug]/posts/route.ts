@@ -10,35 +10,18 @@ import {
   findActiveCommunityBySlug,
   findMembership,
 } from "@/lib/server/communities-access";
+import { findCommunityForumBySlug } from "@/lib/server/community-forums-public";
 import { listCommunityPostsVisibleToViewer } from "@/lib/server/community-posts-public";
+import {
+  bumpThreadRootAfterReplyPublished,
+  notifyThreadAuthorOfPublishedReply,
+} from "@/lib/server/community-thread-reply-notify";
 import { defaultCommunityPostPremoderation } from "@/lib/server/community-premoderate";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
+import { toCommunityPostListApiJson } from "@/lib/community-post-api-json";
 import { communityPostCreateSchema, isCommunitySlug } from "@/lib/validation/communities";
 
 type Props = { params: Promise<{ slug: string }> };
-
-function mapPostRow(p: {
-  id: string;
-  kind: CommunityPostKind;
-  body: string;
-  moderationStatus: string;
-  pinned: boolean;
-  createdAt: Date;
-  author: { id: string; displayName: string | null };
-}) {
-  return {
-    id: p.id,
-    kind: p.kind,
-    body: p.body,
-    moderationStatus: p.moderationStatus,
-    pinned: p.pinned,
-    createdAt: p.createdAt.toISOString(),
-    author: {
-      id: p.author.id,
-      displayName: p.author.displayName,
-    },
-  };
-}
 
 function canPostAnnouncement(role: CommunityMembershipRole): boolean {
   return role === "MODERATOR" || role === "QUEEN_MOTHER_VERIFIED";
@@ -86,10 +69,21 @@ export async function GET(request: Request, { params }: Props) {
     return NextResponse.json({ error: "Members only" }, { status: 403 });
   }
 
-  const rows = await listCommunityPostsVisibleToViewer(community.id, viewerId);
+  const url = new URL(request.url);
+  const forumSlug = url.searchParams.get("forumSlug")?.trim().toLowerCase() ?? "";
+  let forumId: string | null | undefined;
+  if (forumSlug) {
+    const forum = await findCommunityForumBySlug(community.id, forumSlug);
+    if (!forum) {
+      return NextResponse.json({ error: "Forum not found" }, { status: 404 });
+    }
+    forumId = forum.id;
+  }
+
+  const rows = await listCommunityPostsVisibleToViewer(community.id, viewerId, { forumId });
 
   return NextResponse.json({
-    posts: rows.map(mapPostRow),
+    posts: rows.map(toCommunityPostListApiJson),
   });
 }
 
@@ -147,7 +141,53 @@ export async function POST(request: Request, { params }: Props) {
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
 
-  const { kind, body } = parsed.data;
+  const { kind, body, forumSlug: bodyForumSlug, parentPostId, title } = parsed.data;
+
+  let communityForumId: string | null = null;
+  let resolvedParentId: string | null = null;
+
+  if (parentPostId) {
+    const parent = await prisma.communityPost.findFirst({
+      where: { id: parentPostId, communityId: community.id },
+      select: {
+        id: true,
+        parentPostId: true,
+        communityForumId: true,
+        moderationStatus: true,
+      },
+    });
+    if (!parent || parent.parentPostId !== null) {
+      return NextResponse.json({ error: "Invalid thread" }, { status: 400 });
+    }
+    if (parent.moderationStatus !== "PUBLISHED") {
+      return NextResponse.json({ error: "Thread is not available" }, { status: 403 });
+    }
+    if (!parent.communityForumId) {
+      return NextResponse.json({ error: "Thread has no forum context" }, { status: 400 });
+    }
+    const forum = await prisma.communityForum.findFirst({
+      where: { id: parent.communityForumId, communityId: community.id },
+      select: { locked: true },
+    });
+    if (!forum) {
+      return NextResponse.json({ error: "Forum missing" }, { status: 400 });
+    }
+    if (forum.locked && !canPostAnnouncement(membership.role)) {
+      return NextResponse.json({ error: "Forum is locked" }, { status: 403 });
+    }
+    communityForumId = parent.communityForumId;
+    resolvedParentId = parent.id;
+  } else {
+    const slugToUse = bodyForumSlug ?? "general";
+    const forum = await findCommunityForumBySlug(community.id, slugToUse);
+    if (!forum) {
+      return NextResponse.json({ error: "Forum not found" }, { status: 404 });
+    }
+    if (forum.locked && !canPostAnnouncement(membership.role)) {
+      return NextResponse.json({ error: "Forum is locked" }, { status: 403 });
+    }
+    communityForumId = forum.id;
+  }
 
   if (kind === "ANNOUNCEMENT" && !canPostAnnouncement(membership.role)) {
     return NextResponse.json({ error: "Announcements are restricted" }, { status: 403 });
@@ -158,15 +198,30 @@ export async function POST(request: Request, { params }: Props) {
   const created = await prisma.communityPost.create({
     data: {
       communityId: community.id,
+      communityForumId,
+      parentPostId: resolvedParentId,
       authorMemberId: session.memberId,
       kind,
+      title: parentPostId ? null : title ?? null,
       body,
       moderationStatus,
     },
     include: {
       author: { select: { id: true, displayName: true } },
+      communityForum: { select: { slug: true, name: true } },
     },
   });
 
-  return NextResponse.json({ post: mapPostRow(created) }, { status: 201 });
+  if (moderationStatus === "PUBLISHED" && resolvedParentId) {
+    await bumpThreadRootAfterReplyPublished(resolvedParentId);
+    await notifyThreadAuthorOfPublishedReply({
+      replyPostId: created.id,
+      replyAuthorMemberId: session.memberId,
+      communitySlug: community.slug,
+      communityName: community.name,
+      parentPostId: resolvedParentId,
+    });
+  }
+
+  return NextResponse.json({ post: toCommunityPostListApiJson(created) }, { status: 201 });
 }

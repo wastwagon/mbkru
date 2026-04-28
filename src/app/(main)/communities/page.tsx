@@ -13,7 +13,8 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Communities",
-  description: "Public community spaces linked to traditional areas and Queen Mother networks — join policy and membership vary by community.",
+  description:
+    "Community spaces with forums, threaded discussion, and moderated posts — traditional areas and Queen Mother networks; join policy varies.",
 };
 
 type Props = { searchParams?: Promise<{ q?: string }> };
@@ -49,7 +50,7 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
     <div>
       <PageHeader
         title="Communities"
-        description="Spaces for traditional areas, Queen Mother networks, and local accountability. Some listings are members-only — sign in to see full details and posts where applicable."
+        description="Spaces for traditional areas, Queen Mother networks, and local accountability. Each community can host forums (discussion areas), threaded posts, and replies — sign in to join members-only spaces and participate."
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
@@ -114,35 +115,42 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
                   <ul className="mt-3 space-y-4">
                     {searchResult.communities.map((c) => (
                       <li key={c.slug}>
-                        <Link
-                          href={`/communities/${c.slug}`}
-                          className="block rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition hover:border-[var(--primary)]/30"
-                        >
-                          <span className="font-semibold text-[var(--foreground)]">{c.name}</span>
-                          {c.visibility === "MEMBERS_ONLY" ? (
-                            <span className="ml-2 rounded-full bg-[var(--section-light)] px-2 py-0.5 text-[10px] font-semibold uppercase text-[var(--foreground)]">
-                              Members only
-                            </span>
-                          ) : null}
-                          {c.traditionalAreaName ? (
-                            <p className="mt-1 text-sm text-[var(--muted-foreground)]">{c.traditionalAreaName}</p>
-                          ) : null}
-                          {c.region ? (
-                            <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">{c.region.name}</p>
-                          ) : null}
-                          {c.visibility === "MEMBERS_ONLY" ? (
-                            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-                              Members-only community — sign in on the community page to read details and posts.
+                        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition hover:border-[var(--primary)]/30">
+                          <Link href={`/communities/${c.slug}`} className="block">
+                            <span className="font-semibold text-[var(--foreground)]">{c.name}</span>
+                            {c.visibility === "MEMBERS_ONLY" ? (
+                              <span className="ml-2 rounded-full bg-[var(--section-light)] px-2 py-0.5 text-[10px] font-semibold uppercase text-[var(--foreground)]">
+                                Members only
+                              </span>
+                            ) : null}
+                            {c.traditionalAreaName ? (
+                              <p className="mt-1 text-sm text-[var(--muted-foreground)]">{c.traditionalAreaName}</p>
+                            ) : null}
+                            {c.region ? (
+                              <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">{c.region.name}</p>
+                            ) : null}
+                            {c.visibility === "MEMBERS_ONLY" ? (
+                              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+                                Members-only community — sign in on the community page to read details and posts.
+                              </p>
+                            ) : (
+                              <p className="mt-2 line-clamp-3 text-sm text-[var(--muted-foreground)]">
+                                {c.description}
+                              </p>
+                            )}
+                            <p className="mt-3 text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+                              Join: {c.joinPolicy === "OPEN" ? "Open" : "Approval required"}
                             </p>
-                          ) : (
-                            <p className="mt-2 line-clamp-3 text-sm text-[var(--muted-foreground)]">
-                              {c.description}
-                            </p>
-                          )}
-                          <p className="mt-3 text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-                            Join: {c.joinPolicy === "OPEN" ? "Open" : "Approval required"}
+                          </Link>
+                          <p className="mt-3 flex flex-wrap gap-x-3 gap-y-1 border-t border-[var(--border)] pt-3 text-xs font-medium">
+                            <Link href={`/communities/${c.slug}`} className={primaryNavLinkClass}>
+                              Overview
+                            </Link>
+                            <Link href={`/communities/${c.slug}/forums`} className={primaryNavLinkClass}>
+                              Forums &amp; threads
+                            </Link>
                           </p>
-                        </Link>
+                        </div>
                       </li>
                     ))}
                   </ul>
@@ -185,33 +193,40 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
               <ul className={`space-y-4 ${invalidShort ? "mt-3" : "mt-10"}`}>
                 {communities.map((c) => (
                   <li key={c.slug}>
-                    <Link
-                      href={`/communities/${c.slug}`}
-                      className="block rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition hover:border-[var(--primary)]/30"
-                    >
-                      <span className="font-semibold text-[var(--foreground)]">{c.name}</span>
-                      {c.visibility === "MEMBERS_ONLY" ? (
-                        <span className="ml-2 rounded-full bg-[var(--section-light)] px-2 py-0.5 text-[10px] font-semibold uppercase text-[var(--foreground)]">
-                          Members only
-                        </span>
-                      ) : null}
-                      {c.traditionalAreaName ? (
-                        <p className="mt-1 text-sm text-[var(--muted-foreground)]">{c.traditionalAreaName}</p>
-                      ) : null}
-                      {c.region ? (
-                        <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">{c.region.name}</p>
-                      ) : null}
-                      {c.visibility === "MEMBERS_ONLY" ? (
-                        <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-                          Members-only community — sign in on the community page to read details and posts.
+                    <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition hover:border-[var(--primary)]/30">
+                      <Link href={`/communities/${c.slug}`} className="block">
+                        <span className="font-semibold text-[var(--foreground)]">{c.name}</span>
+                        {c.visibility === "MEMBERS_ONLY" ? (
+                          <span className="ml-2 rounded-full bg-[var(--section-light)] px-2 py-0.5 text-[10px] font-semibold uppercase text-[var(--foreground)]">
+                            Members only
+                          </span>
+                        ) : null}
+                        {c.traditionalAreaName ? (
+                          <p className="mt-1 text-sm text-[var(--muted-foreground)]">{c.traditionalAreaName}</p>
+                        ) : null}
+                        {c.region ? (
+                          <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">{c.region.name}</p>
+                        ) : null}
+                        {c.visibility === "MEMBERS_ONLY" ? (
+                          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+                            Members-only community — sign in on the community page to read details and posts.
+                          </p>
+                        ) : (
+                          <p className="mt-2 line-clamp-3 text-sm text-[var(--muted-foreground)]">{c.description}</p>
+                        )}
+                        <p className="mt-3 text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+                          Join: {c.joinPolicy === "OPEN" ? "Open" : "Approval required"}
                         </p>
-                      ) : (
-                        <p className="mt-2 line-clamp-3 text-sm text-[var(--muted-foreground)]">{c.description}</p>
-                      )}
-                      <p className="mt-3 text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-                        Join: {c.joinPolicy === "OPEN" ? "Open" : "Approval required"}
+                      </Link>
+                      <p className="mt-3 flex flex-wrap gap-x-3 gap-y-1 border-t border-[var(--border)] pt-3 text-xs font-medium">
+                        <Link href={`/communities/${c.slug}`} className={primaryNavLinkClass}>
+                          Overview
+                        </Link>
+                        <Link href={`/communities/${c.slug}/forums`} className={primaryNavLinkClass}>
+                          Forums &amp; threads
+                        </Link>
                       </p>
-                    </Link>
+                    </div>
                   </li>
                 ))}
               </ul>

@@ -22,6 +22,7 @@ export async function notifyCommunityModeratorsOfPostReport(args: {
 
   const payload = {
     postId: args.postId,
+    communityId: args.communityId,
     communitySlug: args.communitySlug,
     communityName: args.communityName,
     reason: args.reason,

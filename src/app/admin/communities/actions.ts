@@ -5,6 +5,10 @@ import { z } from "zod";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import {
+  bumpThreadRootAfterReplyPublished,
+  notifyThreadAuthorOfPublishedReply,
+} from "@/lib/server/community-thread-reply-notify";
 import { createMemberNotification } from "@/lib/server/member-notifications";
 import { isCommunitySlug } from "@/lib/validation/communities";
 
@@ -144,7 +148,8 @@ export async function publishCommunityPostAction(formData: FormData): Promise<vo
     select: {
       id: true,
       authorMemberId: true,
-      community: { select: { slug: true } },
+      parentPostId: true,
+      community: { select: { slug: true, name: true } },
     },
   });
   if (!post) return;
@@ -163,10 +168,24 @@ export async function publishCommunityPostAction(formData: FormData): Promise<vo
     communitySlug: post.community.slug,
   });
 
+  if (post.parentPostId) {
+    await bumpThreadRootAfterReplyPublished(post.parentPostId);
+  }
+  await notifyThreadAuthorOfPublishedReply({
+    replyPostId: post.id,
+    replyAuthorMemberId: post.authorMemberId,
+    communitySlug: post.community.slug,
+    communityName: post.community.name,
+    parentPostId: post.parentPostId,
+  });
+
   revalidatePath(`/admin/communities/${p.data.communityId}`);
   revalidatePath("/admin/communities/moderation");
   revalidatePath(`/communities/${post.community.slug}`);
   revalidatePath(`/communities/${post.community.slug}/post/${post.id}`);
+  if (post.parentPostId) {
+    revalidatePath(`/communities/${post.community.slug}/post/${post.parentPostId}`);
+  }
 }
 
 export async function rejectCommunityPostAction(formData: FormData): Promise<void> {

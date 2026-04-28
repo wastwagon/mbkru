@@ -12,6 +12,14 @@ vi.mock("@/lib/server/member-notifications", () => ({
   createMemberNotification,
 }));
 
+const notifyThreadAuthorOfPublishedReply = vi.hoisted(() => vi.fn());
+const bumpThreadRootAfterReplyPublished = vi.hoisted(() => vi.fn());
+
+vi.mock("@/lib/server/community-thread-reply-notify", () => ({
+  notifyThreadAuthorOfPublishedReply,
+  bumpThreadRootAfterReplyPublished,
+}));
+
 const requireAdminSession = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/admin/require-session", () => ({
@@ -68,7 +76,8 @@ describe("admin communities actions", () => {
       prisma.communityPost.findFirst.mockResolvedValue({
         id: POST,
         authorMemberId: MEM,
-        community: { slug: "east-area" },
+        parentPostId: null,
+        community: { slug: "east-area", name: "East Area" },
       });
       prisma.communityPost.update.mockResolvedValue({});
 
@@ -90,6 +99,36 @@ describe("admin communities actions", () => {
       expect(revalidatePath).toHaveBeenCalledWith("/admin/communities/moderation");
       expect(revalidatePath).toHaveBeenCalledWith("/communities/east-area");
       expect(revalidatePath).toHaveBeenCalledWith(`/communities/east-area/post/${POST}`);
+      expect(notifyThreadAuthorOfPublishedReply).toHaveBeenCalledWith({
+        replyPostId: POST,
+        replyAuthorMemberId: MEM,
+        communitySlug: "east-area",
+        communityName: "East Area",
+        parentPostId: null,
+      });
+      expect(bumpThreadRootAfterReplyPublished).not.toHaveBeenCalled();
+    });
+
+    it("publishes pending reply and bumps root thread activity", async () => {
+      const ROOT = "cjld2cjxh0000qzrmn831i7re";
+      prisma.communityPost.findFirst.mockResolvedValue({
+        id: POST,
+        authorMemberId: MEM,
+        parentPostId: ROOT,
+        community: { slug: "east-area", name: "East Area" },
+      });
+      prisma.communityPost.update.mockResolvedValue({});
+
+      await publishCommunityPostAction(fd({ postId: POST, communityId: COMM }));
+
+      expect(bumpThreadRootAfterReplyPublished).toHaveBeenCalledWith(ROOT);
+      expect(notifyThreadAuthorOfPublishedReply).toHaveBeenCalledWith({
+        replyPostId: POST,
+        replyAuthorMemberId: MEM,
+        communitySlug: "east-area",
+        communityName: "East Area",
+        parentPostId: ROOT,
+      });
     });
 
     it("no-ops when post is missing", async () => {
@@ -99,6 +138,8 @@ describe("admin communities actions", () => {
 
       expect(prisma.communityPost.update).not.toHaveBeenCalled();
       expect(createMemberNotification).not.toHaveBeenCalled();
+      expect(notifyThreadAuthorOfPublishedReply).not.toHaveBeenCalled();
+      expect(bumpThreadRootAfterReplyPublished).not.toHaveBeenCalled();
     });
   });
 

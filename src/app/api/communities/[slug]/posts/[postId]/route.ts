@@ -9,12 +9,37 @@ import {
   findActiveCommunityBySlug,
   findMembership,
 } from "@/lib/server/communities-access";
-import { getCommunityPostForViewer } from "@/lib/server/community-posts-public";
+import {
+  getCommunityPostForViewer,
+  listCommunityPostRepliesVisibleToViewer,
+} from "@/lib/server/community-posts-public";
+import { toCommunityPostDetailApiJson } from "@/lib/community-post-api-json";
 import { isCommunitySlug } from "@/lib/validation/communities";
 
 type Props = { params: Promise<{ slug: string; postId: string }> };
 
-/** Single post for community readers (same visibility rules as feed/permalink). */
+function mapReplyRow(r: {
+  id: string;
+  kind: string;
+  body: string;
+  moderationStatus: string;
+  createdAt: Date;
+  author: { id: string; displayName: string | null };
+}) {
+  return {
+    id: r.id,
+    kind: r.kind,
+    body: r.body,
+    moderationStatus: r.moderationStatus,
+    createdAt: r.createdAt.toISOString(),
+    author: {
+      id: r.author.id,
+      displayName: r.author.displayName,
+    },
+  };
+}
+
+/** Single post + replies for community readers (same visibility rules as feed/permalink). */
 export async function GET(request: Request, { params }: Props) {
   if (!platformFeatures.communities(getServerPlatformPhase())) {
     return NextResponse.json({ error: "Not available" }, { status: 404 });
@@ -49,22 +74,13 @@ export async function GET(request: Request, { params }: Props) {
     return NextResponse.json({ error: "Post not found" }, { status: 404 });
   }
 
+  const replies =
+    post.parentPostId === null
+      ? await listCommunityPostRepliesVisibleToViewer(community.id, post.id, viewerId)
+      : [];
+
   return NextResponse.json({
-    post: {
-      id: post.id,
-      kind: post.kind,
-      body: post.body,
-      moderationStatus: post.moderationStatus,
-      pinned: post.pinned,
-      createdAt: post.createdAt.toISOString(),
-      author: {
-        id: post.author.id,
-        displayName: post.author.displayName,
-      },
-      community: {
-        slug: community.slug,
-        name: community.name,
-      },
-    },
+    post: toCommunityPostDetailApiJson(post, { slug: community.slug, name: community.name }),
+    replies: replies.map(mapReplyRow),
   });
 }

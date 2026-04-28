@@ -10,6 +10,7 @@ describe("notification-labels", () => {
   it("summarizes known types", () => {
     expect(memberNotificationSummary("community_join_approved", { communityName: "East" })).toContain("East");
     expect(memberNotificationSummary("community_post_published", {})).toContain("published");
+    expect(memberNotificationSummary("community_thread_reply", { communityName: "East" })).toContain("replied");
     expect(memberNotificationSummary("community_verification_approved", { communityName: "East" })).toContain(
       "approved",
     );
@@ -31,6 +32,40 @@ describe("notification-labels", () => {
   it("builds community href from payload", () => {
     expect(memberNotificationHref("x", { communitySlug: "demo-area" })).toBe("/communities/demo-area");
     expect(memberNotificationHref("x", {})).toBeNull();
+  });
+
+  it("links thread reply notifications to the root post", () => {
+    expect(
+      memberNotificationHref("community_thread_reply", {
+        communitySlug: "demo-area",
+        threadPostId: "tid1",
+      }),
+    ).toBe("/communities/demo-area/post/tid1");
+    expect(memberNotificationLinkLabel("community_thread_reply")).toBe("View thread");
+  });
+
+  it("links published and rejected post notifications to the permalink", () => {
+    expect(
+      memberNotificationHref("community_post_published", {
+        communitySlug: "demo-area",
+        postId: "pid1",
+      }),
+    ).toBe("/communities/demo-area/post/pid1");
+    expect(
+      memberNotificationHref("community_post_rejected", { communitySlug: "x", postId: "p2" }),
+    ).toBe("/communities/x/post/p2");
+    expect(memberNotificationLinkLabel("community_post_published")).toBe("View post");
+    expect(memberNotificationLinkLabel("community_post_reported")).toBe("View post");
+  });
+
+  it("links reported post notifications for moderators to the post", () => {
+    expect(
+      memberNotificationHref("community_post_reported", {
+        communitySlug: "demo-area",
+        postId: "pid9",
+        communityId: "cid1",
+      }),
+    ).toBe("/communities/demo-area/post/pid9");
   });
 
   it("links identity notifications to account", () => {

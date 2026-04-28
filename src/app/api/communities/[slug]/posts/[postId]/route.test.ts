@@ -29,6 +29,7 @@ vi.mock("@/lib/server/communities-access", () => ({
 
 vi.mock("@/lib/server/community-posts-public", () => ({
   getCommunityPostForViewer: vi.fn(),
+  listCommunityPostRepliesVisibleToViewer: vi.fn(),
 }));
 
 vi.mock("@/lib/validation/communities", () => ({
@@ -44,7 +45,10 @@ import {
   findActiveCommunityBySlug,
   findMembership,
 } from "@/lib/server/communities-access";
-import { getCommunityPostForViewer } from "@/lib/server/community-posts-public";
+import {
+  getCommunityPostForViewer,
+  listCommunityPostRepliesVisibleToViewer,
+} from "@/lib/server/community-posts-public";
 import { isCommunitySlug } from "@/lib/validation/communities";
 
 const params = { params: Promise.resolve({ slug: "east-area", postId: "post1" }) };
@@ -68,11 +72,16 @@ describe("GET /api/communities/[slug]/posts/[postId]", () => {
       regionId: null,
     });
     vi.mocked(canReadCommunityPosts).mockReturnValue(true);
+    vi.mocked(listCommunityPostRepliesVisibleToViewer).mockResolvedValue([]);
     vi.mocked(getCommunityPostForViewer).mockResolvedValue({
       id: "post1",
       communityId: "c1",
+      communityForumId: "f1",
+      communityForum: { slug: "general", name: "General discussion" },
+      parentPostId: null,
       authorMemberId: "m1",
       kind: "GENERAL",
+      title: null,
       body: "Hello community",
       moderationStatus: "PUBLISHED",
       pinned: false,
@@ -80,8 +89,10 @@ describe("GET /api/communities/[slug]/posts/[postId]", () => {
       moderatedByAdminId: null,
       rejectionReason: null,
       createdAt: new Date("2026-04-08T10:00:00.000Z"),
+      lastActivityAt: new Date("2026-04-08T10:00:00.000Z"),
       updatedAt: new Date("2026-04-08T10:00:00.000Z"),
       author: { id: "m1", displayName: "Ama" },
+      _count: { replies: 0 },
     } as Awaited<ReturnType<typeof getCommunityPostForViewer>>);
   });
 
@@ -117,5 +128,6 @@ describe("GET /api/communities/[slug]/posts/[postId]", () => {
     expect(json.post.community.slug).toBe("east-area");
     expect(json.post.author.displayName).toBe("Ama");
     expect(json.post.createdAt).toContain("2026-04-08");
+    expect(Array.isArray(json.replies)).toBe(true);
   });
 });
