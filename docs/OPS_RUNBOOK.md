@@ -11,7 +11,10 @@ Short checklist for production Docker / Coolify hosts. Complements `README.md` a
 Use before major traffic (e.g. election window) or after infra changes:
 
 - [ ] **Automated gates:** `npm run verify:release-gates` (Prisma validate, TypeScript, Vitest) — same sequence as CI after lint.
-- [ ] **Backups:** restore a `pg_dump` (or volume snapshot) to a scratch instance — confirm app boots and admin login works.
+- [ ] **E2E smoke:** `npm run test:e2e:smoke` against the deploy target (or local build) for critical public/auth route checks.
+- [ ] **Notification outbox:** run `npm run ops:notifications:process` (or scheduled cron) and confirm `/admin/notifications` has no stuck failures.
+- [ ] **Operational audit:** review `/admin/operational-audit` for retry/reset actions during incidents and postmortems.
+- [ ] **Backups:** create + restore verification using `npm run ops:backup` and `npm run ops:restore-verify` (or equivalent), then confirm app boots and admin login works against scratch.
 - [ ] **`SKIP_DB_SEED=1`** on production after first stable deploy (see below).
 - [ ] **`GET /api/health`:** HTTP **200** (or **503** only if Postgres intentionally down in a test); JSON **`dependencies`** and **`accountability`** flags match the phase you intend.
 - [ ] **`NEXT_PUBLIC_*`:** any change (phase, site URL, Turnstile, analytics) required a **full image rebuild** — confirm current image matches env in your registry.
@@ -34,7 +37,7 @@ Use before major traffic (e.g. election window) or after infra changes:
 
 - Rotate **`ADMIN_SESSION_SECRET`**, **`MEMBER_SESSION_SECRET`**, DB passwords, Resend/Turnstile keys on compromise or per org policy (e.g. annually).
 - Run **`npm audit`** periodically; plan **Prisma major** upgrades separately — [`PRISMA7_NOTES.md`](./PRISMA7_NOTES.md).
-- Review **upload volume** size and backup retention for **`public/uploads/reports/`** and **`public/uploads/resources/`** (public Resource library PDFs).
+- Review **upload volume** size and backup retention for **`PRIVATE_UPLOADS_DIR`** (sensitive evidence/docs) and **`public/uploads/resources/`** (public Resource library PDFs).
 
 ---
 
@@ -49,14 +52,26 @@ Use before major traffic (e.g. election window) or after infra changes:
 
 Restore only with a tested procedure; never overwrite production without a rollback plan.
 
+### Optional scripted backup + restore verification
+
+```bash
+# writes backups/mbkru-<timestamp>.sql.gz
+DATABASE_URL=postgresql://... npm run ops:backup
+
+# verifies one backup against a scratch DB
+BACKUP_FILE=backups/mbkru-2026-...sql.gz SCRATCH_DATABASE_URL=postgresql://... npm run ops:restore-verify
+```
+
+Requires host tools `pg_dump`, `psql`, and `gzip`.
+
 ## Migrations vs seed
 
-- **Migrations** run on every container start via `prisma migrate deploy` (see `docker-entrypoint.sh`).
-- **Seed** runs after a successful migrate **unless** `SKIP_DB_SEED=1`.
+- **Migrations** run on every container start via `prisma migrate deploy` (see `docker-entrypoint.sh`), and startup fails by default if migrations fail.
+- **Seed** is skipped by default in production; set `RUN_DB_SEED_ON_BOOT=1` when intentionally needed.
 
 ### After the first stable deploy
 
-Set **`SKIP_DB_SEED=1`** in Coolify / Compose so container restarts do not re-run seed. Seed is idempotent for regions, admin password, and starter posts, but skipping avoids unnecessary work and surprises if you edit seeded data in the admin.
+Keep `RUN_DB_SEED_ON_BOOT` unset in production so container restarts do not re-run seed. Seed is idempotent for regions, admin password, and starter posts, but skipping avoids unnecessary work and surprises if you edit seeded data in the admin.
 
 You can still run seed manually when needed:
 
@@ -75,6 +90,20 @@ docker compose exec mbkru-web node /app/node_modules/prisma/build/index.js db se
 - Use **`GET /api/health`** for load balancers (returns **503** if Postgres is configured but unreachable). JSON includes **`phase`**, **`dependencies`**, and **`accountability`**: **`parliamentJson`** / **`reportCardJson`** mirror which partner **`GET`** routes this build can serve (`/api/mps`, `/api/promises` vs `/api/report-card/[year]`). Data responses still require Postgres **`ok`**.
 - If migrate fails on start, the app still boots; use **Admin → Settings → Database** to retry migrations or seed.
 
+## Scheduled jobs (cron)
+
+- **Petition pending cleanup:** `POST /api/cron/cleanup-petition-pending`
+- **Notification outbox processing:** `POST /api/cron/notifications-outbox`
+- Both require `CRON_SECRET` and either:
+  - `Authorization: Bearer <CRON_SECRET>` or
+  - `x-cron-secret: <CRON_SECRET>`
+
+Example (every 2 minutes on host cron):
+
+```bash
+*/2 * * * * curl -fsS -X POST -H "Authorization: Bearer $CRON_SECRET" "https://your-domain/api/cron/notifications-outbox?limit=50"
+```
+
 ## Content
 
 - Starter **news posts** are upserted by seed (same slugs as `starterNewsArticles` in `src/lib/site-content.ts`). Edit or unpublish from **`/admin/posts`** as needed.
@@ -84,10 +113,10 @@ docker compose exec mbkru-web node /app/node_modules/prisma/build/index.js db se
 
 ## Report evidence uploads (MBKRU Voice)
 
-- Files are stored on disk under **`public/uploads/reports/{reportId}/`** (same volume as other media in Docker: **`mbkru_uploads`**).
+- Files are stored in private storage under **`PRIVATE_UPLOADS_DIR/reports/{reportId}/...`** (default root: `var/private-uploads`).
 - **Signed-in members** can upload attachments for their own report via the **member session cookie** (no extra secret).
 - **Anonymous** reporters need **`REPORT_ATTACHMENT_HMAC_SECRET`** (≥32 characters, server-only). The app returns a short-lived **`attachmentUploadToken`** after **`POST /api/reports`**; without this secret, anonymous users cannot upload (the report is still accepted).
-- **Antivirus:** there is **no** in-app scanning. For production at scale, scan the uploads volume on a schedule, use a reverse proxy / WAF with upload inspection, or move to object storage with malware scanning — see comments in `src/lib/server/report-attachment-limits.ts`.
+- **Antivirus:** optional in-app scanning is available with ClamAV (`MALWARE_SCAN_MODE=clamd`). By default scan failures are fail-closed; set `MALWARE_SCAN_FAIL_OPEN=1` only if your risk policy allows degraded operation.
 
 ## Election window & legal positioning
 

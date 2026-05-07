@@ -4,12 +4,15 @@ import type { CitizenReportKind } from "@prisma/client";
 
 import { isCitizenReportSlaOverdue } from "@/lib/admin/report-operations-datetime";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminListPanel } from "@/components/admin/AdminListPanel";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 
 const KIND_TABS: { param: string; label: string; description: string }[] = [
   { param: "", label: "All", description: "Every report kind" },
-  { param: "VOICE", label: "Voice", description: "MBKRU Voice" },
+  { param: "VOICE", label: "Voice", description: "Citizen Voice reports" },
   { param: "SITUATIONAL_ALERT", label: "Situational", description: "Situational alerts" },
   { param: "ELECTION_OBSERVATION", label: "Election", description: "Election observation" },
 ];
@@ -46,18 +49,27 @@ export default async function AdminReportsPage({ searchParams }: Props) {
   });
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">Citizen reports</h1>
-      <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-        Triage by kind or open a row for status, staff notes, and audit. Status and team-note emails use Resend when
-        configured.
-      </p>
-      <p className="mt-3 text-sm">
-        <Link href="/admin/analytics/citizen-reports" className={primaryLinkClass}>
-          Aggregate analytics
-        </Link>
-        <span className="text-[var(--muted-foreground)]"> — counts by kind, status, region, playbook; no personal data.</span>
-      </p>
+    <AdminPageContainer>
+      <AdminPageHeader
+        title="Citizen reports"
+        description={
+          <>
+            <p>Triage by kind below. Open a report for status, operations fields, staff notes, and history.</p>
+            <p className="mt-2">
+              Outbound email for status changes and submitter-visible notes uses Resend when it is configured.
+            </p>
+            <p className="mt-2 text-sm">
+              <Link href="/admin/analytics/citizen-reports" className={primaryLinkClass}>
+                Aggregate analytics
+              </Link>
+              <span className="text-[var(--muted-foreground)]">
+                {" "}
+                — counts by kind, status, region, playbook; no personal data.
+              </span>
+            </p>
+          </>
+        }
+      />
 
       <div className="mt-6 flex flex-wrap gap-2" role="tablist" aria-label="Filter by report kind">
         {KIND_TABS.map((t) => {
@@ -82,7 +94,7 @@ export default async function AdminReportsPage({ searchParams }: Props) {
         })}
       </div>
 
-      <ul className="mt-6 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-white">
+      <AdminListPanel className="mt-6">
         {reports.length === 0 ? (
           <li className="p-6 text-sm text-[var(--muted-foreground)]">No reports yet.</li>
         ) : (
@@ -129,13 +141,8 @@ export default async function AdminReportsPage({ searchParams }: Props) {
             );
           })
         )}
-      </ul>
+      </AdminListPanel>
 
-      <p className="mt-8">
-        <Link href="/admin" className={`${primaryLinkClass} text-sm`}>
-          ← Dashboard
-        </Link>
-      </p>
-    </div>
+    </AdminPageContainer>
   );
 }

@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { upsertScorecardEntryAction } from "@/app/admin/report-card/actions";
 import { MetricsDisplay } from "@/components/accountability/MetricsDisplay";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -32,19 +34,20 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
   });
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin/report-card" className={primaryLinkClass}>
-          ← Report card cycles
-        </Link>
-      </p>
-      <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">
-        {cycle.year} — {cycle.label}
-      </h1>
+    <AdminPageContainer width="narrow">
+      <AdminPageHeader
+        showDashboardBack={false}
+        title={`${cycle.year} — ${cycle.label}`}
+        backSlot={
+          <Link href="/admin/report-card" className={primaryLinkClass}>
+            ← Report card cycles
+          </Link>
+        }
+      />
       {cycle.publishedAt ? (
-        <p className="mt-1 text-xs text-green-700">Published {cycle.publishedAt.toLocaleString("en-GB")}</p>
+        <p className="text-xs text-green-700">Published {cycle.publishedAt.toLocaleString("en-GB")}</p>
       ) : (
-        <p className="mt-1 text-xs text-amber-700">Draft — not visible on public report card</p>
+        <p className="text-xs text-amber-700">Draft — not visible on public report card</p>
       )}
 
       <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6">
@@ -146,6 +149,6 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
           </ul>
         )}
       </section>
-    </div>
+    </AdminPageContainer>
   );
 }

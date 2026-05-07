@@ -1,6 +1,10 @@
 import Link from "next/link";
 
+import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
+import { AdminListPanel } from "@/components/admin/AdminListPanel";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { reportKindLabel } from "@/lib/report-status-text";
@@ -89,17 +93,16 @@ export default async function AdminPublicCausesPage({ searchParams }: Props) {
   ];
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className={primaryLinkClass}>
-          ← Admin home
-        </Link>
-      </p>
-      <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">Public causes</h1>
-      <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-        Voice reports with a public-thread URL or publish timestamp. Edit summaries and moderation on each report&apos;s
-        admin page.
-      </p>
+    <AdminPageContainer>
+      <AdminPageHeader
+        title="Public causes"
+        description={
+          <>
+            Citizen Voice reports with a public-thread URL or publish timestamp. Edit summaries and moderation on each
+            report&apos;s admin page.
+          </>
+        }
+      />
 
       <div className="mt-6 flex flex-wrap gap-2" role="tablist" aria-label="Filter queue">
         {tabs.map((t) => {
@@ -125,9 +128,11 @@ export default async function AdminPublicCausesPage({ searchParams }: Props) {
         })}
       </div>
 
-      <ul className="mt-6 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-white">
+      <AdminListPanel className="mt-6">
         {queue.length === 0 ? (
-          <li className="p-6 text-sm text-[var(--muted-foreground)]">Nothing in this view.</li>
+          <li className="p-6">
+            <AdminEmptyState message="Nothing in this view." />
+          </li>
         ) : (
           queue.map((r) => {
             const slug = r.publicCauseSlug?.trim() ?? "";
@@ -186,7 +191,7 @@ export default async function AdminPublicCausesPage({ searchParams }: Props) {
             );
           })
         )}
-      </ul>
-    </div>
+      </AdminListPanel>
+    </AdminPageContainer>
   );
 }

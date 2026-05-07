@@ -1,6 +1,4 @@
 import { randomUUID } from "crypto";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
 
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -11,6 +9,8 @@ import {
   REPORT_ATTACHMENT_MAX_FILES,
   REPORT_ATTACHMENT_MIME,
 } from "@/lib/server/report-attachment-limits";
+import { writePrivateUploadFile } from "@/lib/server/private-upload-storage";
+import { MalwareScanError, scanUploadedFileOrThrow } from "@/lib/server/upload-malware-scan";
 import { verifyReportAttachmentScope } from "@/lib/server/report-upload-token";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 import { prisma, isDatabaseConfigured } from "@/lib/db/prisma";
@@ -89,10 +89,7 @@ export async function POST(request: Request, { params }: Props) {
     );
   }
 
-  const uploadRoot = path.join(process.cwd(), "public", "uploads", "reports", reportId);
-  await mkdir(uploadRoot, { recursive: true });
-
-  const created: { path: string; mimeType: string }[] = [];
+  const created: { id: string; path: string; mimeType: string }[] = [];
 
   try {
     for (const file of files) {
@@ -110,19 +107,35 @@ export async function POST(request: Request, { params }: Props) {
       }
 
       const filename = `${randomUUID()}${extForMime(file.type)}`;
-      const diskPath = path.join(uploadRoot, filename);
       const buffer = Buffer.from(await file.arrayBuffer());
-      await writeFile(diskPath, buffer);
-
-      const storagePath = `/uploads/reports/${reportId}/${filename}`;
-      await prisma.citizenReportAttachment.create({
+      try {
+        await scanUploadedFileOrThrow(buffer, `report-attachment:${reportId}`);
+      } catch (err) {
+        if (err instanceof MalwareScanError) {
+          return NextResponse.json(
+            { error: err.code === "infected" ? "File blocked by malware scanner" : "Upload scanner unavailable" },
+            { status: err.code === "infected" ? 400 : 503 },
+          );
+        }
+        throw err;
+      }
+      const storagePath = await writePrivateUploadFile({
+        bucket: "reports",
+        segments: [reportId, filename],
+        bytes: buffer,
+      });
+      const record = await prisma.citizenReportAttachment.create({
         data: {
           reportId,
           path: storagePath,
           mimeType: file.type,
         },
       });
-      created.push({ path: storagePath, mimeType: file.type });
+      created.push({
+        id: record.id,
+        path: `/api/reports/${encodeURIComponent(reportId)}/attachments/${encodeURIComponent(record.id)}`,
+        mimeType: file.type,
+      });
     }
   } catch (e) {
     console.error(e);

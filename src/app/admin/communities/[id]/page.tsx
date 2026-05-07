@@ -10,6 +10,8 @@ import {
   updateCommunityPostReportStatusAction,
 } from "@/app/admin/communities/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -79,14 +81,17 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
   });
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin/communities" className={primaryLinkClass}>
-          ← Communities
-        </Link>
-      </p>
-      <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">{community.name}</h1>
-      <p className="mt-1 font-mono text-sm text-[var(--muted-foreground)]">{community.slug}</p>
+    <AdminPageContainer width="narrow">
+      <AdminPageHeader
+        showDashboardBack={false}
+        title={community.name}
+        backSlot={
+          <Link href="/admin/communities" className={primaryLinkClass}>
+            ← Communities
+          </Link>
+        }
+        description={<p className="font-mono text-sm">{community.slug}</p>}
+      />
       <dl className="mt-3 grid gap-1 text-sm text-[var(--muted-foreground)]">
         <div>
           <dt className="inline font-medium text-[var(--foreground)]">Status: </dt>
@@ -370,6 +375,6 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
           </ul>
         )}
       </section>
-    </div>
+    </AdminPageContainer>
   );
 }

@@ -5,6 +5,8 @@ import {
   rejectCommunityPostAction,
 } from "@/app/admin/communities/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -22,22 +24,30 @@ export default async function AdminCommunityPostsModerationPage() {
   });
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin/communities" className={primaryLinkClass}>
-          ← Communities
-        </Link>
-        {" · "}
-        <Link href="/admin" className={primaryLinkClass}>
-          Admin
-        </Link>
-      </p>
-      <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">Community posts — global queue</h1>
-      <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-        Pending posts across all communities, oldest first. Publishing or rejecting also updates the community page and
-        the post permalink. Rows use <code className="rounded bg-[var(--section-light)] px-1 font-mono text-xs">#mod-post-</code>
-        plus the post id (from “View permalink”) so you can share a direct link to one queue item.
-      </p>
+    <AdminPageContainer>
+      <AdminPageHeader
+        showDashboardBack={false}
+        title="Community posts — global queue"
+        backSlot={
+          <>
+            <Link href="/admin/communities" className={primaryLinkClass}>
+              ← Communities
+            </Link>
+            {" · "}
+            <Link href="/admin" className={primaryLinkClass}>
+              Dashboard
+            </Link>
+          </>
+        }
+        description={
+          <p>
+            Pending posts across all communities, oldest first. Publishing or rejecting also updates the community page
+            and the post permalink. Rows use{" "}
+            <code className="rounded bg-[var(--section-light)] px-1 font-mono text-xs">#mod-post-</code>
+            plus the post id (from “View permalink”) so you can share a direct link to one queue item.
+          </p>
+        }
+      />
 
       {pendingPosts.length === 0 ? (
         <p className="mt-8 text-sm text-[var(--muted-foreground)]">No posts awaiting moderation.</p>
@@ -93,6 +103,6 @@ export default async function AdminCommunityPostsModerationPage() {
           ))}
         </ul>
       )}
-    </div>
+    </AdminPageContainer>
   );
 }

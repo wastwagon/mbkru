@@ -2,6 +2,7 @@ import "server-only";
 
 import { Resend } from "resend";
 
+import { runWithNotificationRetries } from "@/lib/server/notification-retry";
 import {
   buildReportAdminReplyEmailBody,
   buildReportAdminReplyVisibleAgainEmailBody,
@@ -38,12 +39,14 @@ export async function sendReportAdminReplyEmail(params: {
     isUpdate: params.isUpdate,
   });
 
-  const { data, error } = await resend.emails.send({
-    from,
-    to: [params.to],
-    subject,
-    text,
-  });
+  const { data, error } = await runWithNotificationRetries("report-admin-reply-email", () =>
+    resend.emails.send({
+      from,
+      to: [params.to],
+      subject,
+      text,
+    }),
+  );
 
   if (error) {
     console.error("[report-admin-reply] Resend error:", error);
@@ -76,12 +79,14 @@ export async function sendReportAdminReplyVisibleAgainEmail(params: {
     trackingCode: params.trackingCode,
   });
 
-  const { data, error } = await resend.emails.send({
-    from,
-    to: [params.to],
-    subject,
-    text,
-  });
+  const { data, error } = await runWithNotificationRetries("report-admin-reply-visible-email", () =>
+    resend.emails.send({
+      from,
+      to: [params.to],
+      subject,
+      text,
+    }),
+  );
 
   if (error) {
     console.error("[report-admin-reply-visible] Resend error:", error);

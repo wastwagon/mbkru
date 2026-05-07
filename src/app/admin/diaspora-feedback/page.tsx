@@ -1,6 +1,10 @@
 import Link from "next/link";
 
+import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { AdminTablePanel } from "@/components/admin/AdminTablePanel";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -30,24 +34,28 @@ export default async function AdminDiasporaFeedbackPage() {
   });
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">Diaspora experience &amp; feedback</h1>
-      <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-        Submissions from{" "}
-        <code className="rounded bg-[var(--section-light)] px-1 text-xs">/diaspora/feedback</code> via{" "}
-        <code className="rounded bg-[var(--section-light)] px-1 text-xs">POST /api/diaspora-feedback</code>.
-      </p>
+    <AdminPageContainer width="wide">
+      <AdminPageHeader
+        title="Diaspora experience & feedback"
+        description={
+          <>
+            <p>
+              Submissions from <code className="rounded bg-[var(--section-light)] px-1 text-xs">/diaspora/feedback</code>{" "}
+              via <code className="rounded bg-[var(--section-light)] px-1 text-xs">POST /api/diaspora-feedback</code>.
+            </p>
+            <p className="mt-3 flex flex-wrap gap-4 text-sm">
+              <Link href="/admin/contact-submissions" className={primaryLinkClass}>
+                Contact form
+              </Link>
+              <Link href="/diaspora/feedback" className={primaryLinkClass}>
+                Open public form
+              </Link>
+            </p>
+          </>
+        }
+      />
 
-      <p className="mt-4 flex flex-wrap gap-4 text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin/contact-submissions" className={primaryLinkClass}>
-          Contact form
-        </Link>
-        <Link href="/diaspora/feedback" className={primaryLinkClass}>
-          Open public form
-        </Link>
-      </p>
-
-      <div className="mt-8 overflow-x-auto rounded-2xl border border-[var(--border)] bg-white">
+      <AdminTablePanel className="mt-2">
         <table className="min-w-full text-left text-sm">
           <thead className="border-b border-[var(--border)] bg-[var(--section-light)]/80 text-[var(--muted-foreground)]">
             <tr>
@@ -65,7 +73,7 @@ export default async function AdminDiasporaFeedbackPage() {
             {rows.length === 0 ? (
               <tr>
                 <td colSpan={8} className="px-4 py-8 text-center text-[var(--muted-foreground)]">
-                  No submissions yet.
+                  <AdminEmptyState message="No submissions yet." className="text-center" />
                 </td>
               </tr>
             ) : (
@@ -119,13 +127,7 @@ export default async function AdminDiasporaFeedbackPage() {
             )}
           </tbody>
         </table>
-      </div>
-
-      <p className="mt-8 text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className={primaryLinkClass}>
-          ← Dashboard
-        </Link>
-      </p>
-    </div>
+      </AdminTablePanel>
+    </AdminPageContainer>
   );
 }

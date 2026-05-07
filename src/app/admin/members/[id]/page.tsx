@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 
 import { updateMemberIdentityVerificationAction } from "@/app/admin/members/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -34,20 +36,27 @@ export default async function AdminMemberDetailPage({ params }: Props) {
   if (!member) notFound();
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
-      <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin/members" className={primaryLinkClass}>
-          ← Members
-        </Link>
-      </p>
-      <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">Member identity</h1>
-      <p className="mt-1 font-mono text-sm text-[var(--muted-foreground)]">{member.email}</p>
-      <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-        {member.displayName ? `${member.displayName} · ` : null}
-        {member.region?.name ? `${member.region.name} · ` : null}
-        {member.phone ? `Phone ${member.phone} · ` : null}
-        Joined {member.createdAt.toLocaleString("en-GB")}
-      </p>
+    <AdminPageContainer width="compact">
+      <AdminPageHeader
+        showDashboardBack={false}
+        title="Member identity"
+        backSlot={
+          <Link href="/admin/members" className={primaryLinkClass}>
+            ← Members
+          </Link>
+        }
+        description={
+          <>
+            <p className="font-mono">{member.email}</p>
+            <p className="mt-2">
+              {member.displayName ? `${member.displayName} · ` : null}
+              {member.region?.name ? `${member.region.name} · ` : null}
+              {member.phone ? `Phone ${member.phone} · ` : null}
+              Joined {member.createdAt.toLocaleString("en-GB")}
+            </p>
+          </>
+        }
+      />
 
       {member.identityReviewRequestedAt || member.identityReviewRequestMessage ? (
         <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--section-light)]/50 p-6">
@@ -119,6 +128,6 @@ export default async function AdminMemberDetailPage({ params }: Props) {
           Verified timestamp: {member.identityVerifiedAt.toLocaleString("en-GB")}
         </p>
       ) : null}
-    </div>
+    </AdminPageContainer>
   );
 }

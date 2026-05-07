@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 import { deletePostAction, savePostAction } from "@/app/admin/posts/actions";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { destructiveTextControlClass, primaryLinkClass } from "@/lib/primary-link-styles";
 import type { Media, Post } from "@prisma/client";
 
@@ -10,11 +12,9 @@ export function PostEditor({ post, media }: { post: PostWithOptional; media: Med
   const isEdit = Boolean(post);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-      <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">
-        {isEdit ? "Edit post" : "New post"}
-      </h1>
-      <form action={savePostAction} className="mt-8 space-y-5">
+    <AdminPageContainer width="form">
+      <AdminPageHeader title={isEdit ? "Edit post" : "New post"} />
+      <form action={savePostAction} className="mt-2 space-y-5">
         {post?.id ? <input type="hidden" name="id" value={post.id} /> : null}
         <div>
           <label className="block text-sm font-medium text-[var(--foreground)]">Title</label>
@@ -110,6 +110,6 @@ export function PostEditor({ post, media }: { post: PostWithOptional; media: Med
           </button>
         </form>
       ) : null}
-    </div>
+    </AdminPageContainer>
   );
 }

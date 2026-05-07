@@ -7,17 +7,8 @@ import { parseUtcDatetimeLocalInput } from "@/lib/admin/report-operations-dateti
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
 import { logCitizenReportAdminReplyAudit } from "@/lib/server/citizen-report-admin-reply-audit";
-import {
-  sendReportAdminReplyEmail,
-  sendReportAdminReplyVisibleAgainEmail,
-} from "@/lib/server/send-report-admin-reply-email";
 import { createMemberNotification } from "@/lib/server/member-notifications";
-import { sendReportStatusNotification } from "@/lib/server/send-report-status-email";
-import {
-  sendReportAdminReplySms,
-  sendReportAdminReplyVisibleAgainSms,
-  sendReportStatusSms,
-} from "@/lib/server/send-report-status-sms";
+import { enqueueNotificationJob, processNotificationOutboxBatch } from "@/lib/server/notification-outbox";
 import {
   adminReplyToSubmitterField,
   operationsPlaybookKeyField,
@@ -62,11 +53,15 @@ export async function updateCitizenReportStatusAction(formData: FormData) {
   if (prev.status !== newStatus) {
     const to = prev.submitterEmail ?? prev.member?.email;
     if (to) {
-      await sendReportStatusNotification({
-        to,
-        trackingCode: prev.trackingCode,
-        kind: prev.kind,
-        status: newStatus,
+      await enqueueNotificationJob({
+        channel: "EMAIL",
+        kind: "REPORT_STATUS",
+        payload: {
+          to,
+          trackingCode: prev.trackingCode,
+          kind: prev.kind,
+          status: newStatus,
+        },
       });
     }
 
@@ -78,13 +73,18 @@ export async function updateCitizenReportStatusAction(formData: FormData) {
         ? submitterPhone
         : undefined;
     if (smsTo) {
-      await sendReportStatusSms({
-        to: smsTo,
-        trackingCode: prev.trackingCode,
-        kind: prev.kind,
-        status: newStatus,
+      await enqueueNotificationJob({
+        channel: "SMS",
+        kind: "REPORT_STATUS",
+        payload: {
+          to: smsTo,
+          trackingCode: prev.trackingCode,
+          kind: prev.kind,
+          status: newStatus,
+        },
       });
     }
+    await processNotificationOutboxBatch(10);
   }
 
   revalidatePath("/admin/reports");
@@ -212,11 +212,16 @@ export async function addCitizenReportAdminReplyAction(formData: FormData) {
   if (sendEmail) {
     const to = report.submitterEmail ?? report.member?.email;
     if (to) {
-      await sendReportAdminReplyEmail({
-        to,
-        trackingCode: report.trackingCode,
-        kind: report.kind,
-        replyBody: bodyParsed.data,
+      await enqueueNotificationJob({
+        channel: "EMAIL",
+        kind: "REPORT_ADMIN_REPLY",
+        payload: {
+          to,
+          trackingCode: report.trackingCode,
+          kind: report.kind,
+          replyBody: bodyParsed.data,
+          isUpdate: false,
+        },
       });
     }
   }
@@ -230,13 +235,19 @@ export async function addCitizenReportAdminReplyAction(formData: FormData) {
         ? submitterPhone
         : undefined;
     if (smsTo) {
-      await sendReportAdminReplySms({
-        to: smsTo,
-        trackingCode: report.trackingCode,
-        kind: report.kind,
+      await enqueueNotificationJob({
+        channel: "SMS",
+        kind: "REPORT_ADMIN_REPLY",
+        payload: {
+          to: smsTo,
+          trackingCode: report.trackingCode,
+          kind: report.kind,
+          isUpdate: false,
+        },
       });
     }
   }
+  await processNotificationOutboxBatch(10);
 
   revalidatePath("/admin/reports");
   revalidatePath(`/admin/reports/${id}`);
@@ -298,12 +309,16 @@ export async function updateCitizenReportAdminReplyAction(formData: FormData) {
       if (sendEmail) {
         const to = report.submitterEmail ?? report.member?.email;
         if (to) {
-          await sendReportAdminReplyEmail({
-            to,
-            trackingCode: report.trackingCode,
-            kind: report.kind,
-            replyBody: bodyParsed.data,
-            isUpdate: true,
+          await enqueueNotificationJob({
+            channel: "EMAIL",
+            kind: "REPORT_ADMIN_REPLY",
+            payload: {
+              to,
+              trackingCode: report.trackingCode,
+              kind: report.kind,
+              replyBody: bodyParsed.data,
+              isUpdate: true,
+            },
           });
         }
       }
@@ -316,14 +331,19 @@ export async function updateCitizenReportAdminReplyAction(formData: FormData) {
             ? submitterPhone
             : undefined;
         if (smsTo) {
-          await sendReportAdminReplySms({
-            to: smsTo,
-            trackingCode: report.trackingCode,
-            kind: report.kind,
-            isUpdate: true,
+          await enqueueNotificationJob({
+            channel: "SMS",
+            kind: "REPORT_ADMIN_REPLY",
+            payload: {
+              to: smsTo,
+              trackingCode: report.trackingCode,
+              kind: report.kind,
+              isUpdate: true,
+            },
           });
         }
       }
+      await processNotificationOutboxBatch(10);
     }
   }
 
@@ -395,10 +415,14 @@ export async function setCitizenReportAdminReplyVisibilityAction(formData: FormD
     if (notifyUnhideEmail && report) {
       const to = report.submitterEmail ?? report.member?.email;
       if (to) {
-        await sendReportAdminReplyVisibleAgainEmail({
-          to,
-          trackingCode: report.trackingCode,
-          kind: report.kind,
+        await enqueueNotificationJob({
+          channel: "EMAIL",
+          kind: "REPORT_ADMIN_REPLY_VISIBLE_AGAIN",
+          payload: {
+            to,
+            trackingCode: report.trackingCode,
+            kind: report.kind,
+          },
         });
       }
     }
@@ -412,13 +436,18 @@ export async function setCitizenReportAdminReplyVisibilityAction(formData: FormD
           ? submitterPhone
           : undefined;
       if (smsTo) {
-        await sendReportAdminReplyVisibleAgainSms({
-          to: smsTo,
-          trackingCode: report.trackingCode,
-          kind: report.kind,
+        await enqueueNotificationJob({
+          channel: "SMS",
+          kind: "REPORT_ADMIN_REPLY_VISIBLE_AGAIN",
+          payload: {
+            to: smsTo,
+            trackingCode: report.trackingCode,
+            kind: report.kind,
+          },
         });
       }
     }
+    await processNotificationOutboxBatch(10);
   }
 
   revalidatePath("/admin/reports");

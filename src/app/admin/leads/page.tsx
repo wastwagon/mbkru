@@ -2,7 +2,11 @@ import Link from "next/link";
 
 import type { LeadCaptureSource } from "@prisma/client";
 
+import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { AdminTablePanel } from "@/components/admin/AdminTablePanel";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -43,18 +47,27 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
   >;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">Lead capture</h1>
-      <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-        Newsletter, early access, and Parliament tracker waitlist signups (deduplicated by email per source). Use for
-        pilot notifications and exports.{" "}
-        <Link href="/admin/contact-submissions" className={primaryLinkClass}>
-          Contact form messages
-        </Link>{" "}
-        are stored separately (full text, append-only).
-      </p>
+    <AdminPageContainer>
+      <AdminPageHeader
+        title="Lead capture"
+        description={
+          <>
+            <p>
+              Newsletter, early access, and Parliament tracker waitlists. Rows are deduplicated by email within each
+              source.
+            </p>
+            <p className="mt-2">
+              Use these lists for pilot outreach and exports.{" "}
+              <Link href="/admin/contact-submissions" className={primaryLinkClass}>
+                Contact form messages
+              </Link>{" "}
+              live separately (full text, append-only).
+            </p>
+          </>
+        }
+      />
 
-      <ul className="mt-4 flex flex-wrap gap-3 text-sm text-[var(--muted-foreground)]">
+      <ul className="flex flex-wrap gap-3 text-sm text-[var(--muted-foreground)]">
         <li>
           Tracker:{" "}
           <span className="font-mono text-[var(--foreground)]">
@@ -108,7 +121,7 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
         })}
       </div>
 
-      <div className="mt-6 overflow-x-auto rounded-2xl border border-[var(--border)] bg-white">
+      <AdminTablePanel className="mt-6">
         <table className="min-w-full text-left text-sm">
           <thead className="border-b border-[var(--border)] bg-[var(--section-light)]/80 text-[var(--muted-foreground)]">
             <tr>
@@ -121,7 +134,7 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
             {leads.length === 0 ? (
               <tr>
                 <td colSpan={3} className="px-4 py-8 text-center text-[var(--muted-foreground)]">
-                  No rows for this filter.
+                  <AdminEmptyState message="No rows for this filter." className="text-center" />
                 </td>
               </tr>
             ) : (
@@ -139,13 +152,7 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
             )}
           </tbody>
         </table>
-      </div>
-
-      <p className="mt-8 text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className={primaryLinkClass}>
-          ← Dashboard
-        </Link>
-      </p>
-    </div>
+      </AdminTablePanel>
+    </AdminPageContainer>
   );
 }

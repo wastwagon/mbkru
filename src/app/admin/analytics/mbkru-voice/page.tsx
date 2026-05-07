@@ -1,6 +1,12 @@
 import Link from "next/link";
 
+import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
+import { AdminTablePanel } from "@/components/admin/AdminTablePanel";
+import { AdminMetricCard } from "@/components/admin/AdminMetricCard";
+import { AdminSectionCard } from "@/components/admin/AdminSectionCard";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { MBKRU_VOICE_ANALYTICS_TAXONOMY } from "@/lib/mbkru-voice-analytics-taxonomy";
@@ -26,17 +32,11 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
   const summary = dbEnabled ? await getMbkruVoiceAnalyticsSummary(days) : null;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className={primaryLinkClass}>
-          ← Admin
-        </Link>
-      </p>
-      <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">MBKRU Voice analytics</h1>
-      <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-        Event taxonomy for chatbot and accessibility interactions. Track volumes, error rates, and provider-vs-fallback
-        behavior from your analytics tool.
-      </p>
+    <AdminPageContainer>
+      <AdminPageHeader
+        title="MBKRU Voice analytics"
+        description="Event taxonomy for the MBKRU Voice chatbot and accessibility tools. Track volumes, errors, and AI versus fallback behaviour in GA4 or Plausible."
+      />
       <p className="mt-2 text-sm">
         <Link href={`/api/admin/analytics/mbkru-voice?days=${days}`} className={primaryLinkClass}>
           JSON API
@@ -64,25 +64,27 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
       </p>
 
       <section className="mt-8 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">GA4 status</p>
-          <p className="mt-2 text-sm text-[var(--foreground)]">{gaEnabled ? "Configured" : "Not configured"}</p>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-            {gaEnabled
+        <AdminMetricCard
+          surface="tile"
+          label="GA4 status"
+          value={gaEnabled ? "Configured" : "Not configured"}
+          subline={
+            gaEnabled
               ? "Use Events reports and filters on source/language properties."
-              : "Set NEXT_PUBLIC_GA_MEASUREMENT_ID to capture events in Google Analytics."}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Plausible status</p>
-          <p className="mt-2 text-sm text-[var(--foreground)]">{plausibleEnabled ? "Configured" : "Not configured"}</p>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-            {plausibleEnabled
+              : "Set NEXT_PUBLIC_GA_MEASUREMENT_ID to capture events in Google Analytics."
+          }
+        />
+        <AdminMetricCard
+          surface="tile"
+          label="Plausible status"
+          value={plausibleEnabled ? "Configured" : "Not configured"}
+          subline={
+            plausibleEnabled
               ? "Use custom events dashboard for MBKRU Voice flows."
-              : "Set NEXT_PUBLIC_PLAUSIBLE_DOMAIN to capture events in Plausible."}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
+              : "Set NEXT_PUBLIC_PLAUSIBLE_DOMAIN to capture events in Plausible."
+          }
+        />
+        <AdminSectionCard className="rounded-2xl shadow-sm">
           <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Internal DB analytics</p>
           <p className="mt-2 text-sm text-[var(--foreground)]">{dbEnabled ? "Configured" : "Not configured"}</p>
           <p className="mt-1 text-xs text-[var(--muted-foreground)]">
@@ -101,37 +103,32 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
               {telemetryTokenEnabled ? "Token mode enabled" : "Token mode disabled"}
             </span>
           </p>
-        </div>
+        </AdminSectionCard>
       </section>
 
       {summary ? (
         <section className="mt-8 grid gap-4 lg:grid-cols-3">
-          <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
-            <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-              Events ({summary.windowDays} days)
-            </p>
-            <p className="mt-2 font-display text-3xl font-bold tabular-nums text-[var(--foreground)]">
-              {summary.windowRows.reduce((acc, row) => acc + row.count, 0)}
-            </p>
-          </div>
-          <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
-            <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Unique event names</p>
-            <p className="mt-2 font-display text-3xl font-bold tabular-nums text-[var(--foreground)]">
-              {summary.windowRows.length}
-            </p>
-          </div>
-          <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
-            <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-              Top source ({summary.windowDays} days)
-            </p>
-            <p className="mt-2 text-base font-semibold text-[var(--foreground)]">
-              {summary.bySourceWindow[0]?.source ?? "No data"}
-            </p>
-          </div>
+          <AdminMetricCard
+            surface="tile"
+            valueSize="xl"
+            label={`Events (${summary.windowDays} days)`}
+            value={summary.windowRows.reduce((acc, row) => acc + row.count, 0)}
+          />
+          <AdminMetricCard
+            surface="tile"
+            valueSize="xl"
+            label="Unique event names"
+            value={summary.windowRows.length}
+          />
+          <AdminMetricCard
+            surface="tile"
+            label={`Top source (${summary.windowDays} days)`}
+            value={summary.bySourceWindow[0]?.source ?? "No data"}
+          />
         </section>
       ) : null}
 
-      <section className="mt-8 overflow-x-auto rounded-2xl border border-[var(--border)] bg-white shadow-sm">
+      <AdminTablePanel className="mt-8 shadow-sm">
         <table className="min-w-full text-left text-sm">
           <thead className="border-b border-[var(--border)] bg-[var(--muted)]/40 text-xs uppercase tracking-wide text-[var(--muted-foreground)]">
             <tr>
@@ -152,17 +149,19 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
             ))}
           </tbody>
         </table>
-      </section>
+      </AdminTablePanel>
 
       {summary ? (
         <div className="mt-8 grid gap-8 lg:grid-cols-2">
-          <section className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
+          <AdminSectionCard className="rounded-2xl shadow-sm">
             <h2 className="text-sm font-semibold text-[var(--foreground)]">
               Internal DB events (last {summary.windowDays} days)
             </h2>
             <ul className="mt-3 space-y-2 text-sm">
               {summary.windowRows.length === 0 ? (
-                <li className="text-[var(--muted-foreground)]">No rows yet.</li>
+                <li>
+                  <AdminEmptyState message="No rows yet." />
+                </li>
               ) : (
                 summary.windowRows.map((row) => (
                   <li key={`w-${row.eventName}`} className="flex justify-between gap-2">
@@ -172,14 +171,16 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
                 ))
               )}
             </ul>
-          </section>
-          <section className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
+          </AdminSectionCard>
+          <AdminSectionCard className="rounded-2xl shadow-sm">
             <h2 className="text-sm font-semibold text-[var(--foreground)]">
               Event source split (last {summary.windowDays} days)
             </h2>
             <ul className="mt-3 space-y-2 text-sm">
               {summary.bySourceWindow.length === 0 ? (
-                <li className="text-[var(--muted-foreground)]">No rows yet.</li>
+                <li>
+                  <AdminEmptyState message="No rows yet." />
+                </li>
               ) : (
                 summary.bySourceWindow.map((row) => (
                   <li key={`s-${row.source}`} className="flex justify-between gap-2">
@@ -189,7 +190,7 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
                 ))
               )}
             </ul>
-          </section>
+          </AdminSectionCard>
         </div>
       ) : null}
 
@@ -198,6 +199,6 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
         <code>safety_reason</code> (when applicable), <code>site_context</code> (comma‑separated in‑app paths from curated
         site knowledge), and <code>web_search_used</code> (when live search augmented the turn).
       </p>
-    </div>
+    </AdminPageContainer>
   );
 }

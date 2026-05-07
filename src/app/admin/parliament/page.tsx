@@ -1,9 +1,13 @@
 import Link from "next/link";
 
 import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
+import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
+import { AdminListPanel } from "@/components/admin/AdminListPanel";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
-import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 
 import { ConstituencyCsvImport } from "./ConstituencyCsvImport";
 import { ParliamentCsvImport } from "./ParliamentCsvImport";
@@ -21,27 +25,29 @@ export default async function AdminParliamentPage() {
   });
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">
-        {accountabilityProse.adminParliamentSectionTitle}
-      </h1>
-      <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-        {accountabilityProse.adminParliamentIntro}{" "}
-        <code className="rounded bg-[var(--section-light)] px-1 text-xs">GET /api/mps</code>
-        {" · "}
-        <code className="rounded bg-[var(--section-light)] px-1 text-xs">GET /api/promises</code>.
-      </p>
+    <AdminPageContainer>
+      <AdminPageHeader
+        title={accountabilityProse.adminParliamentSectionTitle}
+        description={
+          <>
+            {accountabilityProse.adminParliamentIntro}{" "}
+            <code className="rounded bg-[var(--section-light)] px-1 text-xs">GET /api/mps</code>
+            {" · "}
+            <code className="rounded bg-[var(--section-light)] px-1 text-xs">GET /api/promises</code>.
+          </>
+        }
+      />
 
-      <div className="mt-8 space-y-6">
+      <div className="space-y-6">
         <ConstituencyCsvImport />
         <ParliamentCsvReconcile />
         <ParliamentCsvImport />
       </div>
 
-      <ul className="mt-8 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-white">
+      <AdminListPanel className="mt-8">
         {members.length === 0 ? (
-          <li className="p-6 text-sm text-[var(--muted-foreground)]">
-            No parliament members yet — upload a CSV above.
+          <li className="p-6">
+            <AdminEmptyState message="No parliament members yet — upload a CSV above." />
           </li>
         ) : (
           members.map((m) => (
@@ -68,13 +74,7 @@ export default async function AdminParliamentPage() {
             </li>
           ))
         )}
-      </ul>
-
-      <p className="mt-8">
-        <Link href="/admin" className={`${primaryLinkClass} text-sm`}>
-          ← Dashboard
-        </Link>
-      </p>
-    </div>
+      </AdminListPanel>
+    </AdminPageContainer>
   );
 }

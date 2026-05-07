@@ -1,26 +1,18 @@
-import Link from "next/link";
-
 import { DatabaseMaintenancePanel } from "@/app/admin/settings/DatabaseMaintenancePanel";
 import { PetitionPendingCleanupPanel } from "@/app/admin/settings/PetitionPendingCleanupPanel";
 import { requireAdminSession } from "@/lib/admin/require-session";
-import { primaryLinkClass } from "@/lib/primary-link-styles";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 export default async function AdminSettingsPage() {
   await requireAdminSession();
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">Settings</h1>
-          <p className="text-sm text-[var(--muted-foreground)]">
-            Database maintenance when deploy-time migrate or seed did not succeed.
-          </p>
-        </div>
-        <Link href="/admin" className={`${primaryLinkClass} text-sm`}>
-          ← Admin home
-        </Link>
-      </div>
+    <AdminPageContainer width="narrow">
+      <AdminPageHeader
+        title="Settings"
+        description="Run database maintenance when deploy-time migrate or seed did not complete successfully."
+      />
 
       <DatabaseMaintenancePanel />
 
@@ -32,6 +24,6 @@ export default async function AdminSettingsPage() {
         <code className="rounded bg-[var(--muted)] px-1">ADMIN_PASSWORD</code>, and{" "}
         <code className="rounded bg-[var(--muted)] px-1">ADMIN_SESSION_SECRET</code> secret.
       </p>
-    </div>
+    </AdminPageContainer>
   );
 }

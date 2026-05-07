@@ -11,6 +11,8 @@ import {
   accountabilityProse,
 } from "@/config/accountability-catalogue-destinations";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { POLICY_SECTOR_LABELS, POLICY_SECTOR_VALUES } from "@/lib/promise-policy-sectors";
@@ -51,14 +53,16 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
   if (!member) notFound();
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-      <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin/parliament" className={primaryLinkClass}>
-          {accountabilityProse.adminParliamentListBackLink}
-        </Link>
-      </p>
-
-      <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">{member.name}</h1>
+    <AdminPageContainer width="form">
+      <AdminPageHeader
+        showDashboardBack={false}
+        title={member.name}
+        backSlot={
+          <Link href="/admin/parliament" className={primaryLinkClass}>
+            {accountabilityProse.adminParliamentListBackLink}
+          </Link>
+        }
+      />
       <dl className="mt-2 grid gap-1 text-sm text-[var(--muted-foreground)]">
         <div>
           <dt className="inline font-medium text-[var(--foreground)]">Slug: </dt>
@@ -446,6 +450,6 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
           </ul>
         )}
       </section>
-    </div>
+    </AdminPageContainer>
   );
 }

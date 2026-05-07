@@ -5,6 +5,8 @@ import {
   createCommunityAction,
 } from "@/app/admin/communities/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -22,27 +24,28 @@ export default async function AdminCommunitiesPage() {
   ]);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className={primaryLinkClass}>
-          ← Admin
-        </Link>
-      </p>
-      <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">Communities</h1>
-      <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-        Create spaces for traditional areas and Queen Mother networks. Only <strong>ACTIVE</strong> +{" "}
-        <strong>PUBLIC</strong> communities appear on the public directory.
-      </p>
-      <p className="mt-2 text-sm">
-        <Link href="/admin/community-reports" className={primaryLinkClass}>
-          Open cross-community reports queue →
-        </Link>
-      </p>
-      <p className="mt-1 text-sm">
-        <Link href="/admin/community-verifications" className={primaryLinkClass}>
-          Open community verification queue →
-        </Link>
-      </p>
+    <AdminPageContainer width="narrow">
+      <AdminPageHeader
+        title="Communities"
+        description={
+          <>
+            <p>
+              Create spaces for traditional areas and Queen Mother networks. Only <strong>ACTIVE</strong> +{" "}
+              <strong>PUBLIC</strong> communities appear on the public directory.
+            </p>
+            <p className="mt-2 text-sm">
+              <Link href="/admin/community-reports" className={primaryLinkClass}>
+                Open cross-community reports queue →
+              </Link>
+            </p>
+            <p className="mt-1 text-sm">
+              <Link href="/admin/community-verifications" className={primaryLinkClass}>
+                Open community verification queue →
+              </Link>
+            </p>
+          </>
+        }
+      />
       <p className="mt-1 text-sm">
         <Link href="/admin/communities/moderation" className={primaryLinkClass}>
           Global pending posts queue →
@@ -212,6 +215,6 @@ export default async function AdminCommunitiesPage() {
           </ul>
         )}
       </section>
-    </div>
+    </AdminPageContainer>
   );
 }

@@ -4,7 +4,11 @@ import {
   createTownHallEventAction,
 } from "@/app/admin/town-halls/actions";
 import { TownHallFormFields } from "@/app/admin/town-halls/TownHallFormFields";
+import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
+import { AdminListPanel } from "@/components/admin/AdminListPanel";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { programmeEventKindLabel } from "@/lib/programme-event-labels";
@@ -51,18 +55,22 @@ export default async function AdminTownHallsPage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">Town halls &amp; forums</h1>
-      <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-        Programme rows power the public{" "}
-        <Link href="/town-halls" className={primaryLinkClass}>
-          /town-halls
-        </Link>{" "}
-        page. Seed creates roadmap placeholders; edit here when dates and venues are confirmed. Provenance note:{" "}
-        <code className="rounded bg-[var(--section-light)] px-1 text-xs">prisma/data/TOWN_HALL_SEED_SOURCES.txt</code>.
-      </p>
+    <AdminPageContainer width="narrow">
+      <AdminPageHeader
+        title="Town halls & forums"
+        description={
+          <>
+            Programme rows power the public{" "}
+            <Link href="/town-halls" className={primaryLinkClass}>
+              /town-halls
+            </Link>{" "}
+            page. Seed creates roadmap placeholders; edit here when dates and venues are confirmed. Provenance note:{" "}
+            <code className="rounded bg-[var(--section-light)] px-1 text-xs">prisma/data/TOWN_HALL_SEED_SOURCES.txt</code>.
+          </>
+        }
+      />
 
-      <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6">
+      <section className="mt-2 rounded-2xl border border-[var(--border)] bg-white p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">New programme row</h2>
         <form action={createTownHallEventAction} className="mt-4 grid gap-4 sm:grid-cols-2">
           <TownHallFormFields regions={regions} constituencies={constituencies} defaults={emptyDefaults} />
@@ -77,9 +85,11 @@ export default async function AdminTownHallsPage() {
         </form>
       </section>
 
-      <ul className="mt-10 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-white">
+      <AdminListPanel className="mt-10">
         {events.length === 0 ? (
-          <li className="p-6 text-sm text-[var(--muted-foreground)]">No rows yet — run seed or create above.</li>
+          <li className="p-6">
+            <AdminEmptyState message="No rows yet — run seed or create above." />
+          </li>
         ) : (
           events.map((ev) => (
             <li key={ev.id} className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -102,13 +112,7 @@ export default async function AdminTownHallsPage() {
             </li>
           ))
         )}
-      </ul>
-
-      <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className={primaryLinkClass}>
-          ← Admin home
-        </Link>
-      </p>
-    </div>
+      </AdminListPanel>
+    </AdminPageContainer>
   );
 }

@@ -2,6 +2,7 @@ import "server-only";
 
 import { Resend } from "resend";
 
+import { runWithNotificationRetries } from "@/lib/server/notification-retry";
 import { buildReportStatusEmailBody } from "@/lib/report-status-text";
 import type { CitizenReportKind, CitizenReportStatus } from "@prisma/client";
 
@@ -32,12 +33,14 @@ export async function sendReportStatusNotification(params: {
     trackingCode: params.trackingCode,
   });
 
-  const { data, error } = await resend.emails.send({
-    from,
-    to: [params.to],
-    subject,
-    text,
-  });
+  const { data, error } = await runWithNotificationRetries("report-status-email", () =>
+    resend.emails.send({
+      from,
+      to: [params.to],
+      subject,
+      text,
+    }),
+  );
 
   if (error) {
     console.error("[report-status] Resend error:", error);

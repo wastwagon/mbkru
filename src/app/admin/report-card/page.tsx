@@ -5,9 +5,13 @@ import {
   publishReportCardCycleAction,
   unpublishReportCardCycleAction,
 } from "@/app/admin/report-card/actions";
+import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
+import { AdminListPanel } from "@/components/admin/AdminListPanel";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
-import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminReportCardPage() {
   await requireAdminSession();
@@ -18,14 +22,19 @@ export default async function AdminReportCardPage() {
   });
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">People&apos;s Report Card</h1>
-      <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-        Create a cycle per year, add scorecard rows per MP/minister, then publish when ready.         Public site shows only published cycles (Phase 2+ build with public report card enabled). Partner read API:{" "}
-        <code className="rounded bg-[var(--section-light)] px-1 text-xs">GET /api/report-card/[year]</code>.
-      </p>
+    <AdminPageContainer width="narrow">
+      <AdminPageHeader
+        title="People's Report Card"
+        description={
+          <>
+            Create a cycle per year, add scorecard rows per MP or minister, then publish when ready. The public site
+            lists only published cycles when the feature is enabled. Partner read API:{" "}
+            <code className="rounded bg-[var(--section-light)] px-1 text-xs">GET /api/report-card/[year]</code>.
+          </>
+        }
+      />
 
-      <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6">
+      <section className="mt-2 rounded-2xl border border-[var(--border)] bg-white p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">New cycle</h2>
         <form action={createReportCardCycleAction} className="mt-4 grid gap-3 sm:grid-cols-2">
           <div>
@@ -78,9 +87,11 @@ export default async function AdminReportCardPage() {
         </form>
       </section>
 
-      <ul className="mt-10 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-white">
+      <AdminListPanel className="mt-10">
         {cycles.length === 0 ? (
-          <li className="p-6 text-sm text-[var(--muted-foreground)]">No cycles yet.</li>
+          <li className="p-6">
+            <AdminEmptyState message="No cycles yet." />
+          </li>
         ) : (
           cycles.map((c) => (
             <li key={c.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -130,13 +141,7 @@ export default async function AdminReportCardPage() {
             </li>
           ))
         )}
-      </ul>
-
-      <p className="mt-8">
-        <Link href="/admin" className={`${primaryLinkClass} text-sm`}>
-          ← Dashboard
-        </Link>
-      </p>
-    </div>
+      </AdminListPanel>
+    </AdminPageContainer>
   );
 }

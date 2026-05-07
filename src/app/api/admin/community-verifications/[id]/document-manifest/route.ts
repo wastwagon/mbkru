@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { getAdminSession } from "@/lib/admin/session";
 import { prisma } from "@/lib/db/prisma";
+import { isPrivateStoragePath } from "@/lib/server/private-upload-storage";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -59,7 +60,11 @@ export async function GET(request: Request, { params }: Props) {
       mediaId,
       media?.filename ?? "",
       media?.mimeType ?? "",
-      media ? `${origin}${media.storagePath}` : "",
+      media
+        ? isPrivateStoragePath(media.storagePath)
+          ? `${origin}/api/admin/community-verifications/documents/${encodeURIComponent(media.id)}`
+          : `${origin}${media.storagePath}`
+        : "",
       media ? "false" : "true",
     ].map((v) => csvEscape(v));
     lines.push(line.join(","));

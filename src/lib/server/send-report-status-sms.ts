@@ -6,6 +6,7 @@ import {
   buildReportStatusSmsBody,
   reportKindLabel,
 } from "@/lib/report-status-text";
+import { runWithNotificationRetries } from "@/lib/server/notification-retry";
 import type { CitizenReportKind, CitizenReportStatus } from "@prisma/client";
 
 export type SmsSendMode = "skipped" | "sent" | "failed";
@@ -42,14 +43,16 @@ async function sendViaTwilio(to: string, body: string): Promise<SendResult> {
   form.set("From", from);
   form.set("Body", body);
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${auth}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: form.toString(),
-  });
+  const res = await runWithNotificationRetries("report-status-sms-twilio", () =>
+    fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${auth}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: form.toString(),
+    }),
+  );
 
   const json = (await res.json().catch(() => ({}))) as { message?: string; sid?: string; error_message?: string };
 

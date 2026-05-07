@@ -1,25 +1,31 @@
 import Link from "next/link";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminListPanel } from "@/components/admin/AdminListPanel";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
-import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { focusRingMdClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminPostsPage() {
   await requireAdminSession();
   const posts = await prisma.post.findMany({ orderBy: { updatedAt: "desc" } });
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">News posts</h1>
-        <Link
-          href="/admin/posts/new"
-          className="inline-flex justify-center rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white"
-        >
-          New post
-        </Link>
-      </div>
-      <ul className="mt-8 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-white">
+    <AdminPageContainer>
+      <AdminPageHeader
+        title="News posts"
+        description="Create and publish articles for the public news index."
+        actions={
+          <Link
+            href="/admin/posts/new"
+            className={`inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] ${focusRingMdClass}`}
+          >
+            New post
+          </Link>
+        }
+      />
+      <AdminListPanel>
         {posts.length === 0 ? (
           <li className="p-6 text-sm text-[var(--muted-foreground)]">No posts yet.</li>
         ) : (
@@ -37,12 +43,7 @@ export default async function AdminPostsPage() {
             </li>
           ))
         )}
-      </ul>
-      <p className="mt-8">
-        <Link href="/admin" className={`${primaryLinkClass} text-sm`}>
-          ← Dashboard
-        </Link>
-      </p>
-    </div>
+      </AdminListPanel>
+    </AdminPageContainer>
   );
 }

@@ -122,8 +122,15 @@ export async function POST(request: Request, { params }: Props) {
                 ? "Each file must be at most 8 MB"
                 : e.code === "bad_mime"
                   ? "Only JPEG, PNG, WebP, GIF, and PDF are allowed"
-                  : "At most 10 documents per request";
-          return NextResponse.json({ error: message }, { status: 400 });
+                  : e.code === "scanner_infected"
+                    ? "A document was blocked by malware scanner"
+                    : e.code === "scanner_unavailable"
+                      ? "Upload scanner unavailable"
+                      : "At most 10 documents per request";
+          return NextResponse.json(
+            { error: message },
+            { status: e.code === "scanner_unavailable" ? 503 : 400 },
+          );
         }
         throw e;
       }

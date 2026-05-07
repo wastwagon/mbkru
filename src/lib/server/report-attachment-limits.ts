@@ -1,6 +1,6 @@
 import "server-only";
 
-/** Virus scanning: not automated in-app; ops should scan uploads volume or use edge AV — see docs/SPRINT_BACKLOG.md */
+/** Optional in-app malware scanning via ClamAV (`MALWARE_SCAN_MODE=clamd`). */
 
 export const REPORT_ATTACHMENT_MAX_FILES = 3;
 export const REPORT_ATTACHMENT_MAX_BYTES = 5 * 1024 * 1024; // 5 MB each

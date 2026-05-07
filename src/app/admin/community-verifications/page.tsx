@@ -1,10 +1,12 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { reviewCommunityVerificationAction } from "@/app/admin/communities/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
+import { isPrivateStoragePath } from "@/lib/server/private-upload-storage";
 
 export default async function AdminCommunityVerificationsPage() {
   await requireAdminSession();
@@ -48,18 +50,13 @@ export default async function AdminCommunityVerificationsPage() {
   );
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className={primaryLinkClass}>
-          ← Admin
-        </Link>
-      </p>
-      <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">Community verifications</h1>
-      <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-        Review identity/traditional role verification requests from community members.
-      </p>
+    <AdminPageContainer>
+      <AdminPageHeader
+        title="Community verifications"
+        description="Review identity and traditional-role verification requests from community members."
+      />
 
-      <section className="mt-8">
+      <section className="mt-2">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Pending requests ({pending.length})</h2>
         {pending.length === 0 ? (
           <p className="mt-2 text-sm text-[var(--muted-foreground)]">No pending requests.</p>
@@ -83,6 +80,11 @@ export default async function AdminCommunityVerificationsPage() {
                       .map((docId) => {
                         const media = mediaById.get(docId);
                         const canPreview = !!media && media.mimeType.startsWith("image/");
+                        const mediaUrl = media
+                          ? isPrivateStoragePath(media.storagePath)
+                            ? `/api/admin/community-verifications/documents/${encodeURIComponent(media.id)}`
+                            : media.storagePath
+                          : "";
                         return (
                           <li
                             key={`${r.id}-${docId}`}
@@ -91,20 +93,15 @@ export default async function AdminCommunityVerificationsPage() {
                             <div className="flex items-start gap-3">
                               {canPreview ? (
                                 <div className="relative h-12 w-16 shrink-0 overflow-hidden rounded border border-[var(--border)] bg-white">
-                                  <Image
-                                    src={media.storagePath}
-                                    alt={media.filename}
-                                    fill
-                                    sizes="64px"
-                                    className="object-cover"
-                                  />
+                                  {/* eslint-disable-next-line @next/next/no-img-element -- admin-only preview */}
+                                  <img src={mediaUrl} alt={media.filename} className="h-full w-full object-cover" />
                                 </div>
                               ) : null}
                               <div className="min-w-0">
                                 <p className="truncate font-mono text-[10px] text-[var(--muted-foreground)]">{docId}</p>
                                 {media ? (
                                   <a
-                                    href={media.storagePath}
+                                    href={mediaUrl}
                                     target="_blank"
                                     rel="noreferrer"
                                     className={`${primaryLinkClass} mt-0.5 inline-block text-xs`}
@@ -213,6 +210,6 @@ export default async function AdminCommunityVerificationsPage() {
           </ul>
         )}
       </section>
-    </div>
+    </AdminPageContainer>
   );
 }

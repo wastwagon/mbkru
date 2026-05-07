@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { deleteTownHallEventAction, updateTownHallEventAction } from "@/app/admin/town-halls/actions";
 import { formatLocalDateTimeInput, TownHallFormFields } from "@/app/admin/town-halls/TownHallFormFields";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -52,19 +54,24 @@ export default async function AdminTownHallEditPage({ params }: Props) {
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin/town-halls" className={primaryLinkClass}>
-          ← Town halls
-        </Link>
-      </p>
-      <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">Edit programme row</h1>
-      <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-        <code className="rounded bg-[var(--section-light)] px-1 text-xs">{ev.slug}</code>
-        {ev.region?.name ? ` · ${ev.region.name}` : null}
-      </p>
+    <AdminPageContainer width="narrow">
+      <AdminPageHeader
+        showDashboardBack={false}
+        title="Edit programme row"
+        backSlot={
+          <Link href="/admin/town-halls" className={primaryLinkClass}>
+            ← Town halls
+          </Link>
+        }
+        description={
+          <p>
+            <code className="rounded bg-[var(--section-light)] px-1 text-xs">{ev.slug}</code>
+            {ev.region?.name ? ` · ${ev.region.name}` : null}
+          </p>
+        }
+      />
 
-      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6">
+      <section className="mt-2 rounded-2xl border border-[var(--border)] bg-white p-6">
         <form action={updateTownHallEventAction} className="grid gap-4 sm:grid-cols-2">
           <TownHallFormFields regions={regions} constituencies={constituencies} defaults={defaults} />
           <div className="sm:col-span-2 flex flex-wrap gap-3">
@@ -97,6 +104,6 @@ export default async function AdminTownHallEditPage({ params }: Props) {
           </button>
         </form>
       </section>
-    </div>
+    </AdminPageContainer>
   );
 }

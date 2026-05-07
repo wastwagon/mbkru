@@ -1,6 +1,9 @@
 import Link from "next/link";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminMetricCard } from "@/components/admin/AdminMetricCard";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { getPetitionPendingAnalytics } from "@/lib/server/petition-pending-analytics";
@@ -10,37 +13,28 @@ export default async function AdminPetitionPendingAnalyticsPage() {
 
   if (!isDatabaseConfigured()) {
     return (
-      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-        <p className="text-sm text-[var(--muted-foreground)]">
-          <Link href="/admin" className={primaryLinkClass}>
-            ← Admin
-          </Link>
-        </p>
-        <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">
-          Petition pending signatures
-        </h1>
-        <p className="mt-2 text-sm text-[var(--muted-foreground)]">Database is not configured.</p>
-      </div>
+      <AdminPageContainer>
+        <AdminPageHeader title="Petition pending signatures" description="Database is not configured." />
+      </AdminPageContainer>
     );
   }
 
   const data = await getPetitionPendingAnalytics();
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className={primaryLinkClass}>
-          ← Admin
-        </Link>
-      </p>
-      <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">
-        Petition pending signatures
-      </h1>
-      <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-        Guest email-verification queue (no addresses shown). Confirmed signatures live in{" "}
-        <code className="rounded bg-[var(--muted)] px-1 py-0.5 text-xs">PetitionSignature</code>.
-      </p>
-      <p className="mt-1 font-mono text-xs text-[var(--muted-foreground)]">Generated {data.generatedAt}</p>
+    <AdminPageContainer>
+      <AdminPageHeader
+        title="Petition pending signatures"
+        description={
+          <>
+            <p>
+              Guest email-verification queue (no addresses shown). Confirmed signatures live in{" "}
+              <code className="rounded bg-[var(--muted)] px-1 py-0.5 text-xs">PetitionSignature</code>.
+            </p>
+            <p className="mt-1 font-mono text-xs">Generated {data.generatedAt}</p>
+          </>
+        }
+      />
 
       <p className="mt-2 text-sm">
         <Link href="/api/admin/analytics/petition-pending" className={primaryLinkClass}>
@@ -58,42 +52,34 @@ export default async function AdminPetitionPendingAnalyticsPage() {
       </p>
 
       <section className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-            Active pending
-          </p>
-          <p className="mt-1 font-display text-3xl font-bold tabular-nums text-[var(--foreground)]">
-            {data.totals.activePending}
-          </p>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">Link not yet expired</p>
-        </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-            Expired pending
-          </p>
-          <p className="mt-1 font-display text-3xl font-bold tabular-nums text-[var(--foreground)]">
-            {data.totals.expiredPending}
-          </p>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">Safe to delete via cron</p>
-        </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-            Verified signatures
-          </p>
-          <p className="mt-1 font-display text-3xl font-bold tabular-nums text-[var(--foreground)]">
-            {data.totals.verifiedSignatures}
-          </p>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">All petitions, all time</p>
-        </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-            New pending (30d)
-          </p>
-          <p className="mt-1 font-display text-3xl font-bold tabular-nums text-[var(--foreground)]">
-            {data.createdCounts.last30d}
-          </p>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">Rows created in rolling window</p>
-        </div>
+        <AdminMetricCard
+          surface="tile"
+          valueSize="xl"
+          label="Active pending"
+          value={data.totals.activePending}
+          subline="Link not yet expired"
+        />
+        <AdminMetricCard
+          surface="tile"
+          valueSize="xl"
+          label="Expired pending"
+          value={data.totals.expiredPending}
+          subline="Safe to delete via cron"
+        />
+        <AdminMetricCard
+          surface="tile"
+          valueSize="xl"
+          label="Verified signatures"
+          value={data.totals.verifiedSignatures}
+          subline="All petitions, all time"
+        />
+        <AdminMetricCard
+          surface="tile"
+          valueSize="xl"
+          label="New pending (30d)"
+          value={data.createdCounts.last30d}
+          subline="Rows created in rolling window"
+        />
       </section>
 
       <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
@@ -159,6 +145,6 @@ export default async function AdminPetitionPendingAnalyticsPage() {
           </table>
         </div>
       </section>
-    </div>
+    </AdminPageContainer>
   );
 }

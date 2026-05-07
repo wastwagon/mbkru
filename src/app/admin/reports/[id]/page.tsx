@@ -17,6 +17,8 @@ import {
   isCitizenReportSlaOverdue,
 } from "@/lib/admin/report-operations-datetime";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
 import { destructiveTextControlClass, primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -77,7 +79,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
   );
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+    <AdminPageContainer width="form">
       {sp.error === "sla_invalid" ? (
         <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
           SLA date could not be read. Use the datetime picker or clear the field.
@@ -129,36 +131,39 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
         </p>
       ) : null}
 
-      <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin/reports" className={primaryLinkClass}>
-          ← All reports
-        </Link>
-        {report.publicCauseOpenedAt != null || (report.publicCauseSlug?.trim() ?? "").length > 0 ? (
+      <AdminPageHeader
+        showDashboardBack={false}
+        title={report.title}
+        titleClassName="line-clamp-2"
+        backSlot={
           <>
-            {" · "}
-            <Link href="/admin/public-causes" className={primaryLinkClass}>
-              Public causes queue
+            <Link href="/admin/reports" className={primaryLinkClass}>
+              ← All reports
             </Link>
-            {report.publicCauseOpenedAt != null && report.publicCauseSlug?.trim() ? (
+            {report.publicCauseOpenedAt != null || (report.publicCauseSlug?.trim() ?? "").length > 0 ? (
               <>
                 {" · "}
-                <Link
-                  href={`/citizens-voice/causes/${encodeURIComponent(report.publicCauseSlug.trim())}`}
-                  className={primaryLinkClass}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Live page
+                <Link href="/admin/public-causes" className={primaryLinkClass}>
+                  Public causes queue
                 </Link>
+                {report.publicCauseOpenedAt != null && report.publicCauseSlug?.trim() ? (
+                  <>
+                    {" · "}
+                    <Link
+                      href={`/citizens-voice/causes/${encodeURIComponent(report.publicCauseSlug.trim())}`}
+                      className={primaryLinkClass}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Live page
+                    </Link>
+                  </>
+                ) : null}
               </>
             ) : null}
           </>
-        ) : null}
-      </p>
-
-      <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)] line-clamp-2">
-        {report.title}
-      </h1>
+        }
+      />
 
       {report.kind === "SITUATIONAL_ALERT" ? (
         <div
@@ -492,20 +497,21 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
           <ul className="mt-4 grid gap-4 sm:grid-cols-2">
             {report.attachments.map((a) => {
               const isImage = a.mimeType.startsWith("image/");
+              const attachmentUrl = `/api/reports/${encodeURIComponent(report.id)}/attachments/${encodeURIComponent(a.id)}`;
               return (
                 <li key={a.id} className="rounded-lg border border-[var(--border)] p-3">
                   {isImage ? (
-                    <a href={a.path} target="_blank" rel="noopener noreferrer" className="block">
+                    <a href={attachmentUrl} target="_blank" rel="noopener noreferrer" className="block">
                       {/* eslint-disable-next-line @next/next/no-img-element -- admin-only local uploads */}
                       <img
-                        src={a.path}
+                        src={attachmentUrl}
                         alt=""
                         className="max-h-40 w-full rounded-md object-contain bg-[var(--muted)]/10"
                       />
                     </a>
                   ) : null}
                   <a
-                    href={a.path}
+                    href={attachmentUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`${primaryLinkClass} mt-2 block text-sm break-all`}
@@ -728,6 +734,6 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
           </button>
         </div>
       </form>
-    </div>
+    </AdminPageContainer>
   );
 }

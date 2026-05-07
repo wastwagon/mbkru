@@ -2,6 +2,9 @@ import Link from "next/link";
 
 import { updatePetitionStatusAction } from "@/app/admin/petitions/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminListPanel } from "@/components/admin/AdminListPanel";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -43,22 +46,23 @@ export default async function AdminPetitionsPage({ searchParams }: Props) {
   });
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className={primaryLinkClass}>
-          ← Admin home
-        </Link>
-      </p>
-      <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">Petitions</h1>
-      <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-        Close to stop new signatures, or archive to hide from the public site. Reopen returns a petition to open
-        signatures.
-      </p>
-      <p className="mt-2 text-sm">
-        <Link href="/admin/analytics/petition-pending" className={primaryLinkClass}>
-          Guest email-verification queue (analytics)
-        </Link>
-      </p>
+    <AdminPageContainer>
+      <AdminPageHeader
+        title="Petitions"
+        description={
+          <>
+            <p>
+              Close to stop new signatures, or archive to hide from the public site. Reopen returns a petition to open
+              signatures.
+            </p>
+            <p className="mt-2 text-sm">
+              <Link href="/admin/analytics/petition-pending" className={primaryLinkClass}>
+                Guest email-verification queue (analytics)
+              </Link>
+            </p>
+          </>
+        }
+      />
 
       {sp.saved === "1" ? (
         <p className="mt-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900" role="status">
@@ -99,7 +103,7 @@ export default async function AdminPetitionsPage({ searchParams }: Props) {
         })}
       </div>
 
-      <ul className="mt-6 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-white">
+      <AdminListPanel className="mt-6">
         {petitions.length === 0 ? (
           <li className="p-6 text-sm text-[var(--muted-foreground)]">No petitions in this view.</li>
         ) : (
@@ -201,7 +205,7 @@ export default async function AdminPetitionsPage({ searchParams }: Props) {
             </li>
           ))
         )}
-      </ul>
-    </div>
+      </AdminListPanel>
+    </AdminPageContainer>
   );
 }

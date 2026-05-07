@@ -1,6 +1,12 @@
 import Link from "next/link";
 
+import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
+import { AdminListPanel } from "@/components/admin/AdminListPanel";
+import { AdminMetricCard } from "@/components/admin/AdminMetricCard";
+import { AdminSectionCard } from "@/components/admin/AdminSectionCard";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 import {
@@ -24,15 +30,9 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
 
   if (!isDatabaseConfigured()) {
     return (
-      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-        <p className="text-sm text-[var(--muted-foreground)]">
-          <Link href="/admin" className={primaryLinkClass}>
-            ← Admin
-          </Link>
-        </p>
-        <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">Citizen report analytics</h1>
-        <p className="mt-2 text-sm text-[var(--muted-foreground)]">Database is not configured.</p>
-      </div>
+      <AdminPageContainer>
+        <AdminPageHeader title="Citizen report analytics" description="Database is not configured." />
+      </AdminPageContainer>
     );
   }
 
@@ -52,18 +52,20 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className={primaryLinkClass}>
-          ← Admin
-        </Link>
-      </p>
-      <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">Citizen report analytics</h1>
-      <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-        Non-identifying aggregates for triage and reporting. Window: last{" "}
-        <strong>{data.windowMonths}</strong> month(s) (since {new Date(data.windowSince).toLocaleDateString("en-GB")}).
-      </p>
-      <p className="mt-1 font-mono text-xs text-[var(--muted-foreground)]">Generated {data.generatedAt}</p>
+    <AdminPageContainer>
+      <AdminPageHeader
+        title="Citizen report analytics"
+        description={
+          <>
+            <p>Non-identifying aggregates for triage and reporting.</p>
+            <p className="mt-2">
+              Window: last <strong>{data.windowMonths}</strong> month(s) (since{" "}
+              {new Date(data.windowSince).toLocaleDateString("en-GB")}).
+            </p>
+            <p className="mt-1 font-mono text-xs">Generated {data.generatedAt}</p>
+          </>
+        }
+      />
 
       <p className="mt-4 text-sm">
         <span className="text-[var(--muted-foreground)]">Change window:</span>{" "}
@@ -114,35 +116,23 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
       </p>
 
       <section className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">All-time total</p>
-          <p className="mt-1 font-display text-3xl font-bold tabular-nums text-[var(--foreground)]">
-            {data.totals.all}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">In window</p>
-          <p className="mt-1 font-display text-3xl font-bold tabular-nums text-[var(--foreground)]">
-            {data.totals.inWindow}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">With attachments</p>
-          <p className="mt-1 font-display text-3xl font-bold tabular-nums text-[var(--foreground)]">
-            {data.totals.withAttachments}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-            SLA overdue (open)
-          </p>
-          <p className="mt-1 font-display text-3xl font-bold tabular-nums text-[var(--foreground)]">
-            {data.totals.slaOpenOverdue}
-          </p>
-        </div>
+        <AdminMetricCard surface="tile" valueSize="xl" label="All-time total" value={data.totals.all} />
+        <AdminMetricCard surface="tile" valueSize="xl" label="In window" value={data.totals.inWindow} />
+        <AdminMetricCard
+          surface="tile"
+          valueSize="xl"
+          label="With attachments"
+          value={data.totals.withAttachments}
+        />
+        <AdminMetricCard
+          surface="tile"
+          valueSize="xl"
+          label="SLA overdue (open)"
+          value={data.totals.slaOpenOverdue}
+        />
       </section>
 
-      <section className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
+      <AdminSectionCard className="mt-8">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Public causes (counts only)</h2>
         <p className="mt-1 text-xs text-[var(--muted-foreground)]">
           Reports with a staff-approved public thread slug — not a substitute for moderation metrics on{" "}
@@ -171,14 +161,16 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
             </dd>
           </div>
         </dl>
-      </section>
+      </AdminSectionCard>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
-        <section className="rounded-xl border border-[var(--border)] bg-white p-5">
+        <AdminSectionCard>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">By kind (window)</h2>
           <ul className="mt-3 space-y-2 text-sm">
             {Object.keys(data.totals.byKindInWindow).length === 0 ? (
-              <li className="text-[var(--muted-foreground)]">No rows.</li>
+              <li>
+                <AdminEmptyState message="No rows." />
+              </li>
             ) : (
               Object.entries(data.totals.byKindInWindow).map(([k, n]) => (
                 <li key={k} className="flex justify-between gap-2">
@@ -188,12 +180,14 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
               ))
             )}
           </ul>
-        </section>
-        <section className="rounded-xl border border-[var(--border)] bg-white p-5">
+        </AdminSectionCard>
+        <AdminSectionCard>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">By status (window)</h2>
           <ul className="mt-3 space-y-2 text-sm">
             {Object.keys(data.totals.byStatusInWindow).length === 0 ? (
-              <li className="text-[var(--muted-foreground)]">No rows.</li>
+              <li>
+                <AdminEmptyState message="No rows." />
+              </li>
             ) : (
               Object.entries(data.totals.byStatusInWindow).map(([s, n]) => (
                 <li key={s} className="flex justify-between gap-2">
@@ -203,15 +197,17 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
               ))
             )}
           </ul>
-        </section>
+        </AdminSectionCard>
       </div>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
-        <section className="rounded-xl border border-[var(--border)] bg-white p-5">
+        <AdminSectionCard>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">By kind (all-time)</h2>
           <ul className="mt-3 space-y-2 text-sm">
             {Object.keys(data.totals.byKind).length === 0 ? (
-              <li className="text-[var(--muted-foreground)]">No rows.</li>
+              <li>
+                <AdminEmptyState message="No rows." />
+              </li>
             ) : (
               Object.entries(data.totals.byKind).map(([k, n]) => (
                 <li key={k} className="flex justify-between gap-2">
@@ -221,12 +217,14 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
               ))
             )}
           </ul>
-        </section>
-        <section className="rounded-xl border border-[var(--border)] bg-white p-5">
+        </AdminSectionCard>
+        <AdminSectionCard>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">By status (all-time)</h2>
           <ul className="mt-3 space-y-2 text-sm">
             {Object.keys(data.totals.byStatus).length === 0 ? (
-              <li className="text-[var(--muted-foreground)]">No rows.</li>
+              <li>
+                <AdminEmptyState message="No rows." />
+              </li>
             ) : (
               Object.entries(data.totals.byStatus).map(([s, n]) => (
                 <li key={s} className="flex justify-between gap-2">
@@ -236,11 +234,11 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
               ))
             )}
           </ul>
-        </section>
+        </AdminSectionCard>
       </div>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
-        <section className="rounded-xl border border-[var(--border)] bg-white p-5">
+        <AdminSectionCard>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">Ops playbook tag (all-time)</h2>
           <p className="mt-1 text-xs text-[var(--muted-foreground)]">
             From <code className="rounded bg-[var(--section-light)] px-1 py-0.5 text-[11px]">operationsPlaybookKey</code>{" "}
@@ -248,7 +246,9 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
           </p>
           <ul className="mt-3 space-y-2 text-sm">
             {data.byPlaybookAll.length === 0 ? (
-              <li className="text-[var(--muted-foreground)]">No rows.</li>
+              <li>
+                <AdminEmptyState message="No rows." />
+              </li>
             ) : (
               data.byPlaybookAll.map((row) => (
                 <li key={row.key || "__unset__"} className="flex justify-between gap-2">
@@ -260,12 +260,14 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
               ))
             )}
           </ul>
-        </section>
-        <section className="rounded-xl border border-[var(--border)] bg-white p-5">
+        </AdminSectionCard>
+        <AdminSectionCard>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">Ops playbook tag (window)</h2>
           <ul className="mt-3 space-y-2 text-sm">
             {data.byPlaybookInWindow.length === 0 ? (
-              <li className="text-[var(--muted-foreground)]">No rows.</li>
+              <li>
+                <AdminEmptyState message="No rows." />
+              </li>
             ) : (
               data.byPlaybookInWindow.map((row) => (
                 <li key={`${row.key}-w`} className="flex justify-between gap-2">
@@ -277,40 +279,40 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
               ))
             )}
           </ul>
-        </section>
+        </AdminSectionCard>
       </div>
 
       <section className="mt-10">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">By region (all-time)</h2>
         {data.byRegion.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">No region tagged reports yet.</p>
+          <AdminEmptyState message="No region tagged reports yet." className="mt-2" />
         ) : (
-          <ul className="mt-3 divide-y divide-[var(--border)] rounded-xl border border-[var(--border)] bg-white">
+          <AdminListPanel className="mt-3 rounded-xl">
             {data.byRegion.map((r) => (
               <li key={r.regionId} className="flex justify-between gap-2 px-4 py-2 text-sm">
                 <span className="text-[var(--foreground)]">{r.regionName}</span>
                 <span className="tabular-nums text-[var(--muted-foreground)]">{r.count}</span>
               </li>
             ))}
-          </ul>
+          </AdminListPanel>
         )}
       </section>
 
       <section className="mt-10">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">By month (window)</h2>
         {data.byMonth.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">No reports in this window.</p>
+          <AdminEmptyState message="No reports in this window." className="mt-2" />
         ) : (
-          <ul className="mt-3 divide-y divide-[var(--border)] rounded-xl border border-[var(--border)] bg-white">
+          <AdminListPanel className="mt-3 rounded-xl">
             {data.byMonth.map((row) => (
               <li key={row.yearMonth} className="flex justify-between gap-2 px-4 py-2 text-sm">
                 <span className="font-mono text-[var(--foreground)]">{row.yearMonth}</span>
                 <span className="tabular-nums text-[var(--muted-foreground)]">{row.count}</span>
               </li>
             ))}
-          </ul>
+          </AdminListPanel>
         )}
       </section>
-    </div>
+    </AdminPageContainer>
   );
 }

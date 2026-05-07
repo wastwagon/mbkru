@@ -3,6 +3,8 @@ import Link from "next/link";
 
 import { MediaUploadForm } from "@/app/admin/media/MediaUploadForm";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -11,12 +13,12 @@ export default async function AdminMediaPage() {
   const items = await prisma.media.findMany({ orderBy: { createdAt: "desc" } });
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">Image library</h1>
-      <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-        Upload once, then pick these images as featured images on news posts.
-      </p>
-      <div className="mt-8 max-w-lg">
+    <AdminPageContainer>
+      <AdminPageHeader
+        title="Image library"
+        description="Upload once, then pick these images as featured images on news posts."
+      />
+      <div className="max-w-lg">
         <MediaUploadForm />
       </div>
       <h2 className="mt-12 font-semibold text-[var(--foreground)]">All images</h2>
@@ -40,11 +42,11 @@ export default async function AdminMediaPage() {
           ))
         )}
       </ul>
-      <p className="mt-10">
-        <Link href="/admin" className={`${primaryLinkClass} text-sm`}>
-          ← Dashboard
+      <p className="mt-10 text-sm">
+        <Link href="/admin/posts" className={primaryLinkClass}>
+          ← News posts
         </Link>
       </p>
-    </div>
+    </AdminPageContainer>
   );
 }

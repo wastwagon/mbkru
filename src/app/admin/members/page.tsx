@@ -1,8 +1,11 @@
 import Link from "next/link";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminListPanel } from "@/components/admin/AdminListPanel";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
-import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminMembersPage() {
   await requireAdminSession();
@@ -22,14 +25,21 @@ export default async function AdminMembersPage() {
   });
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">Members</h1>
-      <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-        Public accounts (MBKRU Voice). Identity status is staff-controlled — not Ghana Card upload in this MVP. Latest 200 by signup
-        date.
-      </p>
+    <AdminPageContainer width="narrow">
+      <AdminPageHeader
+        title="Members"
+        description={
+          <>
+            <p>Public accounts that use Voice and related tools.</p>
+            <p className="mt-2">
+              Identity status is staff-controlled in this console (not Ghana Card upload in this MVP). Showing the latest
+              200 signups.
+            </p>
+          </>
+        }
+      />
 
-      <ul className="mt-8 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-white">
+      <AdminListPanel>
         {members.length === 0 ? (
           <li className="p-6 text-sm text-[var(--muted-foreground)]">No members yet.</li>
         ) : (
@@ -59,13 +69,7 @@ export default async function AdminMembersPage() {
             </li>
           ))
         )}
-      </ul>
-
-      <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className={primaryLinkClass}>
-          ← Admin home
-        </Link>
-      </p>
-    </div>
+      </AdminListPanel>
+    </AdminPageContainer>
   );
 }

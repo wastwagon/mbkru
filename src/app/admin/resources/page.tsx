@@ -5,7 +5,10 @@ import {
   publishResourceDocumentAction,
   unpublishResourceDocumentAction,
 } from "@/app/admin/resources/actions";
+import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
 import { DeleteResourceDocumentForm } from "@/components/admin/DeleteResourceDocumentForm";
+import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { resourceCategoryLabel } from "@/lib/content/resource-documents";
 import { prisma } from "@/lib/db/prisma";
@@ -19,22 +22,21 @@ export default async function AdminResourcesPage() {
   });
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-      <p className="text-sm text-[var(--muted-foreground)]">
-        <Link href="/admin" className={primaryLinkClass}>
-          ← Admin
-        </Link>
-      </p>
-      <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">Resource library</h1>
-      <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-        Upload PDFs and documents for the public{" "}
-        <Link href="/resources" className={primaryLinkClass}>
-          Resources
-        </Link>{" "}
-        page. Drafts stay hidden until you publish.
-      </p>
+    <AdminPageContainer width="form">
+      <AdminPageHeader
+        title="Resource library"
+        description={
+          <>
+            Upload PDFs and documents for the public{" "}
+            <Link href="/resources" className={primaryLinkClass}>
+              Resources
+            </Link>{" "}
+            page. Drafts stay hidden until you publish.
+          </>
+        }
+      />
 
-      <section className="mt-10 rounded-xl border border-[var(--border)] bg-white p-5">
+      <section className="mt-2 rounded-xl border border-[var(--border)] bg-white p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Add document</h2>
         <form action={createResourceDocumentAction} encType="multipart/form-data" className="mt-4 space-y-3">
           <div>
@@ -134,7 +136,9 @@ export default async function AdminResourcesPage() {
       <h2 className="mt-12 text-sm font-semibold text-[var(--foreground)]">All documents ({docs.length})</h2>
       <ul className="mt-4 space-y-3">
         {docs.length === 0 ? (
-          <li className="text-sm text-[var(--muted-foreground)]">No documents yet.</li>
+          <li>
+            <AdminEmptyState message="No documents yet." />
+          </li>
         ) : (
           docs.map((d) => (
             <li
@@ -198,6 +202,6 @@ export default async function AdminResourcesPage() {
           ))
         )}
       </ul>
-    </div>
+    </AdminPageContainer>
   );
 }

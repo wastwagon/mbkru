@@ -1,8 +1,9 @@
 import { randomUUID } from "crypto";
-import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 
 import { prisma } from "@/lib/db/prisma";
+import { writePrivateUploadFile } from "@/lib/server/private-upload-storage";
+import { MalwareScanError, scanUploadedFileOrThrow } from "@/lib/server/upload-malware-scan";
 
 export const COMMUNITY_VERIFICATION_DOC_MAX_BYTES = 8 * 1024 * 1024;
 export const COMMUNITY_VERIFICATION_DOC_MAX_COUNT = 10;
@@ -22,7 +23,13 @@ function extForMime(mime: string): string {
   return ".jpg";
 }
 
-export type VerificationUploadErrorCode = "empty" | "too_large" | "bad_mime" | "too_many";
+export type VerificationUploadErrorCode =
+  | "empty"
+  | "too_large"
+  | "bad_mime"
+  | "too_many"
+  | "scanner_infected"
+  | "scanner_unavailable";
 
 export class VerificationUploadError extends Error {
   constructor(
@@ -40,9 +47,6 @@ export async function createMediaRecordsFromVerificationFiles(files: File[]): Pr
     throw new VerificationUploadError("too_many");
   }
 
-  const uploadDir = path.join(process.cwd(), "public", "uploads");
-  await mkdir(uploadDir, { recursive: true });
-
   const ids: string[] = [];
 
   for (const file of files) {
@@ -59,11 +63,22 @@ export async function createMediaRecordsFromVerificationFiles(files: File[]): Pr
     const ext = path.extname(file.name) || extForMime(file.type);
     const safeExt = ext.match(/^\.\w{2,5}$/) ? ext : extForMime(file.type);
     const filename = `${randomUUID()}${safeExt}`;
-    const diskPath = path.join(uploadDir, filename);
     const buffer = Buffer.from(await file.arrayBuffer());
-    await writeFile(diskPath, buffer);
-
-    const storagePath = `/uploads/${filename}`;
+    try {
+      await scanUploadedFileOrThrow(buffer, "community-verification");
+    } catch (err) {
+      if (err instanceof MalwareScanError) {
+        throw new VerificationUploadError(
+          err.code === "infected" ? "scanner_infected" : "scanner_unavailable",
+        );
+      }
+      throw err;
+    }
+    const storagePath = await writePrivateUploadFile({
+      bucket: "community-verifications",
+      segments: [filename],
+      bytes: buffer,
+    });
     const record = await prisma.media.create({
       data: {
         filename: file.name.slice(0, 200),

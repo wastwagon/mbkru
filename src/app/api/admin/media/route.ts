@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 
 import { getAdminSession } from "@/lib/admin/session";
 import { prisma } from "@/lib/db/prisma";
+import { MalwareScanError, scanUploadedFileOrThrow } from "@/lib/server/upload-malware-scan";
 
 const MAX_BYTES = 8 * 1024 * 1024;
 const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
@@ -46,6 +47,20 @@ export async function POST(request: Request) {
   await mkdir(uploadDir, { recursive: true });
   const diskPath = path.join(uploadDir, filename);
   const buffer = Buffer.from(await file.arrayBuffer());
+  try {
+    await scanUploadedFileOrThrow(buffer, "admin-media");
+  } catch (err) {
+    if (err instanceof MalwareScanError) {
+      return NextResponse.json(
+        {
+          error:
+            err.code === "infected" ? "File blocked by malware scanner" : "Upload scanner unavailable",
+        },
+        { status: err.code === "infected" ? 400 : 503 },
+      );
+    }
+    throw err;
+  }
   await writeFile(diskPath, buffer);
 
   const storagePath = `/uploads/${filename}`;

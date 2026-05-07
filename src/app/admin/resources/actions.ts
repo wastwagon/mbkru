@@ -10,6 +10,7 @@ import { revalidatePath } from "next/cache";
 import { randomSlugSuffix, slugifyTitleSegment } from "@/lib/civic/slug";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { MalwareScanError, scanUploadedFileOrThrow } from "@/lib/server/upload-malware-scan";
 
 const MAX_BYTES = 25 * 1024 * 1024;
 const ALLOWED_MIME = new Set([
@@ -86,6 +87,18 @@ export async function createResourceDocumentAction(formData: FormData): Promise<
   await mkdir(uploadDir, { recursive: true });
   const diskPath = path.join(uploadDir, diskName);
   const buffer = Buffer.from(await file.arrayBuffer());
+  try {
+    await scanUploadedFileOrThrow(buffer, "admin-resource");
+  } catch (err) {
+    if (err instanceof MalwareScanError) {
+      console.error("[admin/resources] malware scan blocked upload", {
+        reason: err.code,
+        message: err.message,
+      });
+      return;
+    }
+    throw err;
+  }
   await writeFile(diskPath, buffer);
 
   const filePath = `/uploads/resources/${diskName}`;

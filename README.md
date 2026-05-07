@@ -72,8 +72,14 @@ npm start
 
 ```bash
 npm run test
+npm run test:e2e:smoke
+npm run test:e2e:dashboards
 npm run verify:release-gates   # Prisma validate + tsc --noEmit + vitest (CI runs this after lint)
+npm run ops:notifications:process  # process queued report email/SMS jobs
 ```
+
+For automated processing in production, schedule:
+- `POST /api/cron/notifications-outbox` with `Authorization: Bearer <CRON_SECRET>`.
 
 Vitest runs fast unit tests for shared helpers (no database).
 
@@ -111,7 +117,7 @@ Copy `.env.example` to `.env.local` (or `.env` for Docker Compose) and fill in. 
 
 ### Database on deploy (Docker / Coolify)
 
-On container start, `docker-entrypoint.sh` runs **`prisma migrate deploy`** and then **`prisma db seed`** when `DATABASE_URL` is set. Set **`SKIP_DB_SEED=1`** to run migrations only. If migrate or seed fails, the app still starts so you can fix the database and use **Admin → Settings** to run **Run migrations**, **Seed database**, or **Migrate + seed** manually (same Prisma commands, admin session required).
+On container start, `docker-entrypoint.sh` runs **`prisma migrate deploy`** when `DATABASE_URL` is set. In production, startup now **fails fast** on migration errors unless `ALLOW_START_WITH_FAILED_MIGRATION=1` is explicitly set. Seed is **off by default in production**; set `RUN_DB_SEED_ON_BOOT=1` when you intentionally want startup seeding (or use Admin → Settings to run seed manually). In non-production, seed still runs unless `SKIP_DB_SEED=1`.
 
 **Production operations** (backups, when to skip seed, secret rotation, `NEXT_PUBLIC_*` rebuilds): see [`docs/OPS_RUNBOOK.md`](docs/OPS_RUNBOOK.md).
 
@@ -180,7 +186,7 @@ docker compose up -d --build
 docker compose exec mbkru-web npx prisma db seed
 ```
 
-App runs at http://localhost:1100 (port 1100 → container 3000). The image runs **`prisma migrate deploy`** on start when `DATABASE_URL` is set. **Seed** creates the first admin from `ADMIN_EMAIL` / `ADMIN_PASSWORD`. Uploaded files persist in the **`mbkru_uploads`** volume (`public/uploads`). **Resource PDFs** for the public Resources page are stored under `public/uploads/resources/` via **Admin → Resource library** (`/admin/resources`).
+App runs at http://localhost:1100 (port 1100 → container 3000). The image runs **`prisma migrate deploy`** on start when `DATABASE_URL` is set. Sensitive uploads (Voice attachments and community verification docs) are stored under **`PRIVATE_UPLOADS_DIR`** (`var/private-uploads` by default), while public media/resources remain under `public/uploads`.
 
 Use a `.env` file in the project root so `build.args` pick up `NEXT_PUBLIC_*` for the image build, and set `ADMIN_SESSION_SECRET`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD`.
 
@@ -192,7 +198,7 @@ docker compose -f docker-compose.fullstack.yml up -d --build
 docker compose -f docker-compose.fullstack.yml exec mbkru-web node /app/node_modules/prisma/build/index.js db seed
 ```
 
-Same URL; Postgres backs the app; Redis is on the Docker network for rate limiting and future queues. On startup, `docker-entrypoint.sh` runs `prisma migrate deploy` and `prisma db seed` automatically when `DATABASE_URL` is set (skip seed with `SKIP_DB_SEED=1`).
+Same URL; Postgres backs the app; Redis is on the Docker network for rate limiting and future queues. On startup, `docker-entrypoint.sh` runs `prisma migrate deploy` automatically when `DATABASE_URL` is set. Seed requires `RUN_DB_SEED_ON_BOOT=1` in production (or runs by default in non-production unless `SKIP_DB_SEED=1`).
 
 ### Development with Docker
 

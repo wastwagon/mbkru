@@ -17,6 +17,7 @@ model Admin {
   authoredCitizenReportAdminReplies CitizenReportAdminReply[]     @relation("CitizenReportAdminReplyAuthor")
   editedCitizenReportAdminReplies   CitizenReportAdminReply[]     @relation("CitizenReportAdminReplyEditor")
   citizenReportAdminReplyAuditLogs  CitizenReportAdminReplyAuditLog[]
+  operationalAuditLogs              AdminOperationalAuditLog[]
 }
 
 /// Reusable images for posts (and future resources).
@@ -170,6 +171,24 @@ enum PetitionStatus {
 enum PublicCauseCommentStatus {
   VISIBLE
   HIDDEN
+}
+
+enum NotificationDeliveryChannel {
+  EMAIL
+  SMS
+}
+
+enum NotificationDeliveryKind {
+  REPORT_STATUS
+  REPORT_ADMIN_REPLY
+  REPORT_ADMIN_REPLY_VISIBLE_AGAIN
+}
+
+enum NotificationDeliveryJobStatus {
+  PENDING
+  PROCESSING
+  SENT
+  FAILED
 }
 
 /// Ghana 16 regions — seeded in prisma/seed.mjs
@@ -740,6 +759,36 @@ model MemberNotification {
   createdAt DateTime  @default(now())
 
   @@index([memberId, readAt])
+}
+
+model AdminOperationalAuditLog {
+  id        String   @id @default(cuid())
+  adminId   String
+  admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  action    String   @db.VarChar(80)
+  details   Json?
+  createdAt DateTime @default(now())
+
+  @@index([adminId, createdAt])
+  @@index([action, createdAt])
+}
+
+model NotificationDeliveryJob {
+  id           String                        @id @default(cuid())
+  channel      NotificationDeliveryChannel
+  kind         NotificationDeliveryKind
+  payload      Json
+  status       NotificationDeliveryJobStatus @default(PENDING)
+  attempts     Int                           @default(0)
+  maxAttempts  Int                           @default(5)
+  availableAt  DateTime                      @default(now())
+  lastError    String?
+  sentAt       DateTime?
+  createdAt    DateTime                      @default(now())
+  updatedAt    DateTime                      @updatedAt
+
+  @@index([status, availableAt])
+  @@index([channel, status, availableAt])
 }
 
 /// Aggregated UI telemetry for MBKRU Voice and accessibility tools (`POST /api/analytics/mbkru-voice-event`).
