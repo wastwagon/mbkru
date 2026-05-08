@@ -39,6 +39,12 @@ export async function updatePetitionStatusAction(formData: FormData) {
   revalidatePath("/petitions");
   revalidatePath(`/petitions/${p.slug}`);
   revalidatePath("/admin/petitions");
+  revalidatePath(`/admin/petitions/${id}`);
+
+  const redirectTarget = formData.get("redirect");
+  if (redirectTarget === "detail") {
+    redirect(`/admin/petitions/${id}?saved=1`);
+  }
 
   redirect("/admin/petitions?saved=1");
 }

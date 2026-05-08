@@ -110,7 +110,11 @@ export default async function AdminPetitionsPage({ searchParams }: Props) {
           petitions.map((p) => (
             <li key={p.id} className="flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0 flex-1">
-                <p className="font-semibold text-[var(--foreground)]">{p.title}</p>
+                <p className="font-semibold text-[var(--foreground)]">
+                  <Link href={`/admin/petitions/${p.id}`} className={`${primaryLinkClass} font-semibold`}>
+                    {p.title}
+                  </Link>
+                </p>
                 <p className="mt-1 text-xs text-[var(--muted-foreground)]">
                   <span
                     className={

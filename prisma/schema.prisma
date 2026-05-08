@@ -12,6 +12,8 @@ model Admin {
   id                                String                        @id @default(cuid())
   email                             String                        @unique
   password                          String
+  /// When false, sign-in is rejected (operators can re-enable in /admin/operators).
+  active                            Boolean                       @default(true)
   createdAt                         DateTime                      @default(now())
   moderatedCommunityPosts           CommunityPost[]               @relation("CommunityPostModerator")
   authoredCitizenReportAdminReplies CitizenReportAdminReply[]     @relation("CitizenReportAdminReplyAuthor")

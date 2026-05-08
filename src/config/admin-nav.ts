@@ -41,6 +41,11 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
         label: "MBKRU Voice analytics",
         description: "Track chatbot and accessibility event performance.",
       },
+      {
+        href: "/admin/analytics/mbkru-voice/events",
+        label: "Voice event log",
+        description: "Inspect recent raw telemetry rows stored in Postgres.",
+      },
       { href: "/admin/petitions", label: "Petitions", description: "Moderate petition status and visibility." },
       {
         href: "/admin/analytics/petition-pending",
@@ -106,6 +111,16 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
     title: "System",
     items: [
+      {
+        href: "/admin/operators",
+        label: "Operators",
+        description: "Manage admin sign-ins, access, and passwords.",
+      },
+      {
+        href: "/admin/regions",
+        label: "Regions",
+        description: "Edit geographic reference data for forms and events.",
+      },
       {
         href: "/admin/notifications",
         label: "Notification outbox",

@@ -14,6 +14,12 @@ export default async function AdminSettingsPage() {
         description="Run database maintenance when deploy-time migrate or seed did not complete successfully."
       />
 
+      <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+        Multi-admin access: <a className="underline text-[var(--primary)]" href="/admin/operators">Operators</a>
+        {" · "}
+        Region reference data: <a className="underline text-[var(--primary)]" href="/admin/regions">Regions</a>
+      </p>
+
       <DatabaseMaintenancePanel />
 
       <PetitionPendingCleanupPanel />

@@ -238,7 +238,7 @@ docker run -p 1100:3000 mbkru-website
    - `ADMIN_EMAIL` / `ADMIN_PASSWORD` (then run seed once, or run seed in a deploy hook)
    - For Phase 2+: **`MEMBER_SESSION_SECRET`** (≥32 chars, different from admin secret)
 6. **Persistent volume** — Mount or use a named volume for `/app/public/uploads` so media survives redeploys.
-7. **Deploy** — Coolify will build and run the container; ensure migrations run (entrypoint runs `prisma migrate deploy` when `DATABASE_URL` is set).
+7. **Deploy** — Every new container runs **`docker-entrypoint.sh`**, which runs **`prisma migrate deploy`** whenever **`DATABASE_URL`** is set (**no Coolify hooks required**). Optional first-time **`prisma db seed`**: set **`RUN_DB_SEED_ON_BOOT=1`** in Coolify (staging/demo) — production stays empty until you seed or opt in deliberately.
 
 **If `/login` or `/register` say member auth is off:** the running image was built with `NEXT_PUBLIC_PLATFORM_PHASE=1`. Bump the variable in Coolify **build arguments**, add `MEMBER_SESSION_SECRET`, and **trigger a new build** (not just a restart).
 

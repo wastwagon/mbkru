@@ -10,7 +10,11 @@ import {
   notifyThreadAuthorOfPublishedReply,
 } from "@/lib/server/community-thread-reply-notify";
 import { createMemberNotification } from "@/lib/server/member-notifications";
-import { isCommunitySlug } from "@/lib/validation/communities";
+import {
+  communityForumCreateSchema,
+  forumSlugFromName,
+  isCommunitySlug,
+} from "@/lib/validation/communities";
 
 const cuid = z.string().cuid();
 
@@ -457,4 +461,175 @@ export async function reviewCommunityVerificationAction(formData: FormData): Pro
   revalidatePath("/admin/community-verifications");
   revalidatePath(`/admin/communities/${req.communityId}`);
   revalidatePath(`/communities/${req.community.slug}`);
+}
+
+const forumUpdateSchema = z.object({
+  forumId: cuid,
+  communityId: cuid,
+  name: z.string().trim().min(2).max(120),
+  slug: z
+    .string()
+    .trim()
+    .min(2)
+    .max(60)
+    .toLowerCase()
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+  description: z
+    .string()
+    .trim()
+    .max(5000)
+    .optional()
+    .transform((s) => (s && s.length ? s : undefined)),
+  locked: z.enum(["0", "1"]),
+});
+
+export async function createCommunityForumAdminAction(formData: FormData): Promise<void> {
+  await requireAdminSession();
+
+  const communityIdParsed = cuid.safeParse(formData.get("communityId"));
+  if (!communityIdParsed.success) return;
+
+  const parsed = communityForumCreateSchema.safeParse({
+    name: formData.get("name"),
+    slug: (() => {
+      const s = String(formData.get("slug") ?? "").trim();
+      return s.length ? s : undefined;
+    })(),
+    description: String(formData.get("description") ?? "").trim() || undefined,
+  });
+  if (!parsed.success) return;
+
+  const community = await prisma.community.findUnique({
+    where: { id: communityIdParsed.data },
+    select: { id: true, slug: true },
+  });
+  if (!community) return;
+
+  const baseSlug = parsed.data.slug ?? forumSlugFromName(parsed.data.name);
+  let candidate = baseSlug;
+  for (let n = 0; n < 30; n += 1) {
+    const taken = await prisma.communityForum.findUnique({
+      where: { communityId_slug: { communityId: community.id, slug: candidate } },
+      select: { id: true },
+    });
+    if (!taken) break;
+    candidate = `${baseSlug}-${n + 2}`;
+  }
+
+  try {
+    await prisma.communityForum.create({
+      data: {
+        communityId: community.id,
+        slug: candidate,
+        name: parsed.data.name,
+        description: parsed.data.description ?? null,
+      },
+    });
+  } catch {
+    return;
+  }
+
+  revalidatePath(`/admin/communities/${community.id}`);
+  revalidatePath(`/communities/${community.slug}`);
+  revalidatePath(`/communities/${community.slug}/forums`);
+}
+
+export async function updateCommunityForumAdminAction(formData: FormData): Promise<void> {
+  await requireAdminSession();
+
+  const parsed = forumUpdateSchema.safeParse({
+    forumId: formData.get("forumId"),
+    communityId: formData.get("communityId"),
+    name: formData.get("name"),
+    slug: formData.get("slug"),
+    description: String(formData.get("description") ?? "").trim() || undefined,
+    locked: formData.get("locked"),
+  });
+  if (!parsed.success) return;
+
+  const forum = await prisma.communityForum.findFirst({
+    where: { id: parsed.data.forumId, communityId: parsed.data.communityId },
+    select: {
+      id: true,
+      slug: true,
+      community: { select: { slug: true } },
+    },
+  });
+  if (!forum) return;
+
+  if (parsed.data.slug !== forum.slug) {
+    const clash = await prisma.communityForum.findFirst({
+      where: {
+        communityId: parsed.data.communityId,
+        slug: parsed.data.slug,
+        NOT: { id: forum.id },
+      },
+      select: { id: true },
+    });
+    if (clash) return;
+  }
+
+  try {
+    await prisma.communityForum.update({
+      where: { id: forum.id },
+      data: {
+        name: parsed.data.name,
+        slug: parsed.data.slug,
+        description: parsed.data.description ?? null,
+        locked: parsed.data.locked === "1",
+      },
+    });
+  } catch {
+    return;
+  }
+
+  const c = await prisma.community.findUnique({
+    where: { id: parsed.data.communityId },
+    select: { slug: true },
+  });
+  revalidatePath(`/admin/communities/${parsed.data.communityId}`);
+  if (c) {
+    revalidatePath(`/communities/${c.slug}`);
+    revalidatePath(`/communities/${c.slug}/forums`);
+    revalidatePath(`/communities/${c.slug}/forums/${forum.slug}`);
+    revalidatePath(`/communities/${c.slug}/forums/${parsed.data.slug}`);
+  }
+}
+
+export async function deleteCommunityForumAdminAction(formData: FormData): Promise<void> {
+  await requireAdminSession();
+
+  const ids = z
+    .object({
+      forumId: cuid,
+      communityId: cuid,
+    })
+    .safeParse({
+      forumId: formData.get("forumId"),
+      communityId: formData.get("communityId"),
+    });
+  if (!ids.success) return;
+
+  const postCount = await prisma.communityPost.count({
+    where: { communityForumId: ids.data.forumId },
+  });
+  if (postCount > 0) return;
+
+  const forum = await prisma.communityForum.findFirst({
+    where: { id: ids.data.forumId, communityId: ids.data.communityId },
+    select: { id: true },
+  });
+  if (!forum) return;
+
+  await prisma.communityForum.delete({ where: { id: forum.id } });
+
+  const c = await prisma.community.findUnique({
+    where: { id: ids.data.communityId },
+    select: { slug: true },
+  });
+  revalidatePath(`/admin/communities/${ids.data.communityId}`);
+  if (c) {
+    revalidatePath(`/communities/${c.slug}`);
+    revalidatePath(`/communities/${c.slug}/forums`);
+  }
 }

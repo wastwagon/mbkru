@@ -70,11 +70,25 @@ describe("POST /api/admin/login", () => {
     expect(res.status).toBe(401);
   });
 
+  it("returns 401 when admin is disabled", async () => {
+    vi.mocked(prisma.admin.findUnique).mockResolvedValue({
+      id: "admin1",
+      email: "admin@example.com",
+      password: "hashed",
+      active: false,
+      createdAt: new Date(),
+    });
+    const res = await POST(req({ email: "admin@example.com", password: "correct" }));
+    expect(res.status).toBe(401);
+    expect(bcrypt.compare).not.toHaveBeenCalled();
+  });
+
   it("returns 401 when password does not match", async () => {
     vi.mocked(prisma.admin.findUnique).mockResolvedValue({
       id: "admin1",
       email: "admin@example.com",
       password: "hashed",
+      active: true,
       createdAt: new Date(),
     });
     vi.mocked(bcrypt.compare).mockResolvedValue(false as never);
@@ -87,6 +101,7 @@ describe("POST /api/admin/login", () => {
       id: "admin1",
       email: "admin@example.com",
       password: "hashed",
+      active: true,
       createdAt: new Date(),
     });
     vi.mocked(bcrypt.compare).mockResolvedValue(true as never);

@@ -44,12 +44,18 @@ export type VoicePreferences = {
   languageId: VoiceLanguageOption["id"];
   speechRate: number;
   autoReadReplies: boolean;
+  /** Record mic audio on-device, transcribe via OpenAI Whisper on the server. */
+  useOpenAiWhisperMic: boolean;
+  /** Prefer OpenAI TTS for assistant read-aloud (falls back to browser speech when unsupported). */
+  useOpenAiTtsPlayback: boolean;
 };
 
 export const defaultVoicePreferences: VoicePreferences = {
   languageId: "en-gh",
   speechRate: 0.96,
   autoReadReplies: true,
+  useOpenAiWhisperMic: false,
+  useOpenAiTtsPlayback: false,
 };
 
 export function findVoiceLanguage(languageId: VoiceLanguageOption["id"]): VoiceLanguageOption {

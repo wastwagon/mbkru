@@ -68,7 +68,8 @@ const quickPromptsByLanguage: Record<
 };
 
 const helperTextByLanguage: Record<VoicePreferences["languageId"], string> = {
-  "en-gh": "Type, mic, or attach a photo, .txt, or PDF. Toggle live web search below when your host supports it.",
+  "en-gh":
+    "Type, mic, or attach a photo, .txt, or PDF. Optional OpenAI Whisper / cloud read-aloud when the server has OPENAI_API_KEY. Toggle live web search below when your host supports it.",
   twi: "Wubetumi akyerɛw, mic, fa foto, .txt, anaa PDF ka ho. Web nhwehwɛmu no wɔ ase ha. Access icon a header mu ma murya foforo.",
   ga: "Kpee: osha nyɛŋ, mic, alo fa foto, .txt, alo PDF shwɛɛ. Web nhwehwɛmu ase ha. Access icon header ni ma murya.",
   hausa: "Rubutu, mic, ko haɗa hoto, .txt, ko PDF. Kunna binciken yanar gizo a ƙasa idan mai masaukin bada goyan baya. Alamar dama a cikin header don ƙarin ayyukan murya.",
@@ -98,11 +99,22 @@ export function MBKRUVoiceChatbot() {
   const [preferences, setPreferences] = useState<VoicePreferences>(defaultVoicePreferences);
   const [isListening, setIsListening] = useState(false);
   const [listeningError, setListeningError] = useState<string | null>(null);
+  const [audioCaps, setAudioCaps] = useState<{ whisper: boolean; tts: boolean } | null>(null);
+  const [isWhisperRecording, setIsWhisperRecording] = useState(false);
+  const [isTranscribingWhisper, setIsTranscribingWhisper] = useState(false);
   const [imageAttachment, setImageAttachment] = useState<{ previewUrl: string; name: string } | null>(null);
   const [textFileAttachment, setTextFileAttachment] = useState<{ name: string; text: string } | null>(null);
   const [pdfAttachment, setPdfAttachment] = useState<{ name: string } | null>(null);
   const [useWebSearch, setUseWebSearch] = useState(true);
   const [attachmentNotice, setAttachmentNotice] = useState<string | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const mediaChunksRef = useRef<BlobPart[]>([]);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const recordMimeRef = useRef<string>("audio/webm");
+  const playbackAudioRef = useRef<HTMLAudioElement | null>(null);
+  const playbackObjectUrlRef = useRef<string | null>(null);
+
+  const suppressWhisperUploadRef = useRef(false);
   const pendingImageFileRef = useRef<File | null>(null);
   const pendingPdfFileRef = useRef<File | null>(null);
   const openButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -116,6 +128,22 @@ export function MBKRUVoiceChatbot() {
   const selectedLanguage = findVoiceLanguage(preferences.languageId);
   const recognitionCtor: SpeechRecognitionCtor | null =
     typeof window !== "undefined" ? window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null : null;
+  const useWhisperInput = Boolean(preferences.useOpenAiWhisperMic && audioCaps?.whisper);
+
+  function stopOpenAiPlayback() {
+    playbackAudioRef.current?.pause();
+    playbackAudioRef.current = null;
+    if (playbackObjectUrlRef.current) {
+      URL.revokeObjectURL(playbackObjectUrlRef.current);
+      playbackObjectUrlRef.current = null;
+    }
+  }
+
+  function stopWhisperMediaTracks() {
+    mediaStreamRef.current?.getTracks().forEach((t) => t.stop());
+    mediaStreamRef.current = null;
+    mediaRecorderRef.current = null;
+  }
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -133,12 +161,74 @@ export function MBKRUVoiceChatbot() {
             ? parsed.speechRate
             : prev.speechRate,
         autoReadReplies: typeof parsed.autoReadReplies === "boolean" ? parsed.autoReadReplies : prev.autoReadReplies,
+        useOpenAiWhisperMic:
+          typeof (parsed as Partial<VoicePreferences>).useOpenAiWhisperMic === "boolean"
+            ? (parsed as Partial<VoicePreferences>).useOpenAiWhisperMic!
+            : prev.useOpenAiWhisperMic,
+        useOpenAiTtsPlayback:
+          typeof (parsed as Partial<VoicePreferences>).useOpenAiTtsPlayback === "boolean"
+            ? (parsed as Partial<VoicePreferences>).useOpenAiTtsPlayback!
+            : prev.useOpenAiTtsPlayback,
       }));
     } catch {
       // Keep defaults when reading preferences fails.
     } finally {
       setPrefsLoaded(true);
     }
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen || typeof window === "undefined") return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const response = await fetch("/api/mbkru-voice/audio-capabilities");
+        const data = (await response.json()) as { whisper?: unknown; tts?: unknown };
+        if (cancelled) return;
+        setAudioCaps({
+          whisper: data.whisper === true,
+          tts: data.tts === true,
+        });
+      } catch {
+        if (!cancelled) setAudioCaps({ whisper: false, tts: false });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!audioCaps) return;
+    setPreferences((p) => {
+      if (audioCaps.whisper && audioCaps.tts) return p;
+      const next = { ...p };
+      let changed = false;
+      if (!audioCaps.whisper && p.useOpenAiWhisperMic) {
+        next.useOpenAiWhisperMic = false;
+        changed = true;
+      }
+      if (!audioCaps.tts && p.useOpenAiTtsPlayback) {
+        next.useOpenAiTtsPlayback = false;
+        changed = true;
+      }
+      return changed ? next : p;
+    });
+  }, [audioCaps]);
+
+  useEffect(() => {
+    return () => {
+      suppressWhisperUploadRef.current = true;
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+        try {
+          mediaRecorderRef.current.stop();
+        } catch {
+          // ignore
+        }
+      }
+      stopWhisperMediaTracks();
+      stopOpenAiPlayback();
+    };
   }, []);
 
   useEffect(() => {
@@ -212,6 +302,146 @@ export function MBKRUVoiceChatbot() {
     utterance.rate = preferences.speechRate;
     utterance.pitch = 1;
     window.speechSynthesis.speak(utterance);
+  }
+
+  function pickRecorderMime(): string {
+    if (typeof window === "undefined" || typeof MediaRecorder === "undefined") return "";
+    const candidates = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"];
+    for (const c of candidates) {
+      if (MediaRecorder.isTypeSupported(c)) return c;
+    }
+    return "";
+  }
+
+  function filenameForRecorderMime(mime: string): string {
+    if (mime.includes("mp4")) return "recording.m4a";
+    if (mime.includes("webm")) return "recording.webm";
+    return "recording.webm";
+  }
+
+  async function speakAssistantReplyOpenAi(text: string) {
+    if (typeof window === "undefined") return;
+    const trimmed = text.trim();
+    if (!trimmed.length) return;
+    stopOpenAiPlayback();
+    try {
+      const response = await fetch("/api/mbkru-voice/speech", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: trimmed.slice(0, 4096),
+          speed: preferences.speechRate,
+        }),
+      });
+      if (!response.ok) throw new Error("tts_failed");
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      playbackObjectUrlRef.current = url;
+      const audio = new Audio(url);
+      playbackAudioRef.current = audio;
+      audio.addEventListener("ended", () => {
+        stopOpenAiPlayback();
+      });
+      trackUiEvent("mbkru_voice_openai_tts_play", { language: preferences.languageId });
+      await audio.play();
+    } catch {
+      trackUiEvent("mbkru_voice_openai_tts_fallback_browser", { language: preferences.languageId });
+      speakAssistantReply(trimmed);
+    }
+  }
+
+  async function toggleWhisperRecording() {
+    if (typeof window === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+      setListeningError("Microphone is not available in this browser.");
+      return;
+    }
+    if (isWhisperRecording && mediaRecorderRef.current) {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch {
+        setIsWhisperRecording(false);
+        stopWhisperMediaTracks();
+      }
+      return;
+    }
+
+    setListeningError(null);
+    const mime = pickRecorderMime();
+    if (!mime) {
+      setListeningError("This browser cannot record audio for Whisper. Try Chrome or Edge.");
+      trackUiEvent("mbkru_voice_whisper_transcribe_error", { language: preferences.languageId, reason: "no_mime" });
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaStreamRef.current = stream;
+      recordMimeRef.current = mime;
+      mediaChunksRef.current = [];
+      const recorder = new MediaRecorder(stream, { mimeType: mime });
+      mediaRecorderRef.current = recorder;
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) mediaChunksRef.current.push(event.data);
+      };
+      recorder.onerror = () => {
+        setListeningError("Recording failed. Try again or type your message.");
+        trackUiEvent("mbkru_voice_whisper_transcribe_error", { language: preferences.languageId, reason: "recorder" });
+        setIsWhisperRecording(false);
+        stopWhisperMediaTracks();
+      };
+      recorder.onstop = () => {
+        void (async () => {
+          const chunkParts = mediaChunksRef.current;
+          mediaChunksRef.current = [];
+          stopWhisperMediaTracks();
+          setIsWhisperRecording(false);
+          if (suppressWhisperUploadRef.current) {
+            suppressWhisperUploadRef.current = false;
+            return;
+          }
+          const blob = new Blob(chunkParts, { type: recordMimeRef.current });
+          if (blob.size === 0) {
+            setListeningError("No audio captured. Try again.");
+            trackUiEvent("mbkru_voice_whisper_transcribe_error", { language: preferences.languageId, reason: "empty" });
+            return;
+          }
+          setIsTranscribingWhisper(true);
+          try {
+            const formData = new FormData();
+            formData.append("audio", blob, filenameForRecorderMime(recordMimeRef.current));
+            formData.append("languageId", preferences.languageId);
+            const response = await fetch("/api/mbkru-voice/transcribe", {
+              method: "POST",
+              body: formData,
+            });
+            const data = (await response.json()) as { text?: string; error?: string };
+            if (!response.ok || !data.text?.trim()) {
+              setListeningError(data.error === "Too many requests" ? "Please wait a moment and try again." : "Could not transcribe. Type instead.");
+              trackUiEvent("mbkru_voice_whisper_transcribe_error", {
+                language: preferences.languageId,
+                reason: data.error ?? `http_${response.status}`,
+              });
+              return;
+            }
+            setInput((prev) => (prev ? `${prev} ${data.text}`.trim() : data.text!.trim()));
+            trackUiEvent("mbkru_voice_whisper_transcribe_ok", { language: preferences.languageId });
+          } catch {
+            setListeningError("Could not reach the transcription service.");
+            trackUiEvent("mbkru_voice_whisper_transcribe_error", { language: preferences.languageId, reason: "network" });
+          } finally {
+            setIsTranscribingWhisper(false);
+          }
+        })();
+      };
+      recorder.start(250);
+      setIsWhisperRecording(true);
+      trackUiEvent("mbkru_voice_whisper_record_start", { language: preferences.languageId });
+    } catch {
+      setListeningError("Microphone permission denied or unavailable.");
+      trackUiEvent("mbkru_voice_whisper_transcribe_error", { language: preferences.languageId, reason: "getusermedia" });
+      stopWhisperMediaTracks();
+      setIsWhisperRecording(false);
+    }
   }
 
   const MAX_IMAGE_BYTES = 1.25 * 1024 * 1024; // keep JSON body within typical limits
@@ -299,7 +529,7 @@ export function MBKRUVoiceChatbot() {
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (isLoading) return;
+    if (isLoading || isTranscribingWhisper || isWhisperRecording) return;
     const trimmed = input.trim();
     const hasImage = Boolean(pendingImageFileRef.current && imageAttachment);
     const hasTextFile = Boolean(textFileAttachment?.text);
@@ -400,7 +630,12 @@ export function MBKRUVoiceChatbot() {
         },
       ]);
       if (preferences.autoReadReplies) {
-        speakAssistantReply(data.answer?.trim() || "I could not generate a response right now.");
+        const answerText = data.answer?.trim() || "I could not generate a response right now.";
+        if (preferences.useOpenAiTtsPlayback && audioCaps?.tts) {
+          void speakAssistantReplyOpenAi(answerText);
+        } else {
+          speakAssistantReply(answerText);
+        }
       }
       trackUiEvent("mbkru_voice_reply_received", {
         language: preferences.languageId,
@@ -422,7 +657,11 @@ export function MBKRUVoiceChatbot() {
         },
       ]);
       if (preferences.autoReadReplies) {
-        speakAssistantReply(fallback.answer);
+        if (preferences.useOpenAiTtsPlayback && audioCaps?.tts) {
+          void speakAssistantReplyOpenAi(fallback.answer);
+        } else {
+          speakAssistantReply(fallback.answer);
+        }
       }
       trackUiEvent("mbkru_voice_reply_received", {
         language: preferences.languageId,
@@ -440,6 +679,20 @@ export function MBKRUVoiceChatbot() {
   }
 
   function clearConversation() {
+    stopOpenAiPlayback();
+    if (mediaRecorderRef.current?.state === "recording") {
+      suppressWhisperUploadRef.current = true;
+      try {
+        mediaRecorderRef.current.stop();
+      } catch {
+        suppressWhisperUploadRef.current = false;
+        stopWhisperMediaTracks();
+      }
+    } else {
+      stopWhisperMediaTracks();
+    }
+    setIsWhisperRecording(false);
+    setIsTranscribingWhisper(false);
     setMessages([introMessage]);
     setInput("");
     clearAttachments();
@@ -594,6 +847,11 @@ export function MBKRUVoiceChatbot() {
                 Thinking…
               </p>
             ) : null}
+            {isTranscribingWhisper ? (
+              <p className="text-xs font-medium text-[var(--muted-foreground)]" role="status">
+                Transcribing audio…
+              </p>
+            ) : null}
           </div>
 
           <form onSubmit={onSubmit} className="border-t border-[var(--border)] bg-white p-2.5 sm:p-3">
@@ -676,11 +934,36 @@ export function MBKRUVoiceChatbot() {
               />
               <button
                 type="button"
-                onClick={startListeningForChat}
-                disabled={isListening || !recognitionCtor}
-                className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--muted)] text-[var(--foreground)] disabled:opacity-45 ${focusRingSmClass} ${isListening ? "animate-pulse border-[var(--primary)]/40" : ""}`}
-                aria-label={isListening ? "Listening to microphone input" : "Use microphone voice input"}
-                title={isListening ? "Listening…" : "Voice input"}
+                onClick={() => {
+                  if (useWhisperInput) void toggleWhisperRecording();
+                  else startListeningForChat();
+                }}
+                disabled={
+                  isLoading ||
+                  isTranscribingWhisper ||
+                  (useWhisperInput ? false : isListening || !recognitionCtor)
+                }
+                className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--muted)] text-[var(--foreground)] disabled:opacity-45 ${focusRingSmClass} ${
+                  isListening || isWhisperRecording ? "animate-pulse border-[var(--primary)]/40" : ""
+                }`}
+                aria-label={
+                  useWhisperInput
+                    ? isWhisperRecording
+                      ? "Stop recording and transcribe"
+                      : "Record with Whisper (cloud transcription)"
+                    : isListening
+                      ? "Listening to microphone input"
+                      : "Use microphone voice input"
+                }
+                title={
+                  useWhisperInput
+                    ? isWhisperRecording
+                      ? "Stop — send to Whisper"
+                      : "Whisper mic (tap again to stop)"
+                    : isListening
+                      ? "Listening…"
+                      : "Browser voice input"
+                }
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
                   <path
@@ -708,13 +991,18 @@ export function MBKRUVoiceChatbot() {
               </button>
               <button
                 type="submit"
-                disabled={isLoading || (!input.trim() && !imageAttachment && !textFileAttachment && !pdfAttachment)}
+                disabled={
+                  isLoading ||
+                  isTranscribingWhisper ||
+                  isWhisperRecording ||
+                  (!input.trim() && !imageAttachment && !textFileAttachment && !pdfAttachment)
+                }
                 className={`h-11 shrink-0 rounded-xl bg-[var(--primary)] px-3 text-sm font-semibold text-white disabled:opacity-55 sm:px-4 ${focusRingSmClass}`}
               >
                 Send
               </button>
             </div>
-            <div className="mt-2 flex items-center justify-between gap-2">
+            <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
               <label className="flex cursor-pointer select-none items-center gap-1.5 text-xs text-[var(--muted-foreground)]">
                 <input
                   type="checkbox"
@@ -724,6 +1012,43 @@ export function MBKRUVoiceChatbot() {
                 />
                 <span>Search the web (live) when supported</span>
               </label>
+              {audioCaps && (audioCaps.whisper || audioCaps.tts) ? (
+                <div className="flex min-w-0 flex-col gap-1.5 rounded-lg border border-[var(--border)]/80 bg-[var(--section-light)]/60 px-2.5 py-2 text-[11px] leading-snug text-[var(--muted-foreground)] sm:max-w-[14rem]">
+                  <span className="font-semibold text-[var(--foreground)]/90">Cloud audio (OpenAI)</span>
+                  {audioCaps.whisper ? (
+                    <label className="flex cursor-pointer items-start gap-2">
+                      <input
+                        type="checkbox"
+                        className="mt-0.5 h-4 w-4 shrink-0 rounded border-[var(--border)] text-[var(--primary)]"
+                        checked={preferences.useOpenAiWhisperMic}
+                        onChange={(e) =>
+                          setPreferences((prev) => ({ ...prev, useOpenAiWhisperMic: e.target.checked }))
+                        }
+                      />
+                      <span>Whisper for mic (sends a short recording to transcribe)</span>
+                    </label>
+                  ) : null}
+                  {audioCaps.tts ? (
+                    <label className="flex cursor-pointer items-start gap-2">
+                      <input
+                        type="checkbox"
+                        className="mt-0.5 h-4 w-4 shrink-0 rounded border-[var(--border)] text-[var(--primary)]"
+                        checked={preferences.useOpenAiTtsPlayback}
+                        onChange={(e) =>
+                          setPreferences((prev) => ({ ...prev, useOpenAiTtsPlayback: e.target.checked }))
+                        }
+                      />
+                      <span>OpenAI voice for read-aloud (speaker icon still toggles playback)</span>
+                    </label>
+                  ) : null}
+                  <span className="text-[10px] opacity-90">
+                    Uses your API key on the server; may incur usage. Avoid sensitive speech.{" "}
+                    <Link href="/privacy" className={`${focusRingSmClass} font-medium text-[var(--foreground)]`}>
+                      Privacy
+                    </Link>
+                  </span>
+                </div>
+              ) : null}
             </div>
             <p className="mt-1 text-xs text-[var(--muted-foreground)]">{helperTextByLanguage[preferences.languageId]}</p>
             {listeningError ? (

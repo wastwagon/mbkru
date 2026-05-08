@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import "@/lib/client/web-speech-recognition";
@@ -24,7 +25,18 @@ export function AccessibilityVoiceTools() {
   const [prefsLoaded, setPrefsLoaded] = useState(false);
   const [preferences, setPreferences] = useState<VoicePreferences>(defaultVoicePreferences);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [audioCaps, setAudioCaps] = useState<{ whisper: boolean; tts: boolean } | null>(null);
+  const [isWhisperRecording, setIsWhisperRecording] = useState(false);
+  const [isTranscribingWhisper, setIsTranscribingWhisper] = useState(false);
   const panelRef = useRef<HTMLElement | null>(null);
+  const panelWasOpenRef = useRef(false);
+  const suppressWhisperUploadRef = useRef(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const mediaChunksRef = useRef<BlobPart[]>([]);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const recordMimeRef = useRef<string>("audio/webm");
+  const playbackAudioRef = useRef<HTMLAudioElement | null>(null);
+  const playbackObjectUrlRef = useRef<string | null>(null);
 
   const recognitionCtor = useMemo((): SpeechRecognitionCtor | null => {
     if (typeof window === "undefined") return null;
@@ -34,6 +46,269 @@ export function AccessibilityVoiceTools() {
   const speechSupported = typeof window !== "undefined" && "speechSynthesis" in window;
   const recognitionSupported = Boolean(recognitionCtor);
   const selectedLanguage = findVoiceLanguage(preferences.languageId);
+  const useWhisperInput = Boolean(preferences.useOpenAiWhisperMic && audioCaps?.whisper);
+  const readAloudPossible =
+    speechSupported || Boolean(audioCaps?.tts && preferences.useOpenAiTtsPlayback);
+
+  function stopOpenAiPlayback() {
+    playbackAudioRef.current?.pause();
+    playbackAudioRef.current = null;
+    if (playbackObjectUrlRef.current) {
+      URL.revokeObjectURL(playbackObjectUrlRef.current);
+      playbackObjectUrlRef.current = null;
+    }
+  }
+
+  function stopWhisperMediaTracks() {
+    mediaStreamRef.current?.getTracks().forEach((t) => t.stop());
+    mediaStreamRef.current = null;
+    mediaRecorderRef.current = null;
+  }
+
+  function haltAccessibilityRecording() {
+    if (mediaRecorderRef.current?.state === "recording") {
+      suppressWhisperUploadRef.current = true;
+      try {
+        mediaRecorderRef.current.stop();
+      } catch {
+        suppressWhisperUploadRef.current = false;
+        stopWhisperMediaTracks();
+      }
+    } else {
+      stopWhisperMediaTracks();
+    }
+    setIsWhisperRecording(false);
+    setIsTranscribingWhisper(false);
+  }
+
+  function collapsePanelVoiceCleanup() {
+    stopSpeakingInner();
+    haltAccessibilityRecording();
+  }
+
+  function stopSpeakingInner() {
+    stopOpenAiPlayback();
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsReading(false);
+  }
+
+  function speakBrowserUtterance(text: string) {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = selectedLanguage.synthesisLang;
+    utterance.rate = preferences.speechRate;
+    utterance.pitch = 1;
+    utterance.onstart = () => setIsReading(true);
+    utterance.onend = () => setIsReading(false);
+    utterance.onerror = () => setIsReading(false);
+    window.speechSynthesis.speak(utterance);
+  }
+
+  async function speakWithOptionalOpenAiTts(text: string) {
+    if (typeof window === "undefined") return;
+    stopSpeakingInner();
+    const trimmed = text.trim();
+    if (!trimmed.length) return;
+    const preferOpenAi = preferences.useOpenAiTtsPlayback && audioCaps?.tts;
+
+    if (preferOpenAi) {
+      setIsReading(true);
+      try {
+        const response = await fetch("/api/mbkru-voice/speech", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: trimmed.slice(0, 4096),
+            speed: preferences.speechRate,
+          }),
+        });
+        if (!response.ok) throw new Error("tts_failed");
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        playbackObjectUrlRef.current = url;
+        const audio = new Audio(url);
+        playbackAudioRef.current = audio;
+        audio.addEventListener("ended", () => {
+          stopOpenAiPlayback();
+          setIsReading(false);
+        });
+        audio.addEventListener("error", () => {
+          stopOpenAiPlayback();
+          setIsReading(false);
+          trackUiEvent("mbkru_voice_openai_tts_fallback_browser", {
+            language: preferences.languageId,
+            surface: "accessibility",
+          });
+          if (speechSupported) speakBrowserUtterance(trimmed);
+          else setLastError("Read-aloud is not supported in this browser.");
+        });
+        trackUiEvent("mbkru_voice_openai_tts_play", {
+          language: preferences.languageId,
+          surface: "accessibility",
+        });
+        await audio.play();
+      } catch {
+        setIsReading(false);
+        trackUiEvent("mbkru_voice_openai_tts_fallback_browser", {
+          language: preferences.languageId,
+          surface: "accessibility",
+        });
+        if (speechSupported) speakBrowserUtterance(trimmed);
+        else setLastError("Read-aloud is not available right now.");
+      }
+    } else if (speechSupported) {
+      speakBrowserUtterance(trimmed);
+    } else {
+      setLastError("Read-aloud is not supported in this browser.");
+    }
+  }
+
+  function pickRecorderMime(): string {
+    if (typeof window === "undefined" || typeof MediaRecorder === "undefined") return "";
+    const candidates = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"];
+    for (const c of candidates) {
+      if (MediaRecorder.isTypeSupported(c)) return c;
+    }
+    return "";
+  }
+
+  function filenameForRecorderMime(mime: string): string {
+    if (mime.includes("mp4")) return "recording.m4a";
+    if (mime.includes("webm")) return "recording.webm";
+    return "recording.webm";
+  }
+
+  async function toggleWhisperRecording() {
+    if (typeof window === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+      setLastError("Microphone is not available in this browser.");
+      return;
+    }
+    if (isWhisperRecording && mediaRecorderRef.current) {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch {
+        setIsWhisperRecording(false);
+        stopWhisperMediaTracks();
+      }
+      return;
+    }
+
+    setLastError(null);
+    const mime = pickRecorderMime();
+    if (!mime) {
+      setLastError("This browser cannot record audio for Whisper. Try Chrome or Edge.");
+      trackUiEvent("mbkru_voice_whisper_transcribe_error", {
+        language: preferences.languageId,
+        reason: "no_mime",
+        surface: "accessibility",
+      });
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaStreamRef.current = stream;
+      recordMimeRef.current = mime;
+      mediaChunksRef.current = [];
+      const recorder = new MediaRecorder(stream, { mimeType: mime });
+      mediaRecorderRef.current = recorder;
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) mediaChunksRef.current.push(event.data);
+      };
+      recorder.onerror = () => {
+        setLastError("Recording failed. Try again or use keyboard typing.");
+        trackUiEvent("mbkru_voice_whisper_transcribe_error", {
+          language: preferences.languageId,
+          reason: "recorder",
+          surface: "accessibility",
+        });
+        setIsWhisperRecording(false);
+        stopWhisperMediaTracks();
+      };
+      recorder.onstop = () => {
+        void (async () => {
+          const chunkParts = mediaChunksRef.current;
+          mediaChunksRef.current = [];
+          stopWhisperMediaTracks();
+          setIsWhisperRecording(false);
+          if (suppressWhisperUploadRef.current) {
+            suppressWhisperUploadRef.current = false;
+            return;
+          }
+          const blob = new Blob(chunkParts, { type: recordMimeRef.current });
+          if (blob.size === 0) {
+            setLastError("No audio captured. Try again.");
+            trackUiEvent("mbkru_voice_whisper_transcribe_error", {
+              language: preferences.languageId,
+              reason: "empty",
+              surface: "accessibility",
+            });
+            return;
+          }
+          setIsTranscribingWhisper(true);
+          try {
+            const formData = new FormData();
+            formData.append("audio", blob, filenameForRecorderMime(recordMimeRef.current));
+            formData.append("languageId", preferences.languageId);
+            const response = await fetch("/api/mbkru-voice/transcribe", {
+              method: "POST",
+              body: formData,
+            });
+            const data = (await response.json()) as { text?: string; error?: string };
+            if (!response.ok || !data.text?.trim()) {
+              setLastError(
+                data.error === "Too many requests" ? "Please wait a moment and try again." : "Could not transcribe. Type instead.",
+              );
+              trackUiEvent("mbkru_voice_whisper_transcribe_error", {
+                language: preferences.languageId,
+                reason: data.error ?? `http_${response.status}`,
+                surface: "accessibility",
+              });
+              return;
+            }
+            const text = data.text!.trim();
+            setVoiceNote((prev) => (prev ? `${prev} ${text}`.trim() : text));
+            trackUiEvent("mbkru_voice_whisper_transcribe_ok", {
+              language: preferences.languageId,
+              surface: "accessibility",
+            });
+            window.dispatchEvent(
+              new CustomEvent("mbkru-voice-transcript", {
+                detail: { transcript: text, languageId: preferences.languageId },
+              }),
+            );
+          } catch {
+            setLastError("Could not reach the transcription service.");
+            trackUiEvent("mbkru_voice_whisper_transcribe_error", {
+              language: preferences.languageId,
+              reason: "network",
+              surface: "accessibility",
+            });
+          } finally {
+            setIsTranscribingWhisper(false);
+          }
+        })();
+      };
+      recorder.start(250);
+      setIsWhisperRecording(true);
+      trackUiEvent("mbkru_voice_whisper_record_start", {
+        language: preferences.languageId,
+        surface: "accessibility",
+      });
+    } catch {
+      setLastError("Microphone permission denied or unavailable.");
+      trackUiEvent("mbkru_voice_whisper_transcribe_error", {
+        language: preferences.languageId,
+        reason: "getusermedia",
+        surface: "accessibility",
+      });
+      stopWhisperMediaTracks();
+      setIsWhisperRecording(false);
+    }
+  }
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -47,12 +322,17 @@ export function AccessibilityVoiceTools() {
       }
       const parsed = JSON.parse(raw) as Partial<VoicePreferences>;
       setPreferences((prev) => ({
+        ...prev,
         languageId: parsed.languageId ?? prev.languageId,
         speechRate:
           typeof parsed.speechRate === "number" && parsed.speechRate >= 0.7 && parsed.speechRate <= 1.2
             ? parsed.speechRate
             : prev.speechRate,
         autoReadReplies: typeof parsed.autoReadReplies === "boolean" ? parsed.autoReadReplies : prev.autoReadReplies,
+        useOpenAiWhisperMic:
+          typeof parsed.useOpenAiWhisperMic === "boolean" ? parsed.useOpenAiWhisperMic : prev.useOpenAiWhisperMic,
+        useOpenAiTtsPlayback:
+          typeof parsed.useOpenAiTtsPlayback === "boolean" ? parsed.useOpenAiTtsPlayback : prev.useOpenAiTtsPlayback,
       }));
     } catch {
       // Keep default voice preferences when storage parse fails.
@@ -67,12 +347,53 @@ export function AccessibilityVoiceTools() {
   }, [prefsLoaded, preferences]);
 
   useEffect(() => {
-    return () => {
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
+    if (!isOpen || typeof window === "undefined") return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const response = await fetch("/api/mbkru-voice/audio-capabilities");
+        const data = (await response.json()) as { whisper?: unknown; tts?: unknown };
+        if (cancelled) return;
+        setAudioCaps({
+          whisper: data.whisper === true,
+          tts: data.tts === true,
+        });
+      } catch {
+        if (!cancelled) setAudioCaps({ whisper: false, tts: false });
       }
+    })();
+    return () => {
+      cancelled = true;
     };
-  }, []);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!audioCaps) return;
+    setPreferences((p) => {
+      if (audioCaps.whisper && audioCaps.tts) return p;
+      const next = { ...p };
+      let changed = false;
+      if (!audioCaps.whisper && p.useOpenAiWhisperMic) {
+        next.useOpenAiWhisperMic = false;
+        changed = true;
+      }
+      if (!audioCaps.tts && p.useOpenAiTtsPlayback) {
+        next.useOpenAiTtsPlayback = false;
+        changed = true;
+      }
+      return changed ? next : p;
+    });
+  }, [audioCaps]);
+
+  useEffect(() => {
+    if (isOpen) {
+      panelWasOpenRef.current = true;
+      return;
+    }
+    if (!panelWasOpenRef.current || typeof window === "undefined") return;
+    collapsePanelVoiceCleanup();
+    panelWasOpenRef.current = false;
+  }, [isOpen]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -104,8 +425,26 @@ export function AccessibilityVoiceTools() {
     return () => window.removeEventListener("keydown", handleKey);
   }, [isOpen]);
 
+  useEffect(() => {
+    return () => {
+      suppressWhisperUploadRef.current = true;
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+        try {
+          mediaRecorderRef.current.stop();
+        } catch {
+          // ignore
+        }
+      }
+      stopWhisperMediaTracks();
+      stopOpenAiPlayback();
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
   function speakPageSummary() {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    if (typeof window === "undefined") return;
     setLastError(null);
     trackUiEvent("accessibility_read_page_summary", { language: preferences.languageId });
     const title = document.title || "MBKRU website";
@@ -114,41 +453,23 @@ export function AccessibilityVoiceTools() {
       ? `You are viewing ${title}. Main heading: ${firstHeading}.`
       : `You are viewing ${title}.`;
 
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(summary);
-    utterance.lang = selectedLanguage.synthesisLang;
-    utterance.rate = preferences.speechRate;
-    utterance.pitch = 1;
-    utterance.onstart = () => setIsReading(true);
-    utterance.onend = () => setIsReading(false);
-    utterance.onerror = () => setIsReading(false);
-    window.speechSynthesis.speak(utterance);
+    void speakWithOptionalOpenAiTts(summary);
   }
 
   function speakSelectedText() {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    if (typeof window === "undefined") return;
     setLastError(null);
     const selected = window.getSelection()?.toString().trim() ?? "";
     if (!selected) {
       setLastError("Select text on the page first, then use Read selected text.");
       return;
     }
-    window.speechSynthesis.cancel();
     trackUiEvent("accessibility_read_selected_text", { language: preferences.languageId });
-    const utterance = new SpeechSynthesisUtterance(selected.slice(0, 1600));
-    utterance.lang = selectedLanguage.synthesisLang;
-    utterance.rate = preferences.speechRate;
-    utterance.pitch = 1;
-    utterance.onstart = () => setIsReading(true);
-    utterance.onend = () => setIsReading(false);
-    utterance.onerror = () => setIsReading(false);
-    window.speechSynthesis.speak(utterance);
+    void speakWithOptionalOpenAiTts(selected.slice(0, 1600));
   }
 
   function stopSpeaking() {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    setIsReading(false);
+    stopSpeakingInner();
   }
 
   function startListening() {
@@ -264,11 +585,49 @@ export function AccessibilityVoiceTools() {
             />
           </div>
 
+          {audioCaps && (audioCaps.whisper || audioCaps.tts) ? (
+            <div className="mt-3 flex flex-col gap-1.5 rounded-xl border border-[var(--border)]/80 bg-[var(--section-light)]/60 px-2.5 py-2 text-[11px] leading-snug text-[var(--muted-foreground)]">
+              <span className="font-semibold text-[var(--foreground)]/90">Cloud audio (OpenAI)</span>
+              {audioCaps.whisper ? (
+                <label className="flex cursor-pointer items-start gap-2">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-[var(--border)] text-[var(--primary)]"
+                    checked={preferences.useOpenAiWhisperMic}
+                    onChange={(e) =>
+                      setPreferences((prev) => ({ ...prev, useOpenAiWhisperMic: e.target.checked }))
+                    }
+                  />
+                  <span>Whisper for dictation</span>
+                </label>
+              ) : null}
+              {audioCaps.tts ? (
+                <label className="flex cursor-pointer items-start gap-2">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-[var(--border)] text-[var(--primary)]"
+                    checked={preferences.useOpenAiTtsPlayback}
+                    onChange={(e) =>
+                      setPreferences((prev) => ({ ...prev, useOpenAiTtsPlayback: e.target.checked }))
+                    }
+                  />
+                  <span>OpenAI voice for read-aloud</span>
+                </label>
+              ) : null}
+              <span className="text-[10px] opacity-90">
+                Server-held API key; may incur usage.{" "}
+                <Link href="/privacy" className={`font-medium text-[var(--foreground)] ${focusRingSmClass}`}>
+                  Privacy
+                </Link>
+              </span>
+            </div>
+          ) : null}
+
           <div className="mt-3 flex flex-wrap gap-2">
             <button
               type="button"
               onClick={speakPageSummary}
-              disabled={!speechSupported || isReading}
+              disabled={!readAloudPossible || isReading || isTranscribingWhisper}
               className={`rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-semibold text-[var(--foreground)] disabled:opacity-55 ${focusRingSmClass}`}
             >
               {isReading ? "Reading..." : "Read page summary"}
@@ -276,7 +635,7 @@ export function AccessibilityVoiceTools() {
             <button
               type="button"
               onClick={stopSpeaking}
-              disabled={!speechSupported || !isReading}
+              disabled={!isReading}
               className={`rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-semibold text-[var(--foreground)] disabled:opacity-55 ${focusRingSmClass}`}
             >
               Stop reading
@@ -284,25 +643,47 @@ export function AccessibilityVoiceTools() {
             <button
               type="button"
               onClick={speakSelectedText}
-              disabled={!speechSupported}
+              disabled={!readAloudPossible || isReading || isTranscribingWhisper}
               className={`rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-semibold text-[var(--foreground)] disabled:opacity-55 ${focusRingSmClass}`}
             >
               Read selected text
             </button>
             <button
               type="button"
-              onClick={startListening}
-              disabled={!recognitionSupported || isListening}
-              className={`rounded-xl border border-[var(--border)] px-2.5 py-2 text-[11px] font-semibold text-[var(--foreground)] disabled:opacity-55 sm:px-3 sm:text-xs ${focusRingSmClass}`}
+              onClick={() => {
+                if (useWhisperInput) void toggleWhisperRecording();
+                else startListening();
+              }}
+              disabled={
+                isTranscribingWhisper || (useWhisperInput ? false : isListening || !recognitionSupported)
+              }
+              className={`rounded-xl border border-[var(--border)] px-2.5 py-2 text-[11px] font-semibold text-[var(--foreground)] disabled:opacity-55 sm:px-3 sm:text-xs ${focusRingSmClass} ${
+                useWhisperInput && isWhisperRecording ? "border-[var(--primary)]/50" : ""
+              } ${useWhisperInput && isWhisperRecording ? "animate-pulse" : ""} ${!useWhisperInput && isListening ? "animate-pulse border-[var(--primary)]/50" : ""}`}
+              title={
+                useWhisperInput
+                  ? isWhisperRecording
+                    ? "Stop — send to Whisper"
+                    : "Whisper dictation — tap again to stop"
+                  : undefined
+              }
             >
-              {isListening ? "Listening..." : "Speech to text (dictate)"}
+              {useWhisperInput
+                ? isWhisperRecording
+                  ? "Recording…"
+                  : isTranscribingWhisper
+                    ? "Transcribing..."
+                    : "Speech to text (Whisper)"
+                : isListening
+                  ? "Listening..."
+                  : "Speech to text (dictate)"}
             </button>
           </div>
 
           <div className="mt-3 rounded-xl bg-[var(--muted)] p-3">
             <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--muted-foreground)]">Transcript</p>
             <p className="mt-1 min-h-8 text-sm text-[var(--foreground)]">
-              {voiceNote || "Your captured speech will appear here."}
+              {isTranscribingWhisper ? "Transcribing audio…" : voiceNote || "Your captured speech will appear here."}
             </p>
           </div>
           <button
@@ -317,7 +698,7 @@ export function AccessibilityVoiceTools() {
                 );
               }
             }}
-            disabled={voiceNote.trim().length === 0}
+            disabled={voiceNote.trim().length === 0 || isTranscribingWhisper || isWhisperRecording}
             className={`mt-2 rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-semibold text-[var(--foreground)] disabled:opacity-55 ${focusRingSmClass}`}
           >
             Send transcript to MBKRU Voice

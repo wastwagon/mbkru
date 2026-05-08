@@ -3,16 +3,20 @@ import { notFound } from "next/navigation";
 
 import {
   approveCommunityMembershipAction,
+  createCommunityForumAdminAction,
+  deleteCommunityForumAdminAction,
   publishCommunityPostAction,
   rejectCommunityPostAction,
   setCommunityMembershipRoleAction,
   setCommunityMembershipStateAction,
+  updateCommunityForumAdminAction,
   updateCommunityPostReportStatusAction,
 } from "@/app/admin/communities/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
+import { listCommunityForums } from "@/lib/server/community-forums-public";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 type Props = { params: Promise<{ id: string }> };
@@ -34,6 +38,22 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
   });
 
   if (!community) notFound();
+
+  const forums = await listCommunityForums(community.id);
+  const forumIds = forums.map((f) => f.id);
+  const forumPostTotals =
+    forumIds.length > 0
+      ? await prisma.communityPost.groupBy({
+          by: ["communityForumId"],
+          where: { communityForumId: { in: forumIds } },
+          _count: { _all: true },
+        })
+      : [];
+  const forumTotalPosts = new Map(
+    forumPostTotals
+      .filter((x): x is typeof x & { communityForumId: string } => x.communityForumId != null)
+      .map((x) => [x.communityForumId, x._count._all] as const),
+  );
 
   const pendingPosts = await prisma.communityPost.findMany({
     where: { communityId: id, moderationStatus: "PENDING" },
@@ -120,6 +140,159 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
           </Link>
         </p>
       ) : null}
+
+      <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-5">
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">Forums</h2>
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          Changing a forum slug breaks existing URLs. Empty forums only can be deleted.
+        </p>
+
+        <h3 className="mt-6 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">Create forum</h3>
+        <form action={createCommunityForumAdminAction} className="mt-3 grid gap-3 sm:grid-cols-2">
+          <input type="hidden" name="communityId" value={community.id} />
+          <div className="sm:col-span-2">
+            <label htmlFor="forum-name-new" className="block text-xs font-medium">
+              Name
+            </label>
+            <input
+              id="forum-name-new"
+              name="name"
+              required
+              maxLength={120}
+              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label htmlFor="forum-slug-new" className="block text-xs font-medium">
+              Slug <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+            </label>
+            <input
+              id="forum-slug-new"
+              name="slug"
+              maxLength={60}
+              pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+              placeholder="general"
+              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 font-mono text-sm"
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <label htmlFor="forum-desc-new" className="block text-xs font-medium">
+              Description
+            </label>
+            <textarea
+              id="forum-desc-new"
+              name="description"
+              rows={2}
+              maxLength={5000}
+              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-fit rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
+          >
+            Add forum
+          </button>
+        </form>
+
+        {forums.length === 0 ? (
+          <p className="mt-6 text-sm text-[var(--muted-foreground)]">No forums yet.</p>
+        ) : (
+          <ul className="mt-8 space-y-8">
+            {forums.map((f) => (
+              <li key={f.id} className="rounded-xl border border-[var(--border)] bg-[var(--section-light)]/40 p-4">
+                <p className="text-xs font-mono text-[var(--muted-foreground)]">{f.slug}</p>
+                <p className="text-xs text-[var(--muted-foreground)]">
+                  {f.publishedThreadCount} thread{f.publishedThreadCount === 1 ? "" : "s"} ·{" "}
+                  {community.status === "ACTIVE" ? (
+                    <Link href={`/communities/${community.slug}/forums/${f.slug}`} className={primaryLinkClass}>
+                      Live forum URL
+                    </Link>
+                  ) : (
+                    "Activate community to browse public URL"
+                  )}
+                </p>
+                <form action={updateCommunityForumAdminAction} className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <input type="hidden" name="forumId" value={f.id} />
+                  <input type="hidden" name="communityId" value={community.id} />
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-medium" htmlFor={`fn-${f.id}`}>
+                      Name
+                    </label>
+                    <input
+                      id={`fn-${f.id}`}
+                      name="name"
+                      required
+                      defaultValue={f.name}
+                      maxLength={120}
+                      className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium" htmlFor={`fs-${f.id}`}>
+                      Slug
+                    </label>
+                    <input
+                      id={`fs-${f.id}`}
+                      name="slug"
+                      required
+                      defaultValue={f.slug}
+                      maxLength={60}
+                      pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+                      className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 font-mono text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium" htmlFor={`fl-${f.id}`}>
+                      Locked
+                    </label>
+                    <select
+                      id={`fl-${f.id}`}
+                      name="locked"
+                      defaultValue={f.locked ? "1" : "0"}
+                      className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                    >
+                      <option value="0">No</option>
+                      <option value="1">Yes — read only</option>
+                    </select>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-medium" htmlFor={`fd-${f.id}`}>
+                      Description
+                    </label>
+                    <textarea
+                      id={`fd-${f.id}`}
+                      name="description"
+                      rows={2}
+                      maxLength={5000}
+                      defaultValue={f.description ?? ""}
+                      className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-fit rounded-xl border border-[var(--border)] bg-white px-4 py-2 text-sm font-medium hover:bg-[var(--muted)]"
+                  >
+                    Save forum
+                  </button>
+                </form>
+                {(forumTotalPosts.get(f.id) ?? 0) === 0 ? (
+                  <form action={deleteCommunityForumAdminAction} className="mt-3">
+                    <input type="hidden" name="forumId" value={f.id} />
+                    <input type="hidden" name="communityId" value={community.id} />
+                    <button
+                      type="submit"
+                      className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-900 hover:bg-rose-100"
+                    >
+                      Delete empty forum (any status)
+                    </button>
+                  </form>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       <section className="mt-10">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Open post reports</h2>

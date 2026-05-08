@@ -74,6 +74,48 @@ export async function recordMbkruVoiceAnalyticsEvent(input: MbkruVoiceAnalyticsI
   });
 }
 
+export async function listMbkruVoiceAnalyticsEventRows(params: {
+  page: number;
+  pageSize: number;
+  eventNameContains?: string | null;
+}) {
+  await ensureAnalyticsTable();
+
+  const pageSize = Math.min(100, Math.max(1, params.pageSize));
+  const page = Math.max(1, params.page);
+  const skip = (page - 1) * pageSize;
+
+  const q = params.eventNameContains?.trim();
+  const where: Prisma.MbkruVoiceAnalyticsEventWhereInput =
+    q && q.length > 0 ? { eventName: { contains: q, mode: "insensitive" } } : {};
+
+  const [rows, total] = await Promise.all([
+    prisma.mbkruVoiceAnalyticsEvent.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      take: pageSize,
+      skip,
+      select: {
+        id: true,
+        eventName: true,
+        source: true,
+        language: true,
+        payload: true,
+        createdAt: true,
+      },
+    }),
+    prisma.mbkruVoiceAnalyticsEvent.count({ where }),
+  ]);
+
+  return {
+    rows,
+    total,
+    page,
+    pageSize,
+    pageCount: Math.max(1, Math.ceil(total / pageSize)),
+  };
+}
+
 export async function getMbkruVoiceAnalyticsSummary(days: MbkruVoiceAnalyticsDays = 30) {
   await ensureAnalyticsTable();
 

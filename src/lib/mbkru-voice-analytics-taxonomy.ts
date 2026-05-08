@@ -30,6 +30,31 @@ export const MBKRU_VOICE_ANALYTICS_TAXONOMY = [
     signal: "Speech UX friction and support need",
   },
   {
+    name: "mbkru_voice_whisper_record_start",
+    meaning: "User started a Whisper recording (tap mic again or stop to transcribe)",
+    signal: "OpenAI Whisper STT uptake",
+  },
+  {
+    name: "mbkru_voice_whisper_transcribe_ok",
+    meaning: "Whisper returned transcript text into the composer",
+    signal: "Latency and STT UX",
+  },
+  {
+    name: "mbkru_voice_whisper_transcribe_error",
+    meaning: "Whisper transcription failed or empty",
+    signal: "STT breakage or hostile audio",
+  },
+  {
+    name: "mbkru_voice_openai_tts_play",
+    meaning: "Assistant reply played via OpenAI speech synthesis",
+    signal: "TTS uptake vs browser synthesis",
+  },
+  {
+    name: "mbkru_voice_openai_tts_fallback_browser",
+    meaning: "OpenAI TTS failed — fell back to browser speechSynthesis",
+    signal: "TTS breakage or unsupported client playback",
+  },
+  {
     name: "mbkru_voice_clear_chat",
     meaning: "User cleared the chat transcript",
     signal: "Session reset / privacy-sensitive behavior",

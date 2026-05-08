@@ -47,6 +47,10 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
           Download CSV snapshot
         </Link>{" "}
         <span className="text-[var(--muted-foreground)]">(session required, UTF-8)</span>
+        {" · "}
+        <Link href="/admin/analytics/mbkru-voice/events" className={primaryLinkClass}>
+          Raw events (recent rows)
+        </Link>
       </p>
       <p className="mt-2 text-sm">
         <span className="text-[var(--muted-foreground)]">Window:</span>{" "}

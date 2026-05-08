@@ -8,6 +8,7 @@
  * Opt out: `SEED_COMMUNITIES_DEMO=0`. Pilot posts need `SEED_MEMBER_DEMO=1`.
  * Optional admin fixtures (Voice + attachment, situational/election rows, contact, verification queue): `SEED_ENGAGEMENT_DEMOS=1` or `SEED_VOICE_DEMO=1`. Internal origin is noted in `CitizenReport.staffNotes` / contact message footer where applicable.
  * With `SEED_ENGAGEMENT_DEMOS=1`, also seeds **10 demo members** (`demo.cohort01@mbkru.local` … `demo.cohort10@mbkru.local`), member-linked Voice/Situational/Election reports (incl. whistleblow-tagged Voice), community memberships/posts, **petitions** (with **signatures** from other cohort members), a **public cause** thread (**supports** + **comments**), extra **community reply** posts, sample **notifications**, and lead captures — password: `SEED_DEMO_COHORT_PASSWORD` or `SEED_MEMBER_PASSWORD` or default `DemoCohort!change-2026`.
+ * **Stakeholder Phase 3 walkthrough (simulated accountability data):** `SEED_STAKEHOLDER_ACCOUNTABILITY_SIM=1` after you have loaded the MP roster (`prisma/data/parliament-members.seed.json`, default on). Upserts a **ScorecardEntry** for every **active** `ParliamentMember`, sets illustrative `overallScore` + `metrics` JSON, rewrites the pilot cycle label/methodology as **simulation**. Optional: one **CampaignPromise** per active MP (`verificationNotes` prefix `mbkru-seed:stakeholder-accountability-sim-v1`) — disable with `SEED_STAKEHOLDER_SIM_PROMISES=0` if the browse catalogue should stay lighter.
  * @see package.json prisma.seed
  */
 import { readFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
@@ -183,6 +184,165 @@ const POLICY_SECTOR_SEED_VALUES = new Set([
 ]);
 /** Mirror commonly linked for 2024 NPP programme; verify against party canonical host if URL drifts. */
 const NPP_2024_MANIFESTO_URL = "https://npp-usa.org/wp-content/uploads/2024/08/2024_NPP_Manifesto_Full.pdf";
+
+/** Promise rows + scorecard metrics from `seedStakeholderAccountabilitySimulation` — deleteMany by startsWith for idempotent re-seed. */
+const STAKEHOLDER_SIM_PROMISE_TAG = "mbkru-seed:stakeholder-accountability-sim-v1";
+
+function stakeholderSimSlugHash(slug) {
+  let h = 0 >>> 0;
+  for (let i = 0; i < slug.length; i++) h = (h * 31 + slug.charCodeAt(i)) >>> 0;
+  return h >>> 0;
+}
+
+function stakeholderSimOverallScore(slug) {
+  const h = stakeholderSimSlugHash(slug);
+  return Math.round((4 + (h % 55) / 10) * 10) / 10;
+}
+
+function stakeholderSimPartySlugGuess(party) {
+  if (!party || typeof party !== "string") return null;
+  const p = party.trim().toUpperCase();
+  if (p.includes("NPP")) return "npp";
+  if (p.includes("NDC")) return "ndc";
+  if (p.includes("CPP")) return "cpp";
+  return null;
+}
+
+/** Simulated dimensional metrics (JSON); `_mbkruStakeholderSimulation` marks rows for admins. */
+function stakeholderSimMetricsJson(slug, memberName) {
+  const h = stakeholderSimSlugHash(slug);
+  const base = 5 + (h % 40) / 10;
+  const wobble = () => Math.round(Math.min(10, Math.max(4, base + ((h >>> 7) % 7) / 10 - 0.3)) * 10) / 10;
+  return {
+    constituencyEngagement: wobble(),
+    parliamentaryOversight: wobble(),
+    publicTransparency: wobble(),
+    stakeholderResponsiveness: wobble(),
+    _mbkruStakeholderSimulation: STAKEHOLDER_SIM_PROMISE_TAG,
+    _demoMpName: memberName,
+  };
+}
+
+async function seedStakeholderAccountabilitySimulation() {
+  let cycle = await prisma.reportCardCycle.findUnique({
+    where: { year: REPORT_CARD_PILOT_YEAR },
+    select: { id: true },
+  });
+
+  if (!cycle) {
+    cycle = await prisma.reportCardCycle.create({
+      data: {
+        year: REPORT_CARD_PILOT_YEAR,
+        label: `People's Report Card ${REPORT_CARD_PILOT_YEAR} — stakeholder simulation`,
+        publishedAt: new Date(),
+        methodology: [
+          "**Simulated stakeholder preview.** No evidence review. Replace before public release.",
+          "",
+          `Tag: ${STAKEHOLDER_SIM_PROMISE_TAG}`,
+        ].join("\n"),
+      },
+    });
+  }
+
+  await prisma.reportCardCycle.update({
+    where: { id: cycle.id },
+    data: {
+      label: `People's Report Card ${REPORT_CARD_PILOT_YEAR} — stakeholder simulation`,
+      methodology: [
+        "**This cycle is filled with simulated data** for stakeholder demos — not investigative findings.",
+        "",
+        "**Scores and JSON metrics are illustrative.** Deterministic placeholders per MP so charts and layouts can be exercised. Editors must replace narratives, methodology, and evidence in `/admin/report-card` before external comms.",
+        "",
+        "Roster: bundled `parliament-members.seed.json` — verify sitting membership at parliament.gh after by-elections.",
+        "",
+        `Removal / re-seed: promises with \`verificationNotes\` beginning \`${STAKEHOLDER_SIM_PROMISE_TAG}\`; metrics contain \`_mbkruStakeholderSimulation\`.`,
+      ].join("\n"),
+      publishedAt: new Date(),
+    },
+  });
+
+  const activeMps = await prisma.parliamentMember.findMany({
+    where: { active: true },
+    select: { id: true, name: true, slug: true, party: true },
+    orderBy: { name: "asc" },
+  });
+  if (activeMps.length === 0) {
+    console.warn(
+      "SEED_STAKEHOLDER_ACCOUNTABILITY_SIM: no active ParliamentMember rows — ensure parliament-members.seed.json ran.",
+    );
+    return;
+  }
+
+  const narrativeIntro = `[Stakeholder simulation — not editorially reviewed]\n\nTag: ${STAKEHOLDER_SIM_PROMISE_TAG}`;
+
+  let entriesUpserted = 0;
+  for (const mp of activeMps) {
+    const overallScore = stakeholderSimOverallScore(mp.slug);
+    const metrics = stakeholderSimMetricsJson(mp.slug, mp.name);
+    const narrative = [
+      narrativeIntro,
+      "",
+      `**${mp.name}** (${mp.party ?? "party n/a"}) — illustrative score ${overallScore}/10.`,
+      "",
+      "This text is synthesized for UX only. Replace with sourced narrative on oversight, constituency work, and documented commitments.",
+    ].join("\n");
+
+    await prisma.scorecardEntry.upsert({
+      where: { cycleId_memberId: { cycleId: cycle.id, memberId: mp.id } },
+      create: {
+        cycleId: cycle.id,
+        memberId: mp.id,
+        narrative,
+        overallScore,
+        metrics,
+      },
+      update: { narrative, overallScore, metrics },
+    });
+    entriesUpserted += 1;
+  }
+
+  const skipPromises =
+    process.env.SEED_STAKEHOLDER_SIM_PROMISES === "0" || process.env.SEED_STAKEHOLDER_SIM_PROMISES === "false";
+  let promiseInserted = 0;
+  if (!skipPromises) {
+    await prisma.campaignPromise.deleteMany({
+      where: { verificationNotes: { startsWith: STAKEHOLDER_SIM_PROMISE_TAG } },
+    });
+
+    const simStatuses = ["TRACKING", "IN_PROGRESS", "FULFILLED", "DEFERRED", "BROKEN"];
+    const sectors = POLICY_SECTOR_SEED_VALUES;
+
+    for (const mp of activeMps) {
+      const h = stakeholderSimSlugHash(mp.slug);
+      const status = simStatuses[h % simStatuses.length];
+      const sectorList = [...sectors];
+      const policySector = sectorList[h % sectorList.length];
+
+      await prisma.campaignPromise.create({
+        data: {
+          memberId: mp.id,
+          title:
+            "[Sim] Illustrative constituency / delivery commitment — replace with sourced pledge",
+          description:
+            "Auto-generated row for stakeholder walkthrough of /promises/browse and MP surfaces. Attach a real source (manifesto page, Hansard, speech) in admin before publishing.",
+          sourceLabel: "MBKRU stakeholder simulator — no real citation",
+          sourceUrl: null,
+          verificationNotes: `${STAKEHOLDER_SIM_PROMISE_TAG} mpSlug=${mp.slug}`,
+          status,
+          electionCycle: "2024",
+          partySlug: stakeholderSimPartySlugGuess(mp.party),
+          isGovernmentProgramme: h % 3 === 0,
+          policySector,
+        },
+      });
+      promiseInserted += 1;
+    }
+  }
+
+  console.log(
+    `Stakeholder accountability simulation: active MPs=${activeMps.length}, ScorecardEntry upserts=${entriesUpserted}; sim CampaignPromise rows=${skipPromises ? "skipped (SEED_STAKEHOLDER_SIM_PROMISES=0)" : promiseInserted}; cycle year=${REPORT_CARD_PILOT_YEAR}.`,
+  );
+}
 
 async function removeLegacyFictionalAccountabilityRows() {
   const legacyMembers = await prisma.parliamentMember.findMany({
@@ -1861,6 +2021,13 @@ async function main() {
     );
   } else {
     await seedAccountabilityPublicSample();
+  }
+
+  const runStakeholderAccountabilitySim =
+    process.env.SEED_STAKEHOLDER_ACCOUNTABILITY_SIM === "1" ||
+    process.env.SEED_STAKEHOLDER_ACCOUNTABILITY_SIM?.toLowerCase() === "true";
+  if (runStakeholderAccountabilitySim) {
+    await seedStakeholderAccountabilitySimulation();
   }
 
   if (process.env.SEED_MEMBER_DEMO === "1") {

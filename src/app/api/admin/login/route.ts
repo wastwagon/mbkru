@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     }
 
     const admin = await prisma.admin.findUnique({ where: { email } });
-    if (!admin) {
+    if (!admin || !admin.active) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 

@@ -57,7 +57,9 @@ services:
       - NODE_ENV=production
       - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL:-http://localhost:1100}
       - NEXT_PUBLIC_PLATFORM_PHASE=${NEXT_PUBLIC_PLATFORM_PHASE:-3}
-      - DATABASE_URL=${DATABASE_URL:-postgresql://mbkru:mbkru_dev@postgres:5432/mbkru}
+      # Always use Docker service hostname `postgres`. Do not inherit host `.env` DATABASE_URL
+      # (e.g. localhost:55432) — that breaks migrations inside the container.
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-mbkru}:${POSTGRES_PASSWORD:-mbkru_dev}@postgres:5432/${POSTGRES_DB:-mbkru}
       - REDIS_URL=${REDIS_URL:-redis://redis:6379}
       - RESEND_API_KEY=${RESEND_API_KEY}
       - CONTACT_INBOX_EMAIL=${CONTACT_INBOX_EMAIL}
@@ -72,12 +74,16 @@ services:
       - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - TWILIO_FROM_NUMBER=${TWILIO_FROM_NUMBER}
-      # After migrations, docker-entrypoint.sh runs `prisma db seed` unless SKIP_DB_SEED=1.
-      # Default 1 = hydrate public promises, report-card pilot, communities (set to 0 in Coolify only if you want an empty public catalogue).
+      # Entrypoint always runs prisma migrate deploy when DATABASE_URL is set.
+      # In production NODE_ENV=production, seed runs only when RUN_DB_SEED_ON_BOOT=1 (staging/demos).
+      # For Compose local/production-like stack seed on boot without RUN_DB_*: omit NODE_ENV=production here or use RUN_DB_SEED_ON_BOOT=1.
+      - RUN_DB_SEED_ON_BOOT=${RUN_DB_SEED_ON_BOOT:-}
       - SKIP_DB_SEED=${SKIP_DB_SEED:-}
       - SEED_ACCOUNTABILITY_DEMO=${SEED_ACCOUNTABILITY_DEMO:-1}
       - SEED_COMMUNITIES_DEMO=${SEED_COMMUNITIES_DEMO:-1}
       - SEED_TOWN_HALL_PROGRAMME=${SEED_TOWN_HALL_PROGRAMME:-1}
+      - SEED_STAKEHOLDER_ACCOUNTABILITY_SIM=${SEED_STAKEHOLDER_ACCOUNTABILITY_SIM:-}
+      - SEED_STAKEHOLDER_SIM_PROMISES=${SEED_STAKEHOLDER_SIM_PROMISES:-}
     depends_on:
       postgres:
         condition: service_healthy

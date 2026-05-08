@@ -126,7 +126,7 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
         {cycle.entries.length === 0 ? (
           <p className="mt-2 text-sm text-[var(--muted-foreground)]">None yet.</p>
         ) : (
-          <ul className="mt-4 space-y-4">
+          <ul className="mt-4 space-y-6">
             {cycle.entries.map((e) => (
               <li key={e.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
                 <p className="font-medium text-[var(--foreground)]">{e.member.name}</p>
@@ -138,12 +138,65 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
                 ) : null}
                 {e.metrics != null ? (
                   <div className="mt-2 rounded-lg border border-[var(--border)] bg-[var(--section-light)]/60 p-3">
-                    <p className="text-xs font-medium text-[var(--muted-foreground)]">Metrics</p>
+                    <p className="text-xs font-medium text-[var(--muted-foreground)]">Metrics (read-only)</p>
                     <div className="mt-2">
                       <MetricsDisplay value={e.metrics} />
                     </div>
                   </div>
                 ) : null}
+
+                <details className="mt-4 rounded-lg border border-dashed border-[var(--border)] bg-[var(--section-light)]/30 p-3">
+                  <summary className="cursor-pointer text-sm font-medium text-[var(--primary)]">Edit entry</summary>
+                  <form action={upsertScorecardEntryAction} className="mt-3 space-y-3">
+                    <input type="hidden" name="cycleId" value={cycle.id} />
+                    <input type="hidden" name="memberId" value={e.memberId} />
+                    <div>
+                      <label className="block text-xs font-medium" htmlFor={`narr-${e.id}`}>
+                        Narrative
+                      </label>
+                      <textarea
+                        id={`narr-${e.id}`}
+                        name="narrative"
+                        rows={4}
+                        maxLength={100000}
+                        defaultValue={e.narrative ?? ""}
+                        className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium" htmlFor={`score-${e.id}`}>
+                        Overall score <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+                      </label>
+                      <input
+                        id={`score-${e.id}`}
+                        name="overallScore"
+                        type="text"
+                        inputMode="decimal"
+                        defaultValue={e.overallScore != null ? String(e.overallScore) : ""}
+                        className="mt-1 w-full max-w-xs rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium" htmlFor={`met-${e.id}`}>
+                        Metrics JSON <span className="font-normal text-[var(--muted-foreground)]">(optional object)</span>
+                      </label>
+                      <textarea
+                        id={`met-${e.id}`}
+                        name="metrics"
+                        rows={4}
+                        placeholder='{"attendance": 0.8}'
+                        defaultValue={e.metrics == null ? "" : JSON.stringify(e.metrics, null, 2)}
+                        className="mt-1 w-full font-mono text-xs rounded-xl border border-[var(--border)] px-3 py-2"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
+                    >
+                      Save changes
+                    </button>
+                  </form>
+                </details>
               </li>
             ))}
           </ul>
