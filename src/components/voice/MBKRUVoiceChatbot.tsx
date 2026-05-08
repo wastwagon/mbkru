@@ -4,6 +4,7 @@ import Link from "next/link";
 import { type ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import "@/lib/client/web-speech-recognition";
+import { MBKRU_CLOSE_A11Y_PANEL_EVENT, MBKRU_CLOSE_VOICE_CHAT_EVENT } from "@/lib/a11y-voice-dispatch";
 import { getMbkruVoiceFallbackReply } from "@/lib/mbkru-voice-faq";
 import { trackUiEvent } from "@/lib/client/analytics-events";
 import type { SpeechRecognitionCtor, SpeechRecognitionEventLike, SpeechRecognitionLike } from "@/lib/client/web-speech-recognition";
@@ -69,7 +70,7 @@ const quickPromptsByLanguage: Record<
 
 const helperTextByLanguage: Record<VoicePreferences["languageId"], string> = {
   "en-gh":
-    "Type, mic, or attach a photo, .txt, or PDF. Optional OpenAI Whisper / cloud read-aloud when the server has OPENAI_API_KEY. Toggle live web search below when your host supports it.",
+    "Ask by typing, mic, or attach an image, .txt, or PDF. Optional cloud mic and read-aloud appear when your host enables them. Use the checkbox below for live web search when available.",
   twi: "Wubetumi akyerɛw, mic, fa foto, .txt, anaa PDF ka ho. Web nhwehwɛmu no wɔ ase ha. Access icon a header mu ma murya foforo.",
   ga: "Kpee: osha nyɛŋ, mic, alo fa foto, .txt, alo PDF shwɛɛ. Web nhwehwɛmu ase ha. Access icon header ni ma murya.",
   hausa: "Rubutu, mic, ko haɗa hoto, .txt, ko PDF. Kunna binciken yanar gizo a ƙasa idan mai masaukin bada goyan baya. Alamar dama a cikin header don ƙarin ayyukan murya.",
@@ -288,11 +289,26 @@ export function MBKRUVoiceChatbot() {
       const transcript = customEvent.detail?.transcript?.trim();
       if (!transcript) return;
       setInput(transcript);
+      window.dispatchEvent(new Event(MBKRU_CLOSE_A11Y_PANEL_EVENT));
       setIsOpen(true);
     };
     window.addEventListener("mbkru-voice-transcript", handler as EventListener);
     return () => window.removeEventListener("mbkru-voice-transcript", handler as EventListener);
   }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const closeChat = () => setIsOpen(false);
+    window.addEventListener(MBKRU_CLOSE_VOICE_CHAT_EVENT, closeChat);
+    return () => window.removeEventListener(MBKRU_CLOSE_VOICE_CHAT_EVENT, closeChat);
+  }, []);
+
+  function openVoiceChat() {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event(MBKRU_CLOSE_A11Y_PANEL_EVENT));
+    }
+    setIsOpen(true);
+  }
 
   function speakAssistantReply(text: string) {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
@@ -757,7 +773,7 @@ export function MBKRUVoiceChatbot() {
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className={`absolute right-2 top-2 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 ${focusRingSmClass}`}
+              className={`absolute right-2 top-2 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/35 bg-white/15 text-white shadow-sm hover:bg-white/25 ${focusRingSmClass}`}
               aria-label="Close chat"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
@@ -1062,7 +1078,7 @@ export function MBKRUVoiceChatbot() {
         <button
           ref={openButtonRef}
           type="button"
-          onClick={() => setIsOpen(true)}
+          onClick={() => openVoiceChat()}
           onMouseDown={() => trackUiEvent("mbkru_voice_open_launcher")}
           className={`shrink-0 rounded-full bg-[var(--primary)] px-4 py-2.5 text-sm font-bold text-white shadow-lg transition hover:bg-[var(--primary-dark)] ${focusRingSmClass}`}
           aria-label="Open MBKRU Voice chatbot"

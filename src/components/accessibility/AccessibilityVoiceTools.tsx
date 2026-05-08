@@ -1,10 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import "@/lib/client/web-speech-recognition";
-import { MBKRU_A11Y_OPEN_EVENT } from "@/lib/a11y-voice-dispatch";
+import {
+  MBKRU_A11Y_OPEN_EVENT,
+  MBKRU_CLOSE_A11Y_PANEL_EVENT,
+  MBKRU_CLOSE_VOICE_CHAT_EVENT,
+} from "@/lib/a11y-voice-dispatch";
 import { trackUiEvent } from "@/lib/client/analytics-events";
 import type { SpeechRecognitionCtor, SpeechRecognitionEventLike, SpeechRecognitionLike } from "@/lib/client/web-speech-recognition";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
@@ -397,25 +401,43 @@ export function AccessibilityVoiceTools() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const onOpen = () => setIsOpen(true);
+    const onOpen = () => {
+      window.dispatchEvent(new Event(MBKRU_CLOSE_VOICE_CHAT_EVENT));
+      setIsOpen(true);
+    };
     window.addEventListener(MBKRU_A11Y_OPEN_EVENT, onOpen);
     return () => window.removeEventListener(MBKRU_A11Y_OPEN_EVENT, onOpen);
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onClosePanel = () => setIsOpen(false);
+    window.addEventListener(MBKRU_CLOSE_A11Y_PANEL_EVENT, onClosePanel);
+    return () => window.removeEventListener(MBKRU_CLOSE_A11Y_PANEL_EVENT, onClosePanel);
+  }, []);
+
+  const focusAccessibilityTrigger = useCallback(() => {
+    requestAnimationFrame(() => {
+      const list = document.querySelectorAll<HTMLElement>("[data-mbkru-a11y-trigger]");
+      for (const el of list) {
+        if (el.offsetParent !== null) {
+          el.focus();
+          return;
+        }
+      }
+    });
+  }, []);
+
+  const closeAccessibilityPanel = useCallback(() => {
+    setIsOpen(false);
+    focusAccessibilityTrigger();
+  }, [focusAccessibilityTrigger]);
+
+  useEffect(() => {
     if (!isOpen) return;
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setIsOpen(false);
-        requestAnimationFrame(() => {
-          const list = document.querySelectorAll<HTMLElement>("[data-mbkru-a11y-trigger]");
-          for (const el of list) {
-            if (el.offsetParent !== null) {
-              el.focus();
-              return;
-            }
-          }
-        });
+        closeAccessibilityPanel();
       }
     };
     window.addEventListener("keydown", handleKey);
@@ -423,7 +445,7 @@ export function AccessibilityVoiceTools() {
       panelRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
     });
     return () => window.removeEventListener("keydown", handleKey);
-  }, [isOpen]);
+  }, [isOpen, closeAccessibilityPanel]);
 
   useEffect(() => {
     return () => {
@@ -545,11 +567,27 @@ export function AccessibilityVoiceTools() {
         <section
           ref={panelRef}
           id="mbkru-accessibility-tools"
-          className="fixed left-3 right-3 top-[4.75rem] z-[100] mx-auto mt-0 w-auto max-w-[22rem] max-h-[min(72vh,36rem)] overflow-y-auto rounded-2xl border border-[var(--border)] bg-white p-3.5 shadow-xl sm:left-auto sm:right-4 sm:top-24 sm:p-4"
+          className="fixed left-3 right-3 top-[4.75rem] z-[100] mx-auto mt-0 w-auto max-w-[22rem] max-h-[min(72vh,36rem)] overflow-y-auto rounded-2xl border border-[var(--border)] bg-white p-3.5 pb-4 shadow-xl sm:left-auto sm:right-4 sm:top-24 sm:p-4 sm:pb-4"
           aria-label="Accessibility voice tools"
+          role="dialog"
+          aria-modal="true"
         >
-          <p className="text-sm font-semibold text-[var(--foreground)]">Voice &amp; reading</p>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">Escape closes this panel. Dictation can be sent to MBKRU Voice.</p>
+          <div className="relative pr-10">
+            <p className="text-sm font-semibold text-[var(--foreground)]">Voice &amp; reading</p>
+            <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+              Read aloud and dictation for this page. Press Escape or Close.
+            </p>
+            <button
+              type="button"
+              onClick={closeAccessibilityPanel}
+              className={`absolute right-0 top-0 inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--section-light)] text-[var(--foreground)] hover:bg-[var(--muted)] ${focusRingSmClass}`}
+              aria-label="Close accessibility voice tools"
+            >
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
 
           <div className="mt-3 grid gap-2">
             <label className="text-xs font-semibold text-[var(--foreground)]" htmlFor="accessibility-language-select">
