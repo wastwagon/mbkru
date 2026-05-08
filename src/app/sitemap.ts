@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
-import { getServerPlatformPhase } from "@/config/platform";
+import { getServerPlatformPhase, type PlatformPhase } from "@/config/platform";
 import {
   isCivicPetitionsAndPublicCausesEnabled,
   isCommunitiesBrowseEnabled,
@@ -10,17 +10,37 @@ import {
 } from "@/lib/reports/accountability-pages";
 import { getPublicSitemapStaticPaths } from "@/config/public-platform-nav";
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mbkruadvocates.org";
-  const phase = getServerPlatformPhase();
-  const routes = getPublicSitemapStaticPaths(phase);
+const FALLBACK_ORIGIN = "https://mbkruadvocates.org";
 
-  const staticEntries: MetadataRoute.Sitemap = routes.map((route) => ({
+function normalizeSiteOrigin(raw: string | undefined): string {
+  const t = (raw ?? "").trim();
+  if (!t) return FALLBACK_ORIGIN;
+  return t.replace(/\/+$/, "");
+}
+
+function dedupeSitemap(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
+  const seen = new Set<string>();
+  const out: MetadataRoute.Sitemap = [];
+  for (const e of entries) {
+    if (!e?.url || seen.has(e.url)) continue;
+    seen.add(e.url);
+    out.push(e);
+  }
+  return out;
+}
+
+function staticSitemapEntries(baseUrl: string, phase: PlatformPhase): MetadataRoute.Sitemap {
+  const routes = getPublicSitemapStaticPaths(phase);
+  return routes.map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: route === "" ? ("weekly" as const) : ("monthly" as const),
     priority: route === "" ? 1 : 0.8,
   }));
+}
+
+async function dynamicSitemapEntries(baseUrl: string): Promise<MetadataRoute.Sitemap> {
+  const out: MetadataRoute.Sitemap = [];
 
   const communityEntries: MetadataRoute.Sitemap = [];
   if (isCommunitiesBrowseEnabled() && isDatabaseConfigured()) {
@@ -38,7 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         });
       }
     } catch {
-      /* e.g. DB unreachable during build */
+      /* e.g. DB unreachable */
     }
   }
 
@@ -58,7 +78,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         });
       }
     } catch {
-      /* DB unreachable during build */
+      /* DB unreachable */
     }
   }
 
@@ -78,7 +98,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         });
       }
     } catch {
-      /* DB unreachable during build */
+      /* DB unreachable */
     }
   }
 
@@ -98,7 +118,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         });
       }
     } catch {
-      /* DB unreachable during build */
+      /* DB unreachable */
     }
   }
 
@@ -118,7 +138,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         });
       }
     } catch {
-      /* DB unreachable during build */
+      /* DB unreachable */
     }
   }
 
@@ -138,17 +158,36 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         });
       }
     } catch {
-      /* DB unreachable during build */
+      /* DB unreachable */
     }
   }
 
-  return [
-    ...staticEntries,
+  out.push(
     ...communityEntries,
     ...newsEntries,
     ...reportCardYearEntries,
     ...resourceDocumentEntries,
     ...petitionEntries,
     ...promisesMemberEntries,
-  ];
+  );
+  return out;
+}
+
+async function buildSitemapOrThrow(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl = normalizeSiteOrigin(process.env.NEXT_PUBLIC_SITE_URL);
+  const phase = getServerPlatformPhase();
+  const staticEntries = staticSitemapEntries(baseUrl, phase);
+  const dynamic = await dynamicSitemapEntries(baseUrl);
+  return dedupeSitemap([...staticEntries, ...dynamic]);
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  try {
+    return await buildSitemapOrThrow();
+  } catch (err) {
+    console.error("[sitemap] falling back to static routes only:", err);
+    const baseUrl = normalizeSiteOrigin(process.env.NEXT_PUBLIC_SITE_URL);
+    const phase = getServerPlatformPhase();
+    return staticSitemapEntries(baseUrl, phase);
+  }
 }

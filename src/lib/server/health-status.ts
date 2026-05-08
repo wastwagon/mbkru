@@ -25,6 +25,17 @@ export interface HealthPayload {
     parliamentJson: boolean;
     reportCardJson: boolean;
   };
+  /**
+   * Non-secret deploy hints for operators (canonical URL, optional voice stack).
+   * Does not expose secret values.
+   */
+  deployment?: {
+    publicSiteUrlSet: boolean;
+    publicSiteUrlHttps: boolean;
+    /** Hostname from NEXT_PUBLIC_SITE_URL when parseable; null if unset or invalid. */
+    publicSiteHost: string | null;
+    openAiVoiceConfigured: boolean;
+  };
   notes?: string;
 }
 
@@ -70,6 +81,24 @@ async function probeRedis(): Promise<DependencyProbe> {
   }
 }
 
+function deploymentHints(): HealthPayload["deployment"] {
+  const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim() ?? "";
+  let publicSiteHost: string | null = null;
+  if (raw) {
+    try {
+      publicSiteHost = new URL(raw).hostname || null;
+    } catch {
+      publicSiteHost = null;
+    }
+  }
+  return {
+    publicSiteUrlSet: raw.length > 0,
+    publicSiteUrlHttps: raw.startsWith("https://"),
+    publicSiteHost,
+    openAiVoiceConfigured: Boolean(process.env.OPENAI_API_KEY?.trim()),
+  };
+}
+
 export async function getHealthStatus(): Promise<HealthPayload> {
   const phase = getServerPlatformPhase();
   getServerEnv();
@@ -83,6 +112,8 @@ export async function getHealthStatus(): Promise<HealthPayload> {
     reportCardJson: platformFeatures.publicReportCard(phase),
   };
 
+  const deployment = deploymentHints();
+
   return {
     status,
     service: "mbkru-web",
@@ -90,6 +121,7 @@ export async function getHealthStatus(): Promise<HealthPayload> {
     timestamp: new Date().toISOString(),
     dependencies: { postgres, redis },
     accountability,
+    deployment,
     notes:
       phase === 1
         ? "Postgres required for admin/news; Redis optional (rate limits when REDIS_URL is set)."

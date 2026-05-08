@@ -8,7 +8,7 @@
  * Opt out: `SEED_COMMUNITIES_DEMO=0`. Pilot posts need `SEED_MEMBER_DEMO=1`.
  * Optional admin fixtures (Voice + attachment, situational/election rows, contact, verification queue): `SEED_ENGAGEMENT_DEMOS=1` or `SEED_VOICE_DEMO=1`. Internal origin is noted in `CitizenReport.staffNotes` / contact message footer where applicable.
  * With `SEED_ENGAGEMENT_DEMOS=1`, also seeds **10 demo members** (`demo.cohort01@mbkru.local` … `demo.cohort10@mbkru.local`), member-linked Voice/Situational/Election reports (incl. whistleblow-tagged Voice), community memberships/posts, **petitions** (with **signatures** from other cohort members), a **public cause** thread (**supports** + **comments**), extra **community reply** posts, sample **notifications**, and lead captures — password: `SEED_DEMO_COHORT_PASSWORD` or `SEED_MEMBER_PASSWORD` or default `DemoCohort!change-2026`.
- * **Stakeholder Phase 3 walkthrough (simulated accountability data):** `SEED_STAKEHOLDER_ACCOUNTABILITY_SIM=1` after you have loaded the MP roster (`prisma/data/parliament-members.seed.json`, default on). Upserts a **ScorecardEntry** for every **active** `ParliamentMember`, sets illustrative `overallScore` + `metrics` JSON, rewrites the pilot cycle label/methodology as **simulation**. Optional: one **CampaignPromise** per active MP (`verificationNotes` prefix `mbkru-seed:stakeholder-accountability-sim-v1`) — disable with `SEED_STAKEHOLDER_SIM_PROMISES=0` if the browse catalogue should stay lighter.
+ * **Stakeholder Phase 3 walkthrough (simulated accountability data):** `SEED_STAKEHOLDER_ACCOUNTABILITY_SIM=1` after you have loaded the MP roster (`prisma/data/parliament-members.seed.json`, default on). Upserts a **ScorecardEntry** for every **active** `ParliamentMember`, sets illustrative `overallScore` + `metrics` JSON, rewrites the default cycle label/methodology as **simulation**. Optional: one **CampaignPromise** per active MP (`verificationNotes` prefix `mbkru-seed:stakeholder-accountability-sim-v1`) — disable with `SEED_STAKEHOLDER_SIM_PROMISES=0` if the browse catalogue should stay lighter.
  * @see package.json prisma.seed
  */
 import { readFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
@@ -163,8 +163,15 @@ const LEGACY_FICTIONAL_MP_SLUGS = ["demo-mp-koomson", "demo-mp-adjei", "demo-mp-
 const LEGACY_FICTIONAL_CONSTITUENCY_SLUGS = ["demo-constituency-accra-north", "demo-constituency-kumasi-east"];
 
 const STARTER_MP_SLUGS = ["bryan-acheampong", "john-dramani-mahama", "zanetor-agyeman-rawlings"];
-/** Pilot cycle for report-card UI — scores null until MBKRU publishes a reviewed cycle. */
+/** Default published cycle year for report-card UI — scores null until MBKRU publishes a reviewed cycle. */
 const REPORT_CARD_PILOT_YEAR = 2026;
+/** Default label/methodology for production-style seeds (stakeholder sim overwrites when enabled). */
+const REPORT_CARD_DEFAULT_LABEL = `People's Report Card ${REPORT_CARD_PILOT_YEAR}`;
+const REPORT_CARD_DEFAULT_METHODOLOGY = [
+  `Published cycle for ${REPORT_CARD_PILOT_YEAR}. Roster: verify sitting MPs at https://www.parliament.gh/members .`,
+  "Overall scores and MP narratives are filled only after MBKRU methodology sign-off and evidence review (see /methodology). Seed rows use placeholders until editors publish reviewed content in /admin/report-card.",
+  "Starter seed MPs: Bryan Acheampong (Abetifi), John Dramani Mahama (Bole Bamboi), Zanetor Agyeman-Rawlings (Klottey Korle) — confirm against parliament.gh after by-elections or roster changes.",
+].join("\n\n");
 
 const NDC_2024_MANIFESTO_URL =
   "https://manifesto.johnmahama.org/files/shares/2024%20Manifesto_Abridged.pdf";
@@ -703,29 +710,21 @@ async function seedAccountabilityPublicSample() {
     where: { year: REPORT_CARD_PILOT_YEAR },
     create: {
       year: REPORT_CARD_PILOT_YEAR,
-      label: "People's Report Card — pilot (layout & workflow)",
+      label: REPORT_CARD_DEFAULT_LABEL,
       publishedAt: new Date(),
-      methodology: [
-        "This cycle demonstrates the published report-card layout. Roster: verify sitting MPs at https://www.parliament.gh/members .",
-        "Overall scores are intentionally unset until MBKRU completes evidence review and publishes methodology-aligned metrics (see /methodology).",
-        "MP examples in seed: Bryan Acheampong (Abetifi), John Dramani Mahama (Bole Bamboi), Zanetor Agyeman-Rawlings (Klottey Korle) — confirm party and constituency against parliament.gh after by-elections or roster changes.",
-      ].join("\n\n"),
+      methodology: REPORT_CARD_DEFAULT_METHODOLOGY,
     },
     update: {
-      label: "People's Report Card — pilot (layout & workflow)",
+      label: REPORT_CARD_DEFAULT_LABEL,
       publishedAt: new Date(),
-      methodology: [
-        "This cycle demonstrates the published report-card layout. Roster: verify sitting MPs at https://www.parliament.gh/members .",
-        "Overall scores are intentionally unset until MBKRU completes evidence review and publishes methodology-aligned metrics (see /methodology).",
-        "MP examples in seed: Bryan Acheampong (Abetifi), John Dramani Mahama (Bole Bamboi), Zanetor Agyeman-Rawlings (Klottey Korle) — confirm party and constituency against parliament.gh after by-elections or roster changes.",
-      ].join("\n\n"),
+      methodology: REPORT_CARD_DEFAULT_METHODOLOGY,
     },
   });
 
   await prisma.scorecardEntry.deleteMany({ where: { cycleId: cycle.id } });
 
   const pendingNarrative =
-    "Layout preview: no published score yet — MBKRU will populate narratives and metrics after methodology sign-off and evidence review.";
+    "Awaiting published review: MBKRU will populate narrative and scores after methodology sign-off and evidence review.";
 
   for (const slug of STARTER_MP_SLUGS) {
     const mid = bySlug[slug];
@@ -746,7 +745,7 @@ async function seedAccountabilityPublicSample() {
       "Public accountability sample seeded: MPs=3 (verify on parliament.gh), NDC+NPP 2024 manifesto links,",
       `starter promises=${promiseRows.length},`,
       catalogueInserted ? `NDC catalogue promises=${catalogueInserted},` : "",
-      "report-card pilot year=" + REPORT_CARD_PILOT_YEAR,
+      "report-card default year=" + REPORT_CARD_PILOT_YEAR,
     ]
       .filter(Boolean)
       .join(" "),
@@ -2017,7 +2016,7 @@ async function main() {
     process.env.SEED_ACCOUNTABILITY_DEMO === "0" || process.env.SEED_ACCOUNTABILITY_DEMO === "false";
   if (skipAccountabilityStarter) {
     console.log(
-      "SEED_ACCOUNTABILITY_DEMO=0 — skipping public accountability starter (MPs, manifesto-linked promises, report card pilot).",
+      "SEED_ACCOUNTABILITY_DEMO=0 — skipping public accountability starter (MPs, manifesto-linked promises, report card default cycle).",
     );
   } else {
     await seedAccountabilityPublicSample();

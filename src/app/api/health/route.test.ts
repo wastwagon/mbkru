@@ -13,6 +13,12 @@ const basePayload = {
   timestamp: "2026-03-28T12:00:00.000Z",
   dependencies: { postgres: "ok" as const, redis: "not_configured" as const },
   accountability: { parliamentJson: false, reportCardJson: false },
+  deployment: {
+    publicSiteUrlSet: true,
+    publicSiteUrlHttps: true,
+    publicSiteHost: "example.com",
+    openAiVoiceConfigured: false,
+  },
 };
 
 describe("GET /api/health", () => {
@@ -29,6 +35,7 @@ describe("GET /api/health", () => {
     expect(json.status).toBe("ok");
     expect(json.service).toBe("mbkru-web");
     expect(json.dependencies.postgres).toBe("ok");
+    expect(json.deployment?.publicSiteUrlHttps).toBe(true);
   });
 
   it("returns 200 when degraded (redis error)", async () => {

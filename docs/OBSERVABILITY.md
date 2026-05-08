@@ -4,7 +4,8 @@
 
 ## Today (in-repo)
 
-- **`GET /api/health`** — JSON for load balancers; includes Postgres/Redis probe results and build-time accountability flags.
+- **`GET /api/health`** — JSON for load balancers; includes Postgres/Redis probe results, build-time accountability flags, and **`deployment`** hints (`publicSiteUrlHttps`, `openAiVoiceConfigured`, etc.).
+- **`npm run ops:monitor-health`** — curls `/api/health` (pass URL as argv or set `HEALTHCHECK_URL`); exits **1** if the service is unhealthy or unreachable (cron-friendly).
 - **GitHub Actions CI** — `lint`, `vitest`, `prisma validate`, `next build`.
 - **Server logs** — Next.js / Node `console` output on stdout (Docker / Coolify captures this).
 

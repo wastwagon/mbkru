@@ -17,6 +17,7 @@
     "verify:release-gates": "node scripts/verify-release-gates.mjs",
     "ops:backup": "node scripts/ops-backup-postgres.mjs",
     "ops:restore-verify": "node scripts/ops-restore-verify.mjs",
+    "ops:monitor-health": "node scripts/monitor-health.mjs",
     "ops:notifications:process": "tsx scripts/process-notification-outbox.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate deploy",

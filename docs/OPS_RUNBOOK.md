@@ -16,7 +16,7 @@ Use before major traffic (e.g. election window) or after infra changes:
 - [ ] **Operational audit:** review `/admin/operational-audit` for retry/reset actions during incidents and postmortems.
 - [ ] **Backups:** create + restore verification using `npm run ops:backup` and `npm run ops:restore-verify` (or equivalent), then confirm app boots and admin login works against scratch.
 - [ ] **`SKIP_DB_SEED=1`** on production after first stable deploy (see below).
-- [ ] **`GET /api/health`:** HTTP **200** (or **503** only if Postgres intentionally down in a test); JSON **`dependencies`** and **`accountability`** flags match the phase you intend.
+- [ ] **`GET /api/health`:** HTTP **200** (or **503** only if Postgres intentionally down in a test); JSON **`dependencies`** and **`accountability`** flags match the phase you intend. Check **`deployment`**: `publicSiteUrlHttps` should be **true** on public HTTPS, and **`openAiVoiceConfigured`** should match whether Whisper/TTS is intended on that host.
 - [ ] **`NEXT_PUBLIC_*`:** any change (phase, site URL, Turnstile, analytics) required a **full image rebuild** — confirm current image matches env in your registry.
 - [ ] **Search Console:** set `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` to the HTML-tag content value, rebuild, then complete verification in Google Search Console.
 - [ ] **Newsletter ESP:** when `MAILCHIMP_*` or `CONVERTKIT_*` is set, confirm a test signup appears in the audience/form; failures log as `[esp-newsletter]` only — Postgres `LeadCapture` remains source of truth.
