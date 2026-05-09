@@ -42,6 +42,25 @@ export function memberNotificationSummary(type: string, payload: unknown): strin
         ? `A team note on your report ${code} is visible again (My reports / Track a report).`
         : "A team note on one of your reports is visible again.";
     }
+    case "citizen_report_discussion_comment": {
+      const code = String(p.trackingCode ?? "").trim();
+      return code
+        ? `Someone commented on your Voice report ${code} on the public discussion page.`
+        : "Someone commented on one of your Voice reports on the public discussion page.";
+    }
+    case "citizen_report_discussion_reaction": {
+      const code = String(p.trackingCode ?? "").trim();
+      const rk = String(p.reactionKind ?? "").trim();
+      const verb =
+        rk === "THANK"
+          ? "thanked"
+          : rk === "INSIGHT"
+            ? "marked as insightful"
+            : "liked";
+      return code
+        ? `Someone ${verb} your comment on Voice report ${code}.`
+        : `Someone ${verb} your comment on a Voice report discussion.`;
+    }
     default:
       return type;
   }
@@ -76,6 +95,12 @@ export function memberNotificationHref(type: string, payload: unknown): string |
     if (typeof rid === "string" && rid.trim()) return `/account/reports/${rid}`;
     return "/account/reports";
   }
+  if (type === "citizen_report_discussion_comment" || type === "citizen_report_discussion_reaction") {
+    const p = payload as Record<string, unknown>;
+    const rid = p.reportId;
+    if (typeof rid === "string" && rid.trim()) return `/citizens-voice/discussions/${rid.trim()}`;
+    return "/report-card";
+  }
   const p = payload as Record<string, unknown>;
   const slug = p.communitySlug;
   if (typeof slug !== "string" || !slug.trim()) return null;
@@ -94,6 +119,9 @@ export function memberNotificationLinkLabel(type: string): string {
   }
   if (type === "citizen_report_admin_reply" || type === "citizen_report_admin_reply_visible_again") {
     return "View report";
+  }
+  if (type === "citizen_report_discussion_comment" || type === "citizen_report_discussion_reaction") {
+    return "Open discussion";
   }
   return "Open community";
 }

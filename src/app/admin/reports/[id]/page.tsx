@@ -3,12 +3,14 @@ import { notFound } from "next/navigation";
 
 import {
   hidePublicCauseCommentAction,
+  restorePublicCauseCommentAction,
   updatePublicCauseThreadAction,
 } from "@/app/admin/reports/public-cause-actions";
 import {
   addCitizenReportAdminReplyAction,
   setCitizenReportAdminReplyVisibilityAction,
   updateCitizenReportAdminReplyAction,
+  updateCitizenReportDiscussionEnabledAction,
   updateCitizenReportOperationsAction,
   updateCitizenReportStatusAction,
 } from "@/app/admin/reports/actions";
@@ -97,6 +99,11 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
           Public cause settings saved.
         </p>
       ) : null}
+      {sp.saved === "discussion" ? (
+        <p className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900" role="status">
+          Public discussion setting saved.
+        </p>
+      ) : null}
       {sp.saved === "comment" ? (
         <p className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900" role="status">
           Comment updated.
@@ -130,6 +137,11 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
       {sp.error === "cause_slug_clash" ? (
         <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
           That public URL slug is already used on another report.
+        </p>
+      ) : null}
+      {sp.error === "discussion_invalid" ? (
+        <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
+          Discussion setting could not be saved. Choose Open or Closed.
         </p>
       ) : null}
 
@@ -563,6 +575,48 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
       ) : null}
 
       <form
+        action={updateCitizenReportDiscussionEnabledAction}
+        className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5"
+      >
+        <input type="hidden" name="id" value={report.id} />
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">Voice public discussion</h2>
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          Controls the page at{" "}
+          <code className="text-xs">/citizens-voice/discussions/[report id]</code> — full narrative, member comments,
+          reactions, and support. Use <strong className="text-[var(--foreground)]">Closed</strong> to take the page offline
+          without archiving the report.
+        </p>
+        <div className="mt-4 flex flex-wrap items-end gap-4">
+          <label htmlFor="discussionEnabled" className="block text-sm font-medium text-[var(--foreground)]">
+            Discussion page
+          </label>
+          <select
+            id="discussionEnabled"
+            name="discussionEnabled"
+            defaultValue={report.discussionEnabled ? "true" : "false"}
+            className="rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--foreground)]"
+          >
+            <option value="true">Open — public page live</option>
+            <option value="false">Closed — hide discussion page</option>
+          </select>
+          <button
+            type="submit"
+            className="rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-[var(--primary-foreground)] hover:bg-[var(--primary-dark)]"
+          >
+            Save
+          </button>
+          <Link
+            href={`/citizens-voice/discussions/${encodeURIComponent(report.id)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${primaryLinkClass} text-sm`}
+          >
+            Open discussion page ↗
+          </Link>
+        </div>
+      </form>
+
+      <form
         action={updatePublicCauseThreadAction}
         className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5"
       >
@@ -646,7 +700,12 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
 
       {report.publicCauseComments.length > 0 ? (
         <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
-          <h2 className="text-sm font-semibold text-[var(--foreground)]">Public cause comments</h2>
+          <h2 className="text-sm font-semibold text-[var(--foreground)]">Member comments</h2>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            Same thread is used for the public cause page (when published) and for{" "}
+            <code className="text-xs">/citizens-voice/discussions/[report id]</code>. Hiding removes the comment from
+            both; restoring brings it back everywhere it applies.
+          </p>
           <ul className="mt-4 space-y-4">
             {report.publicCauseComments.map((c) => (
               <li key={c.id} className="border-b border-[var(--border)] pb-4 text-sm last:border-0">
@@ -662,10 +721,21 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
                       type="submit"
                       className={`text-xs font-medium text-red-700 ${destructiveTextControlClass}`}
                     >
-                      Hide comment
+                      Hide from public pages
                     </button>
                   </form>
-                ) : null}
+                ) : (
+                  <form action={restorePublicCauseCommentAction} className="mt-2">
+                    <input type="hidden" name="commentId" value={c.id} />
+                    <input type="hidden" name="reportId" value={report.id} />
+                    <button
+                      type="submit"
+                      className="text-xs font-medium text-green-800 underline decoration-green-800/40 underline-offset-2 hover:decoration-green-800"
+                    >
+                      Restore visibility
+                    </button>
+                  </form>
+                )}
               </li>
             ))}
           </ul>

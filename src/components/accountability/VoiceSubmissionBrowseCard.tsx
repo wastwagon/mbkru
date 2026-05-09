@@ -41,7 +41,8 @@ export function VoiceSubmissionBrowseCard({ row }: Props) {
   const place = placeParts.length > 0 ? placeParts.join(" · ") : null;
   const summaryExcerpt = excerptFromSummary(row.publicCauseSummary);
   const publicTitle = row.publicCauseTitle?.trim() ?? null;
-  const hasEngagement = Boolean(row.publicCauseSlug);
+  const hasLegacyCause = Boolean(row.publicCauseSlug);
+  const discussionOpen = row.discussionEnabled;
 
   return (
     <article className="flex flex-col rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
@@ -72,17 +73,17 @@ export function VoiceSubmissionBrowseCard({ row }: Props) {
             </p>
           ) : null}
         </div>
-        {hasEngagement ? (
+        {discussionOpen ? (
           <span className="shrink-0 rounded-full bg-[var(--primary)]/12 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--primary)]">
-            Public thread
+            Discussion open
           </span>
         ) : (
           <span className="shrink-0 rounded-full bg-[var(--muted)]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
-            Private narrative
+            Discussion off
           </span>
         )}
       </div>
-      {hasEngagement ? (
+      {row.publicSupportCount > 0 || row.publicCommentCount > 0 ? (
         <p className="mt-3 text-xs text-[var(--muted-foreground)]">
           Community engagement: {row.publicSupportCount} supporter{row.publicSupportCount === 1 ? "" : "s"}
           {" · "}
@@ -98,20 +99,32 @@ export function VoiceSubmissionBrowseCard({ row }: Props) {
         <p className="mt-3 flex-1 text-sm italic text-[var(--muted-foreground)]">
           Staff-approved summary will appear here when published.
         </p>
+      ) : discussionOpen ? (
+        <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">
+          Full narrative, member comments, and reactions are on the discussion page (sign in to engage).
+        </p>
       ) : (
         <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">
-          Original narrative stays private. Members can <strong className="font-semibold">support and comment</strong> only on
-          threads staff open as a <strong className="font-semibold">public cause</strong> — then sign in on that thread page.
+          Public discussion is turned off for this submission.
         </p>
       )}
       <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 border-t border-[var(--border)]/80 pt-4 text-sm">
+        {discussionOpen ? (
+          <Link
+            href={`/citizens-voice/discussions/${encodeURIComponent(row.id)}`}
+            className={`${primaryLinkClass} font-semibold`}
+            prefetch={false}
+          >
+            Full report &amp; discussion →
+          </Link>
+        ) : null}
         {row.publicCauseSlug ? (
           <Link
             href={`/citizens-voice/causes/${encodeURIComponent(row.publicCauseSlug)}`}
             className={`${primaryLinkClass} font-semibold`}
             prefetch={false}
           >
-            Open public thread (support &amp; comments) →
+            Legacy public cause thread →
           </Link>
         ) : null}
         <Link href="/track-report" className={`${primaryLinkClass} font-semibold`} prefetch={false}>

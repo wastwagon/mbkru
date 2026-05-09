@@ -402,6 +402,7 @@ export type VoiceSubmissionBrowseRow = {
   kind: CitizenReportKind;
   status: CitizenReportStatus;
   createdAt: Date;
+  discussionEnabled: boolean;
   region: { name: string } | null;
   localArea: string | null;
   parliamentMember: { name: string; slug: string; role: string } | null;
@@ -445,6 +446,7 @@ export async function getVoiceSubmissionsBrowseEntries(opts: {
         kind: true,
         status: true,
         createdAt: true,
+        discussionEnabled: true,
         localArea: true,
         region: { select: { name: true } },
         parliamentMember: { select: { name: true, slug: true, role: true } },
@@ -469,6 +471,7 @@ export async function getVoiceSubmissionsBrowseEntries(opts: {
     kind: r.kind,
     status: r.status,
     createdAt: r.createdAt,
+    discussionEnabled: r.discussionEnabled,
     localArea: r.localArea,
     region: r.region,
     parliamentMember: r.parliamentMember,

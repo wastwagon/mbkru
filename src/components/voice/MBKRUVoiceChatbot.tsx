@@ -5,6 +5,7 @@ import { type ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } fro
 
 import "@/lib/client/web-speech-recognition";
 import { MBKRU_CLOSE_A11Y_PANEL_EVENT, MBKRU_CLOSE_VOICE_CHAT_EVENT } from "@/lib/a11y-voice-dispatch";
+import { splitTextForSpeechSynthesis } from "@/lib/client/speech-synthesis-chunks";
 import { getMbkruVoiceFallbackReply } from "@/lib/mbkru-voice-faq";
 import { trackUiEvent } from "@/lib/client/analytics-events";
 import type { SpeechRecognitionCtor, SpeechRecognitionEventLike, SpeechRecognitionLike } from "@/lib/client/web-speech-recognition";
@@ -16,6 +17,7 @@ import {
   voicePreferencesStorageKey,
   type VoicePreferences,
 } from "@/lib/voice-languages";
+import { getVoiceChromeStrings, voiceLanguageMenuLabel, voiceUiDateLocale } from "@/lib/voice-ui-i18n";
 
 /** Provenance and when the turn was received (client clock). Assistant messages only. */
 type MbkruVoiceAssistantMeta = {
@@ -32,70 +34,17 @@ type ChatEntry = {
   meta?: MbkruVoiceAssistantMeta;
 };
 
-const quickPromptsByLanguage: Record<
-  VoicePreferences["languageId"],
-  Array<{ label: string; prompt: string }>
-> = {
-  "en-gh": [
-    { label: "Track report", prompt: "Help me track my report status." },
-    { label: "Diaspora", prompt: "I need the diaspora support hub: Ghana Card, passport, and official signposting." },
-    { label: "Petition", prompt: "How do I start a new petition?" },
-    { label: "Contact", prompt: "How can I contact MBKRU support?" },
-  ],
-  twi: [
-    { label: "Track report", prompt: "Boa me ma menhwe me report no status." },
-    { label: "Diaspora", prompt: "I need the diaspora support hub: Ghana Card, passport, and official signposting." },
-    { label: "Start petition", prompt: "Mɛyɛ dɛn ahyɛ petition foforo ase?" },
-    { label: "Support", prompt: "Mɛyɛ dɛn akasa akyerɛ MBKRU support?" },
-  ],
-  ga: [
-    { label: "Track report", prompt: "Nyɛ mi boi ni mi kɛ mi report status." },
-    { label: "Diaspora", prompt: "I need the diaspora support hub: Ghana Card, passport, and official signposting." },
-    { label: "Start petition", prompt: "Mitsɛ ni maba petition tsui?" },
-    { label: "Support", prompt: "Mitsɛ ni mika MBKRU support hewalɛ?" },
-  ],
-  hausa: [
-    { label: "Track report", prompt: "Taimaka min duba matsayin rahotona." },
-    { label: "Diaspora", prompt: "I need the diaspora support hub: Ghana Card, passport, and official signposting." },
-    { label: "Start petition", prompt: "Ta yaya zan fara sabon petition?" },
-    { label: "Support", prompt: "Ta yaya zan tuntubi MBKRU support?" },
-  ],
-  ewe: [
-    { label: "Track report", prompt: "Kpe ɖe ŋunye be maƒo report status." },
-    { label: "Diaspora", prompt: "I need the diaspora support hub: Ghana Card, passport, and official signposting." },
-    { label: "Start petition", prompt: "Aleke maɖe petition yeye gɔme?" },
-    { label: "Support", prompt: "Aleke maate ŋu akpa nu kple MBKRU support?" },
-  ],
-};
-
-const helperTextByLanguage: Record<VoicePreferences["languageId"], string> = {
-  "en-gh":
-    "Ask by typing, mic, or attach an image, .txt, or PDF. Optional cloud mic and read-aloud appear when your host enables them. Use the checkbox below for live web search when available.",
-  twi: "Wubetumi akyerɛw, mic, fa foto, .txt, anaa PDF ka ho. Web nhwehwɛmu no wɔ ase ha. Access icon a header mu ma murya foforo.",
-  ga: "Kpee: osha nyɛŋ, mic, alo fa foto, .txt, alo PDF shwɛɛ. Web nhwehwɛmu ase ha. Access icon header ni ma murya.",
-  hausa: "Rubutu, mic, ko haɗa hoto, .txt, ko PDF. Kunna binciken yanar gizo a ƙasa idan mai masaukin bada goyan baya. Alamar dama a cikin header don ƙarin ayyukan murya.",
-  ewe: "Aŋlɔ nu, mic, alo na foto, .txt, alo PDF ɖo eme. Web search la anyi gɔme la. Access icon a header la na murya bubuwo.",
-};
-
-const introMessage: ChatEntry = {
-  role: "assistant",
-  content: "Hello. How can I help today?",
-  languageId: "en-gh",
-};
-
-const languageBadgeLabel: Record<VoicePreferences["languageId"], string> = {
-  "en-gh": "EN",
-  twi: "TWI",
-  ga: "GA",
-  hausa: "HAUSA",
-  ewe: "EWE",
-};
-
 export function MBKRUVoiceChatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<ChatEntry[]>([introMessage]);
+  const [messages, setMessages] = useState<ChatEntry[]>(() => [
+    {
+      role: "assistant",
+      content: getVoiceChromeStrings("en-gh").chatIntro,
+      languageId: "en-gh",
+    },
+  ]);
   const [prefsLoaded, setPrefsLoaded] = useState(false);
   const [preferences, setPreferences] = useState<VoicePreferences>(defaultVoicePreferences);
   const [isListening, setIsListening] = useState(false);
@@ -127,6 +76,7 @@ export function MBKRUVoiceChatbot() {
     [messages],
   );
   const selectedLanguage = findVoiceLanguage(preferences.languageId);
+  const ui = useMemo(() => getVoiceChromeStrings(preferences.languageId), [preferences.languageId]);
   const recognitionCtor: SpeechRecognitionCtor | null =
     typeof window !== "undefined" ? window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null : null;
   const useWhisperInput = Boolean(preferences.useOpenAiWhisperMic && audioCaps?.whisper);
@@ -269,7 +219,7 @@ export function MBKRUVoiceChatbot() {
       if (transcript.length > 0) setInput(transcript);
     };
     recognition.onerror = () => {
-      setListeningError("Mic interrupted. You can type instead.");
+      setListeningError(getVoiceChromeStrings(preferences.languageId).errMicInterrupted);
       trackUiEvent("mbkru_voice_mic_error", { language: preferences.languageId });
       setIsListening(false);
     };
@@ -281,6 +231,14 @@ export function MBKRUVoiceChatbot() {
     if (!prefsLoaded || typeof window === "undefined") return;
     window.localStorage.setItem(voicePreferencesStorageKey, JSON.stringify(preferences));
   }, [prefsLoaded, preferences]);
+
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length !== 1 || prev[0].role !== "assistant") return prev;
+      const nextIntro = getVoiceChromeStrings(preferences.languageId).chatIntro;
+      return [{ ...prev[0], content: nextIntro, languageId: preferences.languageId }];
+    });
+  }, [preferences.languageId]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -313,11 +271,14 @@ export function MBKRUVoiceChatbot() {
   function speakAssistantReply(text: string) {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = selectedLanguage.synthesisLang;
-    utterance.rate = preferences.speechRate;
-    utterance.pitch = 1;
-    window.speechSynthesis.speak(utterance);
+    const chunks = splitTextForSpeechSynthesis(text, 320);
+    for (const chunk of chunks) {
+      const utterance = new SpeechSynthesisUtterance(chunk);
+      utterance.lang = selectedLanguage.synthesisLang;
+      utterance.rate = preferences.speechRate;
+      utterance.pitch = 1;
+      window.speechSynthesis.speak(utterance);
+    }
   }
 
   function pickRecorderMime(): string {
@@ -340,26 +301,37 @@ export function MBKRUVoiceChatbot() {
     const trimmed = text.trim();
     if (!trimmed.length) return;
     stopOpenAiPlayback();
+    const TTS_CHUNK = 3800;
     try {
-      const response = await fetch("/api/mbkru-voice/speech", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text: trimmed.slice(0, 4096),
-          speed: preferences.speechRate,
-        }),
-      });
-      if (!response.ok) throw new Error("tts_failed");
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      playbackObjectUrlRef.current = url;
-      const audio = new Audio(url);
-      playbackAudioRef.current = audio;
-      audio.addEventListener("ended", () => {
-        stopOpenAiPlayback();
-      });
-      trackUiEvent("mbkru_voice_openai_tts_play", { language: preferences.languageId });
-      await audio.play();
+      for (let i = 0; i < trimmed.length; i += TTS_CHUNK) {
+        const piece = trimmed.slice(i, i + TTS_CHUNK);
+        const response = await fetch("/api/mbkru-voice/speech", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: piece,
+            speed: preferences.speechRate,
+          }),
+        });
+        if (!response.ok) throw new Error("tts_failed");
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        playbackObjectUrlRef.current = url;
+        const audio = new Audio(url);
+        playbackAudioRef.current = audio;
+        await new Promise<void>((resolve, reject) => {
+          audio.addEventListener("ended", () => {
+            stopOpenAiPlayback();
+            resolve();
+          });
+          audio.addEventListener("error", () => {
+            stopOpenAiPlayback();
+            reject(new Error("audio_error"));
+          });
+          void audio.play().catch(reject);
+        });
+        trackUiEvent("mbkru_voice_openai_tts_play", { language: preferences.languageId });
+      }
     } catch {
       trackUiEvent("mbkru_voice_openai_tts_fallback_browser", { language: preferences.languageId });
       speakAssistantReply(trimmed);
@@ -368,7 +340,7 @@ export function MBKRUVoiceChatbot() {
 
   async function toggleWhisperRecording() {
     if (typeof window === "undefined" || !navigator.mediaDevices?.getUserMedia) {
-      setListeningError("Microphone is not available in this browser.");
+      setListeningError(ui.errNoMic);
       return;
     }
     if (isWhisperRecording && mediaRecorderRef.current) {
@@ -384,7 +356,7 @@ export function MBKRUVoiceChatbot() {
     setListeningError(null);
     const mime = pickRecorderMime();
     if (!mime) {
-      setListeningError("This browser cannot record audio for Whisper. Try Chrome or Edge.");
+      setListeningError(ui.errNoWhisperMime);
       trackUiEvent("mbkru_voice_whisper_transcribe_error", { language: preferences.languageId, reason: "no_mime" });
       return;
     }
@@ -400,7 +372,7 @@ export function MBKRUVoiceChatbot() {
         if (event.data.size > 0) mediaChunksRef.current.push(event.data);
       };
       recorder.onerror = () => {
-        setListeningError("Recording failed. Try again or type your message.");
+        setListeningError(ui.errRecordingFailed);
         trackUiEvent("mbkru_voice_whisper_transcribe_error", { language: preferences.languageId, reason: "recorder" });
         setIsWhisperRecording(false);
         stopWhisperMediaTracks();
@@ -417,7 +389,7 @@ export function MBKRUVoiceChatbot() {
           }
           const blob = new Blob(chunkParts, { type: recordMimeRef.current });
           if (blob.size === 0) {
-            setListeningError("No audio captured. Try again.");
+            setListeningError(ui.errNoAudio);
             trackUiEvent("mbkru_voice_whisper_transcribe_error", { language: preferences.languageId, reason: "empty" });
             return;
           }
@@ -432,7 +404,9 @@ export function MBKRUVoiceChatbot() {
             });
             const data = (await response.json()) as { text?: string; error?: string };
             if (!response.ok || !data.text?.trim()) {
-              setListeningError(data.error === "Too many requests" ? "Please wait a moment and try again." : "Could not transcribe. Type instead.");
+              setListeningError(
+                data.error === "Too many requests" ? ui.errTranscribeRate : ui.errTranscribeGeneric,
+              );
               trackUiEvent("mbkru_voice_whisper_transcribe_error", {
                 language: preferences.languageId,
                 reason: data.error ?? `http_${response.status}`,
@@ -442,7 +416,7 @@ export function MBKRUVoiceChatbot() {
             setInput((prev) => (prev ? `${prev} ${data.text}`.trim() : data.text!.trim()));
             trackUiEvent("mbkru_voice_whisper_transcribe_ok", { language: preferences.languageId });
           } catch {
-            setListeningError("Could not reach the transcription service.");
+            setListeningError(ui.errTranscribeReach);
             trackUiEvent("mbkru_voice_whisper_transcribe_error", { language: preferences.languageId, reason: "network" });
           } finally {
             setIsTranscribingWhisper(false);
@@ -453,7 +427,7 @@ export function MBKRUVoiceChatbot() {
       setIsWhisperRecording(true);
       trackUiEvent("mbkru_voice_whisper_record_start", { language: preferences.languageId });
     } catch {
-      setListeningError("Microphone permission denied or unavailable.");
+      setListeningError(ui.errMicPermission);
       trackUiEvent("mbkru_voice_whisper_transcribe_error", { language: preferences.languageId, reason: "getusermedia" });
       stopWhisperMediaTracks();
       setIsWhisperRecording(false);
@@ -480,7 +454,7 @@ export function MBKRUVoiceChatbot() {
     if (!file) return;
     if (file.type.startsWith("image/")) {
       if (file.size > MAX_IMAGE_BYTES) {
-        setAttachmentNotice("Images must be about 1.25 MB or smaller for the AI to accept them.");
+        setAttachmentNotice(ui.noticeImageSize);
         return;
       }
       setTextFileAttachment(null);
@@ -495,7 +469,7 @@ export function MBKRUVoiceChatbot() {
     }
     if (file.type === "text/plain" || file.name.toLowerCase().endsWith(".txt")) {
       if (file.size > MAX_TEXT_FILE_CHARS) {
-        setAttachmentNotice("Text file is too large — try a smaller .txt (under 40,000 characters).");
+        setAttachmentNotice(ui.noticeTextLarge);
         return;
       }
       pendingImageFileRef.current = null;
@@ -515,7 +489,7 @@ export function MBKRUVoiceChatbot() {
     }
     if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
       if (file.size > MAX_PDF_BYTES) {
-        setAttachmentNotice("PDFs must be 1 MB or smaller.");
+        setAttachmentNotice(ui.noticePdfSize);
         return;
       }
       pendingImageFileRef.current = null;
@@ -528,7 +502,7 @@ export function MBKRUVoiceChatbot() {
       setPdfAttachment({ name: file.name });
       return;
     }
-    setAttachmentNotice("Use an image, a .txt file, or a PDF.");
+    setAttachmentNotice(ui.noticeAttachmentHint);
   }
 
   function clearAttachments() {
@@ -578,7 +552,7 @@ export function MBKRUVoiceChatbot() {
       try {
         imageBase64 = await readFileAsDataUrl(pendingImageFileRef.current);
       } catch {
-        setAttachmentNotice("Could not read the image. Try a smaller file.");
+        setAttachmentNotice(ui.noticeReadImageFail);
         return;
       }
     }
@@ -591,7 +565,7 @@ export function MBKRUVoiceChatbot() {
       try {
         pdfBase64 = await readFileAsDataUrl(pendingPdfFileRef.current);
       } catch {
-        setAttachmentNotice("Could not read the PDF. Try a smaller file.");
+        setAttachmentNotice(ui.noticeReadPdfFail);
         return;
       }
     }
@@ -709,7 +683,13 @@ export function MBKRUVoiceChatbot() {
     }
     setIsWhisperRecording(false);
     setIsTranscribingWhisper(false);
-    setMessages([introMessage]);
+    setMessages([
+      {
+        role: "assistant",
+        content: getVoiceChromeStrings(preferences.languageId).chatIntro,
+        languageId: preferences.languageId,
+      },
+    ]);
     setInput("");
     clearAttachments();
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -722,15 +702,15 @@ export function MBKRUVoiceChatbot() {
     <>
       {isOpen ? (
         <section
-          className="w-[min(22rem,94vw)] max-h-[min(78vh,42rem)] overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-xl"
-          aria-label="MBKRU Voice chatbot"
+          className="w-[min(30rem,96vw)] max-h-[min(78vh,44rem)] overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-xl"
+          aria-label={ui.ariaChatbot}
           role="dialog"
           aria-modal="false"
         >
           <header className="relative border-b border-white/10 bg-[var(--primary)] px-3 py-2.5 pr-11 text-white sm:px-3.5 sm:pr-12 sm:py-2.5">
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-1.5">
               <label htmlFor="mbkru-voice-lang" className="sr-only">
-                Chat language
+                {ui.srChatLanguage}
               </label>
               <select
                 id="mbkru-voice-lang"
@@ -742,11 +722,11 @@ export function MBKRUVoiceChatbot() {
                   }))
                 }
                 className={`h-8 max-w-[9.5rem] rounded-md border border-white/40 bg-white/10 px-1.5 text-[11px] font-medium text-white ${focusRingSmClass}`}
-                aria-label="Chat language"
+                aria-label={ui.ariaChatLanguage}
               >
                 {voiceLanguageOptions.map((option) => (
                   <option key={option.id} value={option.id} className="text-black">
-                    {option.label}
+                    {voiceLanguageMenuLabel(preferences.languageId, option.id)}
                   </option>
                 ))}
               </select>
@@ -755,8 +735,8 @@ export function MBKRUVoiceChatbot() {
                 onClick={() => setPreferences((prev) => ({ ...prev, autoReadReplies: !prev.autoReadReplies }))}
                 className={`inline-flex h-8 w-8 items-center justify-center rounded-md border border-white/40 text-white/95 hover:bg-white/15 ${focusRingSmClass}`}
                 aria-pressed={preferences.autoReadReplies}
-                title={preferences.autoReadReplies ? "Read-aloud is on" : "Read-aloud is off"}
-                aria-label={preferences.autoReadReplies ? "Read assistant replies aloud: on" : "Read assistant replies aloud: off"}
+                title={preferences.autoReadReplies ? ui.readAloudTitleOn : ui.readAloudTitleOff}
+                aria-label={preferences.autoReadReplies ? ui.readAloudAriaOn : ui.readAloudAriaOff}
               >
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
                   <path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />
@@ -767,14 +747,14 @@ export function MBKRUVoiceChatbot() {
                 onClick={clearConversation}
                 className={`rounded-md border border-white/40 px-2 py-1 text-[11px] font-semibold text-white/95 hover:bg-white/15 ${focusRingSmClass}`}
               >
-                Clear
+                {ui.clearChat}
               </button>
             </div>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
               className={`absolute right-2 top-2 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/35 bg-white/15 text-white shadow-sm hover:bg-white/25 ${focusRingSmClass}`}
-              aria-label="Close chat"
+              aria-label={ui.closeChatAria}
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -782,9 +762,9 @@ export function MBKRUVoiceChatbot() {
             </button>
           </header>
 
-          <div className="max-h-[min(52vh,22rem)] space-y-3 overflow-y-auto bg-[var(--section-light)] p-3.5 sm:p-4" aria-live="polite">
+          <div className="max-h-[min(52vh,28rem)] space-y-3 overflow-y-auto bg-[var(--section-light)] p-3.5 sm:p-4" aria-live="polite">
             <div className="flex flex-wrap gap-2">
-              {quickPromptsByLanguage[preferences.languageId].map((entry) => (
+              {ui.quickPrompts.map((entry) => (
                 <button
                   key={entry.label}
                   type="button"
@@ -828,7 +808,7 @@ export function MBKRUVoiceChatbot() {
                   >
                     {message.meta.sitePagePaths && message.meta.sitePagePaths.length > 0 ? (
                       <p className="text-[11px]">
-                        <span className="font-semibold text-[var(--foreground)]/85">This site: </span>
+                        <span className="font-semibold text-[var(--foreground)]/85">{ui.sitePagesPrefix} </span>
                         {message.meta.sitePagePaths.map((path, i) => (
                           <span key={path}>
                             {i > 0 ? " · " : null}
@@ -844,41 +824,44 @@ export function MBKRUVoiceChatbot() {
                       </p>
                     ) : null}
                     {message.meta.webSearchUsed ? (
-                      <p className="mt-1">Live web search was used for this reply; verify time-sensitive facts.</p>
+                      <p className="mt-1">{ui.webSearchUsedNote}</p>
                     ) : null}
                     <p className="mt-1 opacity-95" title={message.meta.answeredAt}>
-                      As of {new Date(message.meta.answeredAt).toLocaleString()}
+                      {ui.asOfPrefix}{" "}
+                      {new Date(message.meta.answeredAt).toLocaleString(
+                        voiceUiDateLocale(message.languageId ?? preferences.languageId),
+                      )}
                     </p>
                   </div>
                 ) : null}
                 {message.role === "assistant" ? (
                   <p className="mt-2 inline-flex rounded-md bg-[var(--muted)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.05em] text-[var(--muted-foreground)]">
-                    {languageBadgeLabel[message.languageId ?? "en-gh"]}
+                    {getVoiceChromeStrings(message.languageId ?? "en-gh").languageBadge}
                   </p>
                 ) : null}
               </article>
             ))}
             {isLoading ? (
               <p className="text-xs font-medium text-[var(--muted-foreground)]" role="status">
-                Thinking…
+                {ui.thinking}
               </p>
             ) : null}
             {isTranscribingWhisper ? (
               <p className="text-xs font-medium text-[var(--muted-foreground)]" role="status">
-                Transcribing audio…
+                {ui.transcribingStatus}
               </p>
             ) : null}
           </div>
 
           <form onSubmit={onSubmit} className="border-t border-[var(--border)] bg-white p-2.5 sm:p-3">
             <p className="mb-2 text-[10px] leading-snug text-[var(--muted-foreground)]">
-              AI-assisted. Avoid highly sensitive data.{" "}
+              {ui.aiDisclaimerBeforePrivacy}{" "}
               <Link href="/privacy" className={focusRingSmClass}>
-                Privacy
+                {ui.privacyLink}
               </Link>
             </p>
             <label htmlFor="mbkru-voice-input" className="sr-only">
-              Ask MBKRU Voice
+              {ui.inputSrLabel}
             </label>
             <input
               ref={imageInputRef}
@@ -901,21 +884,21 @@ export function MBKRUVoiceChatbot() {
                   onClick={clearAttachments}
                   className={`shrink-0 rounded-lg border border-[var(--border)] px-2 py-1 text-xs font-semibold text-[var(--foreground)] ${focusRingSmClass}`}
                 >
-                  Remove
+                  {ui.remove}
                 </button>
               </div>
             ) : null}
             {textFileAttachment ? (
               <div className="mb-2 flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--muted)]/40 p-2 text-xs text-[var(--foreground)]">
                 <span className="line-clamp-2 min-w-0 flex-1" title={textFileAttachment.name}>
-                  {textFileAttachment.name} — {textFileAttachment.text.length.toLocaleString()} characters
+                  {textFileAttachment.name} — {textFileAttachment.text.length.toLocaleString()} {ui.charactersSuffix}
                 </span>
                 <button
                   type="button"
                   onClick={clearAttachments}
                   className={`shrink-0 rounded-lg border border-[var(--border)] px-2 py-1 text-xs font-semibold ${focusRingSmClass}`}
                 >
-                  Remove
+                  {ui.remove}
                 </button>
               </div>
             ) : null}
@@ -928,7 +911,7 @@ export function MBKRUVoiceChatbot() {
                   onClick={clearAttachments}
                   className={`shrink-0 rounded-lg border border-[var(--border)] px-2 py-1 text-xs font-semibold ${focusRingSmClass}`}
                 >
-                  Remove
+                  {ui.remove}
                 </button>
               </div>
             ) : null}
@@ -944,7 +927,7 @@ export function MBKRUVoiceChatbot() {
                 type="text"
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
-                placeholder="Ask a question…"
+                placeholder={ui.placeholder}
                 className={`h-11 min-w-0 flex-1 rounded-xl border border-[var(--border)] px-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] ${focusRingSmClass}`}
                 maxLength={2000}
               />
@@ -965,20 +948,20 @@ export function MBKRUVoiceChatbot() {
                 aria-label={
                   useWhisperInput
                     ? isWhisperRecording
-                      ? "Stop recording and transcribe"
-                      : "Record with Whisper (cloud transcription)"
+                      ? ui.micAriaWhisperStop
+                      : ui.micAriaWhisperRecord
                     : isListening
-                      ? "Listening to microphone input"
-                      : "Use microphone voice input"
+                      ? ui.micAriaListening
+                      : ui.micAriaBrowser
                 }
                 title={
                   useWhisperInput
                     ? isWhisperRecording
-                      ? "Stop — send to Whisper"
-                      : "Whisper mic (tap again to stop)"
+                      ? ui.micTitleWhisperStop
+                      : ui.micTitleWhisperRecord
                     : isListening
-                      ? "Listening…"
-                      : "Browser voice input"
+                      ? ui.micTitleListening
+                      : ui.micTitleBrowser
                 }
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
@@ -994,8 +977,8 @@ export function MBKRUVoiceChatbot() {
                 type="button"
                 onClick={() => imageInputRef.current?.click()}
                 className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--muted)] text-[var(--foreground)] ${focusRingSmClass}`}
-                aria-label="Attach image, text file, or PDF"
-                title="Photo, .txt, or PDF"
+                aria-label={ui.attachAria}
+                title={ui.attachTitle}
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
                   <path
@@ -1015,7 +998,7 @@ export function MBKRUVoiceChatbot() {
                 }
                 className={`h-11 shrink-0 rounded-xl bg-[var(--primary)] px-3 text-sm font-semibold text-white disabled:opacity-55 sm:px-4 ${focusRingSmClass}`}
               >
-                Send
+                {ui.send}
               </button>
             </div>
             <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
@@ -1026,11 +1009,11 @@ export function MBKRUVoiceChatbot() {
                   checked={useWebSearch}
                   onChange={(e) => setUseWebSearch(e.target.checked)}
                 />
-                <span>Search the web (live) when supported</span>
+                <span>{ui.webSearchCheckbox}</span>
               </label>
               {audioCaps && (audioCaps.whisper || audioCaps.tts) ? (
-                <div className="flex min-w-0 flex-col gap-1.5 rounded-lg border border-[var(--border)]/80 bg-[var(--section-light)]/60 px-2.5 py-2 text-[11px] leading-snug text-[var(--muted-foreground)] sm:max-w-[14rem]">
-                  <span className="font-semibold text-[var(--foreground)]/90">Cloud audio (OpenAI)</span>
+                <div className="flex min-w-0 flex-col gap-1.5 rounded-lg border border-[var(--border)]/80 bg-[var(--section-light)]/60 px-2.5 py-2 text-[11px] leading-snug text-[var(--muted-foreground)] sm:max-w-[min(24rem,100%)]">
+                  <span className="font-semibold text-[var(--foreground)]/90">{ui.cloudAudioHeading}</span>
                   {audioCaps.whisper ? (
                     <label className="flex cursor-pointer items-start gap-2">
                       <input
@@ -1041,7 +1024,7 @@ export function MBKRUVoiceChatbot() {
                           setPreferences((prev) => ({ ...prev, useOpenAiWhisperMic: e.target.checked }))
                         }
                       />
-                      <span>Whisper for mic (sends a short recording to transcribe)</span>
+                      <span>{ui.whisperMicCheckbox}</span>
                     </label>
                   ) : null}
                   {audioCaps.tts ? (
@@ -1054,19 +1037,19 @@ export function MBKRUVoiceChatbot() {
                           setPreferences((prev) => ({ ...prev, useOpenAiTtsPlayback: e.target.checked }))
                         }
                       />
-                      <span>OpenAI voice for read-aloud (speaker icon still toggles playback)</span>
+                      <span>{ui.openAiTtsCheckbox}</span>
                     </label>
                   ) : null}
                   <span className="text-[10px] opacity-90">
-                    Uses your API key on the server; may incur usage. Avoid sensitive speech.{" "}
+                    {ui.cloudAudioFootnoteBeforePrivacy}{" "}
                     <Link href="/privacy" className={`${focusRingSmClass} font-medium text-[var(--foreground)]`}>
-                      Privacy
+                      {ui.privacyLink}
                     </Link>
                   </span>
                 </div>
               ) : null}
             </div>
-            <p className="mt-1 text-xs text-[var(--muted-foreground)]">{helperTextByLanguage[preferences.languageId]}</p>
+            <p className="mt-1 text-xs text-[var(--muted-foreground)]">{ui.helperFooter}</p>
             {listeningError ? (
               <p className="mt-1 text-xs text-[var(--muted-foreground)]" role="status">
                 {listeningError}
@@ -1081,9 +1064,9 @@ export function MBKRUVoiceChatbot() {
           onClick={() => openVoiceChat()}
           onMouseDown={() => trackUiEvent("mbkru_voice_open_launcher")}
           className={`shrink-0 rounded-full bg-[var(--primary)] px-4 py-2.5 text-sm font-bold text-white shadow-lg transition hover:bg-[var(--primary-dark)] ${focusRingSmClass}`}
-          aria-label="Open MBKRU Voice chatbot"
+          aria-label={ui.launcherAria}
         >
-          MBKRU Voice
+          {ui.launcherButton}
         </button>
       )}
     </>

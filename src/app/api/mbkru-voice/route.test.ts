@@ -13,7 +13,7 @@ vi.mock("@/lib/mbkru-voice-openai", async (importOriginal) => {
   const mod = await importOriginal<typeof import("@/lib/mbkru-voice-openai")>();
   return {
     ...mod,
-    fetchMbkruVoiceOpenAi: vi.fn().mockResolvedValue("Model reply from test."),
+    fetchMbkruVoiceOpenAi: vi.fn().mockResolvedValue({ ok: true, text: "Model reply from test." }),
   };
 });
 
@@ -29,7 +29,7 @@ describe("POST /api/mbkru-voice", () => {
     vi.mocked(pdfBufferFromPayload).mockReset();
     vi.mocked(extractPdfText).mockReset();
     vi.mocked(fetchMbkruVoiceOpenAi).mockReset();
-    vi.mocked(fetchMbkruVoiceOpenAi).mockResolvedValue("Model reply from test.");
+    vi.mocked(fetchMbkruVoiceOpenAi).mockResolvedValue({ ok: true, text: "Model reply from test." });
     delete process.env.TAVILY_API_KEY;
     process.env.OPENAI_API_KEY = "test-key";
   });

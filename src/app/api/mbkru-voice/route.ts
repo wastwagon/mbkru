@@ -6,7 +6,7 @@ import {
   buildMbkruVoiceSystemPrompt,
   buildMbkruVoiceUserContent,
   fetchMbkruVoiceOpenAi,
-  MBKRU_VOICE_VISION_MODEL,
+  resolveMbkruVoiceChatModel,
   type ChatMessage,
 } from "@/lib/mbkru-voice-openai";
 import { evaluateMbkruVoiceSafety } from "@/lib/mbkru-voice-guardrails";
@@ -138,14 +138,15 @@ export async function POST(request: Request) {
 
     const apiKey = getOpenAiApiKey();
     if (apiKey) {
+      const chatModel = resolveMbkruVoiceChatModel();
       const providerReply = await fetchMbkruVoiceOpenAi({
         apiKey,
-        model: MBKRU_VOICE_VISION_MODEL,
+        model: chatModel,
         messages: openAiMessages,
       });
-      if (providerReply) {
+      if (providerReply.ok) {
         return NextResponse.json({
-          answer: providerReply,
+          answer: providerReply.text,
           source: wantWeb && web.hasResults ? "ai-provider+web" : "ai-provider",
           suggestedLinks: [],
           webSearchUsed: wantWeb && web.hasResults,
@@ -155,6 +156,24 @@ export async function POST(request: Request) {
           pdfUsed: Boolean(rawPdf?.trim()),
         });
       }
+
+      const hint =
+        providerReply.status === 401 || providerReply.status === 403
+          ? " Check that OPENAI_API_KEY on the server is valid."
+          : providerReply.status === 429
+            ? " The AI provider may be rate-limiting; try again shortly."
+            : "";
+
+      return NextResponse.json({
+        answer: `I could not get a reply from the AI service right now.${hint} Please try again in a moment, or use the Contact page if this keeps happening.`,
+        source: "openai_error",
+        suggestedLinks: [{ label: "Contact MBKRU", href: "/contact" }],
+        webSearchUsed: false,
+        siteContextUsed: siteKnowledge.pagePaths.length > 0,
+        sitePagePaths: siteKnowledge.pagePaths,
+        imageUsed: Boolean(imageBase64),
+        pdfUsed: Boolean(rawPdf?.trim()),
+      });
     }
 
     const fallback = getMbkruVoiceFallbackReply(

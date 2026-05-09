@@ -456,3 +456,34 @@ export async function setCitizenReportAdminReplyVisibilityAction(formData: FormD
   revalidatePath(`/account/reports/${reportId}`);
   redirect(`/admin/reports/${reportId}?saved=reply_visibility`);
 }
+
+export async function updateCitizenReportDiscussionEnabledAction(formData: FormData) {
+  await requireAdminSession();
+
+  const id = formData.get("id");
+  const raw = formData.get("discussionEnabled");
+  if (typeof id !== "string" || !id) {
+    redirect("/admin/reports?error=invalid");
+  }
+  if (typeof raw !== "string" || (raw !== "true" && raw !== "false")) {
+    redirect(`/admin/reports/${id}?error=discussion_invalid`);
+  }
+
+  const discussionEnabled = raw === "true";
+
+  const prev = await prisma.citizenReport.findUnique({ where: { id }, select: { id: true } });
+  if (!prev) {
+    redirect("/admin/reports?error=notfound");
+  }
+
+  await prisma.citizenReport.update({
+    where: { id },
+    data: { discussionEnabled },
+  });
+
+  revalidatePath("/admin/reports");
+  revalidatePath(`/admin/reports/${id}`);
+  revalidatePath("/report-card");
+  revalidatePath(`/citizens-voice/discussions/${id}`);
+  redirect(`/admin/reports/${id}?saved=discussion`);
+}

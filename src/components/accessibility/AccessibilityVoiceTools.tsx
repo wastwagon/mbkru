@@ -12,6 +12,12 @@ import {
 import { trackUiEvent } from "@/lib/client/analytics-events";
 import type { SpeechRecognitionCtor, SpeechRecognitionEventLike, SpeechRecognitionLike } from "@/lib/client/web-speech-recognition";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
+import { splitTextForSpeechSynthesis } from "@/lib/client/speech-synthesis-chunks";
+import {
+  getAccessibilityVoiceStrings,
+  getVoiceChromeStrings,
+  voiceLanguageMenuLabel,
+} from "@/lib/voice-ui-i18n";
 import {
   defaultVoicePreferences,
   findVoiceLanguage,
@@ -50,6 +56,8 @@ export function AccessibilityVoiceTools() {
   const speechSupported = typeof window !== "undefined" && "speechSynthesis" in window;
   const recognitionSupported = Boolean(recognitionCtor);
   const selectedLanguage = findVoiceLanguage(preferences.languageId);
+  const a11y = useMemo(() => getAccessibilityVoiceStrings(preferences.languageId), [preferences.languageId]);
+  const chrome = useMemo(() => getVoiceChromeStrings(preferences.languageId), [preferences.languageId]);
   const useWhisperInput = Boolean(preferences.useOpenAiWhisperMic && audioCaps?.whisper);
   const readAloudPossible =
     speechSupported || Boolean(audioCaps?.tts && preferences.useOpenAiTtsPlayback);
@@ -101,14 +109,22 @@ export function AccessibilityVoiceTools() {
   function speakBrowserUtterance(text: string) {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = selectedLanguage.synthesisLang;
-    utterance.rate = preferences.speechRate;
-    utterance.pitch = 1;
-    utterance.onstart = () => setIsReading(true);
-    utterance.onend = () => setIsReading(false);
-    utterance.onerror = () => setIsReading(false);
-    window.speechSynthesis.speak(utterance);
+    const chunks = splitTextForSpeechSynthesis(text, 320);
+    if (chunks.length === 0) return;
+    chunks.forEach((chunk, index) => {
+      const utterance = new SpeechSynthesisUtterance(chunk);
+      utterance.lang = selectedLanguage.synthesisLang;
+      utterance.rate = preferences.speechRate;
+      utterance.pitch = 1;
+      utterance.onstart = () => {
+        if (index === 0) setIsReading(true);
+      };
+      utterance.onend = () => {
+        if (index === chunks.length - 1) setIsReading(false);
+      };
+      utterance.onerror = () => setIsReading(false);
+      window.speechSynthesis.speak(utterance);
+    });
   }
 
   async function speakWithOptionalOpenAiTts(text: string) {
@@ -117,56 +133,61 @@ export function AccessibilityVoiceTools() {
     const trimmed = text.trim();
     if (!trimmed.length) return;
     const preferOpenAi = preferences.useOpenAiTtsPlayback && audioCaps?.tts;
+    const TTS_CHUNK = 3800;
 
     if (preferOpenAi) {
       setIsReading(true);
+      const pieces: string[] = [];
+      for (let i = 0; i < trimmed.length; i += TTS_CHUNK) {
+        pieces.push(trimmed.slice(i, i + TTS_CHUNK));
+      }
       try {
-        const response = await fetch("/api/mbkru-voice/speech", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            text: trimmed.slice(0, 4096),
-            speed: preferences.speechRate,
-          }),
-        });
-        if (!response.ok) throw new Error("tts_failed");
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        playbackObjectUrlRef.current = url;
-        const audio = new Audio(url);
-        playbackAudioRef.current = audio;
-        audio.addEventListener("ended", () => {
-          stopOpenAiPlayback();
-          setIsReading(false);
-        });
-        audio.addEventListener("error", () => {
-          stopOpenAiPlayback();
-          setIsReading(false);
-          trackUiEvent("mbkru_voice_openai_tts_fallback_browser", {
+        for (const piece of pieces) {
+          const response = await fetch("/api/mbkru-voice/speech", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              text: piece,
+              speed: preferences.speechRate,
+            }),
+          });
+          if (!response.ok) throw new Error("tts_failed");
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+          playbackObjectUrlRef.current = url;
+          const audio = new Audio(url);
+          playbackAudioRef.current = audio;
+          await new Promise<void>((resolve, reject) => {
+            audio.addEventListener("ended", () => {
+              stopOpenAiPlayback();
+              resolve();
+            });
+            audio.addEventListener("error", () => {
+              stopOpenAiPlayback();
+              reject(new Error("audio_error"));
+            });
+            void audio.play().catch(reject);
+          });
+          trackUiEvent("mbkru_voice_openai_tts_play", {
             language: preferences.languageId,
             surface: "accessibility",
           });
-          if (speechSupported) speakBrowserUtterance(trimmed);
-          else setLastError("Read-aloud is not supported in this browser.");
-        });
-        trackUiEvent("mbkru_voice_openai_tts_play", {
-          language: preferences.languageId,
-          surface: "accessibility",
-        });
-        await audio.play();
+        }
+        setIsReading(false);
       } catch {
         setIsReading(false);
+        stopOpenAiPlayback();
         trackUiEvent("mbkru_voice_openai_tts_fallback_browser", {
           language: preferences.languageId,
           surface: "accessibility",
         });
         if (speechSupported) speakBrowserUtterance(trimmed);
-        else setLastError("Read-aloud is not available right now.");
+        else setLastError(a11y.errReadAloudUnavailable);
       }
     } else if (speechSupported) {
       speakBrowserUtterance(trimmed);
     } else {
-      setLastError("Read-aloud is not supported in this browser.");
+      setLastError(a11y.errReadAloudNoSynth);
     }
   }
 
@@ -187,7 +208,7 @@ export function AccessibilityVoiceTools() {
 
   async function toggleWhisperRecording() {
     if (typeof window === "undefined" || !navigator.mediaDevices?.getUserMedia) {
-      setLastError("Microphone is not available in this browser.");
+      setLastError(chrome.errNoMic);
       return;
     }
     if (isWhisperRecording && mediaRecorderRef.current) {
@@ -203,7 +224,7 @@ export function AccessibilityVoiceTools() {
     setLastError(null);
     const mime = pickRecorderMime();
     if (!mime) {
-      setLastError("This browser cannot record audio for Whisper. Try Chrome or Edge.");
+      setLastError(chrome.errNoWhisperMime);
       trackUiEvent("mbkru_voice_whisper_transcribe_error", {
         language: preferences.languageId,
         reason: "no_mime",
@@ -223,7 +244,7 @@ export function AccessibilityVoiceTools() {
         if (event.data.size > 0) mediaChunksRef.current.push(event.data);
       };
       recorder.onerror = () => {
-        setLastError("Recording failed. Try again or use keyboard typing.");
+        setLastError(chrome.errRecordingFailed);
         trackUiEvent("mbkru_voice_whisper_transcribe_error", {
           language: preferences.languageId,
           reason: "recorder",
@@ -244,7 +265,7 @@ export function AccessibilityVoiceTools() {
           }
           const blob = new Blob(chunkParts, { type: recordMimeRef.current });
           if (blob.size === 0) {
-            setLastError("No audio captured. Try again.");
+            setLastError(chrome.errNoAudio);
             trackUiEvent("mbkru_voice_whisper_transcribe_error", {
               language: preferences.languageId,
               reason: "empty",
@@ -264,7 +285,7 @@ export function AccessibilityVoiceTools() {
             const data = (await response.json()) as { text?: string; error?: string };
             if (!response.ok || !data.text?.trim()) {
               setLastError(
-                data.error === "Too many requests" ? "Please wait a moment and try again." : "Could not transcribe. Type instead.",
+                data.error === "Too many requests" ? chrome.errTranscribeRate : chrome.errTranscribeGeneric,
               );
               trackUiEvent("mbkru_voice_whisper_transcribe_error", {
                 language: preferences.languageId,
@@ -285,7 +306,7 @@ export function AccessibilityVoiceTools() {
               }),
             );
           } catch {
-            setLastError("Could not reach the transcription service.");
+            setLastError(chrome.errTranscribeReach);
             trackUiEvent("mbkru_voice_whisper_transcribe_error", {
               language: preferences.languageId,
               reason: "network",
@@ -303,7 +324,7 @@ export function AccessibilityVoiceTools() {
         surface: "accessibility",
       });
     } catch {
-      setLastError("Microphone permission denied or unavailable.");
+      setLastError(chrome.errMicPermission);
       trackUiEvent("mbkru_voice_whisper_transcribe_error", {
         language: preferences.languageId,
         reason: "getusermedia",
@@ -465,17 +486,27 @@ export function AccessibilityVoiceTools() {
     };
   }, []);
 
+  function getReadableMainText(): string {
+    if (typeof document === "undefined") return "";
+    const root =
+      document.querySelector<HTMLElement>("main#main") ?? document.querySelector<HTMLElement>("main");
+    if (!root) return "";
+    const text = root.innerText ?? "";
+    return text.replace(/\s+/g, " ").trim();
+  }
+
   function speakPageSummary() {
     if (typeof window === "undefined") return;
     setLastError(null);
     trackUiEvent("accessibility_read_page_summary", { language: preferences.languageId });
     const title = document.title || "MBKRU website";
-    const firstHeading = document.querySelector("h1")?.textContent?.trim();
-    const summary = firstHeading
-      ? `You are viewing ${title}. Main heading: ${firstHeading}.`
-      : `You are viewing ${title}.`;
+    const body = getReadableMainText();
+    const combined =
+      body.length > 0
+        ? `${a11y.ttsPagePrefix}: ${title}. ${a11y.ttsMainContentLead} ${body.slice(0, 28_000)}`
+        : `${a11y.ttsPagePrefix}: ${title}. ${a11y.ttsNoMainFull}`;
 
-    void speakWithOptionalOpenAiTts(summary);
+    void speakWithOptionalOpenAiTts(combined);
   }
 
   function speakSelectedText() {
@@ -483,11 +514,11 @@ export function AccessibilityVoiceTools() {
     setLastError(null);
     const selected = window.getSelection()?.toString().trim() ?? "";
     if (!selected) {
-      setLastError("Select text on the page first, then use Read selected text.");
+      setLastError(a11y.selectTextFirst);
       return;
     }
     trackUiEvent("accessibility_read_selected_text", { language: preferences.languageId });
-    void speakWithOptionalOpenAiTts(selected.slice(0, 1600));
+    void speakWithOptionalOpenAiTts(selected.slice(0, 28_000));
   }
 
   function stopSpeaking() {
@@ -523,7 +554,7 @@ export function AccessibilityVoiceTools() {
     };
     recognition.onerror = () => {
       setIsListening(false);
-      setLastError("Speech recognition did not complete. You can continue with keyboard typing.");
+      setLastError(a11y.sttBrowserError);
       trackUiEvent("accessibility_stt_error", { language: preferences.languageId });
     };
     recognition.onend = () => setIsListening(false);
@@ -545,10 +576,8 @@ export function AccessibilityVoiceTools() {
           className="fixed left-3 right-3 top-20 z-[95] mx-auto w-auto max-w-md rounded-2xl border border-[var(--border)] bg-white p-3 shadow-xl sm:left-auto sm:right-4 sm:top-24"
           aria-label="Accessibility onboarding"
         >
-          <p className="text-sm font-semibold text-[var(--foreground)]">Accessibility &amp; voice</p>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-            Use the access symbol in the header (next to the menu) for read-aloud and dictation.
-          </p>
+          <p className="text-sm font-semibold text-[var(--foreground)]">{a11y.onboardingTitle}</p>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">{a11y.onboardingBody}</p>
           <button
             type="button"
             onClick={() => {
@@ -559,7 +588,7 @@ export function AccessibilityVoiceTools() {
             }}
             className={`mt-2 rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-xs font-semibold text-[var(--foreground)] ${focusRingSmClass}`}
           >
-            Got it
+            {a11y.onboardingGotIt}
           </button>
         </aside>
       ) : null}
@@ -567,21 +596,19 @@ export function AccessibilityVoiceTools() {
         <section
           ref={panelRef}
           id="mbkru-accessibility-tools"
-          className="fixed left-3 right-3 top-[4.75rem] z-[100] mx-auto mt-0 w-auto max-w-[22rem] max-h-[min(72vh,36rem)] overflow-y-auto rounded-2xl border border-[var(--border)] bg-white p-3.5 pb-4 shadow-xl sm:left-auto sm:right-4 sm:top-24 sm:p-4 sm:pb-4"
-          aria-label="Accessibility voice tools"
+          className="fixed left-3 right-3 top-[4.75rem] z-[100] mx-auto mt-0 w-auto max-w-[min(30rem,calc(100vw-1.5rem))] max-h-[min(72vh,40rem)] overflow-y-auto rounded-2xl border border-[var(--border)] bg-white p-3.5 pb-4 shadow-xl sm:left-auto sm:right-4 sm:top-24 sm:p-4 sm:pb-4"
+          aria-label={a11y.panelAria}
           role="dialog"
           aria-modal="true"
         >
           <div className="relative pr-10">
-            <p className="text-sm font-semibold text-[var(--foreground)]">Voice &amp; reading</p>
-            <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-              Read aloud and dictation for this page. Press Escape or Close.
-            </p>
+            <p className="text-sm font-semibold text-[var(--foreground)]">{a11y.panelTitle}</p>
+            <p className="mt-1 text-xs text-[var(--muted-foreground)]">{a11y.panelSubtitle}</p>
             <button
               type="button"
               onClick={closeAccessibilityPanel}
               className={`absolute right-0 top-0 inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--section-light)] text-[var(--foreground)] hover:bg-[var(--muted)] ${focusRingSmClass}`}
-              aria-label="Close accessibility voice tools"
+              aria-label={a11y.closeAria}
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -591,7 +618,7 @@ export function AccessibilityVoiceTools() {
 
           <div className="mt-3 grid gap-2">
             <label className="text-xs font-semibold text-[var(--foreground)]" htmlFor="accessibility-language-select">
-              Voice language
+              {a11y.voiceLanguageLabel}
             </label>
             <select
               id="accessibility-language-select"
@@ -601,7 +628,7 @@ export function AccessibilityVoiceTools() {
             >
               {voiceLanguageOptions.map((option) => (
                 <option key={option.id} value={option.id}>
-                  {option.label}
+                  {voiceLanguageMenuLabel(preferences.languageId, option.id)}
                 </option>
               ))}
             </select>
@@ -609,7 +636,7 @@ export function AccessibilityVoiceTools() {
 
           <div className="mt-3 grid gap-2">
             <label className="text-xs font-semibold text-[var(--foreground)]" htmlFor="accessibility-rate-range">
-              Speech speed ({preferences.speechRate.toFixed(2)}x)
+              {a11y.speechSpeedLabel} ({preferences.speechRate.toFixed(2)}x)
             </label>
             <input
               id="accessibility-rate-range"
@@ -625,7 +652,7 @@ export function AccessibilityVoiceTools() {
 
           {audioCaps && (audioCaps.whisper || audioCaps.tts) ? (
             <div className="mt-3 flex flex-col gap-1.5 rounded-xl border border-[var(--border)]/80 bg-[var(--section-light)]/60 px-2.5 py-2 text-[11px] leading-snug text-[var(--muted-foreground)]">
-              <span className="font-semibold text-[var(--foreground)]/90">Cloud audio (OpenAI)</span>
+              <span className="font-semibold text-[var(--foreground)]/90">{a11y.cloudAudioHeading}</span>
               {audioCaps.whisper ? (
                 <label className="flex cursor-pointer items-start gap-2">
                   <input
@@ -636,7 +663,7 @@ export function AccessibilityVoiceTools() {
                       setPreferences((prev) => ({ ...prev, useOpenAiWhisperMic: e.target.checked }))
                     }
                   />
-                  <span>Whisper for dictation</span>
+                  <span>{a11y.whisperDictation}</span>
                 </label>
               ) : null}
               {audioCaps.tts ? (
@@ -649,13 +676,13 @@ export function AccessibilityVoiceTools() {
                       setPreferences((prev) => ({ ...prev, useOpenAiTtsPlayback: e.target.checked }))
                     }
                   />
-                  <span>OpenAI voice for read-aloud</span>
+                  <span>{a11y.openAiReadAloud}</span>
                 </label>
               ) : null}
               <span className="text-[10px] opacity-90">
-                Server-held API key; may incur usage.{" "}
+                {a11y.cloudFootnoteBeforePrivacy}{" "}
                 <Link href="/privacy" className={`font-medium text-[var(--foreground)] ${focusRingSmClass}`}>
-                  Privacy
+                  {a11y.privacyLink}
                 </Link>
               </span>
             </div>
@@ -668,7 +695,7 @@ export function AccessibilityVoiceTools() {
               disabled={!readAloudPossible || isReading || isTranscribingWhisper}
               className={`rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-semibold text-[var(--foreground)] disabled:opacity-55 ${focusRingSmClass}`}
             >
-              {isReading ? "Reading..." : "Read page summary"}
+              {isReading ? a11y.reading : a11y.readMainContent}
             </button>
             <button
               type="button"
@@ -676,7 +703,7 @@ export function AccessibilityVoiceTools() {
               disabled={!isReading}
               className={`rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-semibold text-[var(--foreground)] disabled:opacity-55 ${focusRingSmClass}`}
             >
-              Stop reading
+              {a11y.stopReading}
             </button>
             <button
               type="button"
@@ -684,7 +711,7 @@ export function AccessibilityVoiceTools() {
               disabled={!readAloudPossible || isReading || isTranscribingWhisper}
               className={`rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-semibold text-[var(--foreground)] disabled:opacity-55 ${focusRingSmClass}`}
             >
-              Read selected text
+              {a11y.readSelected}
             </button>
             <button
               type="button"
@@ -701,27 +728,29 @@ export function AccessibilityVoiceTools() {
               title={
                 useWhisperInput
                   ? isWhisperRecording
-                    ? "Stop — send to Whisper"
-                    : "Whisper dictation — tap again to stop"
+                    ? a11y.whisperTitleRecording
+                    : a11y.whisperTitleIdle
                   : undefined
               }
             >
               {useWhisperInput
                 ? isWhisperRecording
-                  ? "Recording…"
+                  ? a11y.sttWhisperRecording
                   : isTranscribingWhisper
-                    ? "Transcribing..."
-                    : "Speech to text (Whisper)"
+                    ? a11y.sttWhisperTranscribing
+                    : a11y.sttWhisperIdle
                 : isListening
-                  ? "Listening..."
-                  : "Speech to text (dictate)"}
+                  ? a11y.sttListening
+                  : a11y.sttDictate}
             </button>
           </div>
 
           <div className="mt-3 rounded-xl bg-[var(--muted)] p-3">
-            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--muted-foreground)]">Transcript</p>
+            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--muted-foreground)]">
+              {a11y.transcriptLabel}
+            </p>
             <p className="mt-1 min-h-8 text-sm text-[var(--foreground)]">
-              {isTranscribingWhisper ? "Transcribing audio…" : voiceNote || "Your captured speech will appear here."}
+              {isTranscribingWhisper ? a11y.transcriptTranscribing : voiceNote || a11y.transcriptEmpty}
             </p>
           </div>
           <button
@@ -739,11 +768,10 @@ export function AccessibilityVoiceTools() {
             disabled={voiceNote.trim().length === 0 || isTranscribingWhisper || isWhisperRecording}
             className={`mt-2 rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-semibold text-[var(--foreground)] disabled:opacity-55 ${focusRingSmClass}`}
           >
-            Send transcript to MBKRU Voice
+            {a11y.sendToVoice}
           </button>
           <p className="mt-2 text-xs text-[var(--muted-foreground)]" aria-live="polite">
-            {lastError ??
-              "If voice is unavailable, use the keyboard and regular forms. Language packs vary by device."}
+            {lastError ?? a11y.footerHint}
           </p>
         </section>
       ) : null}

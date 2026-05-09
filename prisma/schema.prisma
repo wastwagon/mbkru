@@ -179,6 +179,13 @@ enum PublicCauseCommentStatus {
   HIDDEN
 }
 
+/// Single reaction per member per comment (Facebook-style quick reactions).
+enum CommentReactionKind {
+  LIKE
+  THANK
+  INSIGHT
+}
+
 enum NotificationDeliveryChannel {
   EMAIL
   SMS
@@ -302,6 +309,7 @@ model Member {
   petitionSignatures     PetitionSignature[]
   publicCauseComments    CitizenReportPublicComment[]
   publicCauseSupports    CitizenReportSupport[]
+  voiceCommentReactions  CitizenReportCommentReaction[]
 
   @@index([regionId])
   @@index([identityVerificationStatus])
@@ -339,6 +347,8 @@ model CitizenReport {
   publicCauseSummary    String?                 @db.Text
   publicCauseOpenedAt   DateTime?
   publicCauseClosed     Boolean                 @default(false)
+  /// When true, report narrative + discussion thread are visible at /citizens-voice/discussions/[id] (Phase A).
+  discussionEnabled     Boolean                 @default(true)
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
   attachments           CitizenReportAttachment[]
@@ -403,8 +413,27 @@ model CitizenReportPublicComment {
   status    PublicCauseCommentStatus @default(VISIBLE)
   createdAt DateTime                 @default(now())
 
+  parentCommentId String?
+  parentComment   CitizenReportPublicComment?  @relation("CitizenReportCommentThread", fields: [parentCommentId], references: [id], onDelete: SetNull)
+  replies         CitizenReportPublicComment[] @relation("CitizenReportCommentThread")
+
+  reactions CitizenReportCommentReaction[]
+
   @@index([reportId, createdAt])
   @@index([memberId])
+  @@index([parentCommentId])
+}
+
+model CitizenReportCommentReaction {
+  commentId String
+  comment   CitizenReportPublicComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  memberId  String
+  member    Member                     @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  kind      CommentReactionKind        @default(LIKE)
+  createdAt DateTime                   @default(now())
+
+  @@id([commentId, memberId])
+  @@index([commentId])
 }
 
 model CitizenReportSupport {

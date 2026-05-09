@@ -11,6 +11,15 @@ import {
   publicCauseTitleField,
 } from "@/lib/validation/civic-engagement";
 
+function revalidateCitizenReportPublicCommentSurfaces(reportId: string, publicCauseSlug: string | null) {
+  revalidatePath("/citizens-voice/causes");
+  const slug = publicCauseSlug?.trim();
+  if (slug) revalidatePath(`/citizens-voice/causes/${slug}`);
+  revalidatePath(`/citizens-voice/discussions/${reportId}`);
+  revalidatePath("/report-card");
+  revalidatePath(`/admin/reports/${reportId}`);
+}
+
 export async function updatePublicCauseThreadAction(formData: FormData) {
   await requireAdminSession();
 
@@ -116,8 +125,30 @@ export async function hidePublicCauseCommentAction(formData: FormData) {
     where: { id: reportId },
     select: { publicCauseSlug: true },
   });
-  revalidatePath("/citizens-voice/causes");
-  if (r?.publicCauseSlug) revalidatePath(`/citizens-voice/causes/${r.publicCauseSlug}`);
+  revalidateCitizenReportPublicCommentSurfaces(reportId, r?.publicCauseSlug ?? null);
+
+  redirect(`/admin/reports/${reportId}?saved=comment`);
+}
+
+export async function restorePublicCauseCommentAction(formData: FormData) {
+  await requireAdminSession();
+
+  const commentId = formData.get("commentId");
+  const reportId = formData.get("reportId");
+  if (typeof commentId !== "string" || typeof reportId !== "string") {
+    redirect("/admin/reports?error=invalid");
+  }
+
+  await prisma.citizenReportPublicComment.updateMany({
+    where: { id: commentId, reportId, status: "HIDDEN" },
+    data: { status: "VISIBLE" },
+  });
+
+  const r = await prisma.citizenReport.findUnique({
+    where: { id: reportId },
+    select: { publicCauseSlug: true },
+  });
+  revalidateCitizenReportPublicCommentSurfaces(reportId, r?.publicCauseSlug ?? null);
 
   redirect(`/admin/reports/${reportId}?saved=comment`);
 }

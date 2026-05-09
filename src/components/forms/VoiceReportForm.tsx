@@ -22,6 +22,13 @@ import {
   removeReportQueueItem,
 } from "@/lib/client/report-submit-queue";
 import { redirectToMemberLogin } from "@/lib/client/member-login-redirect";
+import { useVoiceUiLanguageId } from "@/lib/client/use-voice-ui-language";
+import {
+  bodyPlaceholderForKind,
+  formatEvidenceHint,
+  getVoiceReportFormStrings,
+  kindOptionLabel,
+} from "@/lib/voice-report-form-i18n";
 
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
@@ -38,13 +45,15 @@ export type RegionOption = { id: string; name: string; slug: string };
 
 export type MpOption = { id: string; label: string };
 
-const ALL_KINDS = [
-  { value: "VOICE", label: "MBKRU Voice" },
-  { value: "MP_PERFORMANCE", label: "MP performance" },
-  { value: "GOVERNMENT_PERFORMANCE", label: "Government performance" },
-  { value: "SITUATIONAL_ALERT", label: "Situational alert" },
-  { value: "ELECTION_OBSERVATION", label: "Election observation" },
+const ALL_KIND_VALUES = [
+  "VOICE",
+  "MP_PERFORMANCE",
+  "GOVERNMENT_PERFORMANCE",
+  "SITUATIONAL_ALERT",
+  "ELECTION_OBSERVATION",
 ] as const;
+
+export type VoiceReportKindValue = (typeof ALL_KIND_VALUES)[number];
 
 const inputClass = `mt-1 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
 
@@ -66,7 +75,7 @@ export type VoiceReportFormProps = {
   /** Roster MPs for MP performance — label shown as Name · party · constituency. */
   mpOptions?: MpOption[];
   /** When set with `lockKind`, submission uses this kind only. */
-  defaultKind?: (typeof ALL_KINDS)[number]["value"];
+  defaultKind?: VoiceReportKindValue;
   /** Hide report-type selector (e.g. situational submit page). */
   lockKind?: boolean;
   /** Optional textarea placeholder override. */
@@ -82,15 +91,17 @@ export function VoiceReportForm({
 }: VoiceReportFormProps) {
   const phase = getPublicPlatformPhase();
   const electionOn = platformFeatures.electionObservatory(phase);
-  const kindOptions = ALL_KINDS.filter((k) => k.value !== "ELECTION_OBSERVATION" || electionOn);
+  const langId = useVoiceUiLanguageId();
+  const str = useMemo(() => getVoiceReportFormStrings(langId), [langId]);
+  const kindOptions = ALL_KIND_VALUES.filter((v) => v !== "ELECTION_OBSERVATION" || electionOn);
 
   const router = useRouter();
   const pathname = usePathname();
   const [authStatus, setAuthStatus] = useState<"loading" | "signedOut" | "signedIn">("loading");
   const [kind, setKind] = useState<string>(() => {
     if (lockKind && defaultKind) return defaultKind;
-    if (defaultKind && kindOptions.some((k) => k.value === defaultKind)) return defaultKind;
-    return kindOptions[0]?.value ?? "VOICE";
+    if (defaultKind && kindOptions.some((v) => v === defaultKind)) return defaultKind;
+    return kindOptions[0] ?? "VOICE";
   });
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -129,19 +140,8 @@ export function VoiceReportForm({
 
   const resolvedBodyPlaceholder = useMemo(() => {
     if (bodyPlaceholder) return bodyPlaceholder;
-    switch (kind) {
-      case "MP_PERFORMANCE":
-        return "Name the MP where relevant. Describe what you observed on constituency service, accessibility, communication, or accountability — include dates, locations, and sources if you have them.";
-      case "GOVERNMENT_PERFORMANCE":
-        return "Name the ministry, agency, or programme. Describe what was expected versus what you observed on delivery — dates, locations, and factual detail.";
-      case "ELECTION_OBSERVATION":
-        return "Describe what you observed at the polling station or process — stay factual; no threats or knowingly false claims.";
-      case "SITUATIONAL_ALERT":
-        return "Share observable facts: where, when, what happened, and who was affected if known.";
-      default:
-        return "Describe facts, location, time, and who was involved. Avoid hearsay where possible.";
-    }
-  }, [bodyPlaceholder, kind]);
+    return bodyPlaceholderForKind(str, kind);
+  }, [bodyPlaceholder, kind, str]);
 
   const locationGateOk = useMemo(
     () =>
@@ -555,7 +555,7 @@ export function VoiceReportForm({
   if (authStatus === "loading") {
     return (
       <div className="mx-auto max-w-2xl rounded-xl border border-[var(--border)] bg-white/80 px-6 py-10 text-center">
-        <p className="text-sm text-[var(--muted-foreground)]">Checking sign-in…</p>
+        <p className="text-sm text-[var(--muted-foreground)]">{str.checkingSignIn}</p>
       </div>
     );
   }
@@ -563,7 +563,7 @@ export function VoiceReportForm({
   if (authStatus === "signedOut") {
     return (
       <div className="mx-auto max-w-2xl rounded-xl border border-[var(--border)] bg-white/80 px-6 py-10 text-center">
-        <p className="text-sm text-[var(--muted-foreground)]">Redirecting to sign in…</p>
+        <p className="text-sm text-[var(--muted-foreground)]">{str.redirectingSignIn}</p>
       </div>
     );
   }
@@ -575,7 +575,7 @@ export function VoiceReportForm({
           className="rounded-xl border border-[var(--primary)]/30 bg-[var(--primary)]/10 px-4 py-3 text-sm text-[var(--foreground)]"
           role="status"
         >
-          You appear to be back online. Finish a pending draft below, then complete the security check and submit.
+          {str.onlineBanner}
         </p>
       ) : null}
 
@@ -590,30 +590,28 @@ export function VoiceReportForm({
             className={`shrink-0 ${primaryLinkClass}`}
             onClick={() => setLocalDraftNotice(null)}
           >
-            Dismiss
+            {str.dismiss}
           </button>
         </div>
       ) : null}
 
       {lockKind && queueItems.length > visibleQueueItems.length ? (
         <p className="text-xs text-[var(--muted-foreground)]">
-          You have other saved drafts on this device for different report types. Open{" "}
+          {str.draftsOtherTypesBefore}
           <Link href="/citizens-voice/submit" className={primaryLinkClass}>
-            Citizens Voice submit
-          </Link>{" "}
-          to restore them.
+            {str.draftsOtherTypesLink}
+          </Link>
+          {str.draftsOtherTypesAfter}
         </p>
       ) : null}
 
       {visibleQueueItems.length > 0 ? (
         <div
           className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 shadow-sm"
-          aria-label="Pending drafts on this device"
+          aria-label={str.pendingDraftsAria}
         >
-          <p className="text-sm font-semibold text-[var(--foreground)]">Pending drafts (this device)</p>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-            Restored drafts still need the security check before submit. Attachments are not stored offline.
-          </p>
+          <p className="text-sm font-semibold text-[var(--foreground)]">{str.pendingDraftsTitle}</p>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">{str.pendingDraftsHint}</p>
           <ul className="mt-3 space-y-3">
             {visibleQueueItems.map((item) => (
               <li
@@ -623,7 +621,7 @@ export function VoiceReportForm({
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-[var(--foreground)]">{item.payload.title}</p>
                   <p className="text-xs text-[var(--muted-foreground)]">
-                    {ALL_KINDS.find((k) => k.value === item.payload.kind)?.label ?? item.payload.kind}
+                    {kindOptionLabel(str, item.payload.kind)}
                     {" · "}
                     {formatDraftSavedAt(item.createdAt)}
                   </p>
@@ -639,7 +637,7 @@ export function VoiceReportForm({
                       setLocalDraftNotice(null);
                     }}
                   >
-                    Restore
+                    {str.restore}
                   </button>
                   <button
                     type="button"
@@ -649,7 +647,7 @@ export function VoiceReportForm({
                       syncQueue();
                     }}
                   >
-                    Discard
+                    {str.discard}
                   </button>
                 </div>
               </li>
@@ -664,28 +662,28 @@ export function VoiceReportForm({
           role="status"
         >
           <p className="font-semibold">
-            {kind === "SITUATIONAL_ALERT" ? "Situational report received" : "Report received"}
+            {kind === "SITUATIONAL_ALERT" ? str.successSituationalReceived : str.successReportReceived}
           </p>
           <p className="mt-1 text-sm">
-            Save your tracking code:{" "}
+            {str.saveTrackingCode}{" "}
             <span className="font-mono text-base font-bold tracking-wide">{trackingCode}</span>
           </p>
           {submittedAtIso ? (
             <p className="mt-2 text-sm text-green-900/90">
-              <span className="font-medium">Recorded</span>{" "}
+              <span className="font-medium">{str.recordedPrefix}</span>{" "}
               <time dateTime={submittedAtIso}>{formatSubmissionDateTime(submittedAtIso)}</time>
-              <span className="text-green-900/80"> (server time, Ghana programme use).</span>
+              <span className="text-green-900/80">{str.recordedSuffix}</span>
             </p>
           ) : null}
           <p className="mt-2 text-sm">
             <Link href={`/track-report?code=${encodeURIComponent(trackingCode)}`} className={primaryLinkClass}>
-              Check status
+              {str.checkStatus}
             </Link>
           </p>
           {submittedMpSlug ? (
             <p className="mt-2 text-sm text-green-900/95">
               <Link href={`/promises/${encodeURIComponent(submittedMpSlug)}`} className={primaryLinkClass}>
-                Open this MP’s commitment sheet on the parliamentary tracker
+                {str.openMpCommitmentSheet}
               </Link>
             </p>
           ) : null}
@@ -693,15 +691,12 @@ export function VoiceReportForm({
             <summary
               className={`cursor-pointer rounded-sm font-medium text-green-900 outline-none marker:text-green-700 ${focusRingSmClass}`}
             >
-              How we use your report
+              {str.howWeUseTitle}
             </summary>
             <ul className="mt-2 list-inside list-disc space-y-1.5 text-green-900/90">
-              <li>Staff triage submissions for moderation and follow-up; we may contact you if you left an email.</li>
-              <li>Your tracking code shows status updates as the team works the queue — not a court or regulator docket.</li>
-              <li>
-                For formal complaints, use official channels (e.g. CHRAJ, sector regulators, or the courts) where they
-                apply.
-              </li>
+              <li>{str.howWeUseLi1}</li>
+              <li>{str.howWeUseLi2}</li>
+              <li>{str.howWeUseLi3}</li>
             </ul>
           </details>
         </div>
@@ -715,23 +710,23 @@ export function VoiceReportForm({
 
       {lockKind ? (
         <div className="rounded-xl border border-[var(--border)] bg-white/80 px-4 py-3 text-sm text-[var(--muted-foreground)]">
-          <span className="font-medium text-[var(--foreground)]">Report type: </span>
-          {ALL_KINDS.find((k) => k.value === kind)?.label ?? kind}
+          <span className="font-medium text-[var(--foreground)]">{str.reportTypeLockedPrefix} </span>
+          {kindOptionLabel(str, kind)}
         </div>
       ) : (
         <div>
           <label htmlFor="kind" className="block text-sm font-medium text-[var(--foreground)]">
-            Report type
+            {str.reportTypeLabel}
           </label>
           <select
             id="kind"
-            value={kindOptions.some((k) => k.value === kind) ? kind : kindOptions[0]?.value}
+            value={kindOptions.some((v) => v === kind) ? kind : kindOptions[0]}
             onChange={(e) => setKind(e.target.value)}
             className={`${inputClass} cursor-pointer`}
           >
-            {kindOptions.map((k) => (
-              <option key={k.value} value={k.value}>
-                {k.label}
+            {kindOptions.map((value) => (
+              <option key={value} value={value}>
+                {kindOptionLabel(str, value)}
               </option>
             ))}
           </select>
@@ -743,12 +738,8 @@ export function VoiceReportForm({
           className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950"
           role="note"
         >
-          <p className="font-semibold">Election-period reporting</p>
-          <p className="mt-1 text-amber-900/95">
-            MBKRU is not the Electoral Commission or a court. This channel is for documentation and staff triage only
-            — not a formal election petition, legal outcome, or official results challenge. Do not submit threats or
-            knowingly false information.
-          </p>
+          <p className="font-semibold">{str.electionNoteTitle}</p>
+          <p className="mt-1 text-amber-900/95">{str.electionNoteBody}</p>
         </div>
       ) : null}
 
@@ -757,19 +748,14 @@ export function VoiceReportForm({
           className="rounded-xl border border-[var(--primary)]/25 bg-[var(--primary)]/5 px-4 py-3 text-sm text-[var(--foreground)]"
           role="note"
         >
-          <p className="font-semibold">MP performance</p>
-          <p className="mt-1 text-[var(--muted-foreground)]">
-            Use this for your assessment of how an MP is serving the constituency — visibility, casework, accessibility,
-            and accountability. You submit directly; staff moderate and triage like other Voice reports. This is not a
-            formal Parliament petition or party complaint.
-          </p>
+          <p className="font-semibold">{str.mpNoteTitle}</p>
+          <p className="mt-1 text-[var(--muted-foreground)]">{str.mpNoteBody}</p>
           <p className="mt-2 text-[var(--muted-foreground)]">
-            Choose the sitting MP in the list below so the intake links to their parliamentary tracker sheet and catalogue
-            entry (same roster as{" "}
+            {str.mpNoteBody2Before}
             <Link href="/promises" className={primaryLinkClass}>
-              Commitments by MP
+              {str.mpNoteBody2Link}
             </Link>
-            ).
+            {str.mpNoteBody2After}
           </p>
         </div>
       ) : null}
@@ -777,7 +763,7 @@ export function VoiceReportForm({
       {kind === "MP_PERFORMANCE" && !lockKind ? (
         <div>
           <label htmlFor="parliament-member" className="block text-sm font-medium text-[var(--foreground)]">
-            Member of Parliament <span className="text-red-600">*</span>
+            {str.mpLabel} <span className="text-red-600">*</span>
           </label>
           <select
             id="parliament-member"
@@ -786,7 +772,7 @@ export function VoiceReportForm({
             onChange={(e) => setParliamentMemberId(e.target.value)}
             className={`${inputClass} cursor-pointer`}
           >
-            <option value="">Select an MP from the roster…</option>
+            <option value="">{str.mpPlaceholder}</option>
             {mpOptions.map((m) => (
               <option key={m.id} value={m.id}>
                 {m.label}
@@ -795,8 +781,7 @@ export function VoiceReportForm({
           </select>
           {mpOptions.length === 0 ? (
             <p className="mt-1 text-xs text-amber-800" role="status">
-              MP roster is unavailable (database or configuration). You cannot submit an MP performance report until the
-              roster loads — refresh the page or try again later.
+              {str.mpRosterUnavailable}
             </p>
           ) : null}
         </div>
@@ -807,25 +792,21 @@ export function VoiceReportForm({
           className="rounded-xl border border-[var(--primary)]/25 bg-[var(--primary)]/5 px-4 py-3 text-sm text-[var(--foreground)]"
           role="note"
         >
-          <p className="font-semibold">Government performance</p>
-          <p className="mt-1 text-[var(--muted-foreground)]">
-            Use this for ministry, agency, or programme delivery you want documented — facts and observed outcomes, not
-            speculation. MBKRU triages submissions; use official agency channels where you need a binding government
-            response.
-          </p>
+          <p className="font-semibold">{str.govNoteTitle}</p>
+          <p className="mt-1 text-[var(--muted-foreground)]">{str.govNoteBody}</p>
           <p className="mt-2 text-[var(--muted-foreground)]">
-            These intakes are tracked alongside the public{" "}
+            {str.govNoteBody2Before}
             <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments} className={primaryLinkClass}>
-              Government commitments
-            </Link>{" "}
-            lens on the same promise catalogue (programme-tagged executive rows).
+              {str.govNoteBody2Link}
+            </Link>
+            {str.govNoteBody2After}
           </p>
         </div>
       ) : null}
 
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-[var(--foreground)]">
-          Short title
+          {str.shortTitle}
         </label>
         <input
           id="title"
@@ -835,13 +816,13 @@ export function VoiceReportForm({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className={inputClass}
-          placeholder="Summarise your report in one line"
+          placeholder={str.shortTitlePlaceholder}
         />
       </div>
 
       <div>
         <label htmlFor="body" className="block text-sm font-medium text-[var(--foreground)]">
-          What happened?
+          {str.bodyLabel}
         </label>
         <textarea
           id="body"
@@ -857,16 +838,11 @@ export function VoiceReportForm({
       </div>
 
       <div className="rounded-xl border border-[var(--border)] bg-[var(--section-light)]/40 px-4 py-4">
-        <p className="text-sm font-medium text-[var(--foreground)]">Location (automatic)</p>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-          We request your browser location once when this form loads (W3C Geolocation). Coordinates are rounded (~1 km)
-          for triage — not a surveyed boundary pin. The address line below comes from OpenStreetMap reverse geocoding
-          (street or area names where available, plus town and region). Fields stay read-only so submissions match device
-          permission and stay comparable for staff review.
-        </p>
+        <p className="text-sm font-medium text-[var(--foreground)]">{str.locationTitle}</p>
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">{str.locationHelp}</p>
         {geoStatus === "loading" ? (
           <p className="mt-3 text-sm text-[var(--muted-foreground)]" role="status">
-            Detecting approximate location… allow the browser prompt if it appears.
+            {str.geoLoadingBanner}
           </p>
         ) : null}
         {geoStatus === "denied" ? (
@@ -874,11 +850,8 @@ export function VoiceReportForm({
             className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-3 text-xs text-amber-950"
             role="alert"
           >
-            <p className="font-semibold text-amber-950">Location blocked — you cannot submit until it is allowed</p>
-            <p className="mt-2 text-amber-950/95">
-              Enable location for this site in your browser (address bar lock / site settings → Location → Allow). On
-              mobile, turn on device location services. Then reload this page.
-            </p>
+            <p className="font-semibold text-amber-950">{str.geoDeniedTitle}</p>
+            <p className="mt-2 text-amber-950/95">{str.geoDeniedBody}</p>
           </div>
         ) : null}
         {geoStatus === "error" ? (
@@ -886,17 +859,15 @@ export function VoiceReportForm({
             className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-3 text-xs text-amber-950"
             role="alert"
           >
-            <p className="font-semibold text-amber-950">Location unavailable</p>
-            <p className="mt-2 text-amber-950/95">
-              Try another browser or device, enable location services, then reload this page.
-            </p>
+            <p className="font-semibold text-amber-950">{str.geoErrorTitle}</p>
+            <p className="mt-2 text-amber-950/95">{str.geoErrorBody}</p>
           </div>
         ) : null}
       </div>
 
       <div>
         <label htmlFor="region" className="block text-sm font-medium text-[var(--foreground)]">
-          Region <span className="text-red-600">*</span>
+          {str.regionLabel} <span className="text-red-600">*</span>
         </label>
         <select
           id="region"
@@ -907,7 +878,7 @@ export function VoiceReportForm({
           aria-readonly="true"
         >
           <option value="">
-            {geoStatus === "loading" ? "Detecting region…" : "—"}
+            {geoStatus === "loading" ? str.regionDetecting : str.regionDash}
           </option>
           {regions.map((r) => (
             <option key={r.id} value={r.id}>
@@ -915,12 +886,12 @@ export function VoiceReportForm({
             </option>
           ))}
         </select>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">Set automatically from your rounded location.</p>
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">{str.regionHelp}</p>
       </div>
 
       <div>
         <label htmlFor="local-area" className="block text-sm font-medium text-[var(--foreground)]">
-          Approximate address (from map) <span className="text-red-600">*</span>
+          {str.localAreaLabel} <span className="text-red-600">*</span>
         </label>
         <input
           id="local-area"
@@ -931,27 +902,22 @@ export function VoiceReportForm({
           maxLength={LOCAL_AREA_MAX_LEN}
           value={localArea}
           className={`${inputClass} cursor-not-allowed opacity-90`}
-          placeholder={geoStatus === "loading" ? "Resolving address from map…" : ""}
+          placeholder={geoStatus === "loading" ? str.localAreaPlaceholderLoading : ""}
           autoComplete="off"
           aria-readonly="true"
         />
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-          Full formatted line from OpenStreetMap when available (still tied to rounded coordinates). © OpenStreetMap
-          contributors.
-        </p>
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">{str.localAreaHelp}</p>
       </div>
 
-      <p className="text-sm text-[var(--muted-foreground)]">
-        Signed in — we&apos;ll use your account email for updates. If your profile has an E.164 mobile, SMS alerts may be
-        sent when the organisation enables them.
-      </p>
+      <p className="text-sm text-[var(--muted-foreground)]">{str.signedInFooter}</p>
 
       <div>
         <label htmlFor="report-files" className="block text-sm font-medium text-[var(--foreground)]">
-          Evidence files <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+          {str.evidenceLabel}{" "}
+          <span className="font-normal text-[var(--muted-foreground)]">{str.evidenceOptional}</span>
         </label>
         <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-          Up to {MAX_ATTACH_FILES} files, 5 MB each — JPEG, PNG, WebP, or PDF.
+          {formatEvidenceHint(str, MAX_ATTACH_FILES, 5)}
         </p>
         <input
           ref={fileInputRef}
@@ -978,7 +944,7 @@ export function VoiceReportForm({
 
       {!locationGateOk ? (
         <p className="text-sm text-[var(--muted-foreground)]" role="status">
-          Submit stays disabled until automatic location capture finishes (browser permission + area label).
+          {str.submitDisabledHint}
         </p>
       ) : null}
 
@@ -993,7 +959,7 @@ export function VoiceReportForm({
         size="lg"
         className="w-full min-w-0 justify-center sm:w-auto"
       >
-        {loading ? "Submitting…" : "Submit report"}
+        {loading ? str.submitting : str.submit}
       </Button>
     </form>
   );
