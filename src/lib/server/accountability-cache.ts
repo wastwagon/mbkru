@@ -2,14 +2,7 @@ import "server-only";
 
 import type { CitizenReportKind, CitizenReportStatus, Prisma } from "@prisma/client";
 
-/** Allowed filters on `/report-card` Voice submissions (matches enum subset). */
-export const VOICE_SUBMISSION_KIND_FILTERS: readonly CitizenReportKind[] = [
-  "VOICE",
-  "MP_PERFORMANCE",
-  "GOVERNMENT_PERFORMANCE",
-  "SITUATIONAL_ALERT",
-  "ELECTION_OBSERVATION",
-] as const;
+export { VOICE_SUBMISSION_KIND_FILTERS } from "@/lib/reports/voice-submission-kind-filters";
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
 
@@ -101,7 +94,11 @@ export async function getCachedMpsPublicRoster() {
       }));
     },
     ["api-mps-v2"],
-    { tags: [MPS_ROSTER_TAG], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
+    {
+      /** Include catalogue tag so per-MP promise counts refresh when commitments change (not only roster imports). */
+      tags: [MPS_ROSTER_TAG, PROMISES_INDEX_TAG],
+      revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC,
+    },
   )();
 }
 

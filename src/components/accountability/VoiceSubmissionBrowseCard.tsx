@@ -66,8 +66,10 @@ export function VoiceSubmissionBrowseCard({ row }: Props) {
         ? row.bodyPreview
         : null);
 
+  const discussionHref = `/citizens-voice/discussions/${encodeURIComponent(row.id)}`;
+
   return (
-    <article className="flex flex-col rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+    <article className="flex h-full min-h-0 w-full flex-col rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <p className="mb-2">
@@ -117,34 +119,52 @@ export function VoiceSubmissionBrowseCard({ row }: Props) {
         </p>
       ) : null}
       {publicTitle ? (
-        <p className="mt-3 text-xs font-medium text-[var(--foreground)]">Published title: {publicTitle}</p>
+        <p className="mt-3 line-clamp-2 text-xs font-medium text-[var(--foreground)]">Published title: {publicTitle}</p>
       ) : null}
-      {narrative ? (
-        <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{narrative}</p>
-      ) : hasLegacyCause ? (
-        <p className="mt-3 flex-1 text-sm italic text-[var(--muted-foreground)]">
-          Staff-approved summary will appear here when published.
-        </p>
-      ) : discussionOpen ? (
-        <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">
-          Open the report to read the full narrative. Sign in on the discussion page to comment, react, and show
-          support.
-        </p>
-      ) : (
-        <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">
-          Public discussion is turned off for this submission.
-        </p>
-      )}
+      <div className="mt-3 flex min-h-0 flex-1 flex-col">
+        {narrative ? (
+          discussionOpen ? (
+            <Link
+              href={discussionHref}
+              prefetch={false}
+              className="group -mx-1 block min-h-0 flex-1 rounded-lg px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/35"
+            >
+              <p className="line-clamp-4 text-sm leading-relaxed text-[var(--muted-foreground)] group-hover:text-[var(--foreground)]">
+                {narrative}
+              </p>
+              <span className="sr-only"> — open full report and discussion</span>
+            </Link>
+          ) : (
+            <p className="line-clamp-4 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{narrative}</p>
+          )
+        ) : hasLegacyCause ? (
+          <p className="line-clamp-4 flex-1 text-sm italic text-[var(--muted-foreground)]">
+            Staff-approved summary will appear here when published.
+          </p>
+        ) : discussionOpen ? (
+          <Link
+            href={discussionHref}
+            prefetch={false}
+            className="group -mx-1 block min-h-0 flex-1 rounded-lg px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/35"
+          >
+            <p className="line-clamp-4 text-sm leading-relaxed text-[var(--muted-foreground)] group-hover:text-[var(--foreground)]">
+              Open the report to read the full narrative. Sign in on the discussion page to comment, react, and show
+              support.
+            </p>
+            <span className="sr-only"> — open full report and discussion</span>
+          </Link>
+        ) : (
+          <p className="line-clamp-4 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">
+            Public discussion is turned off for this submission.
+          </p>
+        )}
+      </div>
       {discussionOpen && reactionLine ? (
         <p className="mt-2 text-xs text-[var(--muted-foreground)]">{reactionLine}</p>
       ) : null}
-      <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 border-t border-[var(--border)]/80 pt-4 text-sm">
+      <div className="mt-auto mt-5 flex flex-wrap gap-x-4 gap-y-2 border-t border-[var(--border)]/80 pt-4 text-sm">
         {discussionOpen ? (
-          <Link
-            href={`/citizens-voice/discussions/${encodeURIComponent(row.id)}`}
-            className={`${primaryLinkClass} font-semibold`}
-            prefetch={false}
-          >
+          <Link href={discussionHref} className={`${primaryLinkClass} font-semibold`} prefetch={false}>
             Full report &amp; discussion →
           </Link>
         ) : null}

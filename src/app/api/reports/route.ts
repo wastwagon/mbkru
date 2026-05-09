@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 
+import { MPS_ROSTER_TAG } from "@/lib/accountability-tags";
 import { citizensVoiceDisabledResponse, isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 import { allocateTrackingCode } from "@/lib/server/allocate-tracking-code";
 import { signReportAttachmentScope } from "@/lib/server/report-upload-token";
@@ -109,6 +111,10 @@ export async function POST(request: Request) {
     });
 
     const attachmentUploadToken = signReportAttachmentScope(report.id);
+
+    if (parliamentMemberId) {
+      revalidateTag(MPS_ROSTER_TAG, "max");
+    }
 
     return NextResponse.json({
       ok: true,

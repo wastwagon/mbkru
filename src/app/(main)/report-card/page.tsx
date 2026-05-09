@@ -12,7 +12,6 @@ import {
   accountabilityProse,
 } from "@/config/accountability-catalogue-destinations";
 import { publicReportCardCycleTitle } from "@/lib/report-card-public-label";
-import { reportKindLabel } from "@/lib/report-status-text";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
@@ -21,12 +20,13 @@ import {
   isCivicPetitionsAndPublicCausesEnabled,
   isReportCardPublicEnabled,
 } from "@/lib/reports/accountability-pages";
+import { ReportCardVoiceFiltersForm } from "@/components/accountability/ReportCardVoiceFiltersForm";
+import { VOICE_SUBMISSION_KIND_FILTERS } from "@/lib/reports/voice-submission-kind-filters";
 import {
   getCachedPublishedReportCardCycles,
   getReportCardBrowseEntries,
   getVoiceSubmissionsBrowseEntries,
   REPORT_CARD_INDEX_PAGE_SIZE,
-  VOICE_SUBMISSION_KIND_FILTERS,
   VOICE_SUBMISSIONS_BROWSE_PAGE_SIZE,
 } from "@/lib/server/accountability-cache";
 
@@ -117,10 +117,11 @@ export default async function ReportCardIndexPage({
   const vPage = Math.max(1, Number.parseInt(sp.vpage ?? "1", 10) || 1);
 
   const vkindRaw = typeof sp.vkind === "string" ? sp.vkind.trim() : "";
+  const normalizedVkind = vkindRaw.toUpperCase().replace(/-/g, "_");
   const voiceKindFilter: CitizenReportKind | null = VOICE_SUBMISSION_KIND_FILTERS.includes(
-    vkindRaw as CitizenReportKind,
+    normalizedVkind as CitizenReportKind,
   )
-    ? (vkindRaw as CitizenReportKind)
+    ? (normalizedVkind as CitizenReportKind)
     : null;
 
   const voiceBrowse = voiceOn
@@ -143,7 +144,7 @@ export default async function ReportCardIndexPage({
         vq: vqRaw.trim() || undefined,
         vregion: selectedVRegionId || undefined,
         vpage: vTotalPages,
-        vkind: voiceKindFilter ? vkindRaw : undefined,
+        vkind: voiceKindFilter ?? undefined,
       }),
     );
   }
@@ -169,7 +170,7 @@ export default async function ReportCardIndexPage({
         vq: vqRaw.trim() || undefined,
         vregion: selectedVRegionId || undefined,
         vpage: vPage > 1 ? vPage : undefined,
-        vkind: voiceKindFilter ? vkindRaw : undefined,
+        vkind: voiceKindFilter ?? undefined,
       }),
     );
   }
@@ -282,73 +283,27 @@ export default async function ReportCardIndexPage({
                 <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
                   Reports submitted (MBKRU Voice)
                 </p>
-                <form method="get" action="/report-card#browse-voice" className="mt-4 grid gap-4 lg:grid-cols-12 lg:items-end">
-                  <input type="hidden" name="vpage" value="1" />
-                  {hasCycles ? <input type="hidden" name="year" value={selectedYear} /> : null}
-                  <input type="hidden" name="region" value={selectedRegionId} />
-                  <input type="hidden" name="q" value={qRaw} />
-                  <input type="hidden" name="page" value={safePage} />
-                  <label className="lg:col-span-3">
-                    <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Region</span>
-                    <select
-                      name="vregion"
-                      defaultValue={selectedVRegionId}
-                      className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)]"
-                    >
-                      <option value="">All regions</option>
-                      {regions.map((r) => (
-                        <option key={r.id} value={r.id}>
-                          {r.name}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="lg:col-span-3">
-                    <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Report type</span>
-                    <select
-                      name="vkind"
-                      defaultValue={voiceKindFilter ?? ""}
-                      className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)]"
-                    >
-                      <option value="">All types</option>
-                      {VOICE_SUBMISSION_KIND_FILTERS.map((k) => (
-                        <option key={k} value={k}>
-                          {reportKindLabel(k)}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="lg:col-span-4">
-                    <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Search title</span>
-                    <input
-                      type="search"
-                      name="vq"
-                      defaultValue={vqRaw}
-                      placeholder="Words from the submission title"
-                      className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)]/70"
-                      autoComplete="off"
-                    />
-                  </label>
-                  <div className="flex flex-wrap gap-2 lg:col-span-2">
-                    <button
-                      type="submit"
-                      className="min-h-[44px] flex-1 rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-[var(--primary-foreground)] shadow-sm hover:bg-[var(--primary-dark)]"
-                    >
-                      Apply
-                    </button>
-                    <Link
-                      href={reportCardIndexHref({
-                        year: hasCycles ? selectedYear : undefined,
-                        region: selectedRegionId || undefined,
-                        q: qRaw.trim() || undefined,
-                        page: page > 1 ? page : undefined,
-                      })}
-                      className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-[var(--border)] px-3 py-2 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--section-light)]"
-                    >
-                      Reset
-                    </Link>
-                  </div>
-                </form>
+                <ReportCardVoiceFiltersForm
+                  regions={regions}
+                  preserve={{
+                    hasCycles,
+                    selectedYear,
+                    selectedRegionId,
+                    qRaw,
+                    safePage,
+                  }}
+                  voice={{
+                    vregion: selectedVRegionId,
+                    vkind: voiceKindFilter ?? "",
+                    vq: vqRaw,
+                  }}
+                  resetHref={reportCardIndexHref({
+                    year: hasCycles ? selectedYear : undefined,
+                    region: selectedRegionId || undefined,
+                    q: qRaw.trim() || undefined,
+                    page: page > 1 ? page : undefined,
+                  })}
+                />
                 <p className="mt-3 text-xs text-[var(--muted-foreground)]">
                   Listed by most recent (excluding archived). Support and comments require a staff-opened public thread — see
                   &quot;Open public thread&quot; on cards when live.
@@ -383,9 +338,9 @@ export default async function ReportCardIndexPage({
                     to appear in this list (archived rows stay hidden).
                   </p>
                 ) : (
-                  <ul className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                  <ul className="grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
                     {voiceBrowse.rows.map((row) => (
-                      <li key={row.id}>
+                      <li key={row.id} className="flex min-h-0">
                         <VoiceSubmissionBrowseCard row={row} />
                       </li>
                     ))}
@@ -411,7 +366,7 @@ export default async function ReportCardIndexPage({
                             vq: vqRaw.trim() || undefined,
                             vregion: selectedVRegionId || undefined,
                             vpage: safeVPage - 1,
-                            vkind: voiceKindFilter ? vkindRaw : undefined,
+                            vkind: voiceKindFilter ?? undefined,
                           })}
                           className={`${primaryNavLinkClass} font-semibold`}
                           prefetch={false}
@@ -431,7 +386,7 @@ export default async function ReportCardIndexPage({
                             vq: vqRaw.trim() || undefined,
                             vregion: selectedVRegionId || undefined,
                             vpage: safeVPage + 1,
-                            vkind: voiceKindFilter ? vkindRaw : undefined,
+                            vkind: voiceKindFilter ?? undefined,
                           })}
                           className={`${primaryNavLinkClass} font-semibold`}
                           prefetch={false}
@@ -519,7 +474,7 @@ export default async function ReportCardIndexPage({
                         vq: vqRaw.trim() || undefined,
                         vregion: selectedVRegionId || undefined,
                         vpage: vPage > 1 ? vPage : undefined,
-                        vkind: voiceKindFilter ? vkindRaw : undefined,
+                        vkind: voiceKindFilter ?? undefined,
                       })}
                       className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-[var(--border)] px-3 py-2 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--section-light)]"
                     >
@@ -591,7 +546,7 @@ export default async function ReportCardIndexPage({
                             vq: vqRaw.trim() || undefined,
                             vregion: selectedVRegionId || undefined,
                             vpage: vPage > 1 ? vPage : undefined,
-                            vkind: voiceKindFilter ? vkindRaw : undefined,
+                            vkind: voiceKindFilter ?? undefined,
                           })}
                           className={`${primaryNavLinkClass} font-semibold`}
                           prefetch={false}
@@ -611,7 +566,7 @@ export default async function ReportCardIndexPage({
                             vq: vqRaw.trim() || undefined,
                             vregion: selectedVRegionId || undefined,
                             vpage: vPage > 1 ? vPage : undefined,
-                            vkind: voiceKindFilter ? vkindRaw : undefined,
+                            vkind: voiceKindFilter ?? undefined,
                           })}
                           className={`${primaryNavLinkClass} font-semibold`}
                           prefetch={false}
