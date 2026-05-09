@@ -22,7 +22,8 @@ export const maxDuration = 60;
 
 export const metadata: Metadata = {
   title: "People's Report Card",
-  description: "Published accountability cycles — summaries and scores where MBKRU has released a cycle.",
+  description:
+    "Published People's Report Card cycles — MP narratives and scores by release year. Explanatory summaries, not legal or electoral findings.",
 };
 
 export default async function ReportCardIndexPage() {
@@ -37,39 +38,28 @@ export default async function ReportCardIndexPage() {
     <div>
       <PageHeader
         title="People&apos;s Report Card"
-        description="Published cycles only. Scores and narratives are explanatory — not legal or electoral findings. See methodology for our approach."
+        description="Published cycles combine MP narratives and scores for each release year. These are citizen-facing accountability summaries — not court judgments or electoral rulings. Methodology explains how we score and what limits apply."
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {scorecardsMode ? (
-            <div className="mb-8 rounded-2xl border border-[var(--primary)]/25 bg-[var(--primary)]/5 px-4 py-4 text-center sm:px-6">
-              <p className="text-sm font-semibold text-[var(--foreground)]">Pre-election accountability scorecards</p>
-              <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                This section highlights flagship scorecard cycles in the run-up to general elections. Narratives remain
-                explanatory — see methodology for scope and limitations.
-              </p>
-              <p className="mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-sm">
-                <Link
-                  href="/methodology"
-                  className={primaryNavLinkClass}
-                >
-                  Read methodology
-                </Link>
-                {platformFeatures.electionObservatory(phase) ? (
-                  <>
-                    <span className="text-[var(--muted-foreground)]/50" aria-hidden>
-                      ·
-                    </span>
-                    <Link
-                      href="/election-observation"
-                      className={primaryNavLinkClass}
-                    >
-                      Election observation hub
-                    </Link>
-                  </>
-                ) : null}
-              </p>
-            </div>
+            <p className="mx-auto mb-8 max-w-3xl text-center text-sm leading-relaxed text-[var(--muted-foreground)]">
+              Our accountability programme also describes pre-election scorecard timing and engagement (including around
+              elections). That roadmap is in{" "}
+              <Link href="/methodology" className={primaryNavLinkClass}>
+                methodology
+              </Link>
+              {platformFeatures.electionObservatory(phase) ? (
+                <>
+                  {" "}
+                  — with links to the{" "}
+                  <Link href="/election-observation" className={primaryNavLinkClass}>
+                    election observation hub
+                  </Link>
+                </>
+              ) : null}
+              . It sits alongside — not instead of — the published People&apos;s Report Card cycles listed below.
+            </p>
           ) : null}
           <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--muted-foreground)]">
             <Link
@@ -119,9 +109,9 @@ export default async function ReportCardIndexPage() {
                   Published cycles
                 </p>
                 <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-                  Open a cycle for MP-by-MP narratives, scores, and metrics. The year marks each published batch — evidence
-                  stacks across Ghana&apos;s four-year Parliament ({ghanaParliamentTermShortLabel()}) so citizens can judge
-                  cumulative delivery toward the next general election.
+                  Each cycle is a People&apos;s Report Card release: MP-by-MP narratives, scores, and metrics. The year labels
+                  the batch; evidence can stack across Ghana&apos;s four-year Parliament ({ghanaParliamentTermShortLabel()}) so
+                  readers can see cumulative delivery toward the next general election.
                 </p>
                 <p className="mt-3 text-sm">
                   <Link href={`/report-card/${cycles[0]?.year}`} className={primaryNavLinkClass}>

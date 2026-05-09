@@ -61,7 +61,9 @@ export default async function CitizensVoicePage() {
         title="Digital Platform — MBKRU Voice"
         description={
           voiceOn
-            ? "Submit reports with evidence, track with a code, and manage submissions from your account."
+            ? civicEngagement
+              ? "Submit reports with evidence, track with a code, and manage submissions from your account. Selected reports may be published as public causes where members support and discuss — see Public causes."
+              : "Submit reports with evidence, track with a code, and manage submissions from your account."
             : "Digital platform for citizen voice — membership portal, personal dashboard, and public statistics."
         }
       />
@@ -170,6 +172,13 @@ export default async function CitizensVoicePage() {
             <h2 className="font-display text-xl font-bold sm:text-2xl">Report intake</h2>
             <p className="mx-auto mt-2 max-w-2xl text-sm text-white/85">
               Submit a report and track it with a code. Staff may email you when the status changes.
+              {civicEngagement ? (
+                <>
+                  {" "}
+                  When a submission is opened as a public cause, it appears on Public causes so members can support and
+                  comment.
+                </>
+              ) : null}
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
               <Link

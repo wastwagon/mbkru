@@ -146,6 +146,10 @@ enum CitizenReportKind {
   VOICE
   SITUATIONAL_ALERT
   ELECTION_OBSERVATION
+  /// Citizen assessment of MP / constituency accountability (direct intake — not admin-authored).
+  MP_PERFORMANCE
+  /// Citizen assessment of ministry, agency, or programme delivery (direct intake).
+  GOVERNMENT_PERFORMANCE
 }
 
 enum CitizenReportStatus {

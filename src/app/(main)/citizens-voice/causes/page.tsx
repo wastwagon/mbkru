@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Public causes",
   description:
-    "Staff-approved public threads from MBKRU Voice — show support and discuss (sign-in). Original reports stay private.",
+    "MBKRU Voice submissions opened by editors as public threads — members show support, read the summary, and comment. Full intake stays private.",
 };
 
 export default async function PublicCausesIndexPage() {
@@ -41,7 +41,7 @@ export default async function PublicCausesIndexPage() {
     <div>
       <PageHeader
         title="Public causes"
-        description="These pages show editor-approved summaries only — not full Voice intake text. Members can signal support and discuss constructively. Start a petition if you want a standalone signature campaign."
+        description="When staff publish a Voice submission here, it appears on this list with an editor-approved summary (not the full report). Other members can show support and join the discussion on each cause — sign in to comment. Use petitions if you want a separate signature campaign."
         breadcrumbCurrentLabel="Causes"
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
@@ -66,7 +66,8 @@ export default async function PublicCausesIndexPage() {
 
           {rows.length === 0 ? (
             <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
-              No public causes yet. Editors publish threads from admin after verifying a sanitized summary.
+              No public causes yet. When editors open a submitted Voice report as a public thread, it will show here for
+              others to support and discuss.
             </p>
           ) : (
             <ul className="mt-10 space-y-4">

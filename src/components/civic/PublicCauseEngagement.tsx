@@ -119,6 +119,10 @@ export function PublicCauseEngagement({
 
   return (
     <div className="space-y-8">
+      <p className="text-sm leading-relaxed text-[var(--muted-foreground)]">
+        This issue was filed through MBKRU Voice and published here so other members can respond. Support and comments are
+        for civic dialogue only — not a court filing or official complaint record.
+      </p>
       <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
         <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">Show support</h2>
         <p className="mt-1 text-sm text-[var(--muted-foreground)]">

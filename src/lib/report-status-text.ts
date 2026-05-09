@@ -8,6 +8,10 @@ export function reportKindLabel(kind: CitizenReportKind): string {
       return "Situational alert";
     case "ELECTION_OBSERVATION":
       return "Election observation";
+    case "MP_PERFORMANCE":
+      return "MP performance";
+    case "GOVERNMENT_PERFORMANCE":
+      return "Government performance";
     default:
       return kind;
   }

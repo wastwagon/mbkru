@@ -37,7 +37,7 @@ export const methodologyKeyTerms: readonly { term: string; body: string }[] = [
   },
   {
     term: "People's Report Card (published cycle)",
-    body: "A dated editorial release under Report card with narratives and scores when MBKRU publishes that batch. Years label publication windows — evidence can stack across Ghana's four-year Parliament toward informed electoral choices; not every methodology mention implies a scored cycle is already live.",
+    body: "A dated editorial release on the People's Report Card page: MP narratives and scores when MBKRU publishes that batch. Years label publication windows — evidence can stack across Ghana's four-year Parliament toward informed electoral choices. Methodology and roadmap language about scorecards do not replace a live cycle here.",
   },
   {
     term: "Accountability scorecards (programme language)",
@@ -119,9 +119,9 @@ export const accountabilityProse = {
   apiPromisesTableRow:
     "Tracked commitments via GET /api/promises with optional filters; JSON responses are capped — use CSV for full exports.",
   /** `/report-card` index — single cross-link block; avoids duplicating the catalogue KPI strip shown on home and browse pages. */
-  reportCardCatalogueBridgeTitle: "Tracked commitments (elsewhere on the site)",
+  reportCardCatalogueBridgeTitle: "Tracked commitments (live catalogue)",
   reportCardCatalogueBridgeBody:
-    "This page is for published People's Report Card cycles only. The pledge catalogue uses its own dashboards — we do not repeat them here.",
+    "Use the commitment catalogue for searchable pledge rows, filters, and exports. This page stays focused on published People's Report Card cycles only.",
   /** `/methodology#key-terms` — H2. */
   methodologyKeyTermsSectionHeading: "Key public terms",
   methodologyKeyTermsSectionIntro:
@@ -188,9 +188,9 @@ export const accountabilityProse = {
     "The programme’s pre-election accountability scorecard roll-out (90 days before general elections), described in methodology. This is not the same as the published People's Report Card cycles — use People's Report Card in the Accountability menu for those.",
   /** Tools grid intro line — "promises" avoided as a standalone public noun. */
   parliamentTrackerToolsSubline: "Data-driven tools to connect documented commitments, report-style views, and where we publish cycles.",
-  /** /report-card index — one line so visitors don't confuse PRC with pre-election scorecards. */
+  /** /report-card index — People's Report Card vs catalogue vs roadmap scorecard language. */
   reportCardIndexDisambiguation:
-    "The People's Report Card (this section) is where we publish report-card cycles when they exist. Pre-election \"Accountability scorecards\" as a named programme and methodology live on Accountability methodology, not in place of the cycles list below.",
+    "Each year's People's Report Card below is a dated editorial release with MP narratives and scores. That is separate from the live commitment catalogue and from roadmap wording about pre-election accountability scorecards — both are explained in methodology.",
   /** Roster list — count suffix next to each MP (same language as the By MP index). */
   mpRosterListCountLabelSingular: "catalogue row",
   mpRosterListCountLabelPlural: "catalogue rows",

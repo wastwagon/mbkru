@@ -40,6 +40,8 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
 
   const kindLabels: Record<string, string> = {
     VOICE: "Voice",
+    MP_PERFORMANCE: "MP performance",
+    GOVERNMENT_PERFORMANCE: "Government performance",
     SITUATIONAL_ALERT: "Situational alert",
     ELECTION_OBSERVATION: "Election observation",
   };

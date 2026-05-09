@@ -83,7 +83,7 @@ export default async function PublicCauseDetailPage({ params }: Props) {
     <div>
       <PageHeader
         title={report.publicCauseTitle}
-        description={report.publicCauseSummary.slice(0, 280) + (report.publicCauseSummary.length > 280 ? "…" : "")}
+        description="Started from a MBKRU Voice submission and opened as a public cause. Below: editor-approved summary, then support and comments from members — sign in to engage. The original submission text stays private."
         breadcrumbCurrentLabel={
           report.publicCauseTitle.length > 42
             ? `${report.publicCauseTitle.slice(0, 42)}…`

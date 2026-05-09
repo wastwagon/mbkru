@@ -21,7 +21,7 @@ export default async function SubmitVoiceReportPage() {
     <div>
       <PageHeader
         title="Submit a report"
-        description="Secure intake for MBKRU Voice and related channels. You will receive a tracking code — save it to check status later. We moderate all submissions. Election observation reports include extra review and are not filings with the EC or courts."
+        description="Choose report type — general Voice, MP performance, government performance, situational alerts, or election observation (when enabled). You submit directly; staff moderate and triage. You get a tracking code to check status. Not a court filing or official agency petition unless you also use those channels."
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

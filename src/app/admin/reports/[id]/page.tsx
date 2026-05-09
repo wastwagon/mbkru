@@ -23,7 +23,8 @@ import { prisma } from "@/lib/db/prisma";
 import { roundApproximateCoord } from "@/lib/geo/round-approximate-coord";
 import { destructiveTextControlClass, primaryLinkClass } from "@/lib/primary-link-styles";
 
-import type { CitizenReportStatus } from "@prisma/client";
+import type { CitizenReportKind, CitizenReportStatus } from "@prisma/client";
+import { reportKindLabel } from "@/lib/report-status-text";
 
 const STATUS_OPTIONS: { value: CitizenReportStatus; label: string }[] = [
   { value: "RECEIVED", label: "Received" },
@@ -189,6 +190,30 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
           </p>
         </div>
       ) : null}
+      {report.kind === "MP_PERFORMANCE" ? (
+        <div
+          className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-3 text-sm text-[var(--foreground)]"
+          role="note"
+        >
+          <p className="font-semibold">Moderation — MP performance</p>
+          <p className="mt-1 text-[var(--muted-foreground)]">
+            Submitted directly by a member as constituency accountability documentation. Verify factual claims where
+            possible before escalation or external citation.
+          </p>
+        </div>
+      ) : null}
+      {report.kind === "GOVERNMENT_PERFORMANCE" ? (
+        <div
+          className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-3 text-sm text-[var(--foreground)]"
+          role="note"
+        >
+          <p className="font-semibold">Moderation — government performance</p>
+          <p className="mt-1 text-[var(--muted-foreground)]">
+            Submitted directly by a member on programme or agency delivery. Check identifiable facts and programme
+            context before relay outside MBKRU.
+          </p>
+        </div>
+      ) : null}
 
       <dl className="mt-4 grid gap-2 text-sm text-[var(--muted-foreground)]">
         <div>
@@ -197,7 +222,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
         </div>
         <div>
           <dt className="inline font-medium text-[var(--foreground)]">Kind: </dt>
-          <dd className="inline">{report.kind.replace(/_/g, " ")}</dd>
+          <dd className="inline">{reportKindLabel(report.kind as CitizenReportKind)}</dd>
         </div>
         <div>
           <dt className="inline font-medium text-[var(--foreground)]">Status: </dt>

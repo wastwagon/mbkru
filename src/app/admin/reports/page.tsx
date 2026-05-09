@@ -13,6 +13,8 @@ import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles
 const KIND_TABS: { param: string; label: string; description: string }[] = [
   { param: "", label: "All", description: "Every report kind" },
   { param: "VOICE", label: "Voice", description: "Citizen Voice reports" },
+  { param: "MP_PERFORMANCE", label: "MP", description: "MP performance" },
+  { param: "GOVERNMENT_PERFORMANCE", label: "Gov", description: "Government performance" },
   { param: "SITUATIONAL_ALERT", label: "Situational", description: "Situational alerts" },
   { param: "ELECTION_OBSERVATION", label: "Election", description: "Election observation" },
 ];
@@ -20,7 +22,13 @@ const KIND_TABS: { param: string; label: string; description: string }[] = [
 function parseKindParam(raw: string | string[] | undefined): CitizenReportKind | undefined {
   const v = Array.isArray(raw) ? raw[0] : raw;
   if (!v) return undefined;
-  const allowed: CitizenReportKind[] = ["VOICE", "SITUATIONAL_ALERT", "ELECTION_OBSERVATION"];
+  const allowed: CitizenReportKind[] = [
+    "VOICE",
+    "MP_PERFORMANCE",
+    "GOVERNMENT_PERFORMANCE",
+    "SITUATIONAL_ALERT",
+    "ELECTION_OBSERVATION",
+  ];
   return allowed.includes(v as CitizenReportKind) ? (v as CitizenReportKind) : undefined;
 }
 

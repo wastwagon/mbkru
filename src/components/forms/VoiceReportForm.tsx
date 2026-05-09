@@ -36,6 +36,8 @@ export type RegionOption = { id: string; name: string; slug: string };
 
 const ALL_KINDS = [
   { value: "VOICE", label: "MBKRU Voice" },
+  { value: "MP_PERFORMANCE", label: "MP performance" },
+  { value: "GOVERNMENT_PERFORMANCE", label: "Government performance" },
   { value: "SITUATIONAL_ALERT", label: "Situational alert" },
   { value: "ELECTION_OBSERVATION", label: "Election observation" },
 ] as const;
@@ -104,6 +106,10 @@ export function VoiceReportForm({
   const [onlineBanner, setOnlineBanner] = useState(false);
   const turnstileRef = useRef<TurnstileInstance>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  /** Bump when restoring a queued draft so an in-flight geolocation callback cannot overwrite it. */
+  const geoGenerationRef = useRef(0);
+  /** Ensures we only auto-request browser geolocation once per signed-in session on this mount. */
+  const autoGeoRanRef = useRef(false);
 
   const parsedRoundedCoords = useMemo(() => {
     const lat = latitude.trim() === "" ? NaN : Number(latitude);
@@ -112,6 +118,22 @@ export function VoiceReportForm({
     if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return null;
     return { lat, lng };
   }, [latitude, longitude]);
+
+  const resolvedBodyPlaceholder = useMemo(() => {
+    if (bodyPlaceholder) return bodyPlaceholder;
+    switch (kind) {
+      case "MP_PERFORMANCE":
+        return "Name the MP where relevant. Describe what you observed on constituency service, accessibility, communication, or accountability — include dates, locations, and sources if you have them.";
+      case "GOVERNMENT_PERFORMANCE":
+        return "Name the ministry, agency, or programme. Describe what was expected versus what you observed on delivery — dates, locations, and factual detail.";
+      case "ELECTION_OBSERVATION":
+        return "Describe what you observed at the polling station or process — stay factual; no threats or knowingly false claims.";
+      case "SITUATIONAL_ALERT":
+        return "Share observable facts: where, when, what happened, and who was affected if known.";
+      default:
+        return "Describe facts, location, time, and who was involved. Avoid hearsay where possible.";
+    }
+  }, [bodyPlaceholder, kind]);
 
   const locationGateOk = useMemo(
     () =>
@@ -135,38 +157,37 @@ export function VoiceReportForm({
     if (!electionOn && kind === "ELECTION_OBSERVATION") setKind("VOICE");
   }, [electionOn, lockKind, kind]);
 
-  const requestApproximateLocation = useCallback(() => {
-    setGeoStatus("loading");
-    setError(null);
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      setGeoStatus("error");
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const lat = roundApproximateCoord(pos.coords.latitude);
-        const lng = roundApproximateCoord(pos.coords.longitude);
-        setLatitude(String(lat));
-        setLongitude(String(lng));
-        const slug = nearestRegionSlug(lat, lng);
-        const match = regions.find((r) => r.slug === slug);
-        if (match) setRegionId(match.id);
-        setApproxCaptured(true);
-        setGeoStatus("ok");
-      },
-      (err) => {
-        setGeoStatus(err.code === 1 ? "denied" : "error");
-      },
-      { enableHighAccuracy: false, maximumAge: 600_000, timeout: 20_000 },
-    );
-  }, [regions]);
+  const finalizeLocationFromCoords = useCallback(
+    async (lat: number, lng: number) => {
+      setLatitude(String(lat));
+      setLongitude(String(lng));
+      const slug = nearestRegionSlug(lat, lng);
+      const match = regions.find((r) => r.slug === slug) ?? regions[0];
+      if (match) setRegionId(match.id);
+      setApproxCaptured(true);
+      const regionName = match?.name ?? "";
 
-  const clearApproximateLocation = useCallback(() => {
-    setLatitude("");
-    setLongitude("");
-    setApproxCaptured(false);
-    setGeoStatus("idle");
-  }, []);
+      let areaLabel: string | null = null;
+      try {
+        const res = await fetch(
+          `/api/geo/reverse?lat=${encodeURIComponent(String(lat))}&lon=${encodeURIComponent(String(lng))}`,
+          { credentials: "same-origin" },
+        );
+        const data = (await res.json()) as { label?: string | null };
+        const raw = typeof data.label === "string" ? data.label.trim() : "";
+        if (raw.length >= LOCAL_AREA_MIN_LEN) areaLabel = raw.slice(0, 240);
+      } catch {
+        areaLabel = null;
+      }
+
+      setLocalArea(
+        areaLabel ??
+          `Approximate area — ${regionName || "Ghana"}`.slice(0, 240),
+      );
+      setGeoStatus("ok");
+    },
+    [regions],
+  );
 
   useEffect(() => {
     fetch("/api/auth/me", { credentials: "include" })
@@ -179,6 +200,38 @@ export function VoiceReportForm({
     if (authStatus !== "signedOut") return;
     redirectToMemberLogin(router, pathname || "/citizens-voice/submit");
   }, [authStatus, pathname, router]);
+
+  useEffect(() => {
+    if (authStatus === "signedOut") autoGeoRanRef.current = false;
+  }, [authStatus]);
+
+  /** Auto-request rounded device location once signed in — region + local area are filled automatically (read-only). */
+  useEffect(() => {
+    if (authStatus !== "signedIn") return;
+    if (!regions.length) return;
+    if (autoGeoRanRef.current) return;
+    autoGeoRanRef.current = true;
+    setGeoStatus("loading");
+    setError(null);
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setGeoStatus("error");
+      return;
+    }
+    const gen = ++geoGenerationRef.current;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        if (geoGenerationRef.current !== gen) return;
+        const lat = roundApproximateCoord(pos.coords.latitude);
+        const lng = roundApproximateCoord(pos.coords.longitude);
+        void finalizeLocationFromCoords(lat, lng);
+      },
+      (err) => {
+        if (geoGenerationRef.current !== gen) return;
+        setGeoStatus(err.code === 1 ? "denied" : "error");
+      },
+      { enableHighAccuracy: false, maximumAge: 300_000, timeout: 25_000 },
+    );
+  }, [authStatus, regions.length, finalizeLocationFromCoords]);
 
   useEffect(() => {
     syncQueue();
@@ -199,6 +252,7 @@ export function VoiceReportForm({
       : queueItems;
 
   function applyPayloadToForm(p: QueuedReportPayload) {
+    geoGenerationRef.current += 1;
     setKind(p.kind);
     setTitle(p.title);
     setBody(p.body);
@@ -210,6 +264,12 @@ export function VoiceReportForm({
       setLongitude(String(p.longitude));
       setApproxCaptured(true);
       setGeoStatus("ok");
+      if (
+        p.regionId &&
+        (p.localArea?.trim().length ?? 0) >= LOCAL_AREA_MIN_LEN
+      ) {
+        autoGeoRanRef.current = true;
+      }
     } else {
       setLatitude("");
       setLongitude("");
@@ -250,7 +310,7 @@ export function VoiceReportForm({
       const parsed = queuedReportPayloadSchema.safeParse(raw);
       if (!parsed.success) {
         setError(
-          "To save an offline draft, select region, enter local area (at least 3 characters), tap “Use my approximate location”, and allow access when prompted.",
+          "To save an offline draft, wait until region and local area are filled automatically from location, then try again.",
         );
         return "not_saved";
       }
@@ -327,10 +387,12 @@ export function VoiceReportForm({
     if (!locationGateOk || !parsedRoundedCoords) {
       setError(
         geoStatus === "denied"
-          ? "Location access is blocked. Enable location for this site in your browser (and device location services if applicable), then tap “Use my approximate location” again."
+          ? "Location access is blocked. Allow location for this site in your browser (and turn on device location if applicable), then reload the page so we can fill region and area automatically."
           : geoStatus === "error"
-            ? "This browser cannot provide location here. Try another browser or device, enable location services, then tap “Use my approximate location”."
-            : 'Tap “Use my approximate location” and choose Allow when prompted so we can record a rounded point (~1 km) with your report.',
+            ? "This browser could not provide location. Try another browser or device, enable location services, then reload the page."
+            : geoStatus === "loading"
+              ? "Still detecting your approximate location — wait a moment or reload if this persists."
+              : "Location must be captured automatically before submit. Reload the page and allow location when prompted.",
       );
       setLoading(false);
       return;
@@ -451,7 +513,7 @@ export function VoiceReportForm({
         // not_saved / storage_full: trySaveDraftLocally already set a specific error
       } else {
         setError(
-          "Connection problem. Your attachments can’t be stored offline. Connect and try again, or remove files and ensure region, local area, and approximate location are complete so we can save text on this device.",
+          "Connection problem. Your attachments can’t be stored offline. Connect and try again, or remove files and wait until location fields have filled automatically so we can save text on this device.",
         );
       }
     } finally {
@@ -652,6 +714,34 @@ export function VoiceReportForm({
         </div>
       ) : null}
 
+      {kind === "MP_PERFORMANCE" ? (
+        <div
+          className="rounded-xl border border-[var(--primary)]/25 bg-[var(--primary)]/5 px-4 py-3 text-sm text-[var(--foreground)]"
+          role="note"
+        >
+          <p className="font-semibold">MP performance</p>
+          <p className="mt-1 text-[var(--muted-foreground)]">
+            Use this for your assessment of how an MP is serving the constituency — visibility, casework, accessibility,
+            and accountability. You submit directly; staff moderate and triage like other Voice reports. This is not a
+            formal Parliament petition or party complaint.
+          </p>
+        </div>
+      ) : null}
+
+      {kind === "GOVERNMENT_PERFORMANCE" ? (
+        <div
+          className="rounded-xl border border-[var(--primary)]/25 bg-[var(--primary)]/5 px-4 py-3 text-sm text-[var(--foreground)]"
+          role="note"
+        >
+          <p className="font-semibold">Government performance</p>
+          <p className="mt-1 text-[var(--muted-foreground)]">
+            Use this for ministry, agency, or programme delivery you want documented — facts and observed outcomes, not
+            speculation. MBKRU triages submissions; use official agency channels where you need a binding government
+            response.
+          </p>
+        </div>
+      ) : null}
+
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-[var(--foreground)]">
           Short title
@@ -681,10 +771,7 @@ export function VoiceReportForm({
           value={body}
           onChange={(e) => setBody(e.target.value)}
           className={`${inputClass} resize-y min-h-[160px]`}
-          placeholder={
-            bodyPlaceholder ??
-            "Describe facts, location, time, and who was involved. Avoid hearsay where possible."
-          }
+          placeholder={resolvedBodyPlaceholder}
         />
       </div>
 
@@ -701,80 +788,16 @@ export function VoiceReportForm({
         />
       </div>
 
-      <div>
-        <label htmlFor="region" className="block text-sm font-medium text-[var(--foreground)]">
-          Region <span className="text-red-600">*</span>
-        </label>
-        <select
-          id="region"
-          required
-          value={regionId}
-          onChange={(e) => setRegionId(e.target.value)}
-          className={`${inputClass} cursor-pointer`}
-        >
-          <option value="">— Select —</option>
-          {regions.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <label htmlFor="local-area" className="block text-sm font-medium text-[var(--foreground)]">
-          Local area <span className="text-red-600">*</span>
-        </label>
-        <input
-          id="local-area"
-          required
-          minLength={LOCAL_AREA_MIN_LEN}
-          maxLength={240}
-          value={localArea}
-          onChange={(e) => setLocalArea(e.target.value)}
-          className={inputClass}
-          placeholder="e.g. neighbourhood or town — not your street address"
-          autoComplete="off"
-        />
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--section-light)]/40 px-4 py-4">
+        <p className="text-sm font-medium text-[var(--foreground)]">Location (automatic)</p>
         <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-          Use a general area name others would recognise. Do not paste precise coordinates or full addresses here —
-          this protects your safety.
+          We request your browser location once when this form loads (W3C Geolocation). Coordinates are rounded (~1 km)
+          for triage — never a precise pin. Region is inferred from that point; the local area label uses map data when
+          available (OpenStreetMap). These fields are not editable so submissions stay consistent with device permission.
         </p>
-      </div>
-
-      <div className="rounded-xl border border-[var(--border)] bg-white/60 px-4 py-4">
-        <p className="text-sm font-medium text-[var(--foreground)]">
-          Approximate device location <span className="text-red-600">*</span>
-        </p>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-          We use your browser’s location feature (W3C Geolocation — not Google Maps). You must tap below and choose{" "}
-          <strong className="font-medium text-[var(--foreground)]">Allow</strong> so we can store a{" "}
-          <strong className="font-medium text-[var(--foreground)]">rounded</strong> point (~1 km) for triage — never a
-          precise pin. Region above may be suggested automatically; adjust if it does not match where you are reporting
-          from.
-        </p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => void requestApproximateLocation()}
-            disabled={geoStatus === "loading"}
-            className="rounded-xl border border-[var(--border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--foreground)] shadow-sm transition hover:bg-[var(--section-light)] disabled:opacity-60 touch-manipulation"
-          >
-            {geoStatus === "loading" ? "Getting approximate location…" : "Use my approximate location"}
-          </button>
-          {approxCaptured ? (
-            <button
-              type="button"
-              onClick={clearApproximateLocation}
-              className="rounded-xl border border-[var(--border)] bg-transparent px-4 py-2.5 text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--section-light)] touch-manipulation"
-            >
-              Clear captured location
-            </button>
-          ) : null}
-        </div>
-        {geoStatus === "ok" ? (
-          <p className="mt-2 text-xs font-medium text-emerald-800" role="status">
-            Approximate location saved (~1 km). Region was suggested from regional centres — adjust if needed.
+        {geoStatus === "loading" ? (
+          <p className="mt-3 text-sm text-[var(--muted-foreground)]" role="status">
+            Detecting approximate location… allow the browser prompt if it appears.
           </p>
         ) : null}
         {geoStatus === "denied" ? (
@@ -782,12 +805,10 @@ export function VoiceReportForm({
             className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-3 text-xs text-amber-950"
             role="alert"
           >
-            <p className="font-semibold text-amber-950">Location access is blocked — submission stays disabled</p>
+            <p className="font-semibold text-amber-950">Location blocked — you cannot submit until it is allowed</p>
             <p className="mt-2 text-amber-950/95">
-              You must allow location for this website before you can submit. On mobile: turn on device location services
-              (GPS), then in the browser allow location for this site. On desktop: use the lock or site-info icon in the
-              address bar → Site settings → Location → Allow. Reload the page if needed, then tap “Use my approximate
-              location” again.
+              Enable location for this site in your browser (address bar lock / site settings → Location → Allow). On
+              mobile, turn on device location services. Then reload this page.
             </p>
           </div>
         ) : null}
@@ -796,13 +817,59 @@ export function VoiceReportForm({
             className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-3 text-xs text-amber-950"
             role="alert"
           >
-            <p className="font-semibold text-amber-950">Location is not available in this browser context</p>
+            <p className="font-semibold text-amber-950">Location unavailable</p>
             <p className="mt-2 text-amber-950/95">
-              Try another browser, disable strict blocking for geolocation, or ensure system location is enabled. You
-              cannot submit until approximate location is captured successfully.
+              Try another browser or device, enable location services, then reload this page.
             </p>
           </div>
         ) : null}
+      </div>
+
+      <div>
+        <label htmlFor="region" className="block text-sm font-medium text-[var(--foreground)]">
+          Region <span className="text-red-600">*</span>
+        </label>
+        <select
+          id="region"
+          disabled
+          required
+          value={regionId}
+          className={`${inputClass} cursor-not-allowed opacity-90`}
+          aria-readonly="true"
+        >
+          <option value="">
+            {geoStatus === "loading" ? "Detecting region…" : "—"}
+          </option>
+          {regions.map((r) => (
+            <option key={r.id} value={r.id}>
+              {r.name}
+            </option>
+          ))}
+        </select>
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">Set automatically from your rounded location.</p>
+      </div>
+
+      <div>
+        <label htmlFor="local-area" className="block text-sm font-medium text-[var(--foreground)]">
+          Local area <span className="text-red-600">*</span>
+        </label>
+        <input
+          id="local-area"
+          readOnly
+          disabled={geoStatus !== "ok"}
+          required
+          minLength={LOCAL_AREA_MIN_LEN}
+          maxLength={240}
+          value={localArea}
+          className={`${inputClass} cursor-not-allowed opacity-90`}
+          placeholder={geoStatus === "loading" ? "Resolving area label…" : ""}
+          autoComplete="off"
+          aria-readonly="true"
+        />
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          Filled automatically (general locality — not your street address). © OpenStreetMap contributors where map data
+          is used.
+        </p>
       </div>
 
       <p className="text-sm text-[var(--muted-foreground)]">
@@ -842,7 +909,7 @@ export function VoiceReportForm({
 
       {!locationGateOk ? (
         <p className="text-sm text-[var(--muted-foreground)]" role="status">
-          Submit stays disabled until region, local area, and approximate location (with permission) are complete.
+          Submit stays disabled until automatic location capture finishes (browser permission + area label).
         </p>
       ) : null}
 

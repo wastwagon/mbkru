@@ -9,7 +9,13 @@ import { z } from "zod";
 const STORAGE_KEY = "mbkru_report_queue_v1";
 export const MAX_QUEUED_REPORTS = 5;
 
-const reportKindSchema = z.enum(["VOICE", "SITUATIONAL_ALERT", "ELECTION_OBSERVATION"]);
+const reportKindSchema = z.enum([
+  "VOICE",
+  "SITUATIONAL_ALERT",
+  "ELECTION_OBSERVATION",
+  "MP_PERFORMANCE",
+  "GOVERNMENT_PERFORMANCE",
+]);
 
 export const queuedReportPayloadSchema = z
   .object({
