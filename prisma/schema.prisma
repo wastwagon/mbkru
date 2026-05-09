@@ -313,6 +313,9 @@ model CitizenReport {
   kind                  CitizenReportKind
   memberId              String?
   member                Member?                 @relation(fields: [memberId], references: [id], onDelete: SetNull)
+  /// MP performance intake — links submitter narrative to a roster MP (parliamentary tracker / pledge sheet).
+  parliamentMemberId    String?
+  parliamentMember      ParliamentMember?       @relation(fields: [parliamentMemberId], references: [id], onDelete: SetNull)
   submitterEmail        String?
   submitterPhone        String?
   title                 String
@@ -346,6 +349,7 @@ model CitizenReport {
 
   @@index([kind, status])
   @@index([memberId])
+  @@index([parliamentMemberId])
   @@index([slaDueAt])
   @@index([publicCauseOpenedAt])
 }
@@ -498,6 +502,7 @@ model ParliamentMember {
   updatedAt          DateTime      @updatedAt
   promises           CampaignPromise[]
   scoreEntries       ScorecardEntry[]
+  citizenReports     CitizenReport[]
 
   @@index([constituencyId])
 }

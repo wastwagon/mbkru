@@ -15,6 +15,8 @@ export const createReportBodySchema = z
     category: z.string().trim().max(120).optional(),
     regionId: z.string().cuid(),
     constituencyId: z.string().cuid().optional(),
+    /** Required when kind is MP_PERFORMANCE — roster MP id. */
+    parliamentMemberId: z.string().cuid().optional(),
     localArea: z.string().trim().min(3).max(240),
     latitude: z.number().gte(-90).lte(90),
     longitude: z.number().gte(-180).lte(180),
@@ -35,6 +37,15 @@ export const createReportBodySchema = z
         message: "Use international phone format (E.164), e.g. +233201234567",
         path: ["submitterPhone"],
       });
+    }
+    if (data.kind === "MP_PERFORMANCE") {
+      if (!data.parliamentMemberId?.trim()) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Select the Member of Parliament this report is about.",
+          path: ["parliamentMemberId"],
+        });
+      }
     }
   });
 

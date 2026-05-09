@@ -38,17 +38,47 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Sign in to submit a report." }, { status: 401 });
     }
 
-    const region = await prisma.region.findUnique({ where: { id: data.regionId } });
+    let regionId = data.regionId;
+    let constituencyId = data.constituencyId ?? null;
+    let parliamentMemberId: string | null = null;
+    let parliamentMemberSlug: string | null = null;
+
+    if (data.kind === "MP_PERFORMANCE") {
+      const rosterMp = await prisma.parliamentMember.findFirst({
+        where: { id: data.parliamentMemberId!, active: true },
+        select: { id: true, slug: true, constituencyId: true },
+      });
+      if (!rosterMp) {
+        return NextResponse.json(
+          { error: "Select a valid Member of Parliament from the roster." },
+          { status: 400 },
+        );
+      }
+      parliamentMemberId = rosterMp.id;
+      parliamentMemberSlug = rosterMp.slug;
+      if (rosterMp.constituencyId) {
+        const c = await prisma.constituency.findUnique({
+          where: { id: rosterMp.constituencyId },
+          select: { id: true, regionId: true },
+        });
+        if (c) {
+          constituencyId = c.id;
+          regionId = c.regionId;
+        }
+      }
+    }
+
+    const region = await prisma.region.findUnique({ where: { id: regionId } });
     if (!region) {
       return NextResponse.json({ error: "Invalid region" }, { status: 400 });
     }
 
-    if (data.constituencyId) {
-      const c = await prisma.constituency.findUnique({ where: { id: data.constituencyId } });
+    if (constituencyId) {
+      const c = await prisma.constituency.findUnique({ where: { id: constituencyId } });
       if (!c) {
         return NextResponse.json({ error: "Invalid constituency" }, { status: 400 });
       }
-      if (data.regionId && c.regionId !== data.regionId) {
+      if (c.regionId !== regionId) {
         return NextResponse.json({ error: "Constituency does not belong to the selected region" }, { status: 400 });
       }
     }
@@ -63,13 +93,14 @@ export async function POST(request: Request) {
         trackingCode,
         kind: data.kind,
         memberId: member?.memberId ?? null,
+        parliamentMemberId,
         submitterEmail: data.submitterEmail?.trim().toLowerCase() ?? null,
         submitterPhone: data.submitterPhone?.trim() ?? null,
         title: data.title,
         body: data.body,
         category: data.category?.trim() || null,
-        regionId: data.regionId,
-        constituencyId: data.constituencyId ?? null,
+        regionId,
+        constituencyId,
         localArea: data.localArea.trim(),
         latitude: lat,
         longitude: lng,
@@ -85,6 +116,7 @@ export async function POST(request: Request) {
       id: report.id,
       submittedAt: report.createdAt.toISOString(),
       ...(attachmentUploadToken ? { attachmentUploadToken } : {}),
+      ...(parliamentMemberSlug ? { parliamentMemberSlug } : {}),
     });
   } catch (e) {
     console.error(e);

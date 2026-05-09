@@ -25,6 +25,7 @@ export const queuedReportPayloadSchema = z
     category: z.string().trim().max(120).optional(),
     regionId: z.string().cuid(),
     constituencyId: z.string().cuid().optional(),
+    parliamentMemberId: z.string().cuid().optional(),
     localArea: z.string().trim().min(3).max(240),
     latitude: z.number().gte(-90).lte(90),
     longitude: z.number().gte(-180).lte(180),
@@ -42,6 +43,13 @@ export const queuedReportPayloadSchema = z
         code: "custom",
         message: "Use E.164 phone",
         path: ["submitterPhone"],
+      });
+    }
+    if (data.kind === "MP_PERFORMANCE" && !data.parliamentMemberId?.trim()) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Select the MP this report is about.",
+        path: ["parliamentMemberId"],
       });
     }
   });

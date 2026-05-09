@@ -9,6 +9,8 @@
  * Optional admin fixtures (Voice + attachment, situational/election rows, contact, verification queue): `SEED_ENGAGEMENT_DEMOS=1` or `SEED_VOICE_DEMO=1`. Internal origin is noted in `CitizenReport.staffNotes` / contact message footer where applicable.
  * With `SEED_ENGAGEMENT_DEMOS=1`, also seeds **10 demo members** (`demo.cohort01@mbkru.local` … `demo.cohort10@mbkru.local`), member-linked Voice/Situational/Election reports (incl. whistleblow-tagged Voice), community memberships/posts, **petitions** (with **signatures** from other cohort members), a **public cause** thread (**supports** + **comments**), extra **community reply** posts, sample **notifications**, and lead captures — password: `SEED_DEMO_COHORT_PASSWORD` or `SEED_MEMBER_PASSWORD` or default `DemoCohort!change-2026`.
  * **Stakeholder Phase 3 walkthrough (simulated accountability data):** `SEED_STAKEHOLDER_ACCOUNTABILITY_SIM=1` after you have loaded the MP roster (`prisma/data/parliament-members.seed.json`, default on). Upserts a **ScorecardEntry** for every **active** `ParliamentMember`, sets illustrative `overallScore` + `metrics` JSON, rewrites the default cycle label/methodology as **simulation**. Optional: one **CampaignPromise** per active MP (`verificationNotes` prefix `mbkru-seed:stakeholder-accountability-sim-v1`) — disable with `SEED_STAKEHOLDER_SIM_PROMISES=0` if the browse catalogue should stay lighter.
+ * **Presentation demo (Ghana Voice samples):** `SEED_PRESENTATION_DEMO=1` upserts **20 members** (`presentation.demo.01@mbkru.local` … `20`) with Ghanaian display names and **20 citizen reports** (four per report kind, including `MP_PERFORMANCE` rows linked to roster MPs). Password: `SEED_PRESENTATION_DEMO_PASSWORD`, else `SEED_MEMBER_PASSWORD`, else the demo cohort default.
+ * **One-shot deck load:** `npm run db:seed:full-demo` sets **`SEED_PRESENTATION_DEMO`** + **`SEED_STAKEHOLDER_ACCOUNTABILITY_SIM`** so one seed pass fills **Citizen Voice presentation fixtures**, simulated **People’s Report Card / scorecard entries**, and optional **per-MP stakeholder promises** (same flags as running those seeds separately). Does not enable **`SEED_ENGAGEMENT_DEMOS`** (cohort/petitions/community) — add that env yourself if you need it.
  * @see package.json prisma.seed
  */
 import { readFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
@@ -1941,6 +1943,183 @@ async function seedDashboardDemoCohort() {
   await seedDashboardDemoCohortActivityExtensions(members, community ?? null);
 }
 
+/** Opt-in: `SEED_PRESENTATION_DEMO=1` — 20 Ghana-named demo accounts + one report each (all CitizenReportKind values). */
+async function seedPresentationDemo() {
+  const plain = (
+    process.env.SEED_PRESENTATION_DEMO_PASSWORD ||
+    process.env.SEED_MEMBER_PASSWORD ||
+    "DemoCohort!change-2026"
+  ).trim();
+  const password = await bcrypt.hash(plain, 12);
+
+  const regions = await prisma.region.findMany({ orderBy: { sortOrder: "asc" } });
+  const accra = regions.find((r) => r.slug === "greater-accra") ?? regions[0];
+  if (!accra) {
+    console.warn("SEED_PRESENTATION_DEMO: no regions seeded — skipping.");
+    return;
+  }
+
+  const mps = await prisma.parliamentMember.findMany({
+    where: { active: true },
+    orderBy: { name: "asc" },
+    take: 12,
+    select: { id: true, constituencyId: true },
+  });
+  if (mps.length === 0) {
+    console.warn("SEED_PRESENTATION_DEMO: no ParliamentMember rows — load parliament-members.seed.json first.");
+    return;
+  }
+
+  const displayNames = [
+    "Kwame Asante",
+    "Akosua Boateng",
+    "Kofi Mensah",
+    "Abena Owusu",
+    "Yaw Darko",
+    "Efua Adjei",
+    "Nana Osei",
+    "Ama Serwaa",
+    "Kojo Frimpong",
+    "Adwoa Tetteh",
+    "Kwesi Annan",
+    "Leticia Armah",
+    "Ibrahim Sulemana",
+    "Faustina Amponsah",
+    "Rexford Kyere",
+    "Gifty Akoto",
+    "Samuel Ofori",
+    "Patricia Quaye",
+    "Emmanuel Dadzie",
+    "Selase Agbeko",
+  ];
+
+  const emails = displayNames.map(
+    (_, i) => `presentation.demo.${String(i + 1).padStart(2, "0")}@mbkru.local`,
+  );
+
+  const members = [];
+  for (let i = 0; i < emails.length; i++) {
+    const m = await prisma.member.upsert({
+      where: { email: emails[i] },
+      create: {
+        email: emails[i],
+        password,
+        displayName: displayNames[i],
+        regionId: accra.id,
+      },
+      update: {
+        password,
+        displayName: displayNames[i],
+        regionId: accra.id,
+      },
+    });
+    members.push(m);
+  }
+  console.log(
+    "Presentation demo: 20 members upserted (",
+    emails[0],
+    "…",
+    emails[19],
+    "). Password from SEED_PRESENTATION_DEMO_PASSWORD / SEED_MEMBER_PASSWORD / default.",
+  );
+
+  const KIND_ROTATION = [
+    "VOICE",
+    "MP_PERFORMANCE",
+    "GOVERNMENT_PERFORMANCE",
+    "SITUATIONAL_ALERT",
+    "ELECTION_OBSERVATION",
+  ];
+
+  const titles = {
+    VOICE: "Market levy transparency — Kaneshie traders",
+    MP_PERFORMANCE: "Constituency office hours — resident follow-up",
+    GOVERNMENT_PERFORMANCE: "District assembly drainage contract visibility",
+    SITUATIONAL_ALERT: "Road shoulder erosion — safety observation",
+    ELECTION_OBSERVATION: "Polling station queue management — neutral observation",
+  };
+
+  const bodies = {
+    VOICE:
+      "Ghana demonstration data only: traders asked for published schedules for market levies and clearer receipts. Fixture for MBKRU Voice presentation — not a verified investigation.",
+    MP_PERFORMANCE:
+      "Ghana demonstration data: compares advertised constituency surgery hours with observed access at the MP’s office. Fixture for parliamentary tracker linkage — staff must verify.",
+    GOVERNMENT_PERFORMANCE:
+      "Ghana demonstration data: asks the district assembly to publish which contractor is responsible for drainage works and the inspection timeline. Government accountability intake — fixture.",
+    SITUATIONAL_ALERT:
+      "Ghana demonstration data: observable road shoulder damage after heavy rain; requests signage or temporary barrier. Situational triage only — fixture.",
+    ELECTION_OBSERVATION:
+      "Ghana demonstration data: factual note on queue length and signage at one polling stream — not an accredited observation mission. Fixture only.",
+  };
+
+  const categories = {
+    VOICE: "Local economy",
+    MP_PERFORMANCE: "Constituency access",
+    GOVERNMENT_PERFORMANCE: "Local government",
+    SITUATIONAL_ALERT: "Infrastructure",
+    ELECTION_OBSERVATION: "Process",
+  };
+
+  for (let i = 0; i < 20; i++) {
+    const kind = KIND_ROTATION[i % KIND_ROTATION.length];
+    const mem = members[i];
+    const code = `MBKRU-PRES-DEMO-${String(i + 1).padStart(2, "0")}`;
+
+    let parliamentMemberId = null;
+    let constituencyId = null;
+    let regionId = accra.id;
+
+    if (kind === "MP_PERFORMANCE") {
+      const mp = mps[i % mps.length];
+      parliamentMemberId = mp.id;
+      if (mp.constituencyId) {
+        constituencyId = mp.constituencyId;
+        const c = await prisma.constituency.findUnique({
+          where: { id: mp.constituencyId },
+          select: { regionId: true },
+        });
+        if (c) regionId = c.regionId;
+      }
+    }
+
+    await prisma.citizenReport.upsert({
+      where: { trackingCode: code },
+      create: {
+        trackingCode: code,
+        kind,
+        memberId: mem.id,
+        parliamentMemberId,
+        title: titles[kind],
+        body: bodies[kind],
+        category: categories[kind],
+        status: "RECEIVED",
+        regionId,
+        constituencyId,
+        localArea: "Greater Accra — demonstration locality label (seed)",
+        latitude: 5.6037,
+        longitude: -0.187,
+        staffNotes: "prisma seed — SEED_PRESENTATION_DEMO=1. Safe to archive.",
+      },
+      update: {
+        kind,
+        memberId: mem.id,
+        parliamentMemberId,
+        title: titles[kind],
+        body: bodies[kind],
+        category: categories[kind],
+        regionId,
+        constituencyId,
+        localArea: "Greater Accra — demonstration locality label (seed)",
+        latitude: 5.6037,
+        longitude: -0.187,
+        staffNotes: "prisma seed — SEED_PRESENTATION_DEMO=1. Safe to archive.",
+      },
+    });
+  }
+
+  console.log("Presentation demo: 20 citizen reports upserted (MBKRU-PRES-DEMO-01 … 20).");
+}
+
 async function main() {
   console.log("MBKRU prisma seed: starting…");
   for (let i = 0; i < REGIONS_SEED.length; i++) {
@@ -2051,6 +2230,10 @@ async function main() {
   }
   if (process.env.SEED_ENGAGEMENT_DEMOS === "1") {
     await seedDashboardDemoCohort();
+  }
+
+  if (process.env.SEED_PRESENTATION_DEMO === "1" || process.env.SEED_PRESENTATION_DEMO?.toLowerCase() === "true") {
+    await seedPresentationDemo();
   }
 
   console.log("MBKRU prisma seed: finished OK.");

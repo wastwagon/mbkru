@@ -17,6 +17,21 @@ export default async function SubmitVoiceReportPage() {
     select: { id: true, name: true, slug: true },
   });
 
+  const mpRows = await prisma.parliamentMember.findMany({
+    where: { active: true },
+    orderBy: { name: "asc" },
+    select: {
+      id: true,
+      name: true,
+      party: true,
+      constituency: { select: { name: true } },
+    },
+  });
+  const mpOptions = mpRows.map((m) => ({
+    id: m.id,
+    label: `${m.name}${m.party ? ` · ${m.party}` : ""}${m.constituency?.name ? ` · ${m.constituency.name}` : ""}`,
+  }));
+
   return (
     <div>
       <PageHeader
@@ -42,7 +57,7 @@ export default async function SubmitVoiceReportPage() {
               Track an existing report
             </Link>
           </p>
-          <VoiceReportForm regions={regions} />
+          <VoiceReportForm regions={regions} mpOptions={mpOptions} />
         </div>
       </section>
     </div>

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 
+import { ACCOUNTABILITY_CATALOGUE_ROUTES } from "@/config/accountability-catalogue-destinations";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
 import { nearestRegionSlug } from "@/lib/geo/ghana-region-centroids";
@@ -34,6 +35,8 @@ const ATTACH_ACCEPT = "image/jpeg,image/png,image/webp,application/pdf";
 
 export type RegionOption = { id: string; name: string; slug: string };
 
+export type MpOption = { id: string; label: string };
+
 const ALL_KINDS = [
   { value: "VOICE", label: "MBKRU Voice" },
   { value: "MP_PERFORMANCE", label: "MP performance" },
@@ -59,6 +62,8 @@ function formatDraftSavedAt(ts: number): string {
 
 export type VoiceReportFormProps = {
   regions: RegionOption[];
+  /** Roster MPs for MP performance — label shown as Name · party · constituency. */
+  mpOptions?: MpOption[];
   /** When set with `lockKind`, submission uses this kind only. */
   defaultKind?: (typeof ALL_KINDS)[number]["value"];
   /** Hide report-type selector (e.g. situational submit page). */
@@ -69,6 +74,7 @@ export type VoiceReportFormProps = {
 
 export function VoiceReportForm({
   regions,
+  mpOptions = [],
   defaultKind = "VOICE",
   lockKind = false,
   bodyPlaceholder,
@@ -100,6 +106,8 @@ export function VoiceReportForm({
   const [trackingCode, setTrackingCode] = useState<string | null>(null);
   const [submittedAtIso, setSubmittedAtIso] = useState<string | null>(null);
   const [uploadNote, setUploadNote] = useState<string | null>(null);
+  const [parliamentMemberId, setParliamentMemberId] = useState("");
+  const [submittedMpSlug, setSubmittedMpSlug] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [queueItems, setQueueItems] = useState<ReportQueueItem[]>([]);
   const [localDraftNotice, setLocalDraftNotice] = useState<string | null>(null);
@@ -151,6 +159,10 @@ export function VoiceReportForm({
   useEffect(() => {
     if (lockKind && defaultKind) setKind(defaultKind);
   }, [lockKind, defaultKind]);
+
+  useEffect(() => {
+    if (kind !== "MP_PERFORMANCE") setParliamentMemberId("");
+  }, [kind]);
 
   useEffect(() => {
     if (lockKind) return;
@@ -257,6 +269,7 @@ export function VoiceReportForm({
     setTitle(p.title);
     setBody(p.body);
     setCategory(p.category ?? "");
+    setParliamentMemberId(p.parliamentMemberId ?? "");
     setRegionId(p.regionId ?? "");
     setLocalArea(p.localArea ?? "");
     if (p.latitude != null && p.longitude != null) {
@@ -291,6 +304,7 @@ export function VoiceReportForm({
     if (fileInputRef.current) fileInputRef.current.value = "";
     setTurnstileToken(null);
     turnstileRef.current?.reset();
+    setParliamentMemberId("");
   }
 
   function trySaveDraftLocally(): LocalDraftResult {
@@ -306,6 +320,8 @@ export function VoiceReportForm({
         localArea: localArea.trim(),
         latitude: parsedRoundedCoords?.lat,
         longitude: parsedRoundedCoords?.lng,
+        parliamentMemberId:
+          kind === "MP_PERFORMANCE" && parliamentMemberId.trim() ? parliamentMemberId.trim() : undefined,
       };
       const parsed = queuedReportPayloadSchema.safeParse(raw);
       if (!parsed.success) {
@@ -353,6 +369,7 @@ export function VoiceReportForm({
     setUploadNote(null);
     setLoading(true);
     setTrackingCode(null);
+    setSubmittedMpSlug(null);
 
     const fileList = fileInputRef.current?.files ? Array.from(fileInputRef.current.files) : [];
     const attachErr = validateAttachmentList(fileList);
@@ -384,6 +401,19 @@ export function VoiceReportForm({
       setLoading(false);
       return;
     }
+    if (kind === "MP_PERFORMANCE") {
+      if (!parliamentMemberId.trim()) {
+        setError("Select the Member of Parliament this MP performance report is about.");
+        setLoading(false);
+        return;
+      }
+      if (mpOptions.length > 0 && !mpOptions.some((m) => m.id === parliamentMemberId)) {
+        setError("That MP is not in the current roster — refresh the page and try again.");
+        setLoading(false);
+        return;
+      }
+    }
+
     if (!locationGateOk || !parsedRoundedCoords) {
       setError(
         geoStatus === "denied"
@@ -408,6 +438,9 @@ export function VoiceReportForm({
       latitude: parsedRoundedCoords.lat,
       longitude: parsedRoundedCoords.lng,
       turnstileToken: turnstileToken ?? undefined,
+      ...(kind === "MP_PERFORMANCE" && parliamentMemberId.trim()
+        ? { parliamentMemberId: parliamentMemberId.trim() }
+        : {}),
     };
 
     try {
@@ -423,6 +456,7 @@ export function VoiceReportForm({
         id?: string;
         attachmentUploadToken?: string;
         submittedAt?: string;
+        parliamentMemberSlug?: string;
       };
       if (!res.ok) {
         if (res.status === 401) {
@@ -458,6 +492,7 @@ export function VoiceReportForm({
       if (data.trackingCode) {
         setTrackingCode(data.trackingCode);
         setSubmittedAtIso(data.submittedAt ?? new Date().toISOString());
+        setSubmittedMpSlug(data.parliamentMemberSlug ?? null);
       }
       syncQueue();
 
@@ -501,6 +536,7 @@ export function VoiceReportForm({
       setLongitude("");
       setApproxCaptured(false);
       setGeoStatus("idle");
+      setParliamentMemberId("");
       if (fileInputRef.current) fileInputRef.current.value = "";
       setTurnstileToken(null);
       turnstileRef.current?.reset();
@@ -651,6 +687,13 @@ export function VoiceReportForm({
               Check status
             </Link>
           </p>
+          {submittedMpSlug ? (
+            <p className="mt-2 text-sm text-green-900/95">
+              <Link href={`/promises/${encodeURIComponent(submittedMpSlug)}`} className={primaryLinkClass}>
+                Open this MP’s commitment sheet on the parliamentary tracker
+              </Link>
+            </p>
+          ) : null}
           <details className="mt-4 rounded-lg border border-green-200/80 bg-white/60 px-3 py-2 text-sm text-green-950">
             <summary
               className={`cursor-pointer rounded-sm font-medium text-green-900 outline-none marker:text-green-700 ${focusRingSmClass}`}
@@ -725,6 +768,42 @@ export function VoiceReportForm({
             and accountability. You submit directly; staff moderate and triage like other Voice reports. This is not a
             formal Parliament petition or party complaint.
           </p>
+          <p className="mt-2 text-[var(--muted-foreground)]">
+            Choose the sitting MP in the list below so the intake links to their parliamentary tracker sheet and catalogue
+            entry (same roster as{" "}
+            <Link href="/promises" className={primaryLinkClass}>
+              Commitments by MP
+            </Link>
+            ).
+          </p>
+        </div>
+      ) : null}
+
+      {kind === "MP_PERFORMANCE" && !lockKind ? (
+        <div>
+          <label htmlFor="parliament-member" className="block text-sm font-medium text-[var(--foreground)]">
+            Member of Parliament <span className="text-red-600">*</span>
+          </label>
+          <select
+            id="parliament-member"
+            required
+            value={parliamentMemberId}
+            onChange={(e) => setParliamentMemberId(e.target.value)}
+            className={`${inputClass} cursor-pointer`}
+          >
+            <option value="">Select an MP from the roster…</option>
+            {mpOptions.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.label}
+              </option>
+            ))}
+          </select>
+          {mpOptions.length === 0 ? (
+            <p className="mt-1 text-xs text-amber-800" role="status">
+              MP roster is unavailable (database or configuration). You cannot submit an MP performance report until the
+              roster loads — refresh the page or try again later.
+            </p>
+          ) : null}
         </div>
       ) : null}
 
@@ -738,6 +817,13 @@ export function VoiceReportForm({
             Use this for ministry, agency, or programme delivery you want documented — facts and observed outcomes, not
             speculation. MBKRU triages submissions; use official agency channels where you need a binding government
             response.
+          </p>
+          <p className="mt-2 text-[var(--muted-foreground)]">
+            These intakes are tracked alongside the public{" "}
+            <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments} className={primaryLinkClass}>
+              Government commitments
+            </Link>{" "}
+            lens on the same promise catalogue (programme-tagged executive rows).
           </p>
         </div>
       ) : null}
@@ -915,7 +1001,12 @@ export function VoiceReportForm({
 
       <Button
         type="submit"
-        disabled={loading || (isTurnstileWidgetEnabled && !turnstileToken) || !locationGateOk}
+        disabled={
+          loading ||
+          (isTurnstileWidgetEnabled && !turnstileToken) ||
+          !locationGateOk ||
+          (kind === "MP_PERFORMANCE" && !lockKind && (!parliamentMemberId.trim() || mpOptions.length === 0))
+        }
         size="lg"
         className="w-full min-w-0 justify-center sm:w-auto"
       >

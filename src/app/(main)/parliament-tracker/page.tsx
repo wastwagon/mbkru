@@ -11,7 +11,7 @@ import {
   accountabilityProse,
 } from "@/config/accountability-catalogue-destinations";
 import { ghanaParliamentTermShortLabel } from "@/config/ghana-parliament-term";
-import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { images } from "@/lib/site-content";
 import {
   isPartnerApiTermsPageEnabled,
@@ -56,6 +56,12 @@ export default async function ParliamentTrackerPage() {
   const dbReady = isDatabaseConfigured();
   let trackerStats: Awaited<ReturnType<typeof getCachedPromiseTrackerStats>> | null = null;
   let mpRoster: Awaited<ReturnType<typeof getCachedMpsPublicRoster>> = [];
+  let recentMpVoice: {
+    title: string;
+    trackingCode: string;
+    createdAt: Date;
+    parliamentMember: { name: string; slug: string } | null;
+  }[] = [];
 
   if (dbReady) {
     try {
@@ -67,6 +73,21 @@ export default async function ParliamentTrackerPage() {
       /* Unreachable DB at runtime or flaky connection — render page without roster strip */
       trackerStats = null;
       mpRoster = [];
+    }
+    try {
+      recentMpVoice = await prisma.citizenReport.findMany({
+        where: { kind: "MP_PERFORMANCE", parliamentMemberId: { not: null } },
+        orderBy: { createdAt: "desc" },
+        take: 12,
+        select: {
+          title: true,
+          trackingCode: true,
+          createdAt: true,
+          parliamentMember: { select: { name: true, slug: true } },
+        },
+      });
+    } catch {
+      recentMpVoice = [];
     }
   }
 
@@ -180,6 +201,50 @@ export default async function ParliamentTrackerPage() {
                   ))}
                 </ul>
               )}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {dbReady && recentMpVoice.length > 0 ? (
+        <section className="section-spacing section-full bg-[var(--section-light)] pb-10">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6">
+              <h2 className="font-display text-lg font-bold text-[var(--foreground)]">
+                Recent MP performance reports (Citizen Voice)
+              </h2>
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+                Intakes filed with a roster MP selected — staff moderation applies; follow each MP&apos;s commitment sheet
+                for catalogue evidence.
+              </p>
+              <ul className="mt-4 divide-y divide-[var(--border)] rounded-xl border border-[var(--border)]">
+                {recentMpVoice.map((r) => (
+                  <li key={r.trackingCode} className="flex flex-wrap items-baseline justify-between gap-2 px-3 py-2.5 text-sm">
+                    <div className="min-w-0">
+                      <span className="font-medium text-[var(--foreground)]">{r.title}</span>
+                      {r.parliamentMember ? (
+                        <span className="text-[var(--muted-foreground)]">
+                          {" "}
+                          ·{" "}
+                          {showPromises ? (
+                            <Link href={`/promises/${encodeURIComponent(r.parliamentMember.slug)}`} className={primaryLinkClass}>
+                              {r.parliamentMember.name}
+                            </Link>
+                          ) : (
+                            r.parliamentMember.name
+                          )}
+                        </span>
+                      ) : null}
+                    </div>
+                    <Link
+                      href={`/track-report?code=${encodeURIComponent(r.trackingCode)}`}
+                      className={`shrink-0 tabular-nums text-xs ${primaryNavLinkClass}`}
+                    >
+                      {r.trackingCode}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </section>

@@ -24,6 +24,8 @@
     "db:migrate": "prisma migrate deploy",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
+    "db:seed:presentation": "SEED_PRESENTATION_DEMO=1 prisma db seed",
+    "db:seed:full-demo": "SEED_PRESENTATION_DEMO=1 SEED_STAKEHOLDER_ACCOUNTABILITY_SIM=1 prisma db seed",
     "db:seed:stakeholder-sim": "SEED_STAKEHOLDER_ACCOUNTABILITY_SIM=1 prisma db seed",
     "setup:local": "node scripts/setup-local.mjs",
     "docker:db:hydrate": "node scripts/setup-docker-db.mjs",

@@ -12,6 +12,11 @@ const base = {
   longitude: -0.187,
 };
 
+const mpBase = {
+  ...base,
+  kind: "MP_PERFORMANCE" as const,
+};
+
 describe("createReportBodySchema", () => {
   it("accepts optional E.164 submitterPhone", () => {
     const r = createReportBodySchema.safeParse({
@@ -38,5 +43,22 @@ describe("createReportBodySchema", () => {
       localArea: "Ab",
     });
     expect(r.success).toBe(false);
+  });
+
+  it("requires parliamentMemberId for MP_PERFORMANCE", () => {
+    const r = createReportBodySchema.safeParse({
+      ...mpBase,
+      submitterEmail: "a@b.co",
+    });
+    expect(r.success).toBe(false);
+  });
+
+  it("accepts MP_PERFORMANCE with parliamentMemberId", () => {
+    const r = createReportBodySchema.safeParse({
+      ...mpBase,
+      submitterEmail: "a@b.co",
+      parliamentMemberId: "cjld2cjxh0000qzrmn831i7rn",
+    });
+    expect(r.success).toBe(true);
   });
 });
