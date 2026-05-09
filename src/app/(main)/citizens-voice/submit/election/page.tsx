@@ -23,7 +23,7 @@ export default async function SubmitElectionObservationPage() {
     <div>
       <PageHeader
         title="Election observation report"
-        description="This intake is for election-window situational observations. Reports are moderated and are not filings with the EC or courts. You will receive a tracking code."
+        description="This form is for election-window situational observations. Reports are moderated and are not filings with the EC or courts. You will receive a tracking code."
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

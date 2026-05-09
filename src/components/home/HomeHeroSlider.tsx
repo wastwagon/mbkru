@@ -203,7 +203,7 @@ export function HomeHeroSlider({ newsForSlides }: { newsForSlides: HeroNewsSlide
                   type="button"
                   role="tab"
                   aria-selected={i === active}
-                  aria-label={s.kind === "brand" ? "Home message" : s.kind === "news" ? `News: ${s.post.title}` : "News placeholder"}
+                  aria-label={s.kind === "brand" ? "Home message" : s.kind === "news" ? `News: ${s.post.title}` : "News highlight"}
                   onClick={() => go(i)}
                   className={`h-2.5 rounded-full transition-all duration-300 ${
                     i === active ? "w-8 bg-[var(--ghana-gold)]" : "w-2.5 bg-white/40 hover:bg-white/60"

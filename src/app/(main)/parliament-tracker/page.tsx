@@ -10,6 +10,7 @@ import {
   accountabilityCatalogueNavMedium,
   accountabilityProse,
 } from "@/config/accountability-catalogue-destinations";
+import { ghanaParliamentTermShortLabel } from "@/config/ghana-parliament-term";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { images } from "@/lib/site-content";
 import {
@@ -209,7 +210,11 @@ export default async function ParliamentTrackerPage() {
               <ul className="mt-6 space-y-3 text-[var(--muted-foreground)]">
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
-                  <span>Annual &quot;People&apos;s Report Card&quot; on every Minister, Regional Minister, and MP</span>
+                  <span>
+                    People&apos;s Report Card releases track Ministers, Regional Ministers, and MPs — published batches stack
+                    across each four-year Parliament toward election decisions (programme framing:{" "}
+                    {ghanaParliamentTermShortLabel()}).
+                  </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />

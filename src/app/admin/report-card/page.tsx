@@ -12,6 +12,7 @@ import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { reportCardPublicVersusStoredLabel } from "@/lib/report-card-public-label";
 
 export default async function AdminReportCardPage() {
   await requireAdminSession();
@@ -55,13 +56,17 @@ export default async function AdminReportCardPage() {
             <label htmlFor="label" className="block text-xs font-medium">
               Label
             </label>
+            <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+              Shown on the public site unless it looks like internal scaffolding (pilot, layout workflow, etc.) — then
+              visitors see &quot;People&apos;s Report Card [year]&quot; instead.
+            </p>
             <input
               id="label"
               name="label"
               required
               maxLength={200}
               placeholder="e.g. 2026 mid-term snapshot"
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+              className="mt-2 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             />
           </div>
           <div className="sm:col-span-2">
@@ -93,13 +98,24 @@ export default async function AdminReportCardPage() {
             <AdminEmptyState message="No cycles yet." />
           </li>
         ) : (
-          cycles.map((c) => (
+          cycles.map((c) => {
+            const { publicTitle, storedLabel, showStoredLine } = reportCardPublicVersusStoredLabel(c.year, c.label);
+            return (
             <li key={c.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="font-semibold text-[var(--foreground)]">
-                  {c.year} — {c.label}
+                  {c.year} — {publicTitle}
+                  {showStoredLine ? (
+                    <span className="ml-2 font-normal text-[var(--muted-foreground)]">(public title)</span>
+                  ) : null}
                 </p>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                {showStoredLine ? (
+                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                    Stored label:{" "}
+                    <span className="font-mono text-[var(--foreground)]">{storedLabel.length > 0 ? storedLabel : "(empty)"}</span>
+                  </p>
+                ) : null}
+                <p className="mt-1 text-xs text-[var(--muted-foreground)]">
                   {c._count.entries} entr{c._count.entries === 1 ? "y" : "ies"}
                   {c.publishedAt ? (
                     <>
@@ -139,7 +155,8 @@ export default async function AdminReportCardPage() {
                 )}
               </div>
             </li>
-          ))
+            );
+          })
         )}
       </AdminListPanel>
     </AdminPageContainer>

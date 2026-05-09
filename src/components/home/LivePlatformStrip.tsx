@@ -32,7 +32,7 @@ export function LivePlatformStrip() {
         className="border-y border-[var(--border)] bg-[var(--section-light)]/90 py-5 sm:py-6"
       >
         <div className="mx-auto max-w-3xl px-4 text-center text-sm leading-relaxed text-[var(--muted-foreground)] sm:px-6 lg:max-w-4xl lg:px-8">
-          <span className="font-semibold text-[var(--foreground)]">Phase 1 deployment.</span> News, contact, and waitlists
+          <span className="font-semibold text-[var(--foreground)]">Public information mode.</span> News, contact, and waitlists
           are live. {accountabilityProse.livePlatformStripPhase1}
         </div>
       </motion.section>
@@ -52,11 +52,11 @@ export function LivePlatformStrip() {
           id="live-deployment-tools-heading"
           className="text-center text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--primary)]"
         >
-          Live on this deployment
+          Live tools
         </p>
         <p className="mx-auto mt-2 max-w-2xl text-center text-xs leading-relaxed text-[var(--muted-foreground)] sm:text-[13px]">
-          Phase {phase} — the shortcuts below match what is turned on for visitors on this site, including accountability
-          browsing when your programme enables it.
+          Shortcuts below reflect what is available on this site right now, including accountability browsing when it is
+          enabled for visitors.
         </p>
         <p className="mb-2 mt-4 text-center text-[10px] font-medium uppercase tracking-wide text-[var(--muted-foreground)] sm:hidden">
           Swipe for more tools →

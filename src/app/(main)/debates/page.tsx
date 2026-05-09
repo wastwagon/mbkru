@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Constituency debates",
   description:
-    "MBKRU programme placeholders for pre-election constituency debates — roadmap toward 275 constituencies (Ghana 2028).",
+    "MBKRU programme planning for pre-election constituency debates — working toward nationwide coverage before Ghana 2028.",
 };
 
 function statusLabel(status: string) {
@@ -42,7 +42,7 @@ export default async function ConstituencyDebatesPage() {
     <div>
       <PageHeader
         title="Constituency debates"
-        description="Programme planning toward pre-election debates in every constituency before Ghana 2028. Rows below are placeholders until partners, media, and the EC framework confirm schedules."
+        description="Programme planning toward pre-election debates in every constituency before Ghana 2028. Rows below stay provisional until partners, media, and the EC framework confirm schedules."
         breadcrumbCurrentLabel="Debates"
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">

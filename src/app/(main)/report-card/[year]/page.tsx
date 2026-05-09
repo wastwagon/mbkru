@@ -7,21 +7,16 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { publicReportCardCycleTitle } from "@/lib/report-card-public-label";
 import { getCachedPublishedReportCardYear } from "@/lib/server/accountability-cache";
 import { isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
 
 export const dynamic = "force-dynamic";
 
+export const maxDuration = 60;
+
 type Props = { params: Promise<{ year: string }> };
 type SearchParams = { mp?: string };
-
-function presentationCycleLabel(year: number, label: string): string {
-  const lower = label.toLowerCase();
-  if (lower.includes("pilot (layout & workflow)")) {
-    return `People's Report Card ${year}`;
-  }
-  return label;
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { year: raw } = await params;
@@ -32,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cycle = await getCachedPublishedReportCardYear(year);
   return {
     title: cycle ? `Report card ${year}` : "Report card",
-    description: cycle?.label,
+    description: cycle ? publicReportCardCycleTitle(year, cycle.label) : undefined,
   };
 }
 
@@ -86,8 +81,8 @@ export default async function ReportCardYearPage({
   return (
     <div>
       <PageHeader
-        title={`${cycle.year} — ${presentationCycleLabel(cycle.year, cycle.label)}`}
-        description="Summaries and scores below are published for this cycle. They do not replace official oversight."
+        title={publicReportCardCycleTitle(cycle.year, cycle.label)}
+        description="Summaries and scores below are published for this dated cycle — evidence that stacks toward evaluating MPs across the Parliament; they do not replace official oversight."
         breadcrumbCurrentLabel={String(cycle.year)}
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">

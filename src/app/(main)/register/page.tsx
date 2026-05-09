@@ -21,7 +21,7 @@ export default async function RegisterPage() {
     <div>
       <PageHeader
         title="Create account"
-        description="Register for a public MBKRU member account (Phase 2). You will use this for MBKRU Voice and related tools as they roll out."
+        description="Register for a public MBKRU member account for MBKRU Voice and related tools."
       />
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-md px-4 sm:px-6 lg:px-8">

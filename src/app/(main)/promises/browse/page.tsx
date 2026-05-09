@@ -31,6 +31,9 @@ import {
 
 export const dynamic = "force-dynamic";
 
+/** Catalogue page hits Postgres + cache; extend serverless budget where supported. */
+export const maxDuration = 60;
+
 type Props = {
   searchParams: Promise<{
     sector?: string;

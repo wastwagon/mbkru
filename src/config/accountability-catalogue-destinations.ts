@@ -37,7 +37,7 @@ export const methodologyKeyTerms: readonly { term: string; body: string }[] = [
   },
   {
     term: "People's Report Card (published cycle)",
-    body: "A published year under the Report card menu with narrative and scores when MBKRU has released a cycle. Not every methodology concept on this page implies a live scored year is already published.",
+    body: "A dated editorial release under Report card with narratives and scores when MBKRU publishes that batch. Years label publication windows — evidence can stack across Ghana's four-year Parliament toward informed electoral choices; not every methodology mention implies a scored cycle is already live.",
   },
   {
     term: "Accountability scorecards (programme language)",
@@ -75,7 +75,7 @@ export const accountabilityHomePreviewCopy = {
     "Full searchable catalogue for sitting MPs — identical data to the dedicated browse page and public export.",
   /** Homepage `PromisesBrowseHomePreview` in teaser mode — one compact block next to the full government embed. */
   browseTeaserLead:
-    "A short live preview of the first catalogue rows. Open the full page for search, filters, and the public CSV export.",
+    "A short live sample of the first catalogue rows. Open the full page for search, filters, and the public CSV export.",
   /**
    * Homepage only — avoids two identical KPI strips back-to-back. Shown instead of PromiseTrackerStatsStrip
    * in the Browse-all teaser blocks when Government commitments teaser already renders the catalogue dashboard.
@@ -114,7 +114,7 @@ export const accountabilityProse = {
     "Tracked commitments versus delivery — sources and status in one catalogue.",
   mpPledgeSheetLink: "View pledge sheet",
   livePlatformStripPhase1:
-    "MBKRU Voice, the public commitment catalogue, report cards, and pillar pages switch on when this site is upgraded to Phase 2 or higher — see the roadmap below.",
+    "MBKRU Voice, the public commitment catalogue, report cards, and full engagement tools open as the programme enables them — see the pathway section on this page.",
   partnerApiMpsCellLinkLabel: "commitment catalogue",
   apiPromisesTableRow:
     "Tracked commitments via GET /api/promises with optional filters; JSON responses are capped — use CSV for full exports.",
@@ -157,7 +157,7 @@ export const accountabilityProse = {
   browseCatalogueSelectAllTracked: "All tracked commitments",
   /** Homepage teaser (no on-page filters) — nudge to `/promises/browse`. */
   browseHomeTeaserCaption: (shown: number, total: number) =>
-    `Previewing ${shown} of ${total} rows in this first page of results. `,
+    `Showing ${shown} of ${total} rows from this results page. `,
   browseHomeTeaserCta: "Learn more — full list & tools",
   governmentHomeTeaserCta: "Learn more — full list & tools",
   /** Helper under constituency filter — same roster as imports; “catalogue” not “every utterance”. */

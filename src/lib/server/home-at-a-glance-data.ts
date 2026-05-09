@@ -21,6 +21,7 @@ import {
   isReportCardPublicEnabled,
   isTownHallDirectoryPageEnabled,
 } from "@/lib/reports/accountability-pages";
+import { publicReportCardCycleTitle } from "@/lib/report-card-public-label";
 import { getCachedPublishedReportCardCycles } from "@/lib/server/accountability-cache";
 import { getProgrammeTownHallEvents } from "@/lib/server/town-hall-events";
 
@@ -158,7 +159,7 @@ async function loadReportCard(): Promise<HomeReportCardTeaser | null> {
     if (!latest) return null;
     return {
       year: latest.year,
-      label: latest.label,
+      label: publicReportCardCycleTitle(latest.year, latest.label),
       entryCount: latest._count.entries,
     };
   } catch (e) {

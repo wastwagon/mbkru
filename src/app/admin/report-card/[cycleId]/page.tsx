@@ -8,6 +8,7 @@ import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
+import { reportCardPublicVersusStoredLabel } from "@/lib/report-card-public-label";
 
 type Props = { params: Promise<{ cycleId: string }> };
 
@@ -27,6 +28,8 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
 
   if (!cycle) notFound();
 
+  const { publicTitle, storedLabel, showStoredLine } = reportCardPublicVersusStoredLabel(cycle.year, cycle.label);
+
   const members = await prisma.parliamentMember.findMany({
     where: { active: true },
     orderBy: { name: "asc" },
@@ -37,18 +40,26 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
     <AdminPageContainer width="narrow">
       <AdminPageHeader
         showDashboardBack={false}
-        title={`${cycle.year} — ${cycle.label}`}
+        title={`${cycle.year} — ${publicTitle}`}
         backSlot={
           <Link href="/admin/report-card" className={primaryLinkClass}>
             ← Report card cycles
           </Link>
         }
       />
-      {cycle.publishedAt ? (
-        <p className="text-xs text-green-700">Published {cycle.publishedAt.toLocaleString("en-GB")}</p>
-      ) : (
-        <p className="text-xs text-amber-700">Draft — not visible on public report card</p>
-      )}
+      <div className="mt-2 space-y-1">
+        {showStoredLine ? (
+          <p className="text-xs text-[var(--muted-foreground)]">
+            Stored label (database):{" "}
+            <span className="font-mono text-[var(--foreground)]">{storedLabel.length > 0 ? storedLabel : "(empty)"}</span>
+          </p>
+        ) : null}
+        {cycle.publishedAt ? (
+          <p className="text-xs text-green-700">Published {cycle.publishedAt.toLocaleString("en-GB")}</p>
+        ) : (
+          <p className="text-xs text-amber-700">Draft — not visible on public report card</p>
+        )}
+      </div>
 
       <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Add or update entry</h2>

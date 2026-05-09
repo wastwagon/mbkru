@@ -61,7 +61,7 @@ export default async function CitizensVoicePage() {
         title="Digital Platform — MBKRU Voice"
         description={
           voiceOn
-            ? "Pilot live: submit reports with evidence, track with a code, and manage submissions from your account. Full national rollout scales with programme phases."
+            ? "Submit reports with evidence, track with a code, and manage submissions from your account."
             : "Digital platform for citizen voice — membership portal, personal dashboard, and public statistics."
         }
       />
@@ -107,7 +107,7 @@ export default async function CitizensVoicePage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
-                  <span>Register with email and password; eligibility is Ghanaian citizens 18+ — enhanced ID verification is on the roadmap</span>
+                  <span>Register with email and password; eligibility is Ghanaian citizens 18+ — stronger identity checks may be added as rules allow</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
@@ -128,7 +128,7 @@ export default async function CitizensVoicePage() {
                     ) : (
                       "the transparency page"
                     )}{" "}
-                    when the programme enables public statistics for this site
+                    when public statistics are published
                   </span>
                 </li>
               </ul>
@@ -167,10 +167,9 @@ export default async function CitizensVoicePage() {
       {voiceOn ? (
         <section className="section-spacing section-full bg-[var(--section-dark)] text-white">
           <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-            <h2 className="font-display text-xl font-bold sm:text-2xl">Pilot reporting</h2>
+            <h2 className="font-display text-xl font-bold sm:text-2xl">Report intake</h2>
             <p className="mx-auto mt-2 max-w-2xl text-sm text-white/85">
-              Phase 2 pilot: submit a report and track it with a code. Staff may email you when the status
-              changes (if Resend is configured).
+              Submit a report and track it with a code. Staff may email you when the status changes.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
               <Link

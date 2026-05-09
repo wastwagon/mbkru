@@ -78,7 +78,7 @@ export function PromisesBrowseHomePreview({ data }: Props) {
                   {accountabilityHomePreviewCopy.promiseCardSurfaceExplainerShort}
                 </p>
                 <h3 className="text-center font-display text-base font-semibold text-[var(--foreground)] sm:text-left">
-                  Preview (five rows)
+                  Sample rows (five)
                 </h3>
                 <p className="text-center text-xs text-[var(--muted-foreground)] sm:text-left">
                   Use the full browse page (button below) for the interactive dashboard, all filters, and export.

@@ -8,6 +8,7 @@ import { getAccountabilityParticipateHubTiles } from "@/config/accountability-ca
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { homeAtAGlanceHasLiveContent, type HomeAtAGlanceData } from "@/lib/home-at-a-glance-types";
+import { publicReportCardCycleTitle } from "@/lib/report-card-public-label";
 import { sectionRevealTransition } from "@/lib/motion-reveal";
 import { primaryLinkClass, primaryNavLinkClass, resourceTitleLinkClass } from "@/lib/primary-link-styles";
 
@@ -29,7 +30,7 @@ function formatEventDate(iso: string | null): string {
   return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 }
 
-/** Phase 1 — marketing routes only; no DB-backed teasers. */
+/** Entry routes when live civic tools are not yet exposed — same destinations, programme-focused copy. */
 const PHASE_1_PARTICIPATE_ACTIONS: { href: string; title: string; body: string }[] = [
   {
     href: "/about",
@@ -38,23 +39,23 @@ const PHASE_1_PARTICIPATE_ACTIONS: { href: string; title: string; body: string }
   },
   {
     href: "/citizens-voice",
-    title: "MBKRU Voice (preview)",
-    body: "What citizen reporting will look like when Phase 2 intake is enabled on this deployment.",
+    title: "MBKRU Voice",
+    body: "How citizen reporting works, what we moderate, and how membership fits the programme.",
   },
   {
     href: "/parliament-tracker",
     title: "Accountability hub",
-    body: "How we approach the public commitment catalogue, the People's Report Card, and our accountability tools when Phase 1 is marketing-only on this build.",
+    body: "How we approach the public commitment catalogue, the People's Report Card, and our accountability tools.",
   },
   {
     href: "/situational-alerts",
     title: "Situational alerts",
-    body: "How time-sensitive local signals will work alongside Voice when your build enables them.",
+    body: "How time-sensitive local signals work alongside Voice where the programme enables them.",
   },
   {
     href: "/track-report",
-    title: "Track a report (preview)",
-    body: "Explainer for tracking codes — full flow activates with MBKRU Voice in Phase 2+.",
+    title: "Track a report",
+    body: "How tracking codes work once you have submitted through MBKRU Voice.",
   },
   {
     href: "/news",
@@ -94,7 +95,7 @@ const PHASE_1_PARTICIPATE_ACTIONS: { href: string; title: string; body: string }
   {
     href: "/faq",
     title: "FAQ",
-    body: "Common questions about MBKRU, membership, and the platform roadmap.",
+    body: "Common questions about MBKRU, membership, and the programme.",
   },
   {
     href: "/partners",
@@ -133,7 +134,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
       ? {
           href: "/citizens-voice/submit",
           title: "Submit a report",
-          body: "File through MBKRU Voice with evidence when your build enables intake.",
+          body: "File through MBKRU Voice with evidence when reporting is open.",
         }
       : null,
     voice
@@ -188,7 +189,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
       ? {
           href: "/debates",
           title: "Constituency debates",
-          body: "Roadmap placeholders toward nationwide debate coverage.",
+          body: "Programme directory toward nationwide debate coverage.",
         }
       : null,
     ...(parliament
@@ -216,7 +217,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
       ? {
           href: "/election-observation",
           title: "Election observation",
-          body: "Dedicated election-window reporting when Phase 3 is enabled.",
+          body: "Dedicated election-window reporting when the programme publishes that window.",
         }
       : null,
     legal
@@ -257,20 +258,19 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
         >
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--primary)]">Participate &amp; explore</p>
           <h2 className="mt-3 font-display text-2xl font-bold tracking-tight text-[var(--foreground)] sm:mt-4 sm:text-3xl">
-            {phase1 ? "Explore MBKRU in Phase 1" : "How to use MBKRU on this deployment"}
+            {phase1 ? "Explore MBKRU" : "How to use MBKRU"}
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
             {phase1 ? (
               <>
-                This build is in <strong className="text-[var(--foreground)]">Phase 1</strong> (awareness and trust). Use
-                the cards to learn what is coming, contact the team, and read published materials. When the programme
-                enables Phases 2 or 3 on this site and connects the live database, petitions, communities, and tracker
-                highlights appear here automatically — the same routes and rules as the dedicated index pages.
+                Use the cards to explore the programme, contact the team, and read published materials. As civic tools and
+                live data roll out nationally, petitions, communities, and tracker highlights appear here automatically —
+                aligned with the same routes as the dedicated index pages.
               </>
             ) : (
               <>
-                Below matches the same public routes and data rules as our dedicated index pages — pick an action, or skim
-                live highlights when your phase and database expose them.
+                Below matches the same public routes and data rules as our dedicated index pages — pick an action or skim
+                live highlights when they are published.
               </>
             )}
           </p>
@@ -502,11 +502,11 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
           >
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--primary)]">People&apos;s Report Card</p>
             <p className="mt-2 font-display text-xl font-bold text-[var(--foreground)]">
-              {data.reportCard.label}{" "}
-              <span className="text-[var(--muted-foreground)]">({data.reportCard.year})</span>
+              {publicReportCardCycleTitle(data.reportCard.year, data.reportCard.label)}
             </p>
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              {data.reportCard.entryCount} published scorecard row{data.reportCard.entryCount === 1 ? "" : "s"} in this cycle.
+              {data.reportCard.entryCount} published scorecard row{data.reportCard.entryCount === 1 ? "" : "s"} in this release —
+              stacked with other cycles across the Parliament for cumulative accountability.
             </p>
             <Button href={`/report-card/${data.reportCard.year}`} className="mt-4">
               View cycle

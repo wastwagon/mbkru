@@ -36,18 +36,16 @@ export default function PartnerApiPage() {
       <section className="section-spacing section-full bg-white">
         <div className="mx-auto max-w-3xl px-4 text-[var(--foreground)] sm:px-6 lg:px-8">
           <p className="rounded-lg border border-amber-200/80 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">
-            <strong className="font-semibold">Draft — programme copy.</strong> Counsel should review before you cite this
-            page as contractual “terms” in MOUs or press releases. Technical detail for engineers lives in the repository
-            under <code className="rounded bg-white/80 px-1.5 py-0.5 text-[13px]">docs/PARTNER_API.md</code>.
+            <strong className="font-semibold">Programme summary.</strong> Confirm wording with MBKRU before citing this page
+            as contractual terms in agreements or public statements.
           </p>
 
           <h2 className="mt-10 font-display text-xl font-bold">What is available</h2>
           <p className="mt-4 text-[var(--muted-foreground)]">
-            When your deployment runs <strong className="text-[var(--foreground)]">Phase 2 or higher</strong>, MBKRU
-            exposes <strong className="text-[var(--foreground)]">GET</strong> JSON and UTF-8 CSV exports. Each handler
-            checks feature flags and returns <code className="text-[13px]">404</code> or{" "}
-            <code className="text-[13px]">503</code> when data or the database is unavailable — design integrations to
-            degrade gracefully.
+            When parliament and catalogue features are enabled for this site, MBKRU exposes{" "}
+            <strong className="text-[var(--foreground)]">GET</strong> JSON and UTF-8 CSV exports. Each handler may return{" "}
+            <code className="text-[13px]">404</code> or <code className="text-[13px]">503</code> when data or the database is
+            unavailable — design integrations to degrade gracefully.
           </p>
 
           <div className="mt-6 overflow-x-auto rounded-lg border border-[var(--border)]">
@@ -72,7 +70,7 @@ export default function PartnerApiPage() {
                     ) : (
                       "parliament data"
                     )}{" "}
-                    is enabled for this build).
+                    is enabled on this site).
                   </td>
                 </tr>
                 <tr>
@@ -96,7 +94,7 @@ export default function PartnerApiPage() {
                     ) : (
                       "the report card"
                     )}{" "}
-                    is public for this build.
+                    is public on this site.
                   </td>
                 </tr>
                 <tr>

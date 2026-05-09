@@ -125,8 +125,8 @@ const sources: { heading: string; body: ReactNode }[] = [
           <Link href="/town-halls" className={primaryLinkClass}>
             Town halls &amp; forums
           </Link>{" "}
-          page lists events the team confirms in <strong className="text-[var(--foreground)]">Admin → Town halls &amp; forums</strong>.
-          Constituency debate placeholders appear on{" "}
+          page lists events once they are confirmed for publication.
+          Constituency debates are listed on{" "}
           <Link href="/debates" className={primaryLinkClass}>
             Constituency debates
           </Link>
@@ -136,7 +136,7 @@ const sources: { heading: string; body: ReactNode }[] = [
         <MaintainerDetails>
           <p>
             Rows map to <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[12px]">TownHallEvent</code> in the
-            application database. Sample placeholders can ship with initial seed data unless{" "}
+            application database. Starter programme rows may ship with bundled data unless{" "}
             <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[12px]">SEED_TOWN_HALL_PROGRAMME=0</code>.
           </p>
           <p>

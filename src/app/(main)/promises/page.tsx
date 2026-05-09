@@ -15,6 +15,9 @@ import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
 
 export const dynamic = "force-dynamic";
 
+/** Allow slower roster queries behind gateways (e.g. Vercel); ignored on platforms that don’t support it. */
+export const maxDuration = 60;
+
 export const metadata: Metadata = {
   title: accountabilityCatalogueNavMedium.byMp,
   description: "Track documented commitments from MPs and ministers — sources and status in one place.",

@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 
 import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
+import { ghanaParliamentTermShortLabel } from "@/config/ghana-parliament-term";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import type { PromiseTrackerStats } from "@/lib/promise-tracker-public-types";
 
@@ -334,8 +335,8 @@ export function PromiseTrackerStatsStrip({ stats, subtitle, compact }: Props) {
             <p className="mt-1 text-xs font-medium text-slate-500">With ≥1 row in this filter slice</p>
           </KpiCard>
           <KpiCard
-            label="Published report-card years"
-            foot="How many cycles are published on the site — not filtered by pledge table below"
+            label="Published PRC cycles"
+            foot={`Dated editorial releases on the site — not filtered by the pledge slice above; they accumulate as evidence across Ghana's four-year Parliament (${ghanaParliamentTermShortLabel()}).`}
           >
             <p className="font-display text-3xl font-bold tabular-nums tracking-tight sm:text-4xl">
               {stats.publishedReportCardCycles}

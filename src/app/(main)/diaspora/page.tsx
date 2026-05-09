@@ -33,7 +33,7 @@ const collaborate = [
   },
   {
     title: "Petitions & campaigns",
-    body: "When enabled for your build, start or support citizen-led campaigns on issues that matter to you and to communities in Ghana.",
+    body: "Where petitions are available, start or support citizen-led campaigns on issues that matter to you and to communities in Ghana.",
     href: "/petitions",
     label: "Petitions",
   },
@@ -277,12 +277,11 @@ export default function DiasporaPage() {
               ))}
             {accountabilityOn ? null : (
               <p className="col-span-full text-sm text-[var(--muted-foreground)]">
-                Government commitments and promise browsing appear when this deployment enables the accountability
-                catalogue.
+                Government commitments and promise browsing appear when the accountability catalogue is enabled here.
               </p>
             )}
             {!petitionsOn ? (
-              <p className="col-span-full text-sm text-[var(--muted-foreground)]">Petitions appear in later platform phases for this build.</p>
+              <p className="col-span-full text-sm text-[var(--muted-foreground)]">Petitions appear when the programme enables them on this site.</p>
             ) : null}
           </div>
           <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">

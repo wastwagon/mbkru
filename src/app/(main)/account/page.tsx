@@ -131,9 +131,9 @@ export default async function AccountPage() {
         {voiceOn ? (
           <div
             className="rounded-full border border-[var(--accent-gold)]/40 bg-[var(--accent-gold-light)]/35 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--foreground)]"
-            title="MBKRU Voice pilot"
+            title="MBKRU Voice active on this account"
           >
-            Pilot access
+            Voice active
           </div>
         ) : null}
       </div>
@@ -202,12 +202,12 @@ export default async function AccountPage() {
 
       <section className={voiceOn ? "mt-10" : "mt-8"} aria-labelledby="voice-actions-heading">
         <h2 id="voice-actions-heading" className="font-display text-lg font-semibold text-[var(--foreground)]">
-          {voiceOn ? "Voice pilot" : "Coming soon"}
+          {voiceOn ? "MBKRU Voice" : "Reporting tools"}
         </h2>
         <p className="mt-1 text-sm text-[var(--muted-foreground)]">
           {voiceOn
             ? "Submit, review, and track reports tied to your account."
-            : "MBKRU Voice reporting and your full dashboard will appear here when Voice is enabled for this site."}
+            : "MBKRU Voice reporting and your dashboard appear here when Voice is enabled for visitors on this site."}
         </p>
         {voiceOn ? (
           <div className="mt-5 grid gap-4 sm:grid-cols-3">

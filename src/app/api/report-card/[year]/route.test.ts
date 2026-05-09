@@ -62,6 +62,7 @@ describe("GET /api/report-card/[year]", () => {
     vi.mocked(getCachedReportCardApiPayload).mockResolvedValue({
       year: 2099,
       label: "Demo",
+      parliamentTerm: { startYear: 2024, generalElectionYear: 2028 },
       publishedAt: "2026-03-28T00:00:00.000Z",
       methodology: null,
       entries: [],
@@ -71,6 +72,7 @@ describe("GET /api/report-card/[year]", () => {
     expect(res.headers.get("Cache-Control")).toContain("public");
     const json = await res.json();
     expect(json.year).toBe(2099);
+    expect(json.parliamentTerm).toEqual({ startYear: 2024, generalElectionYear: 2028 });
     expect(json.entries).toEqual([]);
   });
 });

@@ -6,11 +6,17 @@ import "./globals.css";
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://mbkruadvocates.org";
 
+/**
+ * Disable `link rel=preload` for all Google fonts. Next still injects `@font-face` styles — fonts load normally without
+ * preload hints, which avoids Chrome “preloaded but not used within a few seconds” warnings (common when many weights
+ * are bundled or secondary families paint after hero).
+ */
 const kumbhSans = Kumbh_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
+  preload: false,
 });
 
 const lora = Lora({
@@ -18,6 +24,7 @@ const lora = Lora({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
+  preload: false,
 });
 
 const playfairDisplay = Playfair_Display({
@@ -25,6 +32,7 @@ const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
   weight: ["600", "700"],
   display: "swap",
+  preload: false,
 });
 
 export const viewport: Viewport = {

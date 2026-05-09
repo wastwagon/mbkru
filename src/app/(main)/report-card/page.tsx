@@ -8,6 +8,8 @@ import {
   accountabilityCatalogueNavMedium,
   accountabilityProse,
 } from "@/config/accountability-catalogue-destinations";
+import { ghanaParliamentTermShortLabel } from "@/config/ghana-parliament-term";
+import { publicReportCardCycleTitle } from "@/lib/report-card-public-label";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { focusRingInsetRowClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
@@ -16,18 +18,12 @@ import { getCachedPublishedReportCardCycles } from "@/lib/server/accountability-
 
 export const dynamic = "force-dynamic";
 
+export const maxDuration = 60;
+
 export const metadata: Metadata = {
   title: "People's Report Card",
   description: "Published accountability cycles — summaries and scores where MBKRU has released a cycle.",
 };
-
-function presentationCycleLabel(year: number, label: string): string {
-  const lower = label.toLowerCase();
-  if (lower.includes("pilot (layout & workflow)")) {
-    return `People's Report Card ${year}`;
-  }
-  return label;
-}
 
 export default async function ReportCardIndexPage() {
   if (!isReportCardPublicEnabled() || !isDatabaseConfigured()) notFound();
@@ -49,7 +45,7 @@ export default async function ReportCardIndexPage() {
             <div className="mb-8 rounded-2xl border border-[var(--primary)]/25 bg-[var(--primary)]/5 px-4 py-4 text-center sm:px-6">
               <p className="text-sm font-semibold text-[var(--foreground)]">Pre-election accountability scorecards</p>
               <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                This deployment highlights flagship scorecard cycles in the run-up to general elections. Narratives remain
+                This section highlights flagship scorecard cycles in the run-up to general elections. Narratives remain
                 explanatory — see methodology for scope and limitations.
               </p>
               <p className="mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-sm">
@@ -123,7 +119,9 @@ export default async function ReportCardIndexPage() {
                   Published cycles
                 </p>
                 <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-                  Open a cycle to see MP-by-MP narratives, scores, and metrics. Use the year page filter for individual MPs.
+                  Open a cycle for MP-by-MP narratives, scores, and metrics. The year marks each published batch — evidence
+                  stacks across Ghana&apos;s four-year Parliament ({ghanaParliamentTermShortLabel()}) so citizens can judge
+                  cumulative delivery toward the next general election.
                 </p>
                 <p className="mt-3 text-sm">
                   <Link href={`/report-card/${cycles[0]?.year}`} className={primaryNavLinkClass}>
@@ -140,7 +138,7 @@ export default async function ReportCardIndexPage() {
                   >
                     <p className="font-display text-lg font-semibold text-[var(--foreground)]">{c.year}</p>
                     <p className="text-sm text-[var(--muted-foreground)]">
-                      {presentationCycleLabel(c.year, c.label)}
+                      {publicReportCardCycleTitle(c.year, c.label)}
                     </p>
                     <p className="mt-1 text-xs text-[var(--muted-foreground)]">
                       {c._count.entries} entr{c._count.entries === 1 ? "y" : "ies"} →

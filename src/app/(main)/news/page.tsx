@@ -156,7 +156,7 @@ export default async function NewsPage() {
               })}
               {previews.length === 0 ? (
                 <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-[var(--border)] bg-white/50 p-8 text-center text-sm text-[var(--muted-foreground)]">
-                  Add more published posts to show previews here.
+                  Further featured articles will appear here as they are published.
                 </div>
               ) : null}
             </div>

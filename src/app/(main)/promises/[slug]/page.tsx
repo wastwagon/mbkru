@@ -16,6 +16,8 @@ import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
 
 export const dynamic = "force-dynamic";
 
+export const maxDuration = 60;
+
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

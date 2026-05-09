@@ -125,7 +125,7 @@ export default async function SituationalAlertsPage() {
       {intakeOn ? (
         <section className="section-spacing section-full bg-[var(--section-dark)] text-white">
           <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-            <h2 className="font-display text-xl font-bold sm:text-2xl">Situational alerts (pilot)</h2>
+            <h2 className="font-display text-xl font-bold sm:text-2xl">Situational alerts</h2>
             <p className="mx-auto mt-2 max-w-2xl text-sm text-white/85">
               Submit a time-sensitive local alert for our team to review. You will get a tracking code; we do not
               publish raw submissions. Use MBKRU Voice for general civic reports.

@@ -27,7 +27,7 @@ export const images = {
   about: pub("130207142157-ghana-tourism-akan-dance.jpg"),
   aboutMission: pub("130207142157-ghana-tourism-akan-dance.jpg"),
 
-  /** Platform preview — citizens and public engagement */
+  /** Digital platform — citizens and public engagement */
   platform: pub("191129141031-01-ghana-citizens-year-of-return.jpg"),
 
   /** Pillar A — Digital platform, connectivity */
@@ -265,7 +265,7 @@ export const faqContent = [
   {
     question: "How do I report an issue or file a complaint?",
     answer:
-      "When member accounts are live on this site, create an account, sign in, and submit through MBKRU Voice from your account page or the Voice submit flow. While the site stays in Phase 1 (information and previews only), use the contact form or the early-access options on the Citizens Voice page.",
+      "When member accounts are live on this site, create an account, sign in, and submit through MBKRU Voice from your account page or the Voice submit flow. If reporting is not yet open here, use the contact form or the options on the Citizens Voice page so the team can guide you.",
   },
   {
     question: "Is MBKRU affiliated with any political party?",
@@ -273,7 +273,8 @@ export const faqContent = [
   },
   {
     question: "What is the People's Report Card?",
-    answer: "The People's Report Card is an annual, data-driven assessment of every Minister, Regional Minister, and Member of Parliament. It tracks documented commitments in the public catalogue versus delivery and is published 90 days before general elections.",
+    answer:
+      "The People's Report Card is a data-driven assessment of Ministers, Regional Ministers, and MPs against documented commitments. Releases are dated editorial batches that stack as cumulative evidence across Ghana's four-year Parliament — so citizens can weigh delivery toward elections (including the run-up to general elections when programme scorecards are published).",
   },
   {
     question: "How is MBKRU funded?",
@@ -302,8 +303,7 @@ export const faqContent = [
 ] as const;
 
 /**
- * Programme roadmap — aligned with Ghana 2028 election
- * Phase 1 complete. Phases 2–3 with modal detail. See ROADMAP_2028_ELECTION.md.
+ * Programme roadmap — aligned with Ghana 2028 election (calendar milestones; modal detail on About).
  */
 export const programmeRoadmap = [
   {
@@ -311,15 +311,15 @@ export const programmeRoadmap = [
     phase: "Phase 1",
     status: "complete" as const,
     title: "Website & Foundation",
-    description: "Phase 1 complete. Website live with all preview pages and interactive features.",
+    description: "Website live with full information architecture, regional engagement map, and published programme pages.",
     items: [
       "Homepage, About Us, Contact — live",
-      "MBKRU Voice, Engagement, Accountability — preview pages",
-      "News, Resources, Partners — skeleton + CMS-ready",
-      "16 Regions interactive viz with modal data",
-      "Privacy Policy, Terms of Use — legal templates",
+      "MBKRU Voice, Engagement, Accountability — programme overview pages",
+      "News, Resources, Partners — editorial workflow",
+      "16 Regions interactive map with modal data",
+      "Privacy Policy, Terms of Use — legal pages",
     ],
-    detailContent: `Phase 1 established MBKRU's digital presence with a professional, accessible website. All 11 Phase 1 pages are live. The 16 Regions section includes interactive modals with capital, population, area, key sectors, and MBKRU engagement notes for each region. Early Access and Tracker signup forms collect leads. No user registration or complaint submission yet — Phase 1 is preview and awareness only.`,
+    detailContent: `This phase established MBKRU's digital presence with a professional, accessible website. The 16 Regions section includes interactive modals with capital, population, area, key sectors, and MBKRU engagement notes for each region. Early access and tracker signup forms welcome interest. Full member registration and complaint intake follow as the programme opens Voice nationally.`,
   },
   {
     period: "Q2 2026",
@@ -329,12 +329,12 @@ export const programmeRoadmap = [
     description: "Foundation for citizen voice and accountability. Approval enables immediate start.",
     items: [
       "MBKRU Voice MVP (registration, dashboard, membership portal)",
-      "Town Hall pilot — Greater Accra",
+      "Town Hall launch — Greater Accra",
       "Complaint intake backend & geo-tagging",
-      "Legal Empowerment Desk pilot",
+      "Legal Empowerment Desk — first desk",
       "Partnership outreach (CHRAJ, media)",
     ],
-    detailContent: `Platform Development builds the technical and operational foundation for citizen voice. The MBKRU Voice MVP includes user registration, personal dashboard, and membership portal at mbkru.org.gh. The Town Hall pilot in Greater Accra validates the physical engagement model. Backend systems for complaint intake and geo-tagging are developed. Legal Empowerment Desk pilot establishes CHRAJ and FOI liaison. Partnership outreach to CHRAJ, media, and development partners secures support for scale.`,
+    detailContent: `Platform Development builds the technical and operational foundation for citizen voice. The MBKRU Voice MVP includes user registration, personal dashboard, and membership portal at mbkru.org.gh. The Greater Accra Town Hall opens the physical engagement model nationally. Backend systems for complaint intake and geo-tagging are developed. The Legal Empowerment Desk establishes CHRAJ and FOI liaison. Partnership outreach to CHRAJ, media, and development partners secures support for scale.`,
   },
   {
     period: "Q3–Q4 2026",
@@ -379,7 +379,7 @@ export const programmeRoadmap = [
       "Media & CSO partnerships for coverage",
       "Real-time 2028 manifesto tracking",
     ],
-    detailContent: `Accountability Scorecards are published 90 days before the Ghana 2028 general election — the flagship deliverable. Pre-election debates and town halls are held nationwide; constituency counts follow the Electoral Commission (275 toward 276 seats, including Guan where applicable). The National People's Assembly focuses on election-year priorities. Media and CSO partnerships ensure broad coverage. Real-time tracking of 2028 manifestos begins as soon as parties release them. On a Phase 3 website build, MBKRU may ship election-observation intake and hardened public scorecard pages before these calendar windows — see methodology for scope.`,
+    detailContent: `Accountability Scorecards are published 90 days before the Ghana 2028 general election — the flagship deliverable. Pre-election debates and town halls are held nationwide; constituency counts follow the Electoral Commission (275 toward 276 seats, including Guan where applicable). The National People's Assembly focuses on election-year priorities. Media and CSO partnerships ensure broad coverage. Real-time tracking of 2028 manifestos begins as soon as parties release them. Election-observation intake and public scorecard pages may appear ahead of these calendar windows where the programme enables them — see methodology for scope.`,
   },
   {
     period: "Q4 2028",
@@ -405,7 +405,7 @@ export const homepageEngagementPathways = [
   {
     tag: "Voice",
     title: "Citizen reporting",
-    description: "How MBKRU Voice works, what we moderate, and how to submit when your deployment enables intake.",
+    description: "How MBKRU Voice works, what we moderate, and how to submit a report when reporting is open.",
     href: "/citizens-voice",
   },
   {
@@ -453,26 +453,26 @@ export const homepageEngagementPathways = [
 ] as const;
 
 /**
- * 16 Regions of Ghana — data for interactive modal (Phase 1)
+ * 16 Regions of Ghana — data for interactive regional map
  * Sources: 2021 PHC, Wikipedia, EC Ghana. Regional ministers: Feb 2025 (Mahama govt). Constituencies: 2024 elections (276 total).
  */
 export const ghanaRegionsData = [
-  { name: "Greater Accra", capital: "Accra", population: 5455692, areaKm2: 3245, districts: 29, constituencies: 34, regionalMinister: "Hon. Mrs. Linda Obenewaa Akweley Ocloo", keySectors: "Services, Finance, Government", pillarFocus: ["A", "B", "E"], townHallStatus: "Pilot Q2 2026", mbkruVoiceStatus: "Pilot region", mbkruNote: "National headquarters. MBKRU Voice pilot. First Town Hall Q2 2026. Presidential liaison office." },
-  { name: "Ashanti", capital: "Kumasi", population: 5440463, areaKm2: 24389, districts: 43, constituencies: 47, regionalMinister: "Hon. Dr. Frank Amoakohene", keySectors: "Commerce, Cocoa, Manufacturing", pillarFocus: ["A", "B", "D"], townHallStatus: "Planned Q3 2026", mbkruVoiceStatus: "Planned", mbkruNote: "Largest inland region. High engagement potential. People's Report Card pilot. Regional Public Forum planned." },
+  { name: "Greater Accra", capital: "Accra", population: 5455692, areaKm2: 3245, districts: 29, constituencies: 34, regionalMinister: "Hon. Mrs. Linda Obenewaa Akweley Ocloo", keySectors: "Services, Finance, Government", pillarFocus: ["A", "B", "E"], townHallStatus: "Q2 2026 · lead region", mbkruVoiceStatus: "Lead region", mbkruNote: "National headquarters. MBKRU Voice lead region. First Town Hall Q2 2026. Presidential liaison office." },
+  { name: "Ashanti", capital: "Kumasi", population: 5440463, areaKm2: 24389, districts: 43, constituencies: 47, regionalMinister: "Hon. Dr. Frank Amoakohene", keySectors: "Commerce, Cocoa, Manufacturing", pillarFocus: ["A", "B", "D"], townHallStatus: "Planned Q3 2026", mbkruVoiceStatus: "Planned", mbkruNote: "Largest inland region. High engagement potential. People's Report Card coverage. Regional Public Forum planned." },
   { name: "Northern", capital: "Tamale", population: 2310939, areaKm2: 26534, districts: 16, constituencies: 18, regionalMinister: "Hon. Mr. Ali Adolf John", keySectors: "Agriculture, Shea, Livestock", pillarFocus: ["B", "D", "E"], townHallStatus: "Planned Q4 2026", mbkruVoiceStatus: "Planned", mbkruNote: "Northern hub. Presidential Listening Session candidate. SDG 1 priority. Accountability & poverty focus." },
   { name: "Western", capital: "Takoradi", population: 2060585, areaKm2: 13842, districts: 14, constituencies: 17, regionalMinister: "Hon. Mr. Joseph Nelson", keySectors: "Oil & Gas, Timber, Mining", pillarFocus: ["B", "C", "D"], townHallStatus: "Planned Q3 2026", mbkruVoiceStatus: "Planned", mbkruNote: "Coastal region. Oil & gas sector accountability. Legal Empowerment Desk expansion. Town Hall planned." },
   { name: "Eastern", capital: "Koforidua", population: 2925653, areaKm2: 19323, districts: 33, constituencies: 33, regionalMinister: "Hon. Mrs. Rita Akosua Adjei Awatey", keySectors: "Agriculture, Cocoa, Tourism", pillarFocus: ["A", "B", "C"], townHallStatus: "Planned Q4 2026", mbkruVoiceStatus: "Planned", mbkruNote: "Agricultural focus. CHRAJ liaison. Regional Public Forum planned. FOI support." },
-  { name: "Volta", capital: "Ho", population: 1659040, areaKm2: 9504, districts: 18, constituencies: 18, regionalMinister: "Hon. Mr. James Gunu", keySectors: "Agriculture, Fishing, Tourism", pillarFocus: ["A", "B", "C"], townHallStatus: "Planned Q4 2026", mbkruVoiceStatus: "Planned", mbkruNote: "Eastern corridor. Legal Empowerment Desk expansion. Citizen voice pilot. Volta Basin focus." },
-  { name: "Upper East", capital: "Bolgatanga", population: 1301226, areaKm2: 8842, districts: 15, constituencies: 15, regionalMinister: "Hon. Mr. Akamugri Donatus Atanga", keySectors: "Agriculture, Shea, Crafts", pillarFocus: ["B", "D", "E"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "Upper East hub. People's Report Card pilot. Poverty eradication focus. SDG 1 priority." },
-  { name: "Upper West", capital: "Wa", population: 901502, areaKm2: 18476, districts: 11, constituencies: 11, regionalMinister: "Hon. Mr. Charles Lwanga Puozuing", keySectors: "Agriculture, Shea, Livestock", pillarFocus: ["B", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "Upper West hub. Regional forum planned. SDG 1 priority. Accountability tracking." },
+  { name: "Volta", capital: "Ho", population: 1659040, areaKm2: 9504, districts: 18, constituencies: 18, regionalMinister: "Hon. Mr. James Gunu", keySectors: "Agriculture, Fishing, Tourism", pillarFocus: ["A", "B", "C"], townHallStatus: "Planned Q4 2026", mbkruVoiceStatus: "Planned", mbkruNote: "Eastern corridor. Legal Empowerment Desk expansion. Citizen voice expansion. Volta Basin focus." },
+  { name: "Upper East", capital: "Bolgatanga", population: 1301226, areaKm2: 8842, districts: 15, constituencies: 15, regionalMinister: "Hon. Mr. Akamugri Donatus Atanga", keySectors: "Agriculture, Shea, Crafts", pillarFocus: ["B", "D", "E"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Planned", mbkruNote: "Upper East hub. People's Report Card coverage. Poverty eradication focus. SDG 1 priority." },
+  { name: "Upper West", capital: "Wa", population: 901502, areaKm2: 18476, districts: 11, constituencies: 11, regionalMinister: "Hon. Mr. Charles Lwanga Puozuing", keySectors: "Agriculture, Shea, Livestock", pillarFocus: ["B", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Planned", mbkruNote: "Upper West hub. Regional forum planned. SDG 1 priority. Accountability tracking." },
   { name: "Central", capital: "Cape Coast", population: 2859821, areaKm2: 9826, districts: 22, constituencies: 23, regionalMinister: "Hon. Mr. Ekow Panyin Okyere Eduamoah", keySectors: "Tourism, Fisheries, Agriculture", pillarFocus: ["A", "B", "D"], townHallStatus: "Planned Q3 2026", mbkruVoiceStatus: "Planned", mbkruNote: "Historic capital. Tourism & fisheries accountability. Town Hall planned. Citizen voice expansion." },
   { name: "Bono", capital: "Sunyani", population: 1208649, areaKm2: 11113, districts: 12, constituencies: 12, regionalMinister: "Hon. Mr. Joseph Addae Akwaboah", keySectors: "Cocoa, Timber, Agriculture", pillarFocus: ["A", "B", "D"], townHallStatus: "Planned Q4 2026", mbkruVoiceStatus: "Planned", mbkruNote: "Bono hub. Cocoa sector focus. People's Report Card. Regional Public Forum planned." },
-  { name: "Bono East", capital: "Techiman", population: 1203400, areaKm2: 23248, districts: 11, constituencies: 11, regionalMinister: "Hon. Mr. Francis Owusu Antwi", keySectors: "Commerce, Agriculture, Transport", pillarFocus: ["A", "B", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "Commercial hub. Regional forum planned. Accountability tracking. Promise catalogue monitoring." },
-  { name: "Ahafo", capital: "Goaso", population: 564668, areaKm2: 5196, districts: 6, constituencies: 6, regionalMinister: "Hon. Mrs. Charity Gardner", keySectors: "Mining, Cocoa, Agriculture", pillarFocus: ["B", "C", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "New region (2019). Mining sector accountability. Legal Empowerment Desk. Engagement planned." },
-  { name: "Oti", capital: "Dambai", population: 747248, areaKm2: 11066, districts: 8, constituencies: 10, regionalMinister: "Hon. Mr. John Kwadwo Gyapong", keySectors: "Agriculture, Volta Basin", pillarFocus: ["A", "B"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "New region (2019). Volta Basin focus. Town Hall expansion planned. Citizen voice pilot. Includes Guan constituency." },
-  { name: "Western North", capital: "Sefwi Wiawso", population: 880921, areaKm2: 10079, districts: 9, constituencies: 9, regionalMinister: "Hon. Mr. Wilbert Petty Brentum", keySectors: "Cocoa, Timber, Mining", pillarFocus: ["B", "C", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "New region (2019). Cocoa & timber. Regional Public Forum planned. Accountability focus." },
-  { name: "North East", capital: "Nalerigu", population: 658946, areaKm2: 9070, districts: 6, constituencies: 6, regionalMinister: "Hon. Mr. Ibrahim Tia", keySectors: "Agriculture, Shea", pillarFocus: ["B", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "New region (2019). Northern outreach. Engagement planned. SDG 1 focus." },
-  { name: "Savannah", capital: "Damongo", population: 653266, areaKm2: 34790, districts: 7, constituencies: 7, regionalMinister: "Hon. Mr. Salisu Be-Awuribe", keySectors: "Agriculture, Livestock, Shea", pillarFocus: ["B", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Coming soon", mbkruNote: "New region (2019). Largest by area. Savannah zone accountability. People's Report Card expansion." },
+  { name: "Bono East", capital: "Techiman", population: 1203400, areaKm2: 23248, districts: 11, constituencies: 11, regionalMinister: "Hon. Mr. Francis Owusu Antwi", keySectors: "Commerce, Agriculture, Transport", pillarFocus: ["A", "B", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Planned", mbkruNote: "Commercial hub. Regional forum planned. Accountability tracking. Promise catalogue monitoring." },
+  { name: "Ahafo", capital: "Goaso", population: 564668, areaKm2: 5196, districts: 6, constituencies: 6, regionalMinister: "Hon. Mrs. Charity Gardner", keySectors: "Mining, Cocoa, Agriculture", pillarFocus: ["B", "C", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Planned", mbkruNote: "New region (2019). Mining sector accountability. Legal Empowerment Desk. Engagement planned." },
+  { name: "Oti", capital: "Dambai", population: 747248, areaKm2: 11066, districts: 8, constituencies: 10, regionalMinister: "Hon. Mr. John Kwadwo Gyapong", keySectors: "Agriculture, Volta Basin", pillarFocus: ["A", "B"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Planned", mbkruNote: "New region (2019). Volta Basin focus. Town Hall expansion planned. Citizen voice expansion. Includes Guan constituency." },
+  { name: "Western North", capital: "Sefwi Wiawso", population: 880921, areaKm2: 10079, districts: 9, constituencies: 9, regionalMinister: "Hon. Mr. Wilbert Petty Brentum", keySectors: "Cocoa, Timber, Mining", pillarFocus: ["B", "C", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Planned", mbkruNote: "New region (2019). Cocoa & timber. Regional Public Forum planned. Accountability focus." },
+  { name: "North East", capital: "Nalerigu", population: 658946, areaKm2: 9070, districts: 6, constituencies: 6, regionalMinister: "Hon. Mr. Ibrahim Tia", keySectors: "Agriculture, Shea", pillarFocus: ["B", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Planned", mbkruNote: "New region (2019). Northern outreach. Engagement planned. SDG 1 focus." },
+  { name: "Savannah", capital: "Damongo", population: 653266, areaKm2: 34790, districts: 7, constituencies: 7, regionalMinister: "Hon. Mr. Salisu Be-Awuribe", keySectors: "Agriculture, Livestock, Shea", pillarFocus: ["B", "D"], townHallStatus: "Planned 2027", mbkruVoiceStatus: "Planned", mbkruNote: "New region (2019). Largest by area. Savannah zone accountability. People's Report Card expansion." },
 ] as const;
 
 /** Concept note card on Resources — PDF link when available */
@@ -480,5 +480,5 @@ export const resourcesConceptNote = {
   title: "MBKRU Concept Note",
   description: "A concise overview of our mission, five operational pillars, and proposed approach to citizen voice and accountability in Ghana.",
   fileUrl: "#",
-  fileLabel: "Download PDF (coming soon)",
+  fileLabel: "Download PDF",
 } as const;

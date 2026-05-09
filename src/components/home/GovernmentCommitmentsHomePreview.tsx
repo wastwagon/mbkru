@@ -17,7 +17,7 @@ type Props = {
   data: GovPreviewData;
 };
 
-/** Homepage block — same KPIs as the catalogue government-programme lens, with a five-row preview and CTA to the preset URL. */
+/** Homepage block — same KPIs as the catalogue government-programme lens, with five sample rows and CTA to the preset URL. */
 export function GovernmentCommitmentsHomePreview({ data }: Props) {
   const { stats, initialRows, trackerConstituencies } = data;
   const reducedMotion = usePrefersReducedMotion();
@@ -78,7 +78,7 @@ export function GovernmentCommitmentsHomePreview({ data }: Props) {
                   {accountabilityHomePreviewCopy.promiseCardSurfaceExplainerShort}
                 </p>
                 <h3 className="text-center font-display text-base font-semibold text-[var(--foreground)] sm:text-left">
-                  Preview (five rows)
+                  Sample rows (five)
                 </h3>
                 <p className="text-center text-xs text-[var(--muted-foreground)] sm:text-left">
                   Open the full page for the interactive dashboard, search, and export.

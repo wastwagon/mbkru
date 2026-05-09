@@ -75,7 +75,7 @@ export default async function TransparencyPage() {
           <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
             <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">By kind</h2>
             {Object.keys(analytics.totals.byKind).length === 0 ? (
-              <p className="mt-4 text-sm text-[var(--muted-foreground)]">No reports yet — counts will appear here after intake begins.</p>
+              <p className="mt-4 text-sm text-[var(--muted-foreground)]">No reports yet — counts will appear here once submissions are recorded.</p>
             ) : null}
             <ul className="mt-4 space-y-3">
               {Object.entries(analytics.totals.byKind).map(([kind, count]) => (

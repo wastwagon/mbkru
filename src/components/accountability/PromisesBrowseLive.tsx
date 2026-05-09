@@ -326,7 +326,7 @@ export function PromisesBrowseLive({
         >
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-4 sm:px-5">
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--primary)]">
-              Catalogue preview — no duplicate KPI strip
+              Catalogue highlights
             </p>
             <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
               {accountabilityHomePreviewCopy.browseHomeOmitDuplicateKpisLead}{" "}

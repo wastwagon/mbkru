@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Town halls & regional forums",
   description:
-    "MBKRU town halls and regional listening forums — programme roadmap with citations. Confirmed dates are announced on News.",
+    "MBKRU town halls and regional listening forums — programme calendar with citations. Confirmed dates are announced on News.",
 };
 
 function statusLabel(status: string) {
@@ -40,7 +40,7 @@ export default async function TownHallsPage() {
     <div>
       <PageHeader
         title="Town halls & regional forums"
-        description="Presidential and regional listening sessions. Programme rows below follow our published roadmap; confirmed dates and venues are announced on News when partners sign off."
+        description="Presidential and regional listening sessions. Programme rows below follow our published calendar; confirmed dates and venues are announced on News when partners sign off."
         breadcrumbCurrentLabel="Forums"
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
@@ -48,14 +48,14 @@ export default async function TownHallsPage() {
           <p className="text-sm leading-relaxed text-[var(--muted-foreground)]">
             We maintain a <strong className="text-[var(--foreground)]">programme directory</strong> tied to our{" "}
             <Link href="/" className={primaryNavLinkClass}>
-              public roadmap
+              published programme pathway
             </Link>
-            . Rows marked <em>to be confirmed</em> are placeholders until venues and registration open. For data provenance on MPs
+            . Rows marked <em>to be confirmed</em> are provisional until venues and registration open. For data provenance on MPs
             and constituencies, see{" "}
             <Link href="/data-sources" className={primaryNavLinkClass}>
               Data sources
             </Link>
-            . Constituency-level debate placeholders live on{" "}
+            . Constituency-level debates are listed on{" "}
             <Link href="/debates" className={primaryNavLinkClass}>
               Constituency debates
             </Link>

@@ -2,6 +2,7 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 
+import { GHANA_ACCOUNTABILITY_PARLIAMENT_TERM } from "@/config/ghana-parliament-term";
 import { ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC } from "@/lib/accountability-http";
 import { buildPromisesCatalogueWhere } from "@/lib/build-promises-catalogue-where";
 import type { PromisesApiFilters } from "@/lib/promises-api-filters";
@@ -15,6 +16,7 @@ import {
 } from "@/lib/accountability-tags";
 import { prisma } from "@/lib/db/prisma";
 import { getPromiseCatalogueApiFields } from "@/lib/promise-catalogue-display";
+import { publicReportCardCycleTitle } from "@/lib/report-card-public-label";
 import { getPromiseTrackerStats } from "@/lib/server/promise-tracker-stats";
 
 export {
@@ -396,7 +398,11 @@ export async function getCachedReportCardApiPayload(year: number) {
       if (!cycle) return null;
       return {
         year: cycle.year,
-        label: cycle.label,
+        label: publicReportCardCycleTitle(cycle.year, cycle.label),
+        parliamentTerm: {
+          startYear: GHANA_ACCOUNTABILITY_PARLIAMENT_TERM.startYear,
+          generalElectionYear: GHANA_ACCOUNTABILITY_PARLIAMENT_TERM.generalElectionYear,
+        },
         publishedAt: cycle.publishedAt!.toISOString(),
         methodology: cycle.methodology,
         entries: cycle.entries.map((e) => ({

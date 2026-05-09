@@ -78,7 +78,7 @@ export function GhanaRegionsSvgMap({ onSelectRegion, selectedRegionName }: Props
               />
             </svg>
           </span>
-          Each region is coloured and labelled. Hover for a quick preview; click for full details. Administrative
+          Each region is coloured and labelled. Hover for a quick summary; click for full details. Administrative
           boundaries © GADM (simplified for web).
         </p>
       </div>
