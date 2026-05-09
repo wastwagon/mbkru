@@ -43,7 +43,7 @@ const nextConfig: NextConfig = {
   // Native PDF parser — keep out of the server bundle graph for reliable tracing.
   serverExternalPackages: ["pdf-parse"],
   // Pin tracing to this app directory (avoids picking a parent-folder lockfile as root).
-  outputFileTracingRoot: path.resolve(process.cwd()),
+  outputFileTracingRoot: path.resolve(/*turbopackIgnore: true*/ process.cwd()),
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

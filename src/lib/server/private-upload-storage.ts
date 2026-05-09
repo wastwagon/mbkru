@@ -2,7 +2,11 @@ import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
 
 const PRIVATE_SCHEME = "private://";
-const DEFAULT_PRIVATE_UPLOADS_ROOT = path.join(process.cwd(), "var", "private-uploads");
+const DEFAULT_PRIVATE_UPLOADS_ROOT = path.join(
+  /*turbopackIgnore: true*/ process.cwd(),
+  "var",
+  "private-uploads",
+);
 
 function sanitizeSegment(value: string): string {
   const trimmed = value.trim();
@@ -15,7 +19,9 @@ function sanitizeSegment(value: string): string {
 function rootDir(): string {
   const configured = process.env.PRIVATE_UPLOADS_DIR?.trim();
   if (!configured) return DEFAULT_PRIVATE_UPLOADS_ROOT;
-  return path.isAbsolute(configured) ? configured : path.join(process.cwd(), configured);
+  return path.isAbsolute(configured)
+    ? configured
+    : path.join(/*turbopackIgnore: true*/ process.cwd(), configured);
 }
 
 export function makePrivateStoragePath(bucket: string, segments: string[]): string {
