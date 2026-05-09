@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 
+import { logServerError } from "@/lib/server/structured-log";
+import { allowGeoReverseRequest } from "@/lib/server/rate-limit";
+
 /** Matches CitizenReport.localArea max length after migration. */
 const ADDRESS_LABEL_MAX = 512;
 
@@ -8,6 +11,10 @@ const ADDRESS_LABEL_MAX = 512;
  * Proxied server-side with a proper User-Agent per Nominatim usage policy.
  */
 export async function GET(request: Request) {
+  if (!(await allowGeoReverseRequest(request))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const url = new URL(request.url);
   const lat = Number(url.searchParams.get("lat"));
   const lon = Number(url.searchParams.get("lon"));
@@ -36,7 +43,8 @@ export async function GET(request: Request) {
     };
     const label = pickAddressLabel(data.address, data.display_name);
     return NextResponse.json({ label });
-  } catch {
+  } catch (e) {
+    logServerError("api/geo/reverse", e);
     return NextResponse.json({ label: null });
   }
 }

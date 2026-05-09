@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AccountPrivacyTools } from "@/components/account/AccountPrivacyTools";
 import { AccountStatGrid } from "@/components/account/AccountStatGrid";
 import { getAccountabilityCatalogueCards } from "@/config/accountability-catalogue-destinations";
 import { prisma } from "@/lib/db/prisma";
@@ -361,6 +362,8 @@ export default async function AccountPage() {
           </div>
         </section>
       ) : null}
+
+      <AccountPrivacyTools accountEmail={member?.email ?? session.email} />
 
       <div className="mt-10 border-t border-[var(--border)] pt-8">
         <SignOutButton />

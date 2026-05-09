@@ -169,8 +169,10 @@ export default function PrivacyPage() {
           </p>
           <p>
             We retain member account data until you ask us to delete your account or as required by law.
-            To exercise access, correction, deletion, or portability for member data, contact us using
-            the details below.
+            When signed in, you can download a JSON export of your account data from{" "}
+            <strong>Your account</strong> (portability). You may also request deletion there; if you created petitions
+            on the platform, automated deletion is blocked to preserve authorship — use the contact details below for a
+            manual review. For other corrections, contact us using the details below.
           </p>
 
           <h2>11. Contact</h2>

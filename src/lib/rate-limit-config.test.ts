@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { parseRateLimitMax, parseRateLimitWindowMs } from "./rate-limit-config";
+import {
+  parseGeoReverseRateLimitMax,
+  parseGeoReverseRateLimitWindowMs,
+  parseRateLimitMax,
+  parseRateLimitWindowMs,
+} from "./rate-limit-config";
 
 describe("parseRateLimitWindowMs", () => {
   it("defaults when missing, empty, non-numeric, or zero", () => {
@@ -31,5 +36,23 @@ describe("parseRateLimitMax", () => {
     expect(parseRateLimitMax("5")).toBe(5);
     expect(parseRateLimitMax("30")).toBe(30);
     expect(parseRateLimitMax("2000")).toBe(1000);
+  });
+});
+
+describe("parseGeoReverseRateLimitWindowMs", () => {
+  it("defaults and clamps", () => {
+    expect(parseGeoReverseRateLimitWindowMs(undefined)).toBe(60_000);
+    expect(parseGeoReverseRateLimitWindowMs("0")).toBe(60_000);
+    expect(parseGeoReverseRateLimitWindowMs("5000")).toBe(10_000);
+    expect(parseGeoReverseRateLimitWindowMs("120000")).toBe(120_000);
+  });
+});
+
+describe("parseGeoReverseRateLimitMax", () => {
+  it("defaults and clamps", () => {
+    expect(parseGeoReverseRateLimitMax(undefined)).toBe(20);
+    expect(parseGeoReverseRateLimitMax("0")).toBe(20);
+    expect(parseGeoReverseRateLimitMax("3")).toBe(5);
+    expect(parseGeoReverseRateLimitMax("200")).toBe(120);
   });
 });

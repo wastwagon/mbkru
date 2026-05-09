@@ -20,6 +20,9 @@ Use for **releases** and **quarterly** review; not a substitute for a profession
 
 - [ ] **Turnstile** enabled in production for public POSTs when bots are a concern.
 - [ ] **Rate limits** on contact, auth, reports, and partner read routes — Redis-backed in multi-instance deploys.
+- [ ] **`/api/geo/reverse`** uses a **stricter bucket** (`allowGeoReverseRequest`; env `RATE_LIMIT_GEO_REVERSE_*`) so Nominatim is not abused.
+- [ ] **Member self-service:** `/api/account/data-export` and `/api/account/delete` (rate-limited; deletion blocked if the member authored petitions — `onDelete: Restrict`).
+- [ ] **Optional** production stderr JSON errors: set `MBKRU_STRUCTURED_ERRORS=1` if your host aggregates logs.
 - [ ] **Zod** validation on JSON bodies; no raw SQL from user input (Prisma parameterized queries).
 
 ## Dependencies

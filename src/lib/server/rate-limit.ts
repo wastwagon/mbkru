@@ -4,10 +4,17 @@ import Redis from "ioredis";
 
 import { getClientIp } from "@/lib/client-ip";
 import { hasRedisUrl } from "@/lib/env.server";
-import { parseRateLimitMax, parseRateLimitWindowMs } from "@/lib/rate-limit-config";
+import {
+  parseGeoReverseRateLimitMax,
+  parseGeoReverseRateLimitWindowMs,
+  parseRateLimitMax,
+  parseRateLimitWindowMs,
+} from "@/lib/rate-limit-config";
 
 const WINDOW_MS = parseRateLimitWindowMs(process.env.RATE_LIMIT_WINDOW_MS);
 const MAX_PER_WINDOW = parseRateLimitMax(process.env.RATE_LIMIT_MAX);
+const GEO_WINDOW_MS = parseGeoReverseRateLimitWindowMs(process.env.RATE_LIMIT_GEO_REVERSE_WINDOW_MS);
+const GEO_MAX_PER_WINDOW = parseGeoReverseRateLimitMax(process.env.RATE_LIMIT_GEO_REVERSE_MAX);
 
 let redis: Redis | null = null;
 
@@ -27,6 +34,7 @@ function getRedis(): Redis | null {
 type Bucket = string;
 
 const memoryBuckets = new Map<string, { count: number; resetAt: number }>();
+const memoryGeoBuckets = new Map<string, { count: number; resetAt: number }>();
 
 function memoryAllow(key: Bucket): boolean {
   const now = Date.now();
@@ -36,6 +44,18 @@ function memoryAllow(key: Bucket): boolean {
     return true;
   }
   if (cur.count >= MAX_PER_WINDOW) return false;
+  cur.count += 1;
+  return true;
+}
+
+function memoryAllowGeo(key: Bucket): boolean {
+  const now = Date.now();
+  const cur = memoryGeoBuckets.get(key);
+  if (!cur || now >= cur.resetAt) {
+    memoryGeoBuckets.set(key, { count: 1, resetAt: now + GEO_WINDOW_MS });
+    return true;
+  }
+  if (cur.count >= GEO_MAX_PER_WINDOW) return false;
   cur.count += 1;
   return true;
 }
@@ -50,6 +70,19 @@ async function redisAllow(key: Bucket): Promise<boolean> {
     return n <= MAX_PER_WINDOW;
   } catch {
     return memoryAllow(key);
+  }
+}
+
+async function redisAllowGeo(key: Bucket): Promise<boolean> {
+  const client = getRedis();
+  if (!client) return memoryAllowGeo(key);
+  const k = `mbkru:rl:geo:${key}`;
+  try {
+    const n = await client.incr(k);
+    if (n === 1) await client.pexpire(k, GEO_WINDOW_MS);
+    return n <= GEO_MAX_PER_WINDOW;
+  } catch {
+    return memoryAllowGeo(key);
   }
 }
 
@@ -77,4 +110,12 @@ export async function allowAdminSessionRequest(adminId: string, routeKey: string
   const bucket = `admin:${routeKey}:${adminId}`;
   if (hasRedisUrl()) return redisAllow(bucket);
   return memoryAllow(bucket);
+}
+
+/** Nominatim-backed reverse geocode — separate, stricter bucket from general public forms. */
+export async function allowGeoReverseRequest(request: Request): Promise<boolean> {
+  const ip = getClientIp(request);
+  const bucket = `geo-reverse:${ip}`;
+  if (hasRedisUrl()) return redisAllowGeo(bucket);
+  return memoryAllowGeo(bucket);
 }
