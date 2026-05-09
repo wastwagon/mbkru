@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
+import type { CitizenReportKind } from "@prisma/client";
 
 import { ReportCardBrowseCard } from "@/components/accountability/ReportCardBrowseCard";
 import { VoiceSubmissionBrowseCard } from "@/components/accountability/VoiceSubmissionBrowseCard";
@@ -10,12 +11,12 @@ import {
   accountabilityCatalogueNavMedium,
   accountabilityProse,
 } from "@/config/accountability-catalogue-destinations";
-import { ghanaParliamentTermShortLabel } from "@/config/ghana-parliament-term";
 import { publicReportCardCycleTitle } from "@/lib/report-card-public-label";
+import { reportKindLabel } from "@/lib/report-status-text";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
-import { focusRingInsetRowClass, primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import {
   isCivicPetitionsAndPublicCausesEnabled,
   isReportCardPublicEnabled,
@@ -25,6 +26,7 @@ import {
   getReportCardBrowseEntries,
   getVoiceSubmissionsBrowseEntries,
   REPORT_CARD_INDEX_PAGE_SIZE,
+  VOICE_SUBMISSION_KIND_FILTERS,
   VOICE_SUBMISSIONS_BROWSE_PAGE_SIZE,
 } from "@/lib/server/accountability-cache";
 
@@ -46,6 +48,7 @@ type ReportCardIndexQuery = {
   vq?: string;
   vregion?: string;
   vpage?: number;
+  vkind?: string;
 };
 
 function reportCardIndexHref(opts: ReportCardIndexQuery) {
@@ -57,6 +60,7 @@ function reportCardIndexHref(opts: ReportCardIndexQuery) {
   if (opts.vq?.trim()) sp.set("vq", opts.vq.trim());
   if (opts.vregion?.trim()) sp.set("vregion", opts.vregion.trim());
   if (opts.vpage != null && opts.vpage > 1) sp.set("vpage", String(opts.vpage));
+  if (opts.vkind?.trim()) sp.set("vkind", opts.vkind.trim());
   const qs = sp.toString();
   return qs ? `/report-card?${qs}` : "/report-card";
 }
@@ -72,6 +76,7 @@ export default async function ReportCardIndexPage({
     vq?: string;
     vregion?: string;
     vpage?: string;
+    vkind?: string;
   }>;
 }) {
   if (!isDatabaseConfigured()) notFound();
@@ -111,11 +116,19 @@ export default async function ReportCardIndexPage({
   const selectedVRegionId = regions.some((r) => r.id === vRegionParam) ? vRegionParam : "";
   const vPage = Math.max(1, Number.parseInt(sp.vpage ?? "1", 10) || 1);
 
+  const vkindRaw = typeof sp.vkind === "string" ? sp.vkind.trim() : "";
+  const voiceKindFilter: CitizenReportKind | null = VOICE_SUBMISSION_KIND_FILTERS.includes(
+    vkindRaw as CitizenReportKind,
+  )
+    ? (vkindRaw as CitizenReportKind)
+    : null;
+
   const voiceBrowse = voiceOn
     ? await getVoiceSubmissionsBrowseEntries({
         page: vPage,
         regionId: selectedVRegionId || null,
         q: vqRaw.trim() || null,
+        kind: voiceKindFilter,
       })
     : { rows: [], totalFiltered: 0, page: 1 };
 
@@ -130,6 +143,7 @@ export default async function ReportCardIndexPage({
         vq: vqRaw.trim() || undefined,
         vregion: selectedVRegionId || undefined,
         vpage: vTotalPages,
+        vkind: voiceKindFilter ? vkindRaw : undefined,
       }),
     );
   }
@@ -155,6 +169,7 @@ export default async function ReportCardIndexPage({
         vq: vqRaw.trim() || undefined,
         vregion: selectedVRegionId || undefined,
         vpage: vPage > 1 ? vPage : undefined,
+        vkind: voiceKindFilter ? vkindRaw : undefined,
       }),
     );
   }
@@ -273,7 +288,7 @@ export default async function ReportCardIndexPage({
                   <input type="hidden" name="region" value={selectedRegionId} />
                   <input type="hidden" name="q" value={qRaw} />
                   <input type="hidden" name="page" value={safePage} />
-                  <label className="lg:col-span-4">
+                  <label className="lg:col-span-3">
                     <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Region</span>
                     <select
                       name="vregion"
@@ -288,7 +303,22 @@ export default async function ReportCardIndexPage({
                       ))}
                     </select>
                   </label>
-                  <label className="lg:col-span-6">
+                  <label className="lg:col-span-3">
+                    <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Report type</span>
+                    <select
+                      name="vkind"
+                      defaultValue={voiceKindFilter ?? ""}
+                      className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)]"
+                    >
+                      <option value="">All types</option>
+                      {VOICE_SUBMISSION_KIND_FILTERS.map((k) => (
+                        <option key={k} value={k}>
+                          {reportKindLabel(k)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="lg:col-span-4">
                     <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Search title</span>
                     <input
                       type="search"
@@ -320,8 +350,8 @@ export default async function ReportCardIndexPage({
                   </div>
                 </form>
                 <p className="mt-3 text-xs text-[var(--muted-foreground)]">
-                  Listed by most recent. Archived submissions are hidden. Public threads show an editor-approved summary (not the
-                  full private narrative).
+                  Listed by most recent (excluding archived). Support and comments require a staff-opened public thread — see
+                  &quot;Open public thread&quot; on cards when live.
                 </p>
               </div>
 
@@ -381,6 +411,7 @@ export default async function ReportCardIndexPage({
                             vq: vqRaw.trim() || undefined,
                             vregion: selectedVRegionId || undefined,
                             vpage: safeVPage - 1,
+                            vkind: voiceKindFilter ? vkindRaw : undefined,
                           })}
                           className={`${primaryNavLinkClass} font-semibold`}
                           prefetch={false}
@@ -400,6 +431,7 @@ export default async function ReportCardIndexPage({
                             vq: vqRaw.trim() || undefined,
                             vregion: selectedVRegionId || undefined,
                             vpage: safeVPage + 1,
+                            vkind: voiceKindFilter ? vkindRaw : undefined,
                           })}
                           className={`${primaryNavLinkClass} font-semibold`}
                           prefetch={false}
@@ -431,6 +463,7 @@ export default async function ReportCardIndexPage({
                   <input type="hidden" name="vq" value={vqRaw} />
                   <input type="hidden" name="vregion" value={selectedVRegionId} />
                   <input type="hidden" name="vpage" value={String(safeVPage)} />
+                  <input type="hidden" name="vkind" value={voiceKindFilter ?? ""} />
                   <label className="lg:col-span-3">
                     <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Cycle (year)</span>
                     <select
@@ -486,6 +519,7 @@ export default async function ReportCardIndexPage({
                         vq: vqRaw.trim() || undefined,
                         vregion: selectedVRegionId || undefined,
                         vpage: vPage > 1 ? vPage : undefined,
+                        vkind: voiceKindFilter ? vkindRaw : undefined,
                       })}
                       className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-[var(--border)] px-3 py-2 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--section-light)]"
                     >
@@ -557,6 +591,7 @@ export default async function ReportCardIndexPage({
                             vq: vqRaw.trim() || undefined,
                             vregion: selectedVRegionId || undefined,
                             vpage: vPage > 1 ? vPage : undefined,
+                            vkind: voiceKindFilter ? vkindRaw : undefined,
                           })}
                           className={`${primaryNavLinkClass} font-semibold`}
                           prefetch={false}
@@ -576,6 +611,7 @@ export default async function ReportCardIndexPage({
                             vq: vqRaw.trim() || undefined,
                             vregion: selectedVRegionId || undefined,
                             vpage: vPage > 1 ? vPage : undefined,
+                            vkind: voiceKindFilter ? vkindRaw : undefined,
                           })}
                           className={`${primaryNavLinkClass} font-semibold`}
                           prefetch={false}
@@ -595,64 +631,6 @@ export default async function ReportCardIndexPage({
               No published programme cycles yet. Voice submissions appear above when Voice is enabled.
             </div>
           ) : null}
-
-          {/* Published cycles compact list */}
-          {hasCycles ? (
-            <div className="mx-auto mt-14 max-w-3xl">
-              <p className="text-center text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
-                All published cycles
-              </p>
-              <ul className="mt-4 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-white">
-                {cycles.map((c) => (
-                  <li key={c.id}>
-                    <Link
-                      href={`/report-card/${c.year}`}
-                      className={`block min-h-[4rem] px-4 py-4 touch-manipulation transition-colors hover:bg-[var(--section-light)]/60 ${focusRingInsetRowClass}`}
-                    >
-                      <p className="font-display text-lg font-semibold text-[var(--foreground)]">{c.year}</p>
-                      <p className="text-sm text-[var(--muted-foreground)]">{publicReportCardCycleTitle(c.year, c.label)}</p>
-                      <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-                        {c._count.entries} entr{c._count.entries === 1 ? "y" : "ies"} · detailed table view
-                      </p>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-4 text-center text-xs text-[var(--muted-foreground)]">
-                Ghana&apos;s four-year Parliament term: {ghanaParliamentTermShortLabel()}. Evidence can stack across cycles
-                toward the next election.
-              </p>
-            </div>
-          ) : null}
-
-          <aside
-            className={`mx-auto mt-12 max-w-3xl rounded-2xl border border-[var(--border)] bg-white px-4 py-5 sm:px-6`}
-            aria-label="Commitment catalogue"
-          >
-            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
-              {accountabilityProse.reportCardCatalogueBridgeTitle}
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
-              {accountabilityProse.reportCardCatalogueBridgeBody}
-            </p>
-            <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-2 text-sm">
-              <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={primaryNavLinkClass}>
-                {accountabilityCatalogueNavMedium.browseAll}
-              </Link>
-              <span className="text-[var(--muted-foreground)]/50" aria-hidden>
-                ·
-              </span>
-              <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments} className={primaryNavLinkClass}>
-                {accountabilityCatalogueNavMedium.government}
-              </Link>
-              <span className="text-[var(--muted-foreground)]/50" aria-hidden>
-                ·
-              </span>
-              <Link href="/parliament-tracker" className={primaryNavLinkClass}>
-                Accountability hub
-              </Link>
-            </p>
-          </aside>
         </div>
       </section>
     </div>

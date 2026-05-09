@@ -1,6 +1,15 @@
 import "server-only";
 
 import type { CitizenReportKind, CitizenReportStatus, Prisma } from "@prisma/client";
+
+/** Allowed filters on `/report-card` Voice submissions (matches enum subset). */
+export const VOICE_SUBMISSION_KIND_FILTERS: readonly CitizenReportKind[] = [
+  "VOICE",
+  "MP_PERFORMANCE",
+  "GOVERNMENT_PERFORMANCE",
+  "SITUATIONAL_ALERT",
+  "ELECTION_OBSERVATION",
+] as const;
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
 
@@ -399,12 +408,15 @@ export type VoiceSubmissionBrowseRow = {
   publicCauseSlug: string | null;
   publicCauseTitle: string | null;
   publicCauseSummary: string | null;
+  publicSupportCount: number;
+  publicCommentCount: number;
 };
 
 export async function getVoiceSubmissionsBrowseEntries(opts: {
   page: number;
   regionId: string | null;
   q: string | null;
+  kind: CitizenReportKind | null;
 }): Promise<{ rows: VoiceSubmissionBrowseRow[]; totalFiltered: number; page: number }> {
   const safePage = Number.isFinite(opts.page) && opts.page >= 1 ? Math.floor(opts.page) : 1;
   const skip = (safePage - 1) * VOICE_SUBMISSIONS_BROWSE_PAGE_SIZE;
@@ -415,6 +427,7 @@ export async function getVoiceSubmissionsBrowseEntries(opts: {
     status: { not: "ARCHIVED" },
   };
   if (regionId) where.regionId = regionId;
+  if (opts.kind != null) where.kind = opts.kind;
   if (q.length > 0) {
     where.title = { contains: q, mode: "insensitive" };
   }
@@ -438,6 +451,12 @@ export async function getVoiceSubmissionsBrowseEntries(opts: {
         publicCauseSlug: true,
         publicCauseTitle: true,
         publicCauseSummary: true,
+        _count: {
+          select: {
+            publicCauseSupports: true,
+            publicCauseComments: true,
+          },
+        },
       },
     }),
     prisma.citizenReport.count({ where }),
@@ -456,6 +475,8 @@ export async function getVoiceSubmissionsBrowseEntries(opts: {
     publicCauseSlug: r.publicCauseSlug,
     publicCauseTitle: r.publicCauseTitle,
     publicCauseSummary: r.publicCauseSummary,
+    publicSupportCount: r._count.publicCauseSupports,
+    publicCommentCount: r._count.publicCauseComments,
   }));
 
   return { rows, totalFiltered, page: safePage };

@@ -1525,6 +1525,39 @@ async function seedDashboardDemoCohortActivityExtensions(members, community) {
   }
   console.log("Demo cohort: public cause + supports + comments ensured (tracking MBKRU-DEMO-COHORT-CAUSE-PUBLIC-1).");
 
+  const mpPerfCause = await prisma.citizenReport.findUnique({
+    where: { trackingCode: "MBKRU-DEMO-COHORT-E-3" },
+    select: { id: true, publicCauseSlug: true },
+  });
+  if (mpPerfCause?.publicCauseSlug) {
+    const mpSupportIdx = [1, 2, 4];
+    for (const idx of mpSupportIdx) {
+      await prisma.citizenReportSupport.upsert({
+        where: {
+          reportId_memberId: { reportId: mpPerfCause.id, memberId: members[idx].id },
+        },
+        create: { reportId: mpPerfCause.id, memberId: members[idx].id },
+        update: {},
+      });
+    }
+    const mpCommentBody =
+      "Seed comment: constituency surgery hour accountability matters for residents — following this thread.";
+    const mpCommentExists = await prisma.citizenReportPublicComment.findFirst({
+      where: { reportId: mpPerfCause.id, body: mpCommentBody },
+    });
+    if (!mpCommentExists) {
+      await prisma.citizenReportPublicComment.create({
+        data: {
+          reportId: mpPerfCause.id,
+          memberId: members[6].id,
+          body: mpCommentBody,
+          status: "VISIBLE",
+        },
+      });
+    }
+    console.log("Demo cohort: MP performance public cause supports/comments ensured (MBKRU-DEMO-COHORT-E-3).");
+  }
+
   const petitionStreet = await prisma.petition.upsert({
     where: { slug: "mbkru-seed-cohort-petition-street-safety" },
     create: {
@@ -1828,7 +1861,7 @@ async function seedDashboardDemoCohort() {
       title: "Health outreach — scheduling",
       body: "Voice report asking for published schedule for a mobile clinic visit.",
       category: "Health",
-      status: "CLOSED",
+      status: "RECEIVED",
     },
     {
       code: "MBKRU-DEMO-COHORT-S-3",
@@ -1847,12 +1880,39 @@ async function seedDashboardDemoCohort() {
       body: "MP performance seed: documents advertised surgery hours versus observed access — fixture only, not verified.",
       category: "Constituency access",
       status: "RECEIVED",
+      parliamentMemberSlug: "john-dramani-mahama",
+      publicCauseSlug: "seed-demo-constituency-surgery-hours",
+      publicCauseTitle: "Constituency surgery hours — transparency",
+      publicCauseSummary:
+        "Residents compare advertised MP surgery hours with observed access. Seed summary for public engagement — not a verified investigation.",
+      publicCauseOpenedAt: "2026-03-10T12:00:00.000Z",
     },
   ];
 
   for (const r of reportFixtures) {
     const mem = members[r.memberIndex];
     const regionId = mem.regionId;
+
+    let parliamentMemberId = null;
+    if (r.parliamentMemberSlug) {
+      const pm = await prisma.parliamentMember.findUnique({
+        where: { slug: r.parliamentMemberSlug },
+        select: { id: true },
+      });
+      parliamentMemberId = pm?.id ?? null;
+    }
+
+    const publicCauseBlock =
+      r.publicCauseSlug && r.publicCauseTitle && r.publicCauseSummary
+        ? {
+            publicCauseSlug: r.publicCauseSlug,
+            publicCauseTitle: r.publicCauseTitle,
+            publicCauseSummary: r.publicCauseSummary,
+            publicCauseOpenedAt: new Date(r.publicCauseOpenedAt ?? "2026-03-10T12:00:00.000Z"),
+            publicCauseClosed: false,
+          }
+        : {};
+
     await prisma.citizenReport.upsert({
       where: { trackingCode: r.code },
       create: {
@@ -1864,7 +1924,9 @@ async function seedDashboardDemoCohort() {
         category: r.category,
         status: r.status,
         regionId,
+        parliamentMemberId,
         staffNotes: "prisma seed — seedDashboardDemoCohort (SEED_ENGAGEMENT_DEMOS=1). Safe to archive.",
+        ...publicCauseBlock,
       },
       update: {
         kind: r.kind,
@@ -1874,7 +1936,9 @@ async function seedDashboardDemoCohort() {
         category: r.category,
         status: r.status,
         regionId,
+        parliamentMemberId,
         staffNotes: "prisma seed — seedDashboardDemoCohort (SEED_ENGAGEMENT_DEMOS=1). Safe to archive.",
+        ...publicCauseBlock,
       },
     });
   }
