@@ -57,9 +57,11 @@ export default async function ParliamentTrackerPage() {
   let trackerStats: Awaited<ReturnType<typeof getCachedPromiseTrackerStats>> | null = null;
   let mpRoster: Awaited<ReturnType<typeof getCachedMpsPublicRoster>> = [];
   let recentMpVoice: {
+    id: string;
     title: string;
     trackingCode: string;
     createdAt: Date;
+    discussionEnabled: boolean;
     parliamentMember: { name: string; slug: string } | null;
   }[] = [];
 
@@ -76,13 +78,15 @@ export default async function ParliamentTrackerPage() {
     }
     try {
       recentMpVoice = await prisma.citizenReport.findMany({
-        where: { kind: "MP_PERFORMANCE", parliamentMemberId: { not: null } },
+        where: { kind: "MP_PERFORMANCE", parliamentMemberId: { not: null }, status: { not: "ARCHIVED" } },
         orderBy: { createdAt: "desc" },
         take: 12,
         select: {
+          id: true,
           title: true,
           trackingCode: true,
           createdAt: true,
+          discussionEnabled: true,
           parliamentMember: { select: { name: true, slug: true } },
         },
       });
@@ -143,18 +147,19 @@ export default async function ParliamentTrackerPage() {
                 <div>
                   <h2 className="font-display text-lg font-bold text-[var(--foreground)]">Parliamentary roster</h2>
                   <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-                    {mpRoster.length} active MP{mpRoster.length === 1 ? "" : "s"} in this catalogue. Open a member’s
-                    catalogue sheet from the list when we publish rows, or{" "}
+                    {mpRoster.length} active MP{mpRoster.length === 1 ? "" : "s"} in this catalogue. Each row shows
+                    Citizen Voice MP intakes and commitment catalogue rows — click a name (when browse is on) to open that
+                    MP&apos;s sheet.{" "}
                     {partnerDataPage ? (
                       <>
-                        see{" "}
+                        For machine-readable exports of the same roster, see{" "}
                         <Link href="/partner-api" className={primaryLinkClass}>
                           Partner data &amp; API
-                        </Link>{" "}
-                        for machine-readable exports of the same roster.
+                        </Link>
+                        .
                       </>
                     ) : (
-                      "ask the team if you need a machine-readable export of this roster."
+                      "Ask the team if you need a machine-readable export of this roster."
                     )}
                   </p>
                 </div>
@@ -177,7 +182,7 @@ export default async function ParliamentTrackerPage() {
                   {mpRoster.map((m) => (
                     <li key={m.slug} className="flex flex-wrap items-baseline justify-between gap-2 px-3 py-2.5 text-sm hover:bg-[var(--section-light)]/50">
                       <div className="min-w-0">
-                        {showPromises && m.promiseCount > 0 ? (
+                        {showPromises ? (
                           <Link href={`/promises/${encodeURIComponent(m.slug)}`} className={primaryLinkClass}>
                             {m.name}
                           </Link>
@@ -191,11 +196,20 @@ export default async function ParliamentTrackerPage() {
                           {m.constituencyName ? ` · ${m.constituencyName}` : ""}
                         </span>
                       </div>
-                      <span className="shrink-0 tabular-nums text-xs text-[var(--muted-foreground)]">
-                        {m.promiseCount}{" "}
-                        {m.promiseCount === 1
-                          ? accountabilityProse.mpRosterListCountLabelSingular
-                          : accountabilityProse.mpRosterListCountLabelPlural}
+                      <span className="shrink-0 text-right text-xs text-[var(--muted-foreground)]">
+                        <span className="tabular-nums">
+                          {m.mpVoiceReportCount}{" "}
+                          {m.mpVoiceReportCount === 1
+                            ? accountabilityProse.mpRosterVoiceReportsSingular
+                            : accountabilityProse.mpRosterVoiceReportsPlural}
+                        </span>
+                        <span className="text-[var(--muted-foreground)]"> · </span>
+                        <span className="tabular-nums">
+                          {m.promiseCount}{" "}
+                          {m.promiseCount === 1
+                            ? accountabilityProse.mpRosterListCountLabelSingular
+                            : accountabilityProse.mpRosterListCountLabelPlural}
+                        </span>
                       </span>
                     </li>
                   ))}
@@ -219,7 +233,7 @@ export default async function ParliamentTrackerPage() {
               </p>
               <ul className="mt-4 divide-y divide-[var(--border)] rounded-xl border border-[var(--border)]">
                 {recentMpVoice.map((r) => (
-                  <li key={r.trackingCode} className="flex flex-wrap items-baseline justify-between gap-2 px-3 py-2.5 text-sm">
+                  <li key={r.id} className="flex flex-wrap items-baseline justify-between gap-2 px-3 py-2.5 text-sm">
                     <div className="min-w-0">
                       <span className="font-medium text-[var(--foreground)]">{r.title}</span>
                       {r.parliamentMember ? (
@@ -236,12 +250,21 @@ export default async function ParliamentTrackerPage() {
                         </span>
                       ) : null}
                     </div>
-                    <Link
-                      href={`/track-report?code=${encodeURIComponent(r.trackingCode)}`}
-                      className={`shrink-0 tabular-nums text-xs ${primaryNavLinkClass}`}
-                    >
-                      {r.trackingCode}
-                    </Link>
+                    {r.discussionEnabled ? (
+                      <Link
+                        href={`/citizens-voice/discussions/${encodeURIComponent(r.id)}`}
+                        className={`shrink-0 text-xs font-semibold ${primaryNavLinkClass}`}
+                      >
+                        Discussion →
+                      </Link>
+                    ) : (
+                      <Link
+                        href={`/track-report?code=${encodeURIComponent(r.trackingCode)}`}
+                        className={`shrink-0 tabular-nums text-xs ${primaryNavLinkClass}`}
+                      >
+                        {r.trackingCode}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

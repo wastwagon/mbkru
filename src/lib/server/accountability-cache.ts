@@ -77,7 +77,17 @@ export async function getCachedMpsPublicRoster() {
           role: true,
           party: true,
           constituency: { select: { name: true } },
-          _count: { select: { promises: true } },
+          _count: {
+            select: {
+              promises: true,
+              citizenReports: {
+                where: {
+                  kind: "MP_PERFORMANCE",
+                  status: { not: "ARCHIVED" },
+                },
+              },
+            },
+          },
         },
       });
       return rows.map((m) => ({
@@ -87,9 +97,10 @@ export async function getCachedMpsPublicRoster() {
         party: m.party,
         constituencyName: m.constituency?.name ?? null,
         promiseCount: m._count.promises,
+        mpVoiceReportCount: m._count.citizenReports,
       }));
     },
-    ["api-mps-v1"],
+    ["api-mps-v2"],
     { tags: [MPS_ROSTER_TAG], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
 }
@@ -110,10 +121,10 @@ export const getCachedPromisesMemberPublic = cache(async (slug: string) => {
           },
         },
       });
-      if (!member || member.promises.length === 0) return null;
+      if (!member) return null;
       return member;
     },
-    ["promises-member-v2", slug],
+    ["promises-member-v3", slug],
     { tags: [PROMISES_INDEX_TAG, promisesMemberTag(slug)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
 });
@@ -406,12 +417,65 @@ export type VoiceSubmissionBrowseRow = {
   region: { name: string } | null;
   localArea: string | null;
   parliamentMember: { name: string; slug: string; role: string } | null;
+  /** Member-facing label for who filed the report (display name or email local-part). */
+  submitterLabel: string | null;
+  /** Short preview of report body for browse cards (never holds staff-only fields). */
+  bodyPreview: string | null;
   publicCauseSlug: string | null;
   publicCauseTitle: string | null;
   publicCauseSummary: string | null;
   publicSupportCount: number;
   publicCommentCount: number;
+  /** Sum of discussion comment reactions (LIKE / THANK / INSIGHT) on this report’s thread. */
+  discussionReactionTotals: { LIKE: number; THANK: number; INSIGHT: number };
 };
+
+async function voiceDiscussionReactionTotalsByReportIds(
+  reportIds: string[],
+): Promise<Map<string, { LIKE: number; THANK: number; INSIGHT: number }>> {
+  const empty = (): { LIKE: number; THANK: number; INSIGHT: number } => ({
+    LIKE: 0,
+    THANK: 0,
+    INSIGHT: 0,
+  });
+  const map = new Map<string, ReturnType<typeof empty>>();
+  for (const id of reportIds) map.set(id, empty());
+  if (reportIds.length === 0) return map;
+
+  const rows = await prisma.citizenReportPublicComment.findMany({
+    where: { reportId: { in: reportIds } },
+    select: {
+      reportId: true,
+      reactions: { select: { kind: true } },
+    },
+  });
+
+  for (const row of rows) {
+    const t = map.get(row.reportId);
+    if (!t) continue;
+    for (const r of row.reactions) {
+      if (r.kind === "LIKE") t.LIKE += 1;
+      else if (r.kind === "THANK") t.THANK += 1;
+      else if (r.kind === "INSIGHT") t.INSIGHT += 1;
+    }
+  }
+  return map;
+}
+
+function memberSubmitterLabel(m: { displayName: string | null; email: string } | null): string | null {
+  if (!m) return null;
+  const dn = m.displayName?.trim();
+  if (dn) return dn;
+  const local = m.email.split("@")[0]?.trim();
+  return local || null;
+}
+
+function bodyPreviewLine(body: string | null, max = 220): string | null {
+  if (!body?.trim()) return null;
+  const t = body.trim().replace(/\s+/g, " ");
+  if (t.length <= max) return t;
+  return `${t.slice(0, max).trimEnd()}…`;
+}
 
 export async function getVoiceSubmissionsBrowseEntries(opts: {
   page: number;
@@ -443,6 +507,7 @@ export async function getVoiceSubmissionsBrowseEntries(opts: {
         id: true,
         trackingCode: true,
         title: true,
+        body: true,
         kind: true,
         status: true,
         createdAt: true,
@@ -450,6 +515,7 @@ export async function getVoiceSubmissionsBrowseEntries(opts: {
         localArea: true,
         region: { select: { name: true } },
         parliamentMember: { select: { name: true, slug: true, role: true } },
+        member: { select: { displayName: true, email: true } },
         publicCauseSlug: true,
         publicCauseTitle: true,
         publicCauseSummary: true,
@@ -464,6 +530,8 @@ export async function getVoiceSubmissionsBrowseEntries(opts: {
     prisma.citizenReport.count({ where }),
   ]);
 
+  const reactionMap = await voiceDiscussionReactionTotalsByReportIds(raw.map((r) => r.id));
+
   const rows: VoiceSubmissionBrowseRow[] = raw.map((r) => ({
     id: r.id,
     trackingCode: r.trackingCode,
@@ -475,11 +543,14 @@ export async function getVoiceSubmissionsBrowseEntries(opts: {
     localArea: r.localArea,
     region: r.region,
     parliamentMember: r.parliamentMember,
+    submitterLabel: memberSubmitterLabel(r.member),
+    bodyPreview: bodyPreviewLine(r.body),
     publicCauseSlug: r.publicCauseSlug,
     publicCauseTitle: r.publicCauseTitle,
     publicCauseSummary: r.publicCauseSummary,
     publicSupportCount: r._count.publicCauseSupports,
     publicCommentCount: r._count.publicCauseComments,
+    discussionReactionTotals: reactionMap.get(r.id) ?? { LIKE: 0, THANK: 0, INSIGHT: 0 },
   }));
 
   return { rows, totalFiltered, page: safePage };

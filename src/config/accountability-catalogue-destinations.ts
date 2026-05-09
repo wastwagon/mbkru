@@ -191,9 +191,12 @@ export const accountabilityProse = {
   /** /report-card index — People's Report Card vs catalogue vs roadmap scorecard language. */
   reportCardIndexDisambiguation:
     "Each year's People's Report Card below is a dated editorial release with MP narratives and scores. That is separate from the live commitment catalogue and from roadmap wording about pre-election accountability scorecards — both are explained in methodology.",
-  /** Roster list — count suffix next to each MP (same language as the By MP index). */
+  /** Roster list — commitment catalogue count suffix next to each MP. */
   mpRosterListCountLabelSingular: "catalogue row",
   mpRosterListCountLabelPlural: "catalogue rows",
+  /** Roster list — Citizen Voice MP performance intakes linked to that MP (non-archived). */
+  mpRosterVoiceReportsSingular: "MP Voice report",
+  mpRosterVoiceReportsPlural: "MP Voice reports",
 } as const;
 
 export type AccountabilityCatalogueCard = {

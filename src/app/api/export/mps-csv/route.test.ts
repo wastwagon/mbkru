@@ -62,6 +62,7 @@ describe("GET /api/export/mps-csv", () => {
         party: "IND",
         constituencyName: "Sample North",
         promiseCount: 2,
+        mpVoiceReportCount: 1,
       },
     ]);
     const res = await GET(new Request("https://example.com/api/export/mps-csv"));
@@ -73,9 +74,9 @@ describe("GET /api/export/mps-csv", () => {
     expect(buf[1]).toBe(0xbb);
     expect(buf[2]).toBe(0xbf);
     const text = new TextDecoder("utf-8").decode(buf);
-    expect(text).toContain("slug,name,role,party,constituency_name,promise_count");
+    expect(text).toContain("slug,name,role,party,constituency_name,promise_count,mp_voice_report_count");
     expect(text).toContain('"Demo, Esq."');
     expect(text).toContain("Sample North");
-    expect(text).toContain(",2");
+    expect(text).toContain(",2,1");
   });
 });

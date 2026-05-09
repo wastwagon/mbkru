@@ -150,8 +150,6 @@ export function VoiceDiscussionPanel({ initial, reportId }: Props) {
     }
   }
 
-  const signedIn = true;
-
   return (
     <div className="space-y-8">
       <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
@@ -207,6 +205,7 @@ export function VoiceDiscussionPanel({ initial, reportId }: Props) {
                 <CommentBlock
                   comment={c}
                   canEngage={data.sessionSignedIn}
+                  discussionLoginHref={`/login?next=${encodeURIComponent(basePath)}`}
                   onReact={setReaction}
                   onReply={() => {
                     setReplyParentId(c.id);
@@ -218,6 +217,7 @@ export function VoiceDiscussionPanel({ initial, reportId }: Props) {
                     <CommentBlock
                       comment={r}
                       canEngage={data.sessionSignedIn}
+                      discussionLoginHref={`/login?next=${encodeURIComponent(basePath)}`}
                       onReact={setReaction}
                       onReply={() => {}}
                       small
@@ -275,12 +275,14 @@ export function VoiceDiscussionPanel({ initial, reportId }: Props) {
 function CommentBlock({
   comment,
   canEngage,
+  discussionLoginHref,
   onReact,
   onReply,
   small,
 }: {
   comment: CommentRow;
   canEngage: boolean;
+  discussionLoginHref: string;
   onReact: (id: string, kind: "LIKE" | "THANK" | "INSIGHT" | null) => void;
   onReply: () => void;
   small?: boolean;
@@ -313,12 +315,13 @@ function CommentBlock({
               {labels[k]} · {comment.reactions[k]}
             </button>
           ) : (
-            <span
+            <a
               key={k}
-              className="rounded-full border border-[var(--border)] bg-[var(--section-light)] px-2.5 py-1 text-xs text-[var(--muted-foreground)]"
+              href={discussionLoginHref}
+              className="rounded-full border border-[var(--border)] bg-[var(--section-light)] px-2.5 py-1 text-xs text-[var(--muted-foreground)] hover:bg-[var(--muted)]/15"
             >
-              {labels[k]} · {comment.reactions[k]}
-            </span>
+              {labels[k]} · {comment.reactions[k]} — sign in
+            </a>
           ),
         )}
       </div>

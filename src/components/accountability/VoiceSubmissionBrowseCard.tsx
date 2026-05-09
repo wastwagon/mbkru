@@ -7,9 +7,17 @@ import type { CitizenReportKind } from "@prisma/client";
 
 function excerptFromSummary(raw: string | null, max = 220): string | null {
   if (!raw?.trim()) return null;
-  const t = raw.trim().replace(/\s+/g, " ");
+  let t = raw.trim().replace(/\s+/g, " ");
+  t = t.replace(/\s+—\s*not a live case\.?$/i, "").replace(/\bSeed data[^.]*\.?\s*/gi, "").trim();
   if (t.length <= max) return t;
   return `${t.slice(0, max).trimEnd()}…`;
+}
+
+/** Hide demo/seed suffixes in browse titles without changing stored data. */
+function stripSeedMarkers(title: string): string {
+  let s = title.trim();
+  s = s.replace(/\s*\(seed\)\s*$/i, "").replace(/\s*[—–-]\s*seed\s*$/i, "").trim();
+  return s;
 }
 
 function kindBadgeClass(kind: CitizenReportKind): string {
@@ -43,6 +51,20 @@ export function VoiceSubmissionBrowseCard({ row }: Props) {
   const publicTitle = row.publicCauseTitle?.trim() ?? null;
   const hasLegacyCause = Boolean(row.publicCauseSlug);
   const discussionOpen = row.discussionEnabled;
+  const displayTitle = stripSeedMarkers(row.title);
+  const rt = row.discussionReactionTotals;
+  const reactionLine =
+    rt.LIKE + rt.THANK + rt.INSIGHT > 0
+      ? `On the discussion thread: Like ${rt.LIKE} · Thanks ${rt.THANK} · Important ${rt.INSIGHT}`
+      : null;
+
+  const narrative =
+    summaryExcerpt ??
+    (row.kind === "MP_PERFORMANCE" && row.bodyPreview
+      ? row.bodyPreview
+      : !hasLegacyCause && discussionOpen && row.bodyPreview
+        ? row.bodyPreview
+        : null);
 
   return (
     <article className="flex flex-col rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
@@ -55,7 +77,10 @@ export function VoiceSubmissionBrowseCard({ row }: Props) {
               Report type: {reportKindLabel(row.kind)}
             </span>
           </p>
-          <h2 className="font-display text-lg font-semibold leading-snug text-[var(--foreground)]">{row.title}</h2>
+          <h2 className="font-display text-lg font-semibold leading-snug text-[var(--foreground)]">{displayTitle}</h2>
+          {row.submitterLabel ? (
+            <p className="mt-2 text-xs font-medium text-[var(--foreground)]">Submitted by {row.submitterLabel}</p>
+          ) : null}
           <p className="mt-2 text-xs text-[var(--muted-foreground)]">
             {reportStatusLabel(row.status)}
             {" · "}
@@ -64,12 +89,13 @@ export function VoiceSubmissionBrowseCard({ row }: Props) {
           {place ? <p className="mt-2 text-xs text-[var(--muted-foreground)]">{place}</p> : null}
           {row.parliamentMember ? (
             <p className="mt-2 text-xs font-medium text-[var(--foreground)]">
-              MP / figure in focus: {row.parliamentMember.name}
+              MP in focus: {row.parliamentMember.name}
               {row.parliamentMember.role ? ` (${row.parliamentMember.role})` : ""}
             </p>
           ) : row.kind === "MP_PERFORMANCE" ? (
             <p className="mt-2 text-xs text-amber-800 dark:text-amber-200">
-              No parliament roster link on this row — pick an MP when submitting so tracking stays clear.
+              No MP selected on this intake — when you file MP performance, pick the sitting MP so it appears on their
+              tracker sheet.
             </p>
           ) : null}
         </div>
@@ -93,21 +119,25 @@ export function VoiceSubmissionBrowseCard({ row }: Props) {
       {publicTitle ? (
         <p className="mt-3 text-xs font-medium text-[var(--foreground)]">Published title: {publicTitle}</p>
       ) : null}
-      {summaryExcerpt ? (
-        <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{summaryExcerpt}</p>
-      ) : row.publicCauseSlug ? (
+      {narrative ? (
+        <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{narrative}</p>
+      ) : hasLegacyCause ? (
         <p className="mt-3 flex-1 text-sm italic text-[var(--muted-foreground)]">
           Staff-approved summary will appear here when published.
         </p>
       ) : discussionOpen ? (
         <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">
-          Full narrative, member comments, and reactions are on the discussion page (sign in to engage).
+          Open the report to read the full narrative. Sign in on the discussion page to comment, react, and show
+          support.
         </p>
       ) : (
         <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">
           Public discussion is turned off for this submission.
         </p>
       )}
+      {discussionOpen && reactionLine ? (
+        <p className="mt-2 text-xs text-[var(--muted-foreground)]">{reactionLine}</p>
+      ) : null}
       <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 border-t border-[var(--border)]/80 pt-4 text-sm">
         {discussionOpen ? (
           <Link
@@ -127,9 +157,6 @@ export function VoiceSubmissionBrowseCard({ row }: Props) {
             Legacy public cause thread →
           </Link>
         ) : null}
-        <Link href="/track-report" className={`${primaryLinkClass} font-semibold`} prefetch={false}>
-          Track a report
-        </Link>
       </div>
     </article>
   );

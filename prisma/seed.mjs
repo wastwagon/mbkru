@@ -1456,9 +1456,9 @@ async function seedDashboardDemoCohortActivityExtensions(members, community) {
       trackingCode: "MBKRU-DEMO-COHORT-CAUSE-PUBLIC-1",
       kind: "VOICE",
       memberId: members[2].id,
-      title: "Street lighting — public cause (seed)",
+      title: "Street lighting on our evening walking route",
       body:
-        "Fixture narrative for admin triage only. The public thread below uses a short summary; supports and comments exercise the citizens-voice causes UX.",
+        "Three lamp heads have been out since Harmattan and parents don’t feel safe walking kids home from tutoring. We’ve WhatsApp’d the assembly twice — posting here so there’s a dated record and neighbours can add what they’re seeing.",
       category: "Infrastructure",
       status: "UNDER_REVIEW",
       regionId: members[2].regionId,
@@ -1466,15 +1466,15 @@ async function seedDashboardDemoCohortActivityExtensions(members, community) {
       publicCauseSlug: "seed-demo-neighbourhood-lighting",
       publicCauseTitle: "Safer evening walkways — lighting request",
       publicCauseSummary:
-        "Residents are asking for a published schedule for lamp repairs on the main walking route. Seed data for public causes — not a live case.",
+        "Residents want a published repair schedule for lamps along the main walking route — especially after dark when traders are still closing up.",
       publicCauseOpenedAt: new Date("2026-03-15T12:00:00.000Z"),
       publicCauseClosed: false,
     },
     update: {
       memberId: members[2].id,
-      title: "Street lighting — public cause (seed)",
+      title: "Street lighting on our evening walking route",
       body:
-        "Fixture narrative for admin triage only. The public thread below uses a short summary; supports and comments exercise the citizens-voice causes UX.",
+        "Three lamp heads have been out since Harmattan and parents don’t feel safe walking kids home from tutoring. We’ve WhatsApp’d the assembly twice — posting here so there’s a dated record and neighbours can add what they’re seeing.",
       category: "Infrastructure",
       status: "UNDER_REVIEW",
       regionId: members[2].regionId,
@@ -1482,7 +1482,7 @@ async function seedDashboardDemoCohortActivityExtensions(members, community) {
       publicCauseSlug: "seed-demo-neighbourhood-lighting",
       publicCauseTitle: "Safer evening walkways — lighting request",
       publicCauseSummary:
-        "Residents are asking for a published schedule for lamp repairs on the main walking route. Seed data for public causes — not a live case.",
+        "Residents want a published repair schedule for lamps along the main walking route — especially after dark when traders are still closing up.",
       publicCauseOpenedAt: new Date("2026-03-15T12:00:00.000Z"),
       publicCauseClosed: false,
     },
@@ -1509,7 +1509,6 @@ async function seedDashboardDemoCohortActivityExtensions(members, community) {
       where: {
         reportId: causeReport.id,
         memberId: members[c.memberIndex].id,
-        body: c.body,
       },
     });
     if (!exists) {
@@ -1520,6 +1519,11 @@ async function seedDashboardDemoCohortActivityExtensions(members, community) {
           body: c.body,
           status: "VISIBLE",
         },
+      });
+    } else if (exists.body !== c.body) {
+      await prisma.citizenReportPublicComment.update({
+        where: { id: exists.id },
+        data: { body: c.body },
       });
     }
   }
@@ -1541,9 +1545,9 @@ async function seedDashboardDemoCohortActivityExtensions(members, community) {
       });
     }
     const mpCommentBody =
-      "Seed comment: constituency surgery hour accountability matters for residents — following this thread.";
+      "Thanks for spelling out the Friday closures — our elders won’t keep making that trip until the office posts reliable hours.";
     const mpCommentExists = await prisma.citizenReportPublicComment.findFirst({
-      where: { reportId: mpPerfCause.id, body: mpCommentBody },
+      where: { reportId: mpPerfCause.id, memberId: members[6].id },
     });
     if (!mpCommentExists) {
       await prisma.citizenReportPublicComment.create({
@@ -1553,6 +1557,11 @@ async function seedDashboardDemoCohortActivityExtensions(members, community) {
           body: mpCommentBody,
           status: "VISIBLE",
         },
+      });
+    } else if (mpCommentExists.body !== mpCommentBody) {
+      await prisma.citizenReportPublicComment.update({
+        where: { id: mpCommentExists.id },
+        data: { body: mpCommentBody },
       });
     }
     console.log("Demo cohort: MP performance public cause supports/comments ensured (MBKRU-DEMO-COHORT-E-3).");
@@ -1769,6 +1778,19 @@ async function seedDashboardDemoCohort() {
   const regionAt = (i) => regions[i % Math.max(regions.length, 1)]?.id ?? null;
 
   const emails = Array.from({ length: 10 }, (_, i) => `demo.cohort${String(i + 1).padStart(2, "0")}@mbkru.local`);
+  /** Readable pilot names for UI demos — rotate passwords for production. */
+  const demoDisplayNames = [
+    "Kwame Asante",
+    "Abena Owusu",
+    "Yaw Boateng",
+    "Akosua Mensah",
+    "Kofi Darko",
+    "Adwoa Frimpong",
+    "Kwesi Nyarko",
+    "Efua Sackey",
+    "Yaw Antwi",
+    "Ama Serwaa-Badu",
+  ];
   const members = [];
   for (let i = 0; i < emails.length; i++) {
     const email = emails[i];
@@ -1777,12 +1799,12 @@ async function seedDashboardDemoCohort() {
       create: {
         email,
         password,
-        displayName: `Demo cohort member ${i + 1}`,
+        displayName: demoDisplayNames[i] ?? `Pilot member ${i + 1}`,
         regionId: regionAt(i),
       },
       update: {
         password,
-        displayName: `Demo cohort member ${i + 1}`,
+        displayName: demoDisplayNames[i] ?? `Pilot member ${i + 1}`,
         regionId: regionAt(i),
       },
     });
@@ -1795,8 +1817,8 @@ async function seedDashboardDemoCohort() {
       code: "MBKRU-DEMO-COHORT-WB-1",
       memberIndex: 0,
       kind: "VOICE",
-      title: "Governance concern — procurement documentation",
-      body: "Request for clarity on how a public tender was evaluated. Submitted as a Voice report with whistleblow-style governance language for admin triage testing only.",
+      title: "We need clarity on how this tender was scored",
+      body: "Several of us followed the procurement notice and the award notice doesn’t line up with what was published in the gazette. We’re asking for a plain-language summary of the evaluation so everyone can see it was fair.",
       category: "Whistleblow (Voice)",
       status: "UNDER_REVIEW",
     },
@@ -1804,8 +1826,8 @@ async function seedDashboardDemoCohort() {
       code: "MBKRU-DEMO-COHORT-WB-2",
       memberIndex: 1,
       kind: "VOICE",
-      title: "Anonymous-style tip follow-up (seed)",
-      body: "Second seed Voice row tagged for governance review workflows. Not a verified allegation — fixture data.",
+      title: "Follow-up on the market roofing contract",
+      body: "Posting again because traders still haven’t seen minutes from the last assembly meeting. Happy to share receipts if someone from procurement can sit down with us this week.",
       category: "Whistleblow (Voice)",
       status: "RECEIVED",
     },
@@ -1813,8 +1835,8 @@ async function seedDashboardDemoCohort() {
       code: "MBKRU-DEMO-COHORT-V-3",
       memberIndex: 2,
       kind: "VOICE",
-      title: "Street drainage — neighbourhood update",
-      body: "Routine Voice casework example: standing water after rain and request for inspection.",
+      title: "Stormwater sitting on our street after every rain",
+      body: "The gutter behind the school hasn’t been cleared in months. Kids are splashing through it to get to class. Can public works send a crew before the next downpour?",
       category: "Infrastructure",
       status: "RECEIVED",
     },
@@ -1822,8 +1844,8 @@ async function seedDashboardDemoCohort() {
       code: "MBKRU-DEMO-COHORT-S-1",
       memberIndex: 3,
       kind: "SITUATIONAL_ALERT",
-      title: "Market access — temporary barrier",
-      body: "Situational note: temporary barrier affecting foot traffic. Asks for official notice or timeline.",
+      title: "Market lane blocked — traders taking long detours",
+      body: "Contractors left barriers up overnight without signage. Women carrying goods are walking an extra 20 minutes. Please pin a reopening date where sellers can see it.",
       category: "Community activity",
       status: "RECEIVED",
     },
@@ -1831,8 +1853,8 @@ async function seedDashboardDemoCohort() {
       code: "MBKRU-DEMO-COHORT-S-2",
       memberIndex: 4,
       kind: "SITUATIONAL_ALERT",
-      title: "Festival week — crowd routing",
-      body: "Community activity observation during a local event; requests better signage from organisers.",
+      title: "Homowo week — can we get clearer crowd routing?",
+      body: "Great turnout at the durbar but visitors kept doubling back at the junction. A few printed arrows would have kept elders off the main road.",
       category: "Community activity",
       status: "UNDER_REVIEW",
     },
@@ -1840,8 +1862,8 @@ async function seedDashboardDemoCohort() {
       code: "MBKRU-DEMO-COHORT-E-1",
       memberIndex: 5,
       kind: "ELECTION_OBSERVATION",
-      title: "Early voting — accessibility",
-      body: "Election observation seed: queue moved quickly; asks whether accessibility ramps are marked consistently.",
+      title: "Early voting — ramps and shade",
+      body: "Queue moved steadily. Two people asked whether the temporary ramp was secured — EC staff showed them. Worth standardising the signage next cycle.",
       category: "Accessibility",
       status: "RECEIVED",
     },
@@ -1849,8 +1871,8 @@ async function seedDashboardDemoCohort() {
       code: "MBKRU-DEMO-COHORT-E-2",
       memberIndex: 6,
       kind: "ELECTION_OBSERVATION",
-      title: "Party agent presence (seed)",
-      body: "Fixture observation only — not accredited mission data.",
+      title: "Party agents were visible and calm",
+      body: "Both major agents stayed behind the cordon; presiding officer called them forward only for seals. No shouting from the public.",
       category: "Party agents",
       status: "UNDER_REVIEW",
     },
@@ -1858,8 +1880,8 @@ async function seedDashboardDemoCohort() {
       code: "MBKRU-DEMO-COHORT-V-4",
       memberIndex: 7,
       kind: "VOICE",
-      title: "Health outreach — scheduling",
-      body: "Voice report asking for published schedule for a mobile clinic visit.",
+      title: "Mobile clinic dates for our district",
+      body: "The health directorate tweeted a ‘coming soon’ six weeks ago. Elderly residents are asking for a fixed date so they can arrange transport.",
       category: "Health",
       status: "RECEIVED",
     },
@@ -1867,8 +1889,8 @@ async function seedDashboardDemoCohort() {
       code: "MBKRU-DEMO-COHORT-S-3",
       memberIndex: 8,
       kind: "GOVERNMENT_PERFORMANCE",
-      title: "District assembly — project timeline (seed)",
-      body: "Government performance seed: asks for published timeline on a local infrastructure project — fixture only.",
+      title: "District assembly — we’re still waiting on the bridge timeline",
+      body: "The DCE said publicly we’d get a written programme of works after the budget hearing. Community council hasn’t received it. We’re not asking for miracles — just the schedule we were promised.",
       category: "Local government",
       status: "RECEIVED",
     },
@@ -1876,15 +1898,15 @@ async function seedDashboardDemoCohort() {
       code: "MBKRU-DEMO-COHORT-E-3",
       memberIndex: 9,
       kind: "MP_PERFORMANCE",
-      title: "Constituency surgery hours — seed",
-      body: "MP performance seed: documents advertised surgery hours versus observed access — fixture only, not verified.",
+      title: "Constituency surgery hours don’t match the flyer",
+      body: "The office posts Friday 9–12 walk-ins on WhatsApp, but twice this month the desk was closed with no notice. Constituents took tro-tro in from surrounding villages. We’re asking the MP’s team to publish real-time updates when surgeries move or cancel.",
       category: "Constituency access",
       status: "RECEIVED",
       parliamentMemberSlug: "john-dramani-mahama",
       publicCauseSlug: "seed-demo-constituency-surgery-hours",
-      publicCauseTitle: "Constituency surgery hours — transparency",
+      publicCauseTitle: "Constituency surgery hours residents can rely on",
       publicCauseSummary:
-        "Residents compare advertised MP surgery hours with observed access. Seed summary for public engagement — not a verified investigation.",
+        "Voters want advertised surgery times to match what happens at the office — short delays happen, but unexplained closures waste people’s time and money.",
       publicCauseOpenedAt: "2026-03-10T12:00:00.000Z",
     },
   ];

@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { parseUtcDatetimeLocalInput } from "@/lib/admin/report-operations-datetime";
@@ -15,6 +15,8 @@ import {
   staffNotesField,
 } from "@/lib/validation/admin-reports";
 import type { CitizenReportStatus } from "@prisma/client";
+
+import { MPS_ROSTER_TAG } from "@/lib/accountability-tags";
 
 const STATUSES: CitizenReportStatus[] = [
   "RECEIVED",
@@ -485,5 +487,6 @@ export async function updateCitizenReportDiscussionEnabledAction(formData: FormD
   revalidatePath(`/admin/reports/${id}`);
   revalidatePath("/report-card");
   revalidatePath(`/citizens-voice/discussions/${id}`);
+  revalidateTag(MPS_ROSTER_TAG, "max");
   redirect(`/admin/reports/${id}?saved=discussion`);
 }

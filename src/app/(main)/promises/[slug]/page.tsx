@@ -43,6 +43,7 @@ export default async function PromisesByMemberPage({ params }: Props) {
     where: {
       parliamentMemberId: member.id,
       kind: "MP_PERFORMANCE",
+      status: { not: "ARCHIVED" },
     },
     orderBy: { createdAt: "desc" },
     take: 12,
@@ -51,6 +52,7 @@ export default async function PromisesByMemberPage({ params }: Props) {
       title: true,
       trackingCode: true,
       createdAt: true,
+      discussionEnabled: true,
     },
   });
 
@@ -86,17 +88,38 @@ export default async function PromisesByMemberPage({ params }: Props) {
                   <li key={r.id} className="border-b border-[var(--border)]/80 pb-3 last:border-0 last:pb-0">
                     <p className="font-medium text-[var(--foreground)]">{r.title}</p>
                     <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-                      Tracking{" "}
-                      <Link href={`/track-report?code=${encodeURIComponent(r.trackingCode)}`} className={primaryNavLinkClass}>
-                        {r.trackingCode}
-                      </Link>
-                      {" · "}
+                      {r.discussionEnabled ? (
+                        <>
+                          <Link
+                            href={`/citizens-voice/discussions/${encodeURIComponent(r.id)}`}
+                            className={primaryNavLinkClass}
+                          >
+                            Open discussion
+                          </Link>
+                          {" · "}
+                        </>
+                      ) : (
+                        <>
+                          Track{" "}
+                          <Link href={`/track-report?code=${encodeURIComponent(r.trackingCode)}`} className={primaryNavLinkClass}>
+                            {r.trackingCode}
+                          </Link>
+                          {" · "}
+                        </>
+                      )}
                       {r.createdAt.toLocaleDateString("en-GB", { dateStyle: "medium" })}
                     </p>
                   </li>
                 ))}
               </ul>
             </div>
+          ) : null}
+
+          {member.promises.length === 0 ? (
+            <p className="mt-8 rounded-xl border border-[var(--border)] bg-white px-4 py-6 text-sm text-[var(--muted-foreground)]">
+              No catalogue commitments are published for this MP yet. Voice intakes above are filed by residents;
+              catalogue rows appear when editors publish verified commitments.
+            </p>
           ) : null}
 
           <ul className="mt-8 space-y-6">

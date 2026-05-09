@@ -34,7 +34,7 @@ export async function GET(request: Request) {
   }
 
   const members = await getCachedMpsPublicRoster();
-  const header = "slug,name,role,party,constituency_name,promise_count";
+  const header = "slug,name,role,party,constituency_name,promise_count,mp_voice_report_count";
   const lines = [
     header,
     ...members.map((m) =>
@@ -45,6 +45,7 @@ export async function GET(request: Request) {
         csvCell(m.party),
         csvCell(m.constituencyName),
         csvCell(m.promiseCount),
+        csvCell(m.mpVoiceReportCount),
       ].join(","),
     ),
   ];
