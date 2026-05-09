@@ -1,3 +1,5 @@
+import { ACCOUNTABILITY_CATALOGUE_ROUTES } from "@/config/accountability-catalogue-destinations";
+
 export type MbkruVoiceReply = {
   answer: string;
   suggestedLinks?: Array<{ label: string; href: string }>;
@@ -38,9 +40,10 @@ const intentRules: IntentRule[] = [
     keywords: ["promise", "commitment", "tracker", "report card", "mp"],
     reply: {
       answer:
-        "MBKRU tracks commitments, report card cycles, and parliamentary accountability data to help citizens verify delivery.",
+        "MBKRU tracks commitments, report card cycles, and parliamentary accountability data to help citizens verify delivery. Use one commitment catalogue: search everything for sitting MPs, or switch on the government-programme preset for editorial executive slice rows.",
       suggestedLinks: [
-        { label: "Government Commitments", href: "/government-commitments" },
+        { label: "Commitment catalogue", href: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises },
+        { label: "Government programme lens", href: ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments },
         { label: "Parliament Tracker", href: "/parliament-tracker" },
         { label: "Report Card", href: "/report-card" },
       ],

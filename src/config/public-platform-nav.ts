@@ -64,10 +64,6 @@ export function getAccountabilityNavLinks(phase: PlatformPhase): PublicNavLink[]
   const links: PublicNavLink[] = [{ href: "/parliament-tracker", label: "Parliament tracker" }];
   if (platformFeatures.parliamentTrackerData(phase)) {
     links.push({
-      href: ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments,
-      label: accountabilityCatalogueNavShort.government,
-    });
-    links.push({
       href: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
       label: accountabilityCatalogueNavShort.browseAll,
       activeWhenPathStartsWith: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
@@ -146,10 +142,6 @@ export function getFooterPlatformFlowLinks(phase: PlatformPhase): PublicNavLink[
 
   if (platformFeatures.parliamentTrackerData(phase)) {
     links.push({
-      href: ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments,
-      label: accountabilityCatalogueNavMedium.government,
-    });
-    links.push({
       href: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
       label: accountabilityCatalogueNavMedium.browseAll,
     });
@@ -226,10 +218,6 @@ export function getAboutPhaseQuickLinks(phase: PlatformPhase): PublicNavLink[] {
   }
   if (platformFeatures.parliamentTrackerData(phase)) {
     links.push({
-      href: ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments,
-      label: accountabilityCatalogueNavMedium.government,
-    });
-    links.push({
       href: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
       label: accountabilityCatalogueNavMedium.browseAll,
     });
@@ -292,7 +280,7 @@ export function getPublicSitemapStaticPaths(phase: PlatformPhase): string[] {
     routes.push("/election-observation");
   }
   if (platformFeatures.parliamentTrackerData(phase)) {
-    routes.push("/promises", "/promises/browse", "/government-commitments");
+    routes.push("/promises", "/promises/browse");
   }
   if (platformFeatures.publicReportCard(phase)) {
     routes.push("/report-card");
@@ -344,10 +332,6 @@ export function getAccountSidebarExploreLinks(phase: PlatformPhase): PublicNavLi
   const out: PublicNavLink[] = [];
   out.push({ href: "/parliament-tracker", label: "Parliament tracker" });
   if (platformFeatures.parliamentTrackerData(phase)) {
-    out.push({
-      href: ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments,
-      label: accountabilityCatalogueNavMedium.government,
-    });
     out.push({
       href: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
       label: accountabilityCatalogueNavMedium.browseAll,

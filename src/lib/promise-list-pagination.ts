@@ -1,4 +1,4 @@
-/** Page size for public HTML promise lists (`/promises/browse`, `/government-commitments`). */
+/** Page size for public HTML promise lists — primary route `/promises/browse` (legacy `/government-commitments` redirects with a preset). */
 export const PROMISE_LIST_PAGE_SIZE = 50;
 
 export function parsePromiseListPageIndex(raw: string | undefined): number {

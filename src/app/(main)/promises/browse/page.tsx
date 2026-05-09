@@ -9,7 +9,9 @@ import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
   accountabilityCatalogueNavMedium,
   accountabilityHomePreviewCopy,
+  accountabilityProse,
 } from "@/config/accountability-catalogue-destinations";
+import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { parsePromisesApiFilters } from "@/lib/promises-api-filters";
 import {
@@ -20,7 +22,6 @@ import {
   parsePromiseListSectorFilter,
   parsePromiseListStatusFilter,
 } from "@/lib/promise-list-filters";
-import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
 import {
   getCachedPromiseTrackerStats,
@@ -29,12 +30,6 @@ import {
 } from "@/lib/server/accountability-cache";
 
 export const dynamic = "force-dynamic";
-
-export const metadata: Metadata = {
-  title: accountabilityCatalogueNavMedium.browseAll,
-  description:
-    "Search and filter documented MP and minister commitments — by constituency, category, status, and government programme tag.",
-};
 
 type Props = {
   searchParams: Promise<{
@@ -79,6 +74,28 @@ function buildApiUrl(sp: {
   return u;
 }
 
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const sp = await searchParams;
+  const governmentLens = parseGovernmentOnlyFlag(sp.governmentOnly);
+  if (governmentLens) {
+    return {
+      title: accountabilityCatalogueNavMedium.government,
+      description: accountabilityProse.governmentCommitmentsMetaDescription,
+    };
+  }
+  return {
+    title: accountabilityCatalogueNavMedium.browseAll,
+    description:
+      "Search and filter documented MP and minister commitments — by constituency, category, status, and government programme preset. One catalogue dashboard.",
+  };
+}
+
+const lensPillBase =
+  "inline-flex min-h-10 touch-manipulation items-center justify-center rounded-full border px-4 py-2 text-sm font-semibold transition";
+const lensInactive = "border-[var(--border)] bg-white text-[var(--foreground)] hover:bg-[var(--section-light)]";
+const lensActive =
+  "border-[var(--primary)]/35 bg-[var(--primary)]/10 text-[var(--primary)] ring-1 ring-[var(--primary)]/20";
+
 export default async function PromisesBrowsePage({ searchParams }: Props) {
   if (!isPromisesBrowseEnabled() || !isDatabaseConfigured()) notFound();
 
@@ -98,42 +115,54 @@ export default async function PromisesBrowsePage({ searchParams }: Props) {
     getCachedTrackerConstituencies(),
   ]);
 
+  const pageTitle = governmentOnly
+    ? accountabilityCatalogueNavMedium.government
+    : accountabilityCatalogueNavMedium.browseAll;
+
+  const govDescription =
+    "Programme- and executive-tagged pledges only. Same underlying rows as MP pledge sheets when a member is linked — one status everywhere. Use the catalogue switch below to widen to all sitting MPs.";
+
+  const fullDescription =
+    "All tracked commitments we publish for sitting parliamentarians unless you narrow filters. Toggle the government-programme preset for the executive slice — same dashboard, smarter filters.";
+
   return (
     <div>
-      <PageHeader
-        title={accountabilityCatalogueNavMedium.browseAll}
-        description={`All documented commitments we track for active parliamentarians, including rows that are also tagged as government programmes (same record appears on ${accountabilityCatalogueNavMedium.government}). Filters update as you type. Not every pledge exists online — we record what we can cite.`}
-      />
+      <PageHeader title={pageTitle} description={governmentOnly ? govDescription : fullDescription} />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm text-[var(--muted-foreground)]">
+          <div className="mx-auto mt-6 flex flex-wrap justify-center gap-3" role="tablist" aria-label="Catalogue presets">
             <Link
-              href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp}
-              className={primaryNavLinkClass}
+              href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
+              className={`${lensPillBase} ${!governmentOnly ? lensActive : lensInactive} ${focusRingSmClass}`}
+              prefetch={false}
             >
-              ← By MP
+              Full catalogue
             </Link>
-            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
-              ·
-            </span>
             <Link
               href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments}
-              className={primaryNavLinkClass}
+              className={`${lensPillBase} ${governmentOnly ? lensActive : lensInactive} ${focusRingSmClass}`}
+              prefetch={false}
             >
-              Government commitments
+              Government programme lens
+            </Link>
+          </div>
+          <p className="mx-auto mt-3 max-w-2xl text-center text-xs leading-relaxed text-[var(--muted-foreground)]">
+            One interactive dashboard — filters below update the KPI strip and rows together.
+          </p>
+
+          <p className="mt-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-sm text-[var(--muted-foreground)]">
+            <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className={primaryNavLinkClass}>
+              ← By MP roster
             </Link>
             <span className="text-[var(--muted-foreground)]/50" aria-hidden>
               ·
             </span>
-            <Link
-              href="/parliament-tracker"
-              className={primaryNavLinkClass}
-            >
+            <Link href="/parliament-tracker" className={primaryNavLinkClass}>
               Accountability hub
             </Link>
           </p>
 
-          <PromiseCatalogueSurfacesCallout variant="browse" />
+          <PromiseCatalogueSurfacesCallout catalogueLens={governmentOnly ? "government" : "full"} />
 
           <p className="mx-auto mt-5 max-w-3xl text-center text-xs leading-relaxed text-[var(--muted-foreground)] sm:text-sm">
             {accountabilityHomePreviewCopy.promiseCardSurfaceExplainer}

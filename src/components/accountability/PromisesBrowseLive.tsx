@@ -7,8 +7,10 @@ import { PromiseEvidenceCard } from "@/components/accountability/PromiseEvidence
 import { PromiseTrackerStatsStrip } from "@/components/accountability/PromiseTrackerStatsStrip";
 import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
+  accountabilityHomePreviewCopy,
   accountabilityProse,
 } from "@/config/accountability-catalogue-destinations";
+import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import {
   POLICY_SECTOR_LABELS,
   POLICY_SECTOR_VALUES,
@@ -51,10 +53,15 @@ type Props = {
   /** Defaults to 5. */
   homeTeaserMaxRows?: number;
   /**
-   * Where the homepage “Learn more” button goes. Defaults: `/promises/browse` (browse) or
-   * `/government-commitments` (government).
+   * Where the homepage “Learn more” button goes. Defaults: full catalogue vs government-programme preset on
+   * `/promises/browse` (see `ACCOUNTABILITY_CATALOGUE_ROUTES`).
    */
   homeTeaserCtaHref?: string;
+  /**
+   * Homepage browse teaser only — skips the KPI strip when Government commitments teaser already renders one,
+   * so visitors are not served two duplicate “snapshot” dashboards in a row.
+   */
+  omitTrackerSnapshot?: boolean;
 };
 
 const DEBOUNCE_MS = 380;
@@ -102,7 +109,10 @@ export function PromisesBrowseLive({
   homeTeaser = false,
   homeTeaserMaxRows = 5,
   homeTeaserCtaHref,
+  omitTrackerSnapshot = false,
 }: Props) {
+  const phase = getPublicPlatformPhase();
+  const showPrcShortcut = platformFeatures.publicReportCard(phase);
   const [stats, setStats] = useState<PromiseTrackerStats>(initialStats);
   const [rows, setRows] = useState<PublicPromiseApiRow[]>(initialRows);
   const [q, setQ] = useState(initialQ);
@@ -240,7 +250,10 @@ export function PromisesBrowseLive({
       constituencySlug,
   );
 
-  const clearHref = mode === "government" ? "/government-commitments" : "/promises/browse";
+  const clearHref =
+    mode === "government"
+      ? ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments
+      : ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises;
 
   const displayRows = useMemo(
     () => (homeTeaser ? rows.slice(0, homeTeaserMaxRows) : rows),
@@ -292,15 +305,48 @@ export function PromisesBrowseLive({
   }
 
   const homeTeaserDestination =
-    homeTeaserCtaHref ?? (mode === "government" ? "/government-commitments" : "/promises/browse");
+    homeTeaserCtaHref ??
+    (mode === "government"
+      ? ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments
+      : ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises);
   const homeTeaserButtonLabel =
     mode === "government" ? accountabilityProse.governmentHomeTeaserCta : accountabilityProse.browseHomeTeaserCta;
 
   const quickChipClass = `inline-flex min-h-9 items-center rounded-full border border-[var(--border)] bg-[var(--section-light)]/50 px-3.5 py-1.5 text-xs font-medium text-[var(--foreground)] transition hover:bg-[var(--section-light)] ${focusRingSmClass}`;
 
+  const showCatalogueSnapshot = !(omitTrackerSnapshot && homeTeaser);
+
   return (
     <>
-      <PromiseTrackerStatsStrip stats={stats} subtitle={statsSubtitle} compact={statsStripCompact} />
+      {showCatalogueSnapshot ? (
+        <PromiseTrackerStatsStrip stats={stats} subtitle={statsSubtitle} compact={statsStripCompact} />
+      ) : (
+        <div
+          className={`w-full ${statsStripCompact ? "mt-0 space-y-3" : "mt-8 space-y-3"}`}
+        >
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-4 sm:px-5">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--primary)]">
+              Catalogue preview — no duplicate KPI strip
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
+              {accountabilityHomePreviewCopy.browseHomeOmitDuplicateKpisLead}{" "}
+              <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={`${primaryLinkClass} font-semibold`}>
+                Browse all commitments
+              </Link>
+              .
+            </p>
+            {showPrcShortcut ? (
+              <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
+                For MP scorecard cycles (not pledge counts), open{" "}
+                <Link href="/report-card" className={`${primaryLinkClass} font-semibold`}>
+                  Report card
+                </Link>
+                .
+              </p>
+            ) : null}
+          </div>
+        </div>
+      )}
 
       {filterToolbarHeader}
 

@@ -304,8 +304,8 @@ export default async function AccountPage() {
               Public accountability
             </h2>
             <p className="mt-2 max-w-2xl text-sm text-[var(--muted-foreground)]">
-              Scores, methodology, and the promise catalogue — three public lenses into the same tracked commitments when
-              parliament data is enabled.
+              Scores, methodology, and one commitment catalogue dashboard (with optional government-programme preset), plus
+              the MP roster when parliament data is enabled.
             </p>
             {showPromises ? (
               <div className="mt-6" aria-labelledby="promise-tracker-subheading">
@@ -316,9 +316,9 @@ export default async function AccountPage() {
                   Promise tracker
                 </h3>
                 <p className="mt-1 max-w-2xl text-xs leading-relaxed text-[var(--muted-foreground)]">
-                  Same dataset as the homepage live blocks: government-tagged slice, full browse, or MP roster entry points.
+                  Same dataset as the homepage live blocks — one catalogue URL with presets, plus the MP roster.
                 </p>
-                <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   {getAccountabilityCatalogueCards().map((card) => (
                     <Link key={card.href} href={card.href} className={tileClass}>
                       <span className="font-display text-base font-semibold text-[var(--foreground)]">{card.title}</span>

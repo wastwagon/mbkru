@@ -53,9 +53,9 @@ const RULES: readonly Rule[] = [
     blurb: `FAQ (/faq): common questions on membership, MBKRU Voice availability, non-partisanship, Report Card, and funding.`,
   },
   {
-    path: "/government-commitments",
+    path: "/promises/browse",
     keywords: ["government commitment", "pledge", "catalogue", "manifesto promise", "promise track"],
-    blurb: `Government commitments (/government-commitments): programme-tagged rows from the public promise catalogue. Browse all: /promises/browse; by MP: /promises`,
+    blurb: `Commitment catalogue (/promises/browse): one filterable dashboard — use ?governmentOnly=1 for the government-programme lens; /government-commitments redirects there. By MP: /promises`,
   },
   {
     path: "/petitions",

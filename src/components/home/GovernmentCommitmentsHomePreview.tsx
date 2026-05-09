@@ -17,7 +17,7 @@ type Props = {
   data: GovPreviewData;
 };
 
-/** Homepage block — same KPIs as the full page, with a five-row preview and CTA to `/government-commitments`. */
+/** Homepage block — same KPIs as the catalogue government-programme lens, with a five-row preview and CTA to the preset URL. */
 export function GovernmentCommitmentsHomePreview({ data }: Props) {
   const { stats, initialRows, trackerConstituencies } = data;
   const reducedMotion = usePrefersReducedMotion();

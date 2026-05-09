@@ -25,7 +25,7 @@ function isRecoverableSchemaError(err: unknown): boolean {
   return err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2021";
 }
 
-/** Same filters as `/government-commitments` default view — for homepage preview consistency. */
+/** Same filters as the government-programme lens (`/promises/browse?governmentOnly=1`) — for homepage preview consistency. */
 export async function getGovernmentCommitmentsHomePreview(): Promise<GovernmentCommitmentsHomePreview | null> {
   if (!isPromisesBrowseEnabled() || !isDatabaseConfigured()) return null;
   try {

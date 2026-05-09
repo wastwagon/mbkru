@@ -60,6 +60,7 @@ export function PromisesBrowseHomePreview({ data }: Props) {
             homeTeaser
             homeTeaserMaxRows={5}
             homeTeaserCtaHref={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
+            omitTrackerSnapshot
             initialStats={stats}
             initialRows={initialRows}
             initialQ=""

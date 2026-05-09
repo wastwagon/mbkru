@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stakeholder checklist — platform phases &amp; go-live readiness</title>
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      line-height: 1.45;
+      color: #111;
+    }
+    body {
+      max-width: 48rem;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 3rem;
+      font-size: 11pt;
+    }
+    h1 {
+      font-size: 1.35rem;
+      margin-top: 0;
+      border-bottom: 2px solid #222;
+      padding-bottom: 0.35rem;
+    }
+    h2 {
+      font-size: 1.1rem;
+      margin-top: 1.75rem;
+      page-break-after: avoid;
+    }
+    p { margin: 0.65rem 0; }
+    ul { margin: 0.5rem 0 0.75rem 1.25rem; }
+    blockquote {
+      margin: 1rem 0;
+      padding: 0.75rem 1rem;
+      border-left: 4px solid #444;
+      background: #f6f6f6;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.5pt;
+      margin: 0.75rem 0 1rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.35rem 0.45rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eee; }
+    .muted { color: #444; font-size: 10pt; }
+    hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 1.25rem 0;
+    }
+    @media print {
+      body { padding: 0; font-size: 10pt; }
+      h2 { page-break-after: avoid; }
+      table { page-break-inside: avoid; }
+      a { color: #000; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Stakeholder checklist — platform phases &amp; go-live readiness</h1>
+
+  <p><strong>Purpose:</strong> A single printable / slide-friendly sheet for demos and governance conversations. It separates <strong>what the codebase ships</strong> from <strong>what your organisation must still sign off</strong> (legal, content, data truth, ops).</p>
+
+  <p><strong>How to use tomorrow</strong></p>
+  <ul>
+    <li>Tick <strong>Engineering</strong> when you have run the automated checks and spot-checked the demo environment.</li>
+    <li>Tick <strong>Organisation</strong> only when the named owner has signed (legal, editorial, ops). Blank rows mean “not claimed complete.”</li>
+    <li>If someone asks “are all phases done?” — answer precisely: <strong>Platform Phase 3 features are implemented in this repo</strong>; <strong>full programme completion</strong> also requires the Organisation column for tiers you care about.</li>
+  </ul>
+
+  <hr />
+
+  <h2>1. Three different “phases” (avoid confusion)</h2>
+  <table>
+    <thead>
+      <tr><th>Term</th><th>Meaning</th><th>Where to read more</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Platform phase (<code>NEXT_PUBLIC_PLATFORM_PHASE</code>)</strong></td>
+        <td><strong>1</strong> = marketing + admin CMS; <strong>2</strong> = + members, Voice, promises/MPs; <strong>3</strong> = + report card flagship &amp; related UX. Set at <strong>build time</strong> (Docker rebuild if you change it).</td>
+        <td><code>docs/ARCHITECTURE.md</code>, <code>.env.example</code></td>
+      </tr>
+      <tr>
+        <td><strong>Safe implementation phases (0–4+)</strong></td>
+        <td><strong>Order of rollout</strong>: engineering safety → marketing truth → participation ops → accountability data → optional full platform. Not the same as the single digit 1/2/3 flag.</td>
+        <td><code>docs/SAFE_IMPLEMENTATION_PHASES.md</code></td>
+      </tr>
+      <tr>
+        <td><strong>Launch verification phases (1–4)</strong></td>
+        <td><strong>Pre-go-live smoke</strong>: automated tests, API/DB contracts, role walkthroughs, cron/backup/malware policy.</td>
+        <td><code>docs/LAUNCH_VERIFICATION_PHASES.md</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr />
+
+  <h2>2. Platform capabilities by build phase (engineering)</h2>
+  <p>Use this table to show <strong>scope shipped in software</strong>. Confirm your <strong>deploy</strong> uses the intended <code>NEXT_PUBLIC_PLATFORM_PHASE</code> and migrations are applied.</p>
+  <table>
+    <thead>
+      <tr><th>Platform phase</th><th>Capabilities (summary)</th><th>Engineering verified?</th><th>Notes / owner</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1</strong></td>
+        <td>Public site, news/resources/partners/contact, admin CMS, leads</td>
+        <td>☐</td>
+        <td>No member login surface if phase stays at 1</td>
+      </tr>
+      <tr>
+        <td><strong>2</strong></td>
+        <td>+ Member auth, MBKRU Voice &amp; reports, tracking, situational/election intake, parliament import &amp; public promises/MPs, communities (per config)</td>
+        <td>☐</td>
+        <td>Needs <code>MEMBER_SESSION_SECRET</code>, Postgres, optional Redis</td>
+      </tr>
+      <tr>
+        <td><strong>3</strong></td>
+        <td>+ Published People’s Report Card (<code>/report-card</code>), partner JSON <code>GET /api/report-card/[year]</code>, methodology &amp; election-observation flows as documented</td>
+        <td>☐</td>
+        <td><strong>Do not</strong> present seeded/simulated scores as official findings</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Quick technical preflight (before the meeting)</strong></p>
+  <table>
+    <thead>
+      <tr><th>Check</th><th>Command / action</th><th>Done</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Automated gates</td><td><code>npm run verify:release-gates</code></td><td>☐</td></tr>
+      <tr><td>Smoke E2E (if you run them)</td><td><code>npm run test:e2e:smoke</code></td><td>☐</td></tr>
+      <tr><td>Health endpoint</td><td><code>GET /api/health</code> → 200, <code>dependencies.postgres</code> ok; review <code>deployment</code> (HTTPS URL, optional OpenAI for voice)</td><td>☐</td></tr>
+      <tr><td>Canonical URL</td><td>Production <code>NEXT_PUBLIC_SITE_URL</code> = real <strong>HTTPS</strong> origin (sitemap, OG, health hints)</td><td>☐</td></tr>
+    </tbody>
+  </table>
+
+  <hr />
+
+  <h2>3. Programme “complete” — organisation sign-offs (Tier 0–3)</h2>
+  <p class="muted">These items define <strong>trustworthy</strong> public launch; many are <strong>not</strong> automatic from code. Full detail: <code>docs/PHASE_GAPS_CLOSURE_QUEUE.md</code>.</p>
+  <table>
+    <thead>
+      <tr><th>Tier</th><th>Topic</th><th>Organisation complete?</th><th>Owner / date</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>0</strong></td><td>Production ops: backups, secrets, seed policy</td><td>☐</td><td></td></tr>
+      <tr><td><strong>0</strong></td><td>Counsel: Privacy, Terms, Voice disclosures</td><td>☐</td><td></td></tr>
+      <tr><td><strong>0</strong></td><td>Real accountability data: import + <strong>editorial</strong> sign-off before “live data” claims</td><td>☐</td><td></td></tr>
+      <tr><td><strong>1</strong></td><td>Citation/claims policy live + aligned content</td><td>☐</td><td></td></tr>
+      <tr><td><strong>1</strong></td><td>Editorial news calendar (not demo posts only)</td><td>☐</td><td></td></tr>
+      <tr><td><strong>1</strong></td><td>Resources &amp; partners match reality</td><td>☐</td><td></td></tr>
+      <tr><td><strong>2</strong></td><td>Voice triage SLA + abuse path documented</td><td>☐</td><td></td></tr>
+      <tr><td><strong>2</strong></td><td>Pilot geography / copy matches what you operate</td><td>☐</td><td></td></tr>
+      <tr><td><strong>2</strong></td><td>Communities governance acknowledged by moderators</td><td>☐</td><td></td></tr>
+      <tr><td><strong>2</strong></td><td>Newsletter/contact ops sign-off</td><td>☐</td><td></td></tr>
+      <tr><td><strong>3</strong></td><td>Phase 3 in prod only when methodology + data policy aligned</td><td>☐</td><td></td></tr>
+      <tr><td><strong>3</strong></td><td>Partner API / MOU language with counsel as needed</td><td>☐</td><td></td></tr>
+      <tr><td><strong>3</strong></td><td>Election-observation copy reviewed for overclaim</td><td>☐</td><td></td></tr>
+    </tbody>
+  </table>
+
+  <hr />
+
+  <h2>4. Launch verification (technical smoke)</h2>
+  <p>For <strong>go-live</strong> or <strong>staging sign-off</strong>, walk through <code>docs/LAUNCH_VERIFICATION_PHASES.md</code>:</p>
+  <ul>
+    <li>Phase 1 — Automated linkage + route health</li>
+    <li>Phase 2 — API/DB contracts (health, track, notifications retry, migrations)</li>
+    <li>Phase 3 — Admin / member / anonymous walkthroughs</li>
+    <li>Phase 4 — Cron, backup/restore, malware policy, outbox/audit review</li>
+  </ul>
+  <p><strong>Exit:</strong> No P0/P1; Go/No-Go recorded.</p>
+
+  <hr />
+
+  <h2>5. Honest one-liner for stakeholders</h2>
+  <blockquote>
+    <p><strong>The platform’s Phase 1–3 <em>software capabilities</em> are implemented and testable in this repository.</strong><br />
+    <strong>Declaring the <em>programme</em> fully complete</strong> still requires your organisation’s checks on legal pages, operational runbooks, real data/editorial sign-off, and production configuration — use §3 and §4 above.</p>
+  </blockquote>
+
+  <p><strong>Living engineering backlog:</strong> <code>docs/PHASE_TASKS.md</code><br />
+  <strong>Ops runbook:</strong> <code>docs/OPS_RUNBOOK.md</code><br />
+  <strong>Observability:</strong> <code>docs/OBSERVABILITY.md</code></p>
+
+  <p class="muted" style="margin-top: 2rem;">Generated from <code>STAKEHOLDER_PHASE_COMPLETION_CHECKLIST.md</code> — open this HTML in a browser and use Print → Save as PDF if you need to regenerate without scripts.</p>
+</body>
+</html>

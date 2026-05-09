@@ -4,11 +4,16 @@
  * Phase 1 (here): shared routes, user-facing copy, and pathname rules so nav, account,
  * breadcrumbs, and marketing blocks stay aligned.
  * Phase 2+: add optional analytics IDs or locale-specific copy without changing hrefs.
+ *
+ * Government commitments are a URL preset on the single catalogue dashboard — not a separate app surface.
  */
 
+const COMMITMENTS_CATALOGUE_PATH = "/promises/browse";
+
 export const ACCOUNTABILITY_CATALOGUE_ROUTES = {
-  governmentCommitments: "/government-commitments",
-  browseAllPromises: "/promises/browse",
+  browseAllPromises: COMMITMENTS_CATALOGUE_PATH,
+  /** Query preset — same dashboard; editorial government-programme lens only. */
+  governmentCommitments: `${COMMITMENTS_CATALOGUE_PATH}?governmentOnly=1`,
   promisesByMp: "/promises",
 } as const;
 
@@ -16,19 +21,19 @@ export const ACCOUNTABILITY_CATALOGUE_ROUTES = {
 export const methodologyKeyTerms: readonly { term: string; body: string }[] = [
   {
     term: "Commitment (catalogue row)",
-    body: "A single editorial record: title, optional narrative, source label, and status. The same record appears in Browse all, Government commitments (when tagged), and on a member’s sheet if linked.",
+    body: "A single editorial record: title, optional narrative, source label, and status. The same record appears in the commitment catalogue, the government-programme lens when tagged, and on a member’s sheet if linked.",
   },
   {
     term: "Government programme (tag)",
-    body: "Editorial flag for rows that also appear on the Government commitments page. It is not a government seal of approval — it marks programme- or executive-typed items we follow in the same catalogue.",
+    body: "Editorial flag for rows that surface in the government-programme lens on the commitment catalogue. It is not a government seal of approval — it marks programme- or executive-typed items we follow in the same catalogue.",
   },
   {
     term: "Parliament tracker",
     body: "The name we use in the main navigation for the Accountability & Electoral Watch hub — roster, tool links, and how the programme fits together.",
   },
   {
-    term: "Browse all commitments",
-    body: "The wide, filterable view of the catalogue (default: sitting MPs). Same underlying rows as other surfaces; filters and exports mirror the public JSON/CSV with the same meaning.",
+    term: "Commitment catalogue (Browse all)",
+    body: "The single filterable dashboard at /promises/browse — default sitting MPs, optional government-programme lens, filters, CSV, and matching public JSON.",
   },
   {
     term: "People's Report Card (published cycle)",
@@ -71,6 +76,12 @@ export const accountabilityHomePreviewCopy = {
   /** Homepage `PromisesBrowseHomePreview` in teaser mode — one compact block next to the full government embed. */
   browseTeaserLead:
     "A short live preview of the first catalogue rows. Open the full page for search, filters, and the public CSV export.",
+  /**
+   * Homepage only — avoids two identical KPI strips back-to-back. Shown instead of PromiseTrackerStatsStrip
+   * in the Browse-all teaser blocks when Government commitments teaser already renders the catalogue dashboard.
+   */
+  browseHomeOmitDuplicateKpisLead:
+    "The KPI dashboard appears once above under the government-programme teaser. This block uses the full-catalogue slice — headline totals differ. Open the catalogue page for the matching snapshot, filters, and export.",
 } as const;
 
 /**
@@ -107,7 +118,10 @@ export const accountabilityProse = {
   partnerApiMpsCellLinkLabel: "commitment catalogue",
   apiPromisesTableRow:
     "Tracked commitments via GET /api/promises with optional filters; JSON responses are capped — use CSV for full exports.",
-  reportCardStatsStripSubtitle: `Cross-links the public commitment catalogue, MPs, and published scorecard rows — same aggregates as ${accountabilityCatalogueNavMedium.browseAll}.`,
+  /** `/report-card` index — single cross-link block; avoids duplicating the catalogue KPI strip shown on home and browse pages. */
+  reportCardCatalogueBridgeTitle: "Tracked commitments (elsewhere on the site)",
+  reportCardCatalogueBridgeBody:
+    "This page is for published People's Report Card cycles only. The pledge catalogue uses its own dashboards — we do not repeat them here.",
   /** `/methodology#key-terms` — H2. */
   methodologyKeyTermsSectionHeading: "Key public terms",
   methodologyKeyTermsSectionIntro:
@@ -153,6 +167,11 @@ export const accountabilityProse = {
   adminMemberCatalogueEmpty: "No catalogue rows yet.",
   /** Stats strip KPI — sitting MPs with at least one published catalogue row in the current slice. */
   statsStripMpsWithCatalogueRowsLabel: "MPs w/ catalogue rows",
+  /** Dark strip eyebrow — not a “report card” dashboard; distinguishes pledge catalogue KPIs from PRC. */
+  statsStripEyebrow: "Commitment catalogue snapshot",
+  /** Line before inline link to `/report-card` on the catalogue KPI strip (when public PRC is enabled). */
+  statsStripPrcDisambiguation:
+    "Not the People's Report Card — these numbers count catalogue pledge rows (same filters as the list). Published MP scorecards:",
   /** `PageHeader` and `<title>` on `/parliament-tracker` — same label as the main site menu. */
   parliamentPageDocumentTitle: "Parliament tracker",
   /**
@@ -163,7 +182,7 @@ export const accountabilityProse = {
   /** Hub PageHeader: subtitle after the H1, naming the full programme. */
   parliamentPageHeaderFullProgrammeLead: "Accountability & Electoral Watch",
   parliamentTrackerHubOrientation:
-    "Start from this hub for the MP roster, the People's Report Card entry point, and catalogue tools. For programme- and executive-tagged rows only, use Government commitments; for the full filterable list tied to sitting MPs, use Browse all commitments.",
+    "Start from this hub for the MP roster, the People's Report Card entry point, and the commitment catalogue. One dashboard at Browse all commitments: switch between the full catalogue and the government-programme lens with the on-page control.",
   /** Blurb for the pre-election scorecards tool card (links to /methodology). */
   hubAccountabilityScorecardsCardDescription:
     "The programme’s pre-election accountability scorecard roll-out (90 days before general elections), described in methodology. This is not the same as the published People's Report Card cycles — use Report card in the menu for those.",
@@ -184,22 +203,15 @@ export type AccountabilityCatalogueCard = {
 };
 
 /**
- * Member account “Public accountability” — three equal destinations (no DB fields;
- * same pages as the marketing homepage blocks).
+ * Member account “Public accountability” — catalogue + roster (no duplicate government vs browse URLs).
  */
 export function getAccountabilityCatalogueCards(): AccountabilityCatalogueCard[] {
   return [
     {
-      href: ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments,
-      title: accountabilityCatalogueNavMedium.government,
-      description:
-        "National programme and executive-tagged pledges only. Same underlying records as MP sheets when a row is linked to a sitting member.",
-    },
-    {
       href: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
-      title: accountabilityCatalogueNavMedium.browseAll,
+      title: "Commitment catalogue",
       description:
-        "Full searchable catalogue for active parliamentarians — filters, status, and CSV export match the public API.",
+        "One dashboard — search and filter tracked pledges for sitting MPs (default), export CSV / JSON, or switch to the government-programme editorial lens.",
     },
     {
       href: ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp,
@@ -212,26 +224,20 @@ export function getAccountabilityCatalogueCards(): AccountabilityCatalogueCard[]
 
 /** Participate hub tiles — titles match account; bodies stay short for scanability. */
 export function getAccountabilityParticipateHubTiles(): {
-  government: { href: string; title: string; body: string };
-  browse: { href: string; title: string; body: string };
+  catalogue: { href: string; title: string; body: string };
   byMp: { href: string; title: string; body: string };
 } {
   const cards = getAccountabilityCatalogueCards();
   return {
-    government: {
+    catalogue: {
       href: cards[0].href,
       title: cards[0].title,
-      body: "Programme- and executive-tagged pledges — the government slice of the same dataset as MP sheets.",
-    },
-    browse: {
-      href: cards[1].href,
-      title: cards[1].title,
-      body: "Search and filter the full catalogue for sitting MPs — same rows as the public JSON API.",
+      body: cards[0].description,
     },
     byMp: {
-      href: cards[2].href,
-      title: cards[2].title,
-      body: "Start from the roster, then open each parliamentarian’s pledge sheet with sources and status.",
+      href: cards[1].href,
+      title: cards[1].title,
+      body: cards[1].description,
     },
   };
 }

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { ACCOUNTABILITY_CATALOGUE_ROUTES } from "@/config/accountability-catalogue-destinations";
 import { getMbkruVoiceFallbackReply } from "@/lib/mbkru-voice-faq";
 
 describe("getMbkruVoiceFallbackReply", () => {
@@ -7,6 +8,16 @@ describe("getMbkruVoiceFallbackReply", () => {
     const result = getMbkruVoiceFallbackReply("I need to report an issue");
     expect(result.answer.toLowerCase()).toContain("citizens voice");
     expect(result.suggestedLinks?.some((link) => link.href === "/track-report")).toBe(true);
+  });
+
+  it("returns catalogue and government-preset links for promise intent", () => {
+    const result = getMbkruVoiceFallbackReply("Which manifesto commitments are you tracking?");
+    expect(result.suggestedLinks?.some((link) => link.href === ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises)).toBe(
+      true,
+    );
+    expect(
+      result.suggestedLinks?.some((link) => link.href === ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments),
+    ).toBe(true);
   });
 
   it("returns diaspora signposting when passport or diaspora is mentioned", () => {

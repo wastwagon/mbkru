@@ -34,7 +34,7 @@ const PATH_BREADCRUMBS: Record<string, string> = {
   "/town-halls": "Forums",
   "/debates": "Debates",
   "/promises": "By MP",
-  "/promises/browse": "Browse all",
+  "/promises/browse": "Commitment catalogue",
   "/government-commitments": "Government commitments",
   "/transparency": "Voice stats",
   "/whistleblowing": "Whistleblowing",
@@ -80,7 +80,7 @@ function buildBreadcrumbs(pathname: string, currentLabel?: string): BreadcrumbIt
       label: PATH_BREADCRUMBS["/promises"] ?? "By MP",
       href: "/promises",
     });
-    items.push({ label: PATH_BREADCRUMBS["/promises/browse"] ?? "Browse all" });
+    items.push({ label: PATH_BREADCRUMBS["/promises/browse"] ?? "Commitment catalogue" });
     return items;
   }
 

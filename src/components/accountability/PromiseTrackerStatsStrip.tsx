@@ -228,7 +228,9 @@ function PolicyMixStrip({
 }
 
 export function PromiseTrackerStatsStrip({ stats, subtitle, compact }: Props) {
-  const partnerDataPageEnabled = platformFeatures.partnerJsonProgramme(getPublicPlatformPhase());
+  const phase = getPublicPlatformPhase();
+  const partnerDataPageEnabled = platformFeatures.partnerJsonProgramme(phase);
+  const showPrcShortcut = platformFeatures.publicReportCard(phase);
   const { byStatus, totalPromises, topPolicySectors } = stats;
   const met = byStatus.FULFILLED ?? 0;
   const inProgress = byStatus.IN_PROGRESS ?? 0;
@@ -262,8 +264,17 @@ export function PromiseTrackerStatsStrip({ stats, subtitle, compact }: Props) {
       <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-4 py-6 text-white shadow-xl ring-1 ring-slate-700/60 sm:px-6 sm:py-8 lg:px-8">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="max-w-2xl">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-sky-200/90">Tracker snapshot</p>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-sky-200/90">{accountabilityProse.statsStripEyebrow}</p>
             <p className="mt-2 text-base font-medium leading-snug text-slate-100 sm:text-lg">{snapshotIntro}</p>
+            {showPrcShortcut ? (
+              <p className="mt-2 text-xs leading-relaxed text-sky-100/85 sm:text-sm">
+                {accountabilityProse.statsStripPrcDisambiguation}{" "}
+                <Link href="/report-card" className="font-semibold text-white underline decoration-sky-200/70 underline-offset-2 hover:text-sky-50">
+                  People&apos;s Report Card
+                </Link>
+                .
+              </p>
+            ) : null}
             <p className="mt-4 text-slate-100">
               <span className="font-display text-4xl font-bold tabular-nums tracking-tight text-white sm:text-5xl">
                 {totalPromises}
@@ -323,14 +334,17 @@ export function PromiseTrackerStatsStrip({ stats, subtitle, compact }: Props) {
             <p className="mt-1 text-xs font-medium text-slate-500">With ≥1 row in this filter slice</p>
           </KpiCard>
           <KpiCard
-            label="Report card cycles"
-            foot="Published PRC years (whole site) — not limited to the commitment filters above"
+            label="Published report-card years"
+            foot="How many cycles are published on the site — not filtered by pledge table below"
           >
             <p className="font-display text-3xl font-bold tabular-nums tracking-tight sm:text-4xl">
               {stats.publishedReportCardCycles}
             </p>
           </KpiCard>
-          <KpiCard label="Scorecard rows" foot="Lines in published PRC years — site-wide, not tied to the table filters">
+          <KpiCard
+            label="Scorecard rows"
+            foot="MP lines in published report-card cycles — whole site; not filtered by pledges below"
+          >
             <p className="font-display text-3xl font-bold tabular-nums tracking-tight sm:text-4xl">
               {stats.reportCardEntriesPublished}
             </p>

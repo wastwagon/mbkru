@@ -17,13 +17,14 @@ describe("promise-list-pagination", () => {
 
   it("buildPromiseListPageHref omits page 1 and empty params", () => {
     expect(
-      buildPromiseListPageHref("/government-commitments", {
+      buildPromiseListPageHref("/promises/browse", {
         q: "",
         sector: undefined,
         status: undefined,
+        governmentOnly: true,
         page: 1,
       }),
-    ).toBe("/government-commitments");
+    ).toBe("/promises/browse?governmentOnly=1");
   });
 
   it("buildPromiseListPageHref preserves filters and page", () => {
