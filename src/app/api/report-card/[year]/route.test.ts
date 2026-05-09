@@ -65,6 +65,13 @@ describe("GET /api/report-card/[year]", () => {
       parliamentTerm: { startYear: 2024, generalElectionYear: 2028 },
       publishedAt: "2026-03-28T00:00:00.000Z",
       methodology: null,
+      pagination: {
+        page: 1,
+        pageSize: 150,
+        totalEntries: 0,
+        totalPages: 1,
+        sort: "memberNameAsc",
+      },
       entries: [],
     });
     const res = await GET(new Request("https://example.com/api/report-card/2099"), ctx("2099"));
@@ -74,5 +81,6 @@ describe("GET /api/report-card/[year]", () => {
     expect(json.year).toBe(2099);
     expect(json.parliamentTerm).toEqual({ startYear: 2024, generalElectionYear: 2028 });
     expect(json.entries).toEqual([]);
+    expect(json.pagination?.totalEntries).toBe(0);
   });
 });

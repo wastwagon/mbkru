@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { Prisma } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
 
@@ -122,34 +123,265 @@ export async function getCachedPublishedReportCardCycles() {
   )();
 }
 
-/** React `cache` dedupes the same year within one request (metadata + page body). */
-export const getCachedPublishedReportCardYear = cache(async (year: number) => {
+/** Server-rendered report card year page — keep small to avoid gateway timeouts on large cycles (e.g. full-roster simulation). */
+export const REPORT_CARD_PUBLIC_PAGE_SIZE = 40;
+
+/** Published cycle header only (no entries). */
+export async function getCachedPublishedReportCardCycleMeta(year: number) {
   return unstable_cache(
     async () => {
       return prisma.reportCardCycle.findFirst({
         where: { year, publishedAt: { not: null } },
-        include: {
-          entries: {
-            orderBy: { member: { name: "asc" } },
-            include: {
-              member: {
-                select: {
-                  name: true,
-                  slug: true,
-                  role: true,
-                  party: true,
-                  _count: { select: { promises: true } },
-                },
+        select: {
+          id: true,
+          year: true,
+          label: true,
+          methodology: true,
+          publishedAt: true,
+        },
+      });
+    },
+    ["report-card-cycle-meta-v3", String(year)],
+    { tags: [REPORT_CARD_INDEX_TAG, reportCardYearTag(year)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
+  )();
+}
+
+export type ReportCardMpPickerOption = { slug: string; name: string };
+
+/** MP slug/name list for the cycle filter dropdown (lightweight). */
+export async function getCachedPublishedReportCardMpIndex(year: number): Promise<ReportCardMpPickerOption[]> {
+  return unstable_cache(
+    async () => {
+      const cycle = await prisma.reportCardCycle.findFirst({
+        where: { year, publishedAt: { not: null } },
+        select: { id: true },
+      });
+      if (!cycle) return [];
+      const rows = await prisma.scorecardEntry.findMany({
+        where: { cycleId: cycle.id },
+        select: { member: { select: { slug: true, name: true } } },
+        orderBy: { member: { name: "asc" } },
+      });
+      return rows.map((r) => ({ slug: r.member.slug, name: r.member.name }));
+    },
+    ["report-card-mp-index-v3", String(year)],
+    { tags: [REPORT_CARD_INDEX_TAG, reportCardYearTag(year)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
+  )();
+}
+
+/** Aggregate stats + top MPs (does not load full entry rows). */
+export async function getCachedPublishedReportCardYearStats(year: number) {
+  return unstable_cache(
+    async () => {
+      const cycle = await prisma.reportCardCycle.findFirst({
+        where: { year, publishedAt: { not: null } },
+        select: { id: true },
+      });
+      if (!cycle) return null;
+      const cycleId = cycle.id;
+      const [totalEntries, scoredCount, avgRow, topRows] = await Promise.all([
+        prisma.scorecardEntry.count({ where: { cycleId } }),
+        prisma.scorecardEntry.count({ where: { cycleId, overallScore: { not: null } } }),
+        prisma.scorecardEntry.aggregate({
+          where: { cycleId, overallScore: { not: null } },
+          _avg: { overallScore: true },
+        }),
+        prisma.scorecardEntry.findMany({
+          where: { cycleId, overallScore: { not: null } },
+          orderBy: { overallScore: "desc" },
+          take: 3,
+          select: {
+            id: true,
+            overallScore: true,
+            member: { select: { slug: true, name: true } },
+          },
+        }),
+      ]);
+      return {
+        totalEntries,
+        scoredCount,
+        avgScore: avgRow._avg.overallScore,
+        topScored: topRows,
+      };
+    },
+    ["report-card-year-stats-v3", String(year)],
+    { tags: [REPORT_CARD_INDEX_TAG, reportCardYearTag(year)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
+  )();
+}
+
+export type PublishedReportCardEntryRow = Prisma.ScorecardEntryGetPayload<{
+  include: {
+    member: {
+      select: {
+        name: true;
+        slug: true;
+        role: true;
+        party: true;
+        _count: { select: { promises: true } };
+      };
+    };
+  };
+}>;
+
+/** One page of entries for SSR (metrics + narrative per row — cap page size). */
+export async function getCachedPublishedReportCardEntriesPage(
+  year: number,
+  page: number,
+  mpSlug: string | null,
+): Promise<{ entries: PublishedReportCardEntryRow[]; totalFiltered: number; page: number }> {
+  const safePage = Number.isFinite(page) && page >= 1 ? Math.floor(page) : 1;
+  const skip = (safePage - 1) * REPORT_CARD_PUBLIC_PAGE_SIZE;
+  const trimmedMp = mpSlug?.trim() || null;
+  const mpKey = trimmedMp ?? "all";
+
+  return unstable_cache(
+    async () => {
+      const cycle = await prisma.reportCardCycle.findFirst({
+        where: { year, publishedAt: { not: null } },
+        select: { id: true },
+      });
+      if (!cycle) return { entries: [], totalFiltered: 0, page: safePage };
+
+      const where = {
+        cycleId: cycle.id,
+        ...(trimmedMp ? { member: { slug: trimmedMp } } : {}),
+      };
+
+      const [entries, totalFiltered] = await Promise.all([
+        prisma.scorecardEntry.findMany({
+          where,
+          orderBy: [
+            { overallScore: { sort: "desc", nulls: "last" } },
+            { member: { name: "asc" } },
+          ],
+          skip,
+          take: REPORT_CARD_PUBLIC_PAGE_SIZE,
+          include: {
+            member: {
+              select: {
+                name: true,
+                slug: true,
+                role: true,
+                party: true,
+                _count: { select: { promises: true } },
+              },
+            },
+          },
+        }),
+        prisma.scorecardEntry.count({ where }),
+      ]);
+
+      return { entries, totalFiltered, page: safePage };
+    },
+    ["report-card-entries-v3", String(year), String(safePage), mpKey],
+    { tags: [REPORT_CARD_INDEX_TAG, reportCardYearTag(year)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
+  )();
+}
+
+/** Index `/report-card` browse grid — paginated; no unstable_cache (filters vary). */
+export const REPORT_CARD_INDEX_PAGE_SIZE = 24;
+
+export type ReportCardBrowseRow = {
+  id: string;
+  overallScore: number | null;
+  narrative: string | null;
+  member: {
+    name: string;
+    slug: string;
+    party: string | null;
+    role: string;
+    constituency: {
+      name: string;
+      region: { name: string; slug: string };
+    } | null;
+  };
+};
+
+export async function getReportCardBrowseEntries(opts: {
+  year: number;
+  page: number;
+  regionId: string | null;
+  q: string | null;
+}): Promise<{ rows: ReportCardBrowseRow[]; totalFiltered: number; page: number }> {
+  const safePage = Number.isFinite(opts.page) && opts.page >= 1 ? Math.floor(opts.page) : 1;
+  const skip = (safePage - 1) * REPORT_CARD_INDEX_PAGE_SIZE;
+  const q = opts.q?.trim() ?? "";
+  const regionId = opts.regionId?.trim() || null;
+
+  const cycle = await prisma.reportCardCycle.findFirst({
+    where: { year: opts.year, publishedAt: { not: null } },
+    select: { id: true },
+  });
+  if (!cycle) return { rows: [], totalFiltered: 0, page: safePage };
+
+  const memberWhere: Prisma.ParliamentMemberWhereInput = {};
+  if (q.length > 0) {
+    memberWhere.name = { contains: q, mode: "insensitive" };
+  }
+  if (regionId) {
+    memberWhere.constituency = { regionId };
+  }
+
+  const where: Prisma.ScorecardEntryWhereInput = {
+    cycleId: cycle.id,
+    ...(Object.keys(memberWhere).length > 0 ? { member: memberWhere } : {}),
+  };
+
+  const [raw, totalFiltered] = await Promise.all([
+    prisma.scorecardEntry.findMany({
+      where,
+      orderBy: [
+        { overallScore: { sort: "desc", nulls: "last" } },
+        { member: { name: "asc" } },
+      ],
+      skip,
+      take: REPORT_CARD_INDEX_PAGE_SIZE,
+      select: {
+        id: true,
+        overallScore: true,
+        narrative: true,
+        member: {
+          select: {
+            name: true,
+            slug: true,
+            party: true,
+            role: true,
+            constituency: {
+              select: {
+                name: true,
+                region: { select: { name: true, slug: true } },
               },
             },
           },
         },
-      });
+      },
+    }),
+    prisma.scorecardEntry.count({ where }),
+  ]);
+
+  const rows: ReportCardBrowseRow[] = raw.map((r) => ({
+    id: r.id,
+    overallScore: r.overallScore,
+    narrative: r.narrative,
+    member: {
+      name: r.member.name,
+      slug: r.member.slug,
+      party: r.member.party,
+      role: r.member.role,
+      constituency: r.member.constituency
+        ? {
+            name: r.member.constituency.name,
+            region: {
+              name: r.member.constituency.region.name,
+              slug: r.member.constituency.region.slug,
+            },
+          }
+        : null,
     },
-    ["report-card-year-v1", String(year)],
-    { tags: [REPORT_CARD_INDEX_TAG, reportCardYearTag(year)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
-  )();
-});
+  }));
+
+  return { rows, totalFiltered, page: safePage };
+}
 
 export type { PromisesApiFilters } from "@/lib/promises-api-filters";
 
@@ -386,19 +618,42 @@ export async function getCachedTrackerConstituencies(): Promise<TrackerConstitue
   )();
 }
 
-export async function getCachedReportCardApiPayload(year: number) {
+export async function getCachedReportCardApiPayload(
+  year: number,
+  opts?: { page?: number; pageSize?: number },
+) {
+  const page = Math.max(1, opts?.page ?? 1);
+  const pageSize = Math.min(250, Math.max(1, opts?.pageSize ?? 150));
+  const skip = (page - 1) * pageSize;
+
   return unstable_cache(
     async () => {
       const cycle = await prisma.reportCardCycle.findFirst({
         where: { year, publishedAt: { not: null } },
-        include: {
-          entries: {
-            orderBy: { member: { name: "asc" } },
-            include: { member: { select: { name: true, slug: true, role: true, party: true } } },
-          },
+        select: {
+          year: true,
+          label: true,
+          methodology: true,
+          publishedAt: true,
+          id: true,
         },
       });
       if (!cycle) return null;
+
+      const where = { cycleId: cycle.id };
+      const [entryRows, totalEntries] = await Promise.all([
+        prisma.scorecardEntry.findMany({
+          where,
+          orderBy: { member: { name: "asc" } },
+          skip,
+          take: pageSize,
+          include: { member: { select: { name: true, slug: true, role: true, party: true } } },
+        }),
+        prisma.scorecardEntry.count({ where }),
+      ]);
+
+      const totalPages = Math.max(1, Math.ceil(totalEntries / pageSize));
+
       return {
         year: cycle.year,
         label: publicReportCardCycleTitle(cycle.year, cycle.label),
@@ -408,7 +663,14 @@ export async function getCachedReportCardApiPayload(year: number) {
         },
         publishedAt: cycle.publishedAt!.toISOString(),
         methodology: cycle.methodology,
-        entries: cycle.entries.map((e) => ({
+        pagination: {
+          page,
+          pageSize,
+          totalEntries,
+          totalPages,
+          sort: "memberNameAsc" as const,
+        },
+        entries: entryRows.map((e) => ({
           member: {
             name: e.member.name,
             slug: e.member.slug,
@@ -422,7 +684,7 @@ export async function getCachedReportCardApiPayload(year: number) {
         })),
       };
     },
-    ["api-report-card-v1", String(year)],
+    ["api-report-card-v4", String(year), String(page), String(pageSize)],
     { tags: [REPORT_CARD_INDEX_TAG, reportCardYearTag(year)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
 }

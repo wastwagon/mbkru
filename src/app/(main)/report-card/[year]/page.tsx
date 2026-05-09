@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 
 import { MetricsDisplay } from "@/components/accountability/MetricsDisplay";
@@ -8,15 +8,30 @@ import { accountabilityProse } from "@/config/accountability-catalogue-destinati
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { publicReportCardCycleTitle } from "@/lib/report-card-public-label";
-import { getCachedPublishedReportCardYear } from "@/lib/server/accountability-cache";
 import { isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
+import {
+  getCachedPublishedReportCardCycleMeta,
+  getCachedPublishedReportCardEntriesPage,
+  getCachedPublishedReportCardMpIndex,
+  getCachedPublishedReportCardYearStats,
+  REPORT_CARD_PUBLIC_PAGE_SIZE,
+  type ReportCardMpPickerOption,
+} from "@/lib/server/accountability-cache";
 
 export const dynamic = "force-dynamic";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 type Props = { params: Promise<{ year: string }> };
-type SearchParams = { mp?: string };
+type SearchParams = Promise<{ mp?: string; page?: string }>;
+
+function reportCardYearHref(year: number, q: { page?: number; mp?: string }) {
+  const sp = new URLSearchParams();
+  if (q.page != null && q.page > 1) sp.set("page", String(q.page));
+  if (q.mp?.trim()) sp.set("mp", q.mp.trim());
+  const s = sp.toString();
+  return s ? `/report-card/${year}?${s}` : `/report-card/${year}`;
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { year: raw } = await params;
@@ -24,66 +39,74 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!isReportCardPublicEnabled() || !isDatabaseConfigured() || !Number.isFinite(year)) {
     return { title: "Report card" };
   }
-  const cycle = await getCachedPublishedReportCardYear(year);
+  const meta = await getCachedPublishedReportCardCycleMeta(year);
   return {
-    title: cycle ? `Report card ${year}` : "Report card",
-    description: cycle ? publicReportCardCycleTitle(year, cycle.label) : undefined,
+    title: meta ? `Report card ${year}` : "Report card",
+    description: meta ? publicReportCardCycleTitle(year, meta.label) : undefined,
   };
 }
 
 export default async function ReportCardYearPage({
   params,
   searchParams,
-}: Props & { searchParams: Promise<SearchParams> }) {
+}: Props & { searchParams: SearchParams }) {
   if (!isReportCardPublicEnabled() || !isDatabaseConfigured()) notFound();
 
   const { year: raw } = await params;
-  const { mp: selectedMpRaw } = await searchParams;
+  const { mp: selectedMpRaw, page: pageRaw } = await searchParams;
   const year = Number.parseInt(raw, 10);
   if (!Number.isFinite(year) || year < 1992 || year > 2100) notFound();
 
-  const cycle = await getCachedPublishedReportCardYear(year);
+  const page = Math.max(1, Number.parseInt(pageRaw ?? "1", 10) || 1);
 
-  if (!cycle) notFound();
+  const [meta, stats, members, entriesPage]: [
+    Awaited<ReturnType<typeof getCachedPublishedReportCardCycleMeta>>,
+    Awaited<ReturnType<typeof getCachedPublishedReportCardYearStats>>,
+    ReportCardMpPickerOption[],
+    Awaited<ReturnType<typeof getCachedPublishedReportCardEntriesPage>>,
+  ] = await Promise.all([
+    getCachedPublishedReportCardCycleMeta(year),
+    getCachedPublishedReportCardYearStats(year),
+    getCachedPublishedReportCardMpIndex(year),
+    getCachedPublishedReportCardEntriesPage(year, page, selectedMpRaw?.trim() ?? null),
+  ]);
+
+  if (!meta || !stats) notFound();
 
   const selectedMp = selectedMpRaw?.trim() || "";
-  const members = cycle.entries
-    .map((e) => ({ slug: e.member.slug, name: e.member.name }))
-    .sort((a, b) => a.name.localeCompare(b.name));
-  const selectedExists = selectedMp
-    ? members.some((m) => m.slug === selectedMp)
-    : false;
-  const filteredEntries = selectedMp
-    ? cycle.entries.filter((e) => e.member.slug === selectedMp)
-    : cycle.entries;
-  const scoredEntries = cycle.entries.filter((e) => e.overallScore != null);
+  const selectedExists = selectedMp ? members.some((m: ReportCardMpPickerOption) => m.slug === selectedMp) : false;
+  const filteredEntries = entriesPage.entries;
   const avgScore =
-    scoredEntries.length > 0
-      ? (scoredEntries.reduce((sum, e) => sum + (e.overallScore ?? 0), 0) / scoredEntries.length).toFixed(1)
+    stats.avgScore != null && Number.isFinite(stats.avgScore)
+      ? stats.avgScore.toFixed(1)
       : null;
-  const topScored = [...scoredEntries]
-    .sort((a, b) => (b.overallScore ?? 0) - (a.overallScore ?? 0))
-    .slice(0, 3);
-  const publishedDateLabel = cycle.publishedAt
-    ? cycle.publishedAt.toLocaleDateString("en-GB", {
+  const topScored = stats.topScored;
+  const publishedDateLabel = meta.publishedAt
+    ? meta.publishedAt.toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "short",
         year: "numeric",
       })
     : "n/a";
-  const sortedFilteredEntries = [...filteredEntries].sort((a, b) => {
-    if (a.overallScore == null && b.overallScore == null) return a.member.name.localeCompare(b.member.name);
-    if (a.overallScore == null) return 1;
-    if (b.overallScore == null) return -1;
-    return b.overallScore - a.overallScore;
-  });
+
+  const totalFiltered = entriesPage.totalFiltered;
+  const totalPages = Math.max(1, Math.ceil(totalFiltered / REPORT_CARD_PUBLIC_PAGE_SIZE));
+  if (totalFiltered > 0 && page > totalPages) {
+    redirect(
+      reportCardYearHref(meta.year, {
+        page: totalPages,
+        mp: selectedExists ? selectedMp : undefined,
+      }),
+    );
+  }
+  const safePage = Math.min(entriesPage.page, totalPages);
 
   return (
     <div>
       <PageHeader
-        title={publicReportCardCycleTitle(cycle.year, cycle.label)}
+        title={publicReportCardCycleTitle(meta.year, meta.label)}
         description="Summaries and scores below are published for this dated cycle — evidence that stacks toward evaluating MPs across the Parliament; they do not replace official oversight."
-        breadcrumbCurrentLabel={String(cycle.year)}
+        breadcrumbCurrentLabel={String(meta.year)}
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
@@ -99,7 +122,10 @@ export default async function ReportCardYearPage({
             <span aria-hidden className="text-[var(--muted-foreground)]/50">
               ·
             </span>
-            <Link href={`/api/report-card/${cycle.year}`} className={primaryNavLinkClass}>
+            <Link
+              href={`/api/report-card/${meta.year}?page=${safePage}`}
+              className={primaryNavLinkClass}
+            >
               Cycle JSON
             </Link>
             <span aria-hidden className="text-[var(--muted-foreground)]/50">
@@ -110,12 +136,12 @@ export default async function ReportCardYearPage({
               <span className="font-medium text-[var(--foreground)]">{publishedDateLabel}</span>
             </span>
           </p>
-          {cycle.methodology?.trim() ? (
+          {meta.methodology?.trim() ? (
             <div className="mt-6 rounded-xl border border-[var(--border)] bg-white p-4 text-sm text-[var(--muted-foreground)]">
               <p className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground)]">
                 Cycle methodology
               </p>
-              <p className="mt-2 whitespace-pre-wrap">{cycle.methodology.trim()}</p>
+              <p className="mt-2 whitespace-pre-wrap">{meta.methodology.trim()}</p>
             </div>
           ) : null}
 
@@ -126,11 +152,11 @@ export default async function ReportCardYearPage({
             <div className="mt-2 grid gap-2 text-sm text-[var(--muted-foreground)] sm:grid-cols-3">
               <p>
                 Entries:{" "}
-                <span className="font-semibold text-[var(--foreground)]">{cycle.entries.length}</span>
+                <span className="font-semibold text-[var(--foreground)]">{stats.totalEntries}</span>
               </p>
               <p>
                 Scored:{" "}
-                <span className="font-semibold text-[var(--foreground)]">{scoredEntries.length}</span>
+                <span className="font-semibold text-[var(--foreground)]">{stats.scoredCount}</span>
               </p>
               <p>
                 Avg score:{" "}
@@ -145,7 +171,7 @@ export default async function ReportCardYearPage({
                     {i > 0 ? " · " : ""}
                     <Link
                       prefetch={false}
-                      href={`/report-card/${cycle.year}?mp=${encodeURIComponent(e.member.slug)}`}
+                      href={reportCardYearHref(meta.year, { mp: e.member.slug })}
                       className={primaryNavLinkClass}
                     >
                       {e.member.name}
@@ -158,6 +184,7 @@ export default async function ReportCardYearPage({
 
           <div className="mt-4 rounded-xl border border-[var(--border)] bg-white p-4">
             <form method="get" className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
+              <input type="hidden" name="page" value="1" />
               <label className="text-sm">
                 <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
                   Filter by MP
@@ -182,7 +209,7 @@ export default async function ReportCardYearPage({
                 Apply
               </button>
               {selectedMp ? (
-                <Link href={`/report-card/${cycle.year}`} className={`${primaryNavLinkClass} text-sm`}>
+                <Link href={`/report-card/${meta.year}`} className={`${primaryNavLinkClass} text-sm`}>
                   Clear
                 </Link>
               ) : (
@@ -190,8 +217,10 @@ export default async function ReportCardYearPage({
               )}
             </form>
             <p className="mt-3 text-xs text-[var(--muted-foreground)]">
-              Showing {filteredEntries.length} of {cycle.entries.length} entr
-              {cycle.entries.length === 1 ? "y" : "ies"} for {cycle.year}.
+              Showing {filteredEntries.length} entr
+              {filteredEntries.length === 1 ? "y" : "ies"} on this page (page {safePage} of {totalPages},{" "}
+              {totalFiltered} total
+              {selectedMp ? " matching filter" : ""}). Sorted by score (pending entries last).
             </p>
             {selectedExists ? (
               <p className="mt-1 text-xs text-[var(--muted-foreground)]">
@@ -201,10 +230,10 @@ export default async function ReportCardYearPage({
           </div>
 
           {filteredEntries.length === 0 ? (
-            <p className="mt-8 text-sm text-[var(--muted-foreground)]">No entries in this cycle yet.</p>
+            <p className="mt-8 text-sm text-[var(--muted-foreground)]">No entries on this page.</p>
           ) : (
             <ul className="mt-8 space-y-6">
-              {sortedFilteredEntries.map((e) => (
+              {filteredEntries.map((e) => (
                 <li
                   key={e.id}
                   className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm"
@@ -259,6 +288,50 @@ export default async function ReportCardYearPage({
               ))}
             </ul>
           )}
+
+          {totalPages > 1 ? (
+            <nav
+              className="mt-10 flex flex-col gap-3 border-t border-[var(--border)] pt-6 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between"
+              aria-label="Report card pages"
+            >
+              <p className="text-xs text-[var(--muted-foreground)]">
+                Page {safePage} of {totalPages} · {REPORT_CARD_PUBLIC_PAGE_SIZE} rows per page ·{" "}
+                <Link href={`/api/report-card/${meta.year}?page=${safePage}`} className={primaryNavLinkClass}>
+                  JSON (this page)
+                </Link>
+              </p>
+              <div className="flex flex-wrap gap-4">
+                {safePage > 1 ? (
+                  <Link
+                    href={reportCardYearHref(meta.year, {
+                      page: safePage - 1,
+                      mp: selectedExists ? selectedMp : undefined,
+                    })}
+                    className={`${primaryNavLinkClass} font-medium`}
+                    prefetch={false}
+                  >
+                    ← Previous page
+                  </Link>
+                ) : (
+                  <span className="text-[var(--muted-foreground)]">← Previous page</span>
+                )}
+                {safePage < totalPages ? (
+                  <Link
+                    href={reportCardYearHref(meta.year, {
+                      page: safePage + 1,
+                      mp: selectedExists ? selectedMp : undefined,
+                    })}
+                    className={`${primaryNavLinkClass} font-medium`}
+                    prefetch={false}
+                  >
+                    Next page →
+                  </Link>
+                ) : (
+                  <span className="text-[var(--muted-foreground)]">Next page →</span>
+                )}
+              </div>
+            </nav>
+          ) : null}
         </div>
       </section>
     </div>

@@ -31,7 +31,14 @@ export async function GET(request: Request, { params }: Props) {
     return NextResponse.json({ error: "Invalid year" }, { status: 400 });
   }
 
-  const payload = await getCachedReportCardApiPayload(year);
+  const url = new URL(request.url);
+  const pageRaw = url.searchParams.get("page");
+  const pageSizeRaw = url.searchParams.get("pageSize");
+  const page = Math.max(1, Number.parseInt(pageRaw ?? "1", 10) || 1);
+  const pageSizeParsed = Number.parseInt(pageSizeRaw ?? "150", 10);
+  const pageSize = Math.min(250, Math.max(1, Number.isFinite(pageSizeParsed) ? pageSizeParsed : 150));
+
+  const payload = await getCachedReportCardApiPayload(year, { page, pageSize });
 
   if (!payload) {
     return NextResponse.json(
