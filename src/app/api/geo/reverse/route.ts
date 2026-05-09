@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 
+/** Matches CitizenReport.localArea max length after migration. */
+const ADDRESS_LABEL_MAX = 512;
+
 /**
- * Reverse geocode rounded coordinates → short locality label (OpenStreetMap Nominatim).
+ * Reverse geocode rounded coordinates → address-style label (OpenStreetMap Nominatim).
  * Proxied server-side with a proper User-Agent per Nominatim usage policy.
  */
 export async function GET(request: Request) {
@@ -31,14 +34,57 @@ export async function GET(request: Request) {
       address?: Record<string, string>;
       display_name?: string;
     };
-    const label = pickLocalityLabel(data.address, data.display_name);
+    const label = pickAddressLabel(data.address, data.display_name);
     return NextResponse.json({ label });
   } catch {
     return NextResponse.json({ label: null });
   }
 }
 
-function pickLocalityLabel(addr: Record<string, string> | undefined, displayName?: string): string | null {
+function clampLabel(s: string): string {
+  return s.trim().replace(/\s+/g, " ").slice(0, ADDRESS_LABEL_MAX);
+}
+
+/** Prefer full formatted address; fallback to structured OSM address components; last resort short locality. */
+function pickAddressLabel(addr: Record<string, string> | undefined, displayName?: string): string | null {
+  if (displayName?.trim()) {
+    const t = clampLabel(displayName);
+    if (t.length >= 3) return t;
+  }
+
+  if (addr) {
+    const roadLine =
+      addr.house_number && addr.road
+        ? `${addr.house_number} ${addr.road}`.trim()
+        : (addr.road || addr.pedestrian || addr.path || "").trim();
+    const parts: string[] = [];
+    if (roadLine) parts.push(roadLine);
+    const locality =
+      addr.suburb ||
+      addr.neighbourhood ||
+      addr.quarter ||
+      addr.hamlet ||
+      addr.village ||
+      addr.town ||
+      "";
+    if (locality.trim()) parts.push(locality.trim());
+    const city =
+      addr.city_district ||
+      addr.city ||
+      addr.municipality ||
+      addr.county ||
+      addr.state_district ||
+      "";
+    if (city.trim()) parts.push(city.trim());
+    const region = (addr.state || addr.region || "").trim();
+    if (region) parts.push(region);
+    const country = (addr.country || "").trim();
+    if (country) parts.push(country);
+
+    const joined = clampLabel(parts.filter(Boolean).join(", "));
+    if (joined.length >= 3) return joined;
+  }
+
   if (addr) {
     const keys = [
       "suburb",
@@ -54,12 +100,12 @@ function pickLocalityLabel(addr: Record<string, string> | undefined, displayName
     ];
     for (const k of keys) {
       const v = addr[k]?.trim();
-      if (v && v.length >= 3 && v.length <= 240) return v.slice(0, 240);
+      if (v && v.length >= 3) return clampLabel(v);
     }
   }
   if (displayName) {
     const first = displayName.split(",").map((s) => s.trim())[0];
-    if (first && first.length >= 3 && first.length <= 240) return first;
+    if (first && first.length >= 3) return clampLabel(first);
   }
   return null;
 }

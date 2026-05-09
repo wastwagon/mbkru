@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Prisma } from "@prisma/client";
+import type { CitizenReportKind, CitizenReportStatus, Prisma } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
 
@@ -378,6 +378,84 @@ export async function getReportCardBrowseEntries(opts: {
           }
         : null,
     },
+  }));
+
+  return { rows, totalFiltered, page: safePage };
+}
+
+/** Index `/report-card` — MBKRU Voice submissions grid (paginated; filters vary — no unstable_cache). */
+export const VOICE_SUBMISSIONS_BROWSE_PAGE_SIZE = 24;
+
+export type VoiceSubmissionBrowseRow = {
+  id: string;
+  trackingCode: string;
+  title: string;
+  kind: CitizenReportKind;
+  status: CitizenReportStatus;
+  createdAt: Date;
+  region: { name: string } | null;
+  localArea: string | null;
+  parliamentMember: { name: string; slug: string; role: string } | null;
+  publicCauseSlug: string | null;
+  publicCauseTitle: string | null;
+  publicCauseSummary: string | null;
+};
+
+export async function getVoiceSubmissionsBrowseEntries(opts: {
+  page: number;
+  regionId: string | null;
+  q: string | null;
+}): Promise<{ rows: VoiceSubmissionBrowseRow[]; totalFiltered: number; page: number }> {
+  const safePage = Number.isFinite(opts.page) && opts.page >= 1 ? Math.floor(opts.page) : 1;
+  const skip = (safePage - 1) * VOICE_SUBMISSIONS_BROWSE_PAGE_SIZE;
+  const q = opts.q?.trim() ?? "";
+  const regionId = opts.regionId?.trim() || null;
+
+  const where: Prisma.CitizenReportWhereInput = {
+    status: { not: "ARCHIVED" },
+  };
+  if (regionId) where.regionId = regionId;
+  if (q.length > 0) {
+    where.title = { contains: q, mode: "insensitive" };
+  }
+
+  const [raw, totalFiltered] = await Promise.all([
+    prisma.citizenReport.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: VOICE_SUBMISSIONS_BROWSE_PAGE_SIZE,
+      select: {
+        id: true,
+        trackingCode: true,
+        title: true,
+        kind: true,
+        status: true,
+        createdAt: true,
+        localArea: true,
+        region: { select: { name: true } },
+        parliamentMember: { select: { name: true, slug: true, role: true } },
+        publicCauseSlug: true,
+        publicCauseTitle: true,
+        publicCauseSummary: true,
+      },
+    }),
+    prisma.citizenReport.count({ where }),
+  ]);
+
+  const rows: VoiceSubmissionBrowseRow[] = raw.map((r) => ({
+    id: r.id,
+    trackingCode: r.trackingCode,
+    title: r.title,
+    kind: r.kind,
+    status: r.status,
+    createdAt: r.createdAt,
+    localArea: r.localArea,
+    region: r.region,
+    parliamentMember: r.parliamentMember,
+    publicCauseSlug: r.publicCauseSlug,
+    publicCauseTitle: r.publicCauseTitle,
+    publicCauseSummary: r.publicCauseSummary,
   }));
 
   return { rows, totalFiltered, page: safePage };

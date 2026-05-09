@@ -27,6 +27,7 @@ import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
 /** Keep in sync with `@/lib/validation/reports` createReportBodySchema. */
 const LOCAL_AREA_MIN_LEN = 3;
+const LOCAL_AREA_MAX_LEN = 512;
 
 /** Keep in sync with `report-attachment-limits` (client bundle cannot import server-only module). */
 const MAX_ATTACH_FILES = 3;
@@ -93,7 +94,6 @@ export function VoiceReportForm({
   });
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const [category, setCategory] = useState("");
   const [regionId, setRegionId] = useState("");
   const [localArea, setLocalArea] = useState("");
   /** Internal only — rounded approximate GPS; never shown as editable coordinates. */
@@ -187,14 +187,14 @@ export function VoiceReportForm({
         );
         const data = (await res.json()) as { label?: string | null };
         const raw = typeof data.label === "string" ? data.label.trim() : "";
-        if (raw.length >= LOCAL_AREA_MIN_LEN) areaLabel = raw.slice(0, 240);
+        if (raw.length >= LOCAL_AREA_MIN_LEN) areaLabel = raw.slice(0, LOCAL_AREA_MAX_LEN);
       } catch {
         areaLabel = null;
       }
 
       setLocalArea(
         areaLabel ??
-          `Approximate area — ${regionName || "Ghana"}`.slice(0, 240),
+          `Approximate area — ${regionName || "Ghana"}`.slice(0, LOCAL_AREA_MAX_LEN),
       );
       setGeoStatus("ok");
     },
@@ -217,7 +217,7 @@ export function VoiceReportForm({
     if (authStatus === "signedOut") autoGeoRanRef.current = false;
   }, [authStatus]);
 
-  /** Auto-request rounded device location once signed in — region + local area are filled automatically (read-only). */
+  /** Auto-request rounded device location once signed in — region + approximate address are filled automatically (read-only). */
   useEffect(() => {
     if (authStatus !== "signedIn") return;
     if (!regions.length) return;
@@ -268,7 +268,6 @@ export function VoiceReportForm({
     setKind(p.kind);
     setTitle(p.title);
     setBody(p.body);
-    setCategory(p.category ?? "");
     setParliamentMemberId(p.parliamentMemberId ?? "");
     setRegionId(p.regionId ?? "");
     setLocalArea(p.localArea ?? "");
@@ -294,7 +293,6 @@ export function VoiceReportForm({
   function clearFormFieldsAfterQueue() {
     setTitle("");
     setBody("");
-    setCategory("");
     setRegionId("");
     setLocalArea("");
     setLatitude("");
@@ -315,7 +313,6 @@ export function VoiceReportForm({
         kind: kind as QueuedReportPayload["kind"],
         title: title.trim(),
         body: body.trim(),
-        category: category.trim() || undefined,
         regionId,
         localArea: localArea.trim(),
         latitude: parsedRoundedCoords?.lat,
@@ -326,7 +323,7 @@ export function VoiceReportForm({
       const parsed = queuedReportPayloadSchema.safeParse(raw);
       if (!parsed.success) {
         setError(
-          "To save an offline draft, wait until region and local area are filled automatically from location, then try again.",
+          "To save an offline draft, wait until region and the map address line are filled automatically from location, then try again.",
         );
         return "not_saved";
       }
@@ -397,7 +394,7 @@ export function VoiceReportForm({
       return;
     }
     if (localArea.trim().length < LOCAL_AREA_MIN_LEN) {
-      setError(`Enter your local area (at least ${LOCAL_AREA_MIN_LEN} characters).`);
+      setError(`Your address line from the map is too short (at least ${LOCAL_AREA_MIN_LEN} characters). Reload and allow location if this persists.`);
       setLoading(false);
       return;
     }
@@ -417,7 +414,7 @@ export function VoiceReportForm({
     if (!locationGateOk || !parsedRoundedCoords) {
       setError(
         geoStatus === "denied"
-          ? "Location access is blocked. Allow location for this site in your browser (and turn on device location if applicable), then reload the page so we can fill region and area automatically."
+          ? "Location access is blocked. Allow location for this site in your browser (and turn on device location if applicable), then reload the page so we can fill region and address automatically."
           : geoStatus === "error"
             ? "This browser could not provide location. Try another browser or device, enable location services, then reload the page."
             : geoStatus === "loading"
@@ -432,7 +429,6 @@ export function VoiceReportForm({
       kind,
       title: title.trim(),
       body: body.trim(),
-      category: category.trim() || undefined,
       regionId,
       localArea: localArea.trim(),
       latitude: parsedRoundedCoords.lat,
@@ -529,7 +525,6 @@ export function VoiceReportForm({
 
       setTitle("");
       setBody("");
-      setCategory("");
       setRegionId("");
       setLocalArea("");
       setLatitude("");
@@ -861,25 +856,13 @@ export function VoiceReportForm({
         />
       </div>
 
-      <div>
-        <label htmlFor="category" className="block text-sm font-medium text-[var(--foreground)]">
-          Category <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
-        </label>
-        <input
-          id="category"
-          maxLength={120}
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className={inputClass}
-        />
-      </div>
-
       <div className="rounded-xl border border-[var(--border)] bg-[var(--section-light)]/40 px-4 py-4">
         <p className="text-sm font-medium text-[var(--foreground)]">Location (automatic)</p>
         <p className="mt-1 text-xs text-[var(--muted-foreground)]">
           We request your browser location once when this form loads (W3C Geolocation). Coordinates are rounded (~1 km)
-          for triage — never a precise pin. Region is inferred from that point; the local area label uses map data when
-          available (OpenStreetMap). These fields are not editable so submissions stay consistent with device permission.
+          for triage — not a surveyed boundary pin. The address line below comes from OpenStreetMap reverse geocoding
+          (street or area names where available, plus town and region). Fields stay read-only so submissions match device
+          permission and stay comparable for staff review.
         </p>
         {geoStatus === "loading" ? (
           <p className="mt-3 text-sm text-[var(--muted-foreground)]" role="status">
@@ -937,7 +920,7 @@ export function VoiceReportForm({
 
       <div>
         <label htmlFor="local-area" className="block text-sm font-medium text-[var(--foreground)]">
-          Local area <span className="text-red-600">*</span>
+          Approximate address (from map) <span className="text-red-600">*</span>
         </label>
         <input
           id="local-area"
@@ -945,16 +928,16 @@ export function VoiceReportForm({
           disabled={geoStatus !== "ok"}
           required
           minLength={LOCAL_AREA_MIN_LEN}
-          maxLength={240}
+          maxLength={LOCAL_AREA_MAX_LEN}
           value={localArea}
           className={`${inputClass} cursor-not-allowed opacity-90`}
-          placeholder={geoStatus === "loading" ? "Resolving area label…" : ""}
+          placeholder={geoStatus === "loading" ? "Resolving address from map…" : ""}
           autoComplete="off"
           aria-readonly="true"
         />
         <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-          Filled automatically (general locality — not your street address). © OpenStreetMap contributors where map data
-          is used.
+          Full formatted line from OpenStreetMap when available (still tied to rounded coordinates). © OpenStreetMap
+          contributors.
         </p>
       </div>
 

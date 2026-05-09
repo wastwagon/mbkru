@@ -17,7 +17,7 @@ export const createReportBodySchema = z
     constituencyId: z.string().cuid().optional(),
     /** Required when kind is MP_PERFORMANCE — roster MP id. */
     parliamentMemberId: z.string().cuid().optional(),
-    localArea: z.string().trim().min(3).max(240),
+    localArea: z.string().trim().min(3).max(512),
     latitude: z.number().gte(-90).lte(90),
     longitude: z.number().gte(-180).lte(180),
     submitterEmail: z.string().trim().email().max(320).optional(),

@@ -471,7 +471,7 @@ async function seedAccountabilityPublicSample() {
     {
       slug: STARTER_MP_SLUGS[1],
       name: "John Dramani Mahama",
-      role: "MP",
+      role: "President of Ghana",
       party: "NDC",
       constituencyId: cBole.id,
     },
