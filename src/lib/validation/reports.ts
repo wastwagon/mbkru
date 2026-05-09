@@ -13,10 +13,11 @@ export const createReportBodySchema = z
     title: z.string().trim().min(5).max(300),
     body: z.string().trim().min(20).max(50_000),
     category: z.string().trim().max(120).optional(),
-    regionId: z.string().cuid().optional(),
+    regionId: z.string().cuid(),
     constituencyId: z.string().cuid().optional(),
-    latitude: z.number().gte(-90).lte(90).optional(),
-    longitude: z.number().gte(-180).lte(180).optional(),
+    localArea: z.string().trim().min(3).max(240),
+    latitude: z.number().gte(-90).lte(90),
+    longitude: z.number().gte(-180).lte(180),
     submitterEmail: z.string().trim().email().max(320).optional(),
     /** International format (E.164), e.g. +233201234567 */
     submitterPhone: z

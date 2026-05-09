@@ -6,11 +6,7 @@ import { OperationalPillarsRegionsSection } from "@/components/operational-pilla
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
-import {
-  ACCOUNTABILITY_CATALOGUE_ROUTES,
-  accountabilityCatalogueNavMedium,
-  accountabilityCatalogueNavShort,
-} from "@/config/accountability-catalogue-destinations";
+import { ACCOUNTABILITY_CATALOGUE_ROUTES } from "@/config/accountability-catalogue-destinations";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { images, mbkruStrategicContent, heroContent } from "@/lib/site-content";
@@ -245,10 +241,10 @@ export default async function AboutPage() {
                 {parliamentLive ? (
                   <>
                     <Button href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments} variant="primary">
-                      {accountabilityCatalogueNavMedium.government}
+                      Government commitment tracker
                     </Button>
-                    <Button href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} variant="outline">
-                      {accountabilityCatalogueNavShort.byMp}
+                    <Button href="/parliament-tracker" variant="outline">
+                      Parliamentarians tracker
                     </Button>
                   </>
                 ) : (
@@ -315,13 +311,13 @@ export default async function AboutPage() {
                       href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments}
                       className={primaryLinkClass}
                     >
-                      {accountabilityCatalogueNavMedium.government}
+                      Government commitment tracker
                     </Link>
                   </li>
                 ) : null}
                 <li>
                   <Link href="/parliament-tracker" className={primaryLinkClass}>
-                    Parliament tracker
+                    Parliamentarians tracker
                   </Link>
                 </li>
                 <li>

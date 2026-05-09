@@ -4,8 +4,11 @@ import { Suspense } from "react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { MemberAuthUnavailable } from "@/components/member/MemberAuthUnavailable";
 import { isMemberAuthEnabled } from "@/lib/member/phase-gate";
+import { safePostAuthRedirectPath } from "@/lib/member/safe-post-auth-redirect";
 import { getMemberSession } from "@/lib/member/session";
 import { MemberLoginForm } from "./MemberLoginForm";
+
+type Props = { searchParams?: Promise<{ next?: string }> };
 
 export async function generateMetadata(): Promise<Metadata> {
   if (!isMemberAuthEnabled()) {
@@ -14,9 +17,12 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: "Sign in" };
 }
 
-export default async function LoginPage() {
+export default async function LoginPage({ searchParams }: Props) {
   if (!isMemberAuthEnabled()) return <MemberAuthUnavailable variant="login" />;
-  if (await getMemberSession()) redirect("/account");
+  const sp = (await searchParams) ?? {};
+  if (await getMemberSession()) {
+    redirect(safePostAuthRedirectPath(sp.next, "/account"));
+  }
 
   return (
     <div>

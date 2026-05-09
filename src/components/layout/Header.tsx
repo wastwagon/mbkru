@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect, useRef, useCallback, type FocusEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import {
@@ -11,42 +11,27 @@ import {
   getDiscoverNavLinks,
   getGuidanceNavLinks,
   getParticipateNavLinks,
+  type PublicNavLink,
 } from "@/config/public-platform-nav";
 import { useMemberMe } from "@/hooks/useMemberMe";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { AccessibilityMenuIcon } from "@/components/ui/AccessibilityMenuIcon";
 import { openAccessibilityTools } from "@/lib/a11y-voice-dispatch";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
+import { publicNavLeafIsActive } from "@/lib/public-nav-active";
 
-type NavLeaf = {
-  href: string;
-  label: string;
-  /** When set, highlight for any path starting with this prefix. */
-  activeWhenPathStartsWith?: string;
-  /** Suppress active state when pathname starts with this (used with `href` prefix matching). */
-  activeExcludePathStartsWith?: string;
-};
+type NavLeaf = PublicNavLink;
 
 type NavEntry =
   | { kind: "link"; leaf: NavLeaf }
   | { kind: "group"; id: string; label: string; items: NavLeaf[] };
 
-function leafIsActive(pathname: string, leaf: NavLeaf): boolean {
-  if (leaf.activeWhenPathStartsWith != null) {
-    if (!pathname.startsWith(leaf.activeWhenPathStartsWith)) return false;
-    if (leaf.activeExcludePathStartsWith && pathname.startsWith(leaf.activeExcludePathStartsWith)) return false;
-    return true;
-  }
-  if (pathname === leaf.href) return true;
-  if (pathname.startsWith(`${leaf.href}/`)) {
-    if (leaf.activeExcludePathStartsWith && pathname.startsWith(leaf.activeExcludePathStartsWith)) return false;
-    return true;
-  }
-  return false;
+function leafIsActive(pathname: string, searchParams: URLSearchParams, leaf: NavLeaf): boolean {
+  return publicNavLeafIsActive(pathname, searchParams, leaf);
 }
 
-function groupIsActive(pathname: string, items: NavLeaf[]): boolean {
-  return items.some((item) => leafIsActive(pathname, item));
+function groupIsActive(pathname: string, searchParams: URLSearchParams, items: NavLeaf[]): boolean {
+  return items.some((item) => leafIsActive(pathname, searchParams, item));
 }
 
 function headerA11yButtonClass(isHomeHero: boolean) {
@@ -62,17 +47,17 @@ function buildMainNav(phase: ReturnType<typeof getPublicPlatformPhase>): NavEntr
     { kind: "link", leaf: { href: "/about", label: "About" } },
   ];
 
-  const participate = getParticipateNavLinks(phase) as NavLeaf[];
+  const participate = getParticipateNavLinks(phase) as PublicNavLink[];
   entries.push({ kind: "group", id: "participate", label: "Participate", items: participate });
 
-  const accountability = getAccountabilityNavLinks(phase) as NavLeaf[];
+  const accountability = getAccountabilityNavLinks(phase) as PublicNavLink[];
   if (accountability.length === 1) {
     entries.push({ kind: "link", leaf: accountability[0] });
   } else {
     entries.push({ kind: "group", id: "accountability", label: "Accountability", items: accountability });
   }
 
-  const guidance = getGuidanceNavLinks(phase) as NavLeaf[];
+  const guidance = getGuidanceNavLinks(phase) as PublicNavLink[];
   if (guidance.length === 1) {
     entries.push({ kind: "link", leaf: guidance[0] });
   } else if (guidance.length > 1) {
@@ -83,7 +68,7 @@ function buildMainNav(phase: ReturnType<typeof getPublicPlatformPhase>): NavEntr
     kind: "group",
     id: "updates",
     label: "News & resources",
-    items: getDiscoverNavLinks(phase) as NavLeaf[],
+    items: getDiscoverNavLinks(phase) as PublicNavLink[],
   });
 
   return entries;
@@ -318,6 +303,7 @@ function desktopLinkClass(isHomeHero: boolean, active: boolean): string {
 function DesktopNavDropdown({
   entry,
   pathname,
+  searchParams,
   isHomeHero,
   open,
   onOpen,
@@ -326,6 +312,7 @@ function DesktopNavDropdown({
 }: {
   entry: Extract<NavEntry, { kind: "group" }>;
   pathname: string;
+  searchParams: URLSearchParams;
   isHomeHero: boolean;
   open: boolean;
   onOpen: () => void;
@@ -335,7 +322,7 @@ function DesktopNavDropdown({
   onCancelDelayedFlyoutClose: () => void;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const active = groupIsActive(pathname, entry.items);
+  const active = groupIsActive(pathname, searchParams, entry.items);
 
   const handleEnter = useCallback(() => {
     onCancelDelayedFlyoutClose();
@@ -398,10 +385,10 @@ function DesktopNavDropdown({
             className="w-full min-w-0 rounded-xl border border-[var(--border)] bg-white py-1 shadow-[var(--shadow-dropdown)]"
           >
             {entry.items.map((item) => {
-              const isItemActive = leafIsActive(pathname, item);
+              const isItemActive = leafIsActive(pathname, searchParams, item);
               return (
                 <Link
-                  key={item.href}
+                  key={`${item.label}-${item.href}`}
                   role="menuitem"
                   href={item.href}
                   className={`${dropdownItemClass} ${isItemActive ? "bg-[var(--section-light)] font-semibold text-[var(--primary)]" : ""}`}
@@ -424,6 +411,7 @@ export function Header() {
   const [desktopOpenId, setDesktopOpenId] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const phase = getPublicPlatformPhase();
   const navStructure = buildMainNav(phase);
   const showMemberAuth = platformFeatures.authentication(phase);
@@ -495,7 +483,7 @@ export function Header() {
         >
           {navStructure.map((entry) => {
             if (entry.kind === "link") {
-              const active = leafIsActive(pathname, entry.leaf);
+              const active = leafIsActive(pathname, searchParams, entry.leaf);
               return (
                 <Link
                   key={entry.leaf.href}
@@ -511,6 +499,7 @@ export function Header() {
                 key={entry.id}
                 entry={entry}
                 pathname={pathname}
+                searchParams={searchParams}
                 isHomeHero={isHomeHero}
                 open={desktopOpenId === entry.id}
                 onOpen={() => setDesktopOpenId(entry.id)}
@@ -597,7 +586,7 @@ export function Header() {
             <div className="max-h-[min(72vh,calc(100dvh-6rem))] space-y-0 overflow-y-auto overscroll-contain px-3 py-4 sm:px-4">
               {navStructure.map((entry) => {
                 if (entry.kind === "link") {
-                  const active = leafIsActive(pathname, entry.leaf);
+                  const active = leafIsActive(pathname, searchParams, entry.leaf);
                   return (
                     <Link
                       key={entry.leaf.href}
@@ -612,7 +601,7 @@ export function Header() {
                   );
                 }
                 const expanded = mobileExpandedId === entry.id;
-                const gActive = groupIsActive(pathname, entry.items);
+                const gActive = groupIsActive(pathname, searchParams, entry.items);
                 return (
                   <div key={entry.id} className="rounded-xl">
                     <button
@@ -637,10 +626,10 @@ export function Header() {
                         >
                           <div className="space-y-0 border-l-2 border-[var(--border)] pb-2 pl-3 ml-3">
                             {entry.items.map((item) => {
-                              const active = leafIsActive(pathname, item);
+                              const active = leafIsActive(pathname, searchParams, item);
                               return (
                                 <Link
-                                  key={item.href}
+                                  key={`${item.label}-${item.href}`}
                                   href={item.href}
                                   onClick={() => setMobileMenuOpen(false)}
                                   className={`flex min-h-[44px] items-center rounded-lg px-3 py-2.5 text-[15px] font-medium transition-colors hover:bg-[var(--muted)] touch-manipulation ${

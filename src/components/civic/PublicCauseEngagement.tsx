@@ -1,7 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
+import { redirectToMemberLogin } from "@/lib/client/member-login-redirect";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 type Comment = { id: string; body: string; createdAt: string; authorLabel: string };
@@ -23,6 +25,8 @@ export function PublicCauseEngagement({
   closed,
   signedIn,
 }: Props) {
+  const router = useRouter();
+  const causePath = `/citizens-voice/causes/${encodeURIComponent(slug)}`;
   const [supportCount, setSupportCount] = useState(initialSupportCount);
   const [viewerSupported, setViewerSupported] = useState(initialViewerSupported);
   const [comments, setComments] = useState(initialComments);
@@ -69,6 +73,10 @@ export function PublicCauseEngagement({
         supported?: boolean;
       };
       if (!res.ok) {
+        if (res.status === 401) {
+          redirectToMemberLogin(router, causePath);
+          return;
+        }
         setError(data.error ?? "Could not update support.");
         return;
       }
@@ -93,6 +101,10 @@ export function PublicCauseEngagement({
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string; comment?: Comment };
       if (!res.ok) {
+        if (res.status === 401) {
+          redirectToMemberLogin(router, causePath);
+          return;
+        }
         setError(data.error ?? "Could not post comment.");
         return;
       }
@@ -118,7 +130,7 @@ export function PublicCauseEngagement({
           <p className="mt-4 text-sm text-amber-800">This cause thread is closed for new support and comments.</p>
         ) : !signedIn ? (
           <p className="mt-4 text-sm text-[var(--muted-foreground)]">
-            <a href={`/login?next=/citizens-voice/causes/${encodeURIComponent(slug)}`} className={primaryLinkClass}>
+            <a href={`/login?next=${encodeURIComponent(causePath)}`} className={primaryLinkClass}>
               Sign in
             </a>{" "}
             to support or comment.
@@ -140,6 +152,14 @@ export function PublicCauseEngagement({
         <p className="mt-1 text-sm text-[var(--muted-foreground)]">
           Stay factual and respectful. Moderators may hide posts that breach community standards.
         </p>
+        {!signedIn && !closed ? (
+          <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+            <a href={`/login?next=${encodeURIComponent(causePath)}`} className={primaryLinkClass}>
+              Sign in
+            </a>{" "}
+            to add a comment (members only).
+          </p>
+        ) : null}
         {error ? (
           <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">{error}</p>
         ) : null}

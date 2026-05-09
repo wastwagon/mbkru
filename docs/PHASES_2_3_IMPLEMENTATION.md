@@ -115,7 +115,7 @@ New / planned tables (see `prisma/schema.prisma`):
 1. **Auth:** `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout` — separate cookie name from admin; Redis sessions optional (`docker-compose.fullstack.yml`).
 2. **Reports:** `POST /api/reports`, `GET /api/reports/me`, `GET /api/reports/track/[code]` (public status).
 3. **Uploads:** Reuse or extend admin media patterns with **virus scan / size limits** and **signed URLs** before production.
-4. **Rate limiting:** Redis token bucket on all anonymous `POST` (align with `docs/ARCHITECTURE.md`).
+4. **Rate limiting:** Redis token bucket on public `POST` routes (align with `docs/ARCHITECTURE.md`).
 5. **Admin moderation:** `/admin/reports` queue (new) — staff roles can wait until after MVP triage.
 
 ### Phase 3 — add

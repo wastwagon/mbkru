@@ -6,6 +6,10 @@ const base = {
   kind: "VOICE" as const,
   title: "Enough length in title here",
   body: "Enough characters in body for validation rules here.",
+  regionId: "cjld2cjxh0000qzrmn831i7rn",
+  localArea: "East Legon",
+  latitude: 5.6037,
+  longitude: -0.187,
 };
 
 describe("createReportBodySchema", () => {
@@ -23,6 +27,15 @@ describe("createReportBodySchema", () => {
       ...base,
       submitterEmail: "a@b.co",
       submitterPhone: "0201234567",
+    });
+    expect(r.success).toBe(false);
+  });
+
+  it("rejects localArea shorter than 3 characters", () => {
+    const r = createReportBodySchema.safeParse({
+      ...base,
+      submitterEmail: "a@b.co",
+      localArea: "Ab",
     });
     expect(r.success).toBe(false);
   });

@@ -35,21 +35,22 @@ const validPayload = {
   kind: "VOICE" as const,
   title: "Enough chars title",
   body: "Enough characters in body for validation rules.",
+  regionId: "cjld2cjxh0000qzrmn831i7rn",
+  localArea: "East Legon",
+  latitude: 5.5,
+  longitude: -0.2,
   submitterPhone: undefined as string | undefined,
 };
 
 describe("queuedReportPayloadSchema", () => {
-  it("rejects latitude without longitude", () => {
-    const r = queuedReportPayloadSchema.safeParse({ ...validPayload, latitude: 5.5 });
+  it("rejects missing regionId", () => {
+    const { regionId: _, ...rest } = validPayload;
+    const r = queuedReportPayloadSchema.safeParse(rest);
     expect(r.success).toBe(false);
   });
 
-  it("accepts coordinate pair", () => {
-    const r = queuedReportPayloadSchema.safeParse({
-      ...validPayload,
-      latitude: 5.5,
-      longitude: -0.2,
-    });
+  it("accepts full location fields", () => {
+    const r = queuedReportPayloadSchema.safeParse(validPayload);
     expect(r.success).toBe(true);
   });
 });

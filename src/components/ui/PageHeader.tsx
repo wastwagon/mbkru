@@ -29,7 +29,7 @@ const PATH_BREADCRUMBS: Record<string, string> = {
   "/contact": "Contact",
   "/citizens-voice": "Voice",
   "/situational-alerts": "Engagement",
-  "/parliament-tracker": "Parliament tracker",
+  "/parliament-tracker": "Parliamentarians tracker",
   "/legal-empowerment": "Legal",
   "/town-halls": "Forums",
   "/debates": "Debates",
@@ -40,7 +40,7 @@ const PATH_BREADCRUMBS: Record<string, string> = {
   "/whistleblowing": "Whistleblowing",
   "/communities": "Communities",
   "/election-observation": "Election observation",
-  "/report-card": "Report card",
+  "/report-card": "People's Report Card",
   "/methodology": "Methodology",
   "/data-sources": "Data sources",
   "/partner-api": "Partner data & API",
@@ -95,7 +95,7 @@ function buildBreadcrumbs(pathname: string, currentLabel?: string): BreadcrumbIt
 
   if (segments[0] === "report-card" && segments.length > 1 && currentLabel) {
     items.push({
-      label: PATH_BREADCRUMBS["/report-card"] ?? "Report card",
+      label: PATH_BREADCRUMBS["/report-card"] ?? "People's Report Card",
       href: "/report-card",
     });
     items.push({ label: currentLabel });

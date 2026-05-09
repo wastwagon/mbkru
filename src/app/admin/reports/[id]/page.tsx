@@ -20,6 +20,7 @@ import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
+import { roundApproximateCoord } from "@/lib/geo/round-approximate-coord";
 import { destructiveTextControlClass, primaryLinkClass } from "@/lib/primary-link-styles";
 
 import type { CitizenReportStatus } from "@prisma/client";
@@ -231,11 +232,17 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
             <dd className="inline">{report.constituency.name}</dd>
           </div>
         ) : null}
-        {(report.latitude != null && report.longitude != null) ? (
+        {report.localArea ? (
           <div>
-            <dt className="inline font-medium text-[var(--foreground)]">Coordinates: </dt>
-            <dd className="inline">
-              {report.latitude.toFixed(5)}, {report.longitude.toFixed(5)}
+            <dt className="inline font-medium text-[var(--foreground)]">Local area (submitter): </dt>
+            <dd className="inline">{report.localArea}</dd>
+          </div>
+        ) : null}
+        {report.latitude != null && report.longitude != null ? (
+          <div>
+            <dt className="inline font-medium text-[var(--foreground)]">Approximate coordinates (~1 km): </dt>
+            <dd className="inline font-mono text-xs">
+              {roundApproximateCoord(report.latitude).toFixed(2)}, {roundApproximateCoord(report.longitude).toFixed(2)}
             </dd>
           </div>
         ) : null}

@@ -27,8 +27,8 @@ Structured sign-off plan for admin linking, user dashboard linking, API contract
   - login, dashboard links, reports queue, outbox retry/reset, operational audit view
 - [ ] Member walkthrough:
   - login, `/account`, `/account/reports`, `/account/notifications`
-- [ ] Anonymous walkthrough:
-  - homepage, report submit, track report, public accountability pages
+- [ ] Signed-out / public walkthrough:
+  - homepage, accountability pages; confirm Voice submit and track **redirect to login** (or 404 when Voice is disabled), then complete flows **signed in**
 
 ## Phase 4 — Production operations sign-off
 

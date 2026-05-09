@@ -4,11 +4,12 @@ import { citizensVoiceDisabledResponse, isCitizensVoiceEnabled } from "@/lib/rep
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 import { prisma } from "@/lib/db/prisma";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { getMemberSessionFromRequest } from "@/lib/member/session";
 import { trackingCodeParamSchema } from "@/lib/validation/reports";
 
 type Props = { params: Promise<{ code: string }> };
 
-/** Public status lookup — no PII or narrative. */
+/** Member-only status lookup — no PII or narrative in response. */
 export async function GET(request: Request, { params }: Props) {
   if (!isCitizensVoiceEnabled()) return citizensVoiceDisabledResponse();
 
@@ -20,6 +21,11 @@ export async function GET(request: Request, { params }: Props) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
+  const session = await getMemberSessionFromRequest(request);
+  if (!session) {
+    return NextResponse.json({ error: "Sign in to track a report." }, { status: 401 });
+  }
+
   const { code: raw } = await params;
   const code = trackingCodeParamSchema.safeParse(raw.toUpperCase());
   if (!code.success) {
@@ -29,6 +35,7 @@ export async function GET(request: Request, { params }: Props) {
   const row = await prisma.citizenReport.findUnique({
     where: { trackingCode: code.data },
     select: {
+      memberId: true,
       trackingCode: true,
       kind: true,
       status: true,
@@ -43,6 +50,10 @@ export async function GET(request: Request, { params }: Props) {
   });
 
   if (!row) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  if (row.memberId != null && row.memberId !== session.memberId) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 

@@ -1,32 +1,31 @@
 "use client";
 
 import type { TurnstileInstance } from "@marsidev/react-turnstile";
-import dynamic from "next/dynamic";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
 import { nearestRegionSlug } from "@/lib/geo/ghana-region-centroids";
+import { roundApproximateCoord } from "@/lib/geo/round-approximate-coord";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 import {
   enqueueReportDraft,
   isRetryableReportSubmitResponse,
   loadReportQueue,
+  queuedReportPayloadSchema,
   type QueuedReportPayload,
   type ReportQueueItem,
   removeReportQueueItem,
 } from "@/lib/client/report-submit-queue";
+import { redirectToMemberLogin } from "@/lib/client/member-login-redirect";
 
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
-const ReportMapLazy = dynamic(() => import("./VoiceReportMapPicker"), {
-  ssr: false,
-  loading: () => (
-    <p className="mt-2 text-sm text-[var(--muted-foreground)]">Loading map…</p>
-  ),
-});
+/** Keep in sync with `@/lib/validation/reports` createReportBodySchema. */
+const LOCAL_AREA_MIN_LEN = 3;
 
 /** Keep in sync with `report-attachment-limits` (client bundle cannot import server-only module). */
 const MAX_ATTACH_FILES = 3;
@@ -64,8 +63,6 @@ export type VoiceReportFormProps = {
   lockKind?: boolean;
   /** Optional textarea placeholder override. */
   bodyPlaceholder?: string;
-  /** Lazy OSM map to set coordinates (default true). */
-  enableMapPicker?: boolean;
 };
 
 export function VoiceReportForm({
@@ -73,13 +70,14 @@ export function VoiceReportForm({
   defaultKind = "VOICE",
   lockKind = false,
   bodyPlaceholder,
-  enableMapPicker = true,
 }: VoiceReportFormProps) {
   const phase = getPublicPlatformPhase();
   const electionOn = platformFeatures.electionObservatory(phase);
   const kindOptions = ALL_KINDS.filter((k) => k.value !== "ELECTION_OBSERVATION" || electionOn);
 
-  const [hasMember, setHasMember] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const [authStatus, setAuthStatus] = useState<"loading" | "signedOut" | "signedIn">("loading");
   const [kind, setKind] = useState<string>(() => {
     if (lockKind && defaultKind) return defaultKind;
     if (defaultKind && kindOptions.some((k) => k.value === defaultKind)) return defaultKind;
@@ -89,22 +87,40 @@ export function VoiceReportForm({
   const [body, setBody] = useState("");
   const [category, setCategory] = useState("");
   const [regionId, setRegionId] = useState("");
-  const [submitterEmail, setSubmitterEmail] = useState("");
-  const [submitterPhone, setSubmitterPhone] = useState("");
+  const [localArea, setLocalArea] = useState("");
+  /** Internal only — rounded approximate GPS; never shown as editable coordinates. */
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
+  const [geoStatus, setGeoStatus] = useState<"idle" | "loading" | "ok" | "denied" | "error">("idle");
+  const [approxCaptured, setApproxCaptured] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [trackingCode, setTrackingCode] = useState<string | null>(null);
   const [submittedAtIso, setSubmittedAtIso] = useState<string | null>(null);
   const [uploadNote, setUploadNote] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const [mapSectionOpen, setMapSectionOpen] = useState(false);
   const [queueItems, setQueueItems] = useState<ReportQueueItem[]>([]);
   const [localDraftNotice, setLocalDraftNotice] = useState<string | null>(null);
   const [onlineBanner, setOnlineBanner] = useState(false);
   const turnstileRef = useRef<TurnstileInstance>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const parsedRoundedCoords = useMemo(() => {
+    const lat = latitude.trim() === "" ? NaN : Number(latitude);
+    const lng = longitude.trim() === "" ? NaN : Number(longitude);
+    if (Number.isNaN(lat) || Number.isNaN(lng)) return null;
+    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return null;
+    return { lat, lng };
+  }, [latitude, longitude]);
+
+  const locationGateOk = useMemo(
+    () =>
+      Boolean(regionId) &&
+      localArea.trim().length >= LOCAL_AREA_MIN_LEN &&
+      approxCaptured &&
+      parsedRoundedCoords !== null,
+    [regionId, localArea, approxCaptured, parsedRoundedCoords],
+  );
 
   const syncQueue = useCallback(() => {
     setQueueItems(loadReportQueue());
@@ -119,23 +135,50 @@ export function VoiceReportForm({
     if (!electionOn && kind === "ELECTION_OBSERVATION") setKind("VOICE");
   }, [electionOn, lockKind, kind]);
 
-  const handleMapPick = useCallback(
-    (lat: number, lng: number) => {
-      setLatitude(lat.toFixed(5));
-      setLongitude(lng.toFixed(5));
-      const slug = nearestRegionSlug(lat, lng);
-      const match = regions.find((r) => r.slug === slug);
-      if (match) setRegionId(match.id);
-    },
-    [regions],
-  );
+  const requestApproximateLocation = useCallback(() => {
+    setGeoStatus("loading");
+    setError(null);
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setGeoStatus("error");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = roundApproximateCoord(pos.coords.latitude);
+        const lng = roundApproximateCoord(pos.coords.longitude);
+        setLatitude(String(lat));
+        setLongitude(String(lng));
+        const slug = nearestRegionSlug(lat, lng);
+        const match = regions.find((r) => r.slug === slug);
+        if (match) setRegionId(match.id);
+        setApproxCaptured(true);
+        setGeoStatus("ok");
+      },
+      (err) => {
+        setGeoStatus(err.code === 1 ? "denied" : "error");
+      },
+      { enableHighAccuracy: false, maximumAge: 600_000, timeout: 20_000 },
+    );
+  }, [regions]);
+
+  const clearApproximateLocation = useCallback(() => {
+    setLatitude("");
+    setLongitude("");
+    setApproxCaptured(false);
+    setGeoStatus("idle");
+  }, []);
 
   useEffect(() => {
     fetch("/api/auth/me", { credentials: "include" })
       .then((r) => r.json())
-      .then((d: { member?: unknown }) => setHasMember(Boolean(d.member)))
-      .catch(() => setHasMember(false));
+      .then((d: { member?: unknown }) => setAuthStatus(d.member ? "signedIn" : "signedOut"))
+      .catch(() => setAuthStatus("signedOut"));
   }, []);
+
+  useEffect(() => {
+    if (authStatus !== "signedOut") return;
+    redirectToMemberLogin(router, pathname || "/citizens-voice/submit");
+  }, [authStatus, pathname, router]);
 
   useEffect(() => {
     syncQueue();
@@ -155,39 +198,23 @@ export function VoiceReportForm({
       ? queueItems.filter((item) => item.payload.kind === defaultKind)
       : queueItems;
 
-  function buildQueuePayload(): QueuedReportPayload {
-    const lat = latitude.trim() === "" ? undefined : Number(latitude);
-    const lng = longitude.trim() === "" ? undefined : Number(longitude);
-    const base: QueuedReportPayload = {
-      kind: kind as QueuedReportPayload["kind"],
-      title: title.trim(),
-      body: body.trim(),
-      category: category.trim() || undefined,
-      regionId: regionId || undefined,
-      submitterEmail: submitterEmail.trim() || undefined,
-      submitterPhone: submitterPhone.trim() || undefined,
-    };
-    if (lat !== undefined && lng !== undefined && !Number.isNaN(lat) && !Number.isNaN(lng)) {
-      base.latitude = lat;
-      base.longitude = lng;
-    }
-    return base;
-  }
-
   function applyPayloadToForm(p: QueuedReportPayload) {
     setKind(p.kind);
     setTitle(p.title);
     setBody(p.body);
     setCategory(p.category ?? "");
     setRegionId(p.regionId ?? "");
-    setSubmitterEmail(p.submitterEmail ?? "");
-    setSubmitterPhone(p.submitterPhone ?? "");
+    setLocalArea(p.localArea ?? "");
     if (p.latitude != null && p.longitude != null) {
       setLatitude(String(p.latitude));
       setLongitude(String(p.longitude));
+      setApproxCaptured(true);
+      setGeoStatus("ok");
     } else {
       setLatitude("");
       setLongitude("");
+      setApproxCaptured(false);
+      setGeoStatus("idle");
     }
   }
 
@@ -196,10 +223,11 @@ export function VoiceReportForm({
     setBody("");
     setCategory("");
     setRegionId("");
-    setSubmitterEmail("");
-    setSubmitterPhone("");
+    setLocalArea("");
     setLatitude("");
     setLongitude("");
+    setApproxCaptured(false);
+    setGeoStatus("idle");
     if (fileInputRef.current) fileInputRef.current.value = "";
     setTurnstileToken(null);
     turnstileRef.current?.reset();
@@ -209,7 +237,24 @@ export function VoiceReportForm({
     const fileList = fileInputRef.current?.files ? Array.from(fileInputRef.current.files) : [];
     if (fileList.length > 0) return "not_saved";
     try {
-      enqueueReportDraft(buildQueuePayload());
+      const raw = {
+        kind: kind as QueuedReportPayload["kind"],
+        title: title.trim(),
+        body: body.trim(),
+        category: category.trim() || undefined,
+        regionId,
+        localArea: localArea.trim(),
+        latitude: parsedRoundedCoords?.lat,
+        longitude: parsedRoundedCoords?.lng,
+      };
+      const parsed = queuedReportPayloadSchema.safeParse(raw);
+      if (!parsed.success) {
+        setError(
+          "To save an offline draft, select region, enter local area (at least 3 characters), tap “Use my approximate location”, and allow access when prompted.",
+        );
+        return "not_saved";
+      }
+      enqueueReportDraft(parsed.data);
       syncQueue();
       clearFormFieldsAfterQueue();
       setLocalDraftNotice(
@@ -263,35 +308,30 @@ export function VoiceReportForm({
       return;
     }
 
-    if (!hasMember) {
-      const em = submitterEmail.trim();
-      const ph = submitterPhone.trim();
-      if (!em && !ph) {
-        setError("Provide an email or an E.164 phone number (e.g. +233201234567) for status updates.");
-        setLoading(false);
-        return;
-      }
-      if (ph && !/^\+[1-9]\d{1,14}$/.test(ph)) {
-        setError("Phone must be in international format (E.164), including country code with +.");
-        setLoading(false);
-        return;
-      }
+    if (authStatus !== "signedIn") {
+      setLoading(false);
+      redirectToMemberLogin(router, pathname || "/citizens-voice/submit");
+      return;
     }
 
-    const lat = latitude.trim() === "" ? undefined : Number(latitude);
-    const lng = longitude.trim() === "" ? undefined : Number(longitude);
-    if (
-      (lat !== undefined || lng !== undefined) &&
-      (lat === undefined ||
-        lng === undefined ||
-        Number.isNaN(lat) ||
-        Number.isNaN(lng) ||
-        lat < -90 ||
-        lat > 90 ||
-        lng < -180 ||
-        lng > 180)
-    ) {
-      setError("Enter valid latitude and longitude, or leave both fields blank.");
+    if (!regionId) {
+      setError("Select your region.");
+      setLoading(false);
+      return;
+    }
+    if (localArea.trim().length < LOCAL_AREA_MIN_LEN) {
+      setError(`Enter your local area (at least ${LOCAL_AREA_MIN_LEN} characters).`);
+      setLoading(false);
+      return;
+    }
+    if (!locationGateOk || !parsedRoundedCoords) {
+      setError(
+        geoStatus === "denied"
+          ? "Location access is blocked. Enable location for this site in your browser (and device location services if applicable), then tap “Use my approximate location” again."
+          : geoStatus === "error"
+            ? "This browser cannot provide location here. Try another browser or device, enable location services, then tap “Use my approximate location”."
+            : 'Tap “Use my approximate location” and choose Allow when prompted so we can record a rounded point (~1 km) with your report.',
+      );
       setLoading(false);
       return;
     }
@@ -301,18 +341,12 @@ export function VoiceReportForm({
       title: title.trim(),
       body: body.trim(),
       category: category.trim() || undefined,
-      regionId: regionId || undefined,
-      submitterEmail: submitterEmail.trim() || undefined,
+      regionId,
+      localArea: localArea.trim(),
+      latitude: parsedRoundedCoords.lat,
+      longitude: parsedRoundedCoords.lng,
       turnstileToken: turnstileToken ?? undefined,
     };
-    if (!hasMember) {
-      const ph = submitterPhone.trim();
-      if (ph) payload.submitterPhone = ph;
-    }
-    if (lat !== undefined && lng !== undefined) {
-      payload.latitude = lat;
-      payload.longitude = lng;
-    }
 
     try {
       const res = await fetch("/api/reports", {
@@ -329,6 +363,12 @@ export function VoiceReportForm({
         submittedAt?: string;
       };
       if (!res.ok) {
+        if (res.status === 401) {
+          turnstileRef.current?.reset();
+          setTurnstileToken(null);
+          redirectToMemberLogin(router, pathname || "/citizens-voice/submit");
+          return;
+        }
         if (fileList.length === 0 && isRetryableReportSubmitResponse(res.status)) {
           const draft = trySaveDraftLocally();
           if (draft === "saved") {
@@ -381,12 +421,12 @@ export function VoiceReportForm({
         if (!up.ok) {
           setUploadNote(
             upJson.error ??
-              "Your report was saved, but uploads failed. If you are signed in, try again from this browser; otherwise contact support with your tracking code.",
+              "Your report was saved, but uploads failed. Try again from this browser or contact support with your tracking code.",
           );
         }
-      } else if (fileList.length > 0 && !data.attachmentUploadToken && !hasMember) {
+      } else if (fileList.length > 0 && !data.attachmentUploadToken) {
         setUploadNote(
-          "Your report was saved, but file uploads require signing in or server configuration. Use your tracking code if you need help.",
+          "Your report was saved, but file uploads need server configuration (attachment token). Contact support with your tracking code if this persists.",
         );
       }
 
@@ -394,10 +434,11 @@ export function VoiceReportForm({
       setBody("");
       setCategory("");
       setRegionId("");
-      setSubmitterEmail("");
-      setSubmitterPhone("");
+      setLocalArea("");
       setLatitude("");
       setLongitude("");
+      setApproxCaptured(false);
+      setGeoStatus("idle");
       if (fileInputRef.current) fileInputRef.current.value = "";
       setTurnstileToken(null);
       turnstileRef.current?.reset();
@@ -410,12 +451,28 @@ export function VoiceReportForm({
         // not_saved / storage_full: trySaveDraftLocally already set a specific error
       } else {
         setError(
-          "Connection problem. Your attachments can’t be stored offline. Connect and try again, or remove files and submit text only so we can save a draft on this device.",
+          "Connection problem. Your attachments can’t be stored offline. Connect and try again, or remove files and ensure region, local area, and approximate location are complete so we can save text on this device.",
         );
       }
     } finally {
       setLoading(false);
     }
+  }
+
+  if (authStatus === "loading") {
+    return (
+      <div className="mx-auto max-w-2xl rounded-xl border border-[var(--border)] bg-white/80 px-6 py-10 text-center">
+        <p className="text-sm text-[var(--muted-foreground)]">Checking sign-in…</p>
+      </div>
+    );
+  }
+
+  if (authStatus === "signedOut") {
+    return (
+      <div className="mx-auto max-w-2xl rounded-xl border border-[var(--border)] bg-white/80 px-6 py-10 text-center">
+        <p className="text-sm text-[var(--muted-foreground)]">Redirecting to sign in…</p>
+      </div>
+    );
   }
 
   return (
@@ -646,10 +703,11 @@ export function VoiceReportForm({
 
       <div>
         <label htmlFor="region" className="block text-sm font-medium text-[var(--foreground)]">
-          Region <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+          Region <span className="text-red-600">*</span>
         </label>
         <select
           id="region"
+          required
           value={regionId}
           onChange={(e) => setRegionId(e.target.value)}
           className={`${inputClass} cursor-pointer`}
@@ -663,99 +721,94 @@ export function VoiceReportForm({
         </select>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="lat" className="block text-sm font-medium text-[var(--foreground)]">
-            Latitude <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
-          </label>
-          <input
-            id="lat"
-            inputMode="decimal"
-            value={latitude}
-            onChange={(e) => setLatitude(e.target.value)}
-            className={inputClass}
-            placeholder="e.g. 5.6037"
-          />
-        </div>
-        <div>
-          <label htmlFor="lng" className="block text-sm font-medium text-[var(--foreground)]">
-            Longitude <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
-          </label>
-          <input
-            id="lng"
-            inputMode="decimal"
-            value={longitude}
-            onChange={(e) => setLongitude(e.target.value)}
-            className={inputClass}
-            placeholder="e.g. -0.1870"
-          />
-        </div>
+      <div>
+        <label htmlFor="local-area" className="block text-sm font-medium text-[var(--foreground)]">
+          Local area <span className="text-red-600">*</span>
+        </label>
+        <input
+          id="local-area"
+          required
+          minLength={LOCAL_AREA_MIN_LEN}
+          maxLength={240}
+          value={localArea}
+          onChange={(e) => setLocalArea(e.target.value)}
+          className={inputClass}
+          placeholder="e.g. neighbourhood or town — not your street address"
+          autoComplete="off"
+        />
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          Use a general area name others would recognise. Do not paste precise coordinates or full addresses here —
+          this protects your safety.
+        </p>
       </div>
 
-      {enableMapPicker ? (
-        <details
-          className="rounded-xl border border-[var(--border)] bg-white/60 px-4 py-3 open:pb-4"
-          onToggle={(e) => setMapSectionOpen((e.target as HTMLDetailsElement).open)}
-        >
-          <summary
-            className={`cursor-pointer rounded-sm text-sm font-medium text-[var(--foreground)] ${focusRingSmClass}`}
-          >
-            Map: tap or drag pin <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
-          </summary>
-          <p className="mt-2 text-xs text-[var(--muted-foreground)]">
-            Loads when opened. Sets latitude and longitude; suggests the nearest region using approximate regional
-            centres (not exact boundaries — you can change the region above).
-          </p>
-          {mapSectionOpen ? (
-            <ReportMapLazy latitude={latitude} longitude={longitude} onPick={handleMapPick} />
-          ) : null}
-        </details>
-      ) : null}
-
-      {!hasMember ? (
-        <fieldset className="space-y-4 rounded-xl border border-[var(--border)] bg-white/50 px-4 py-4">
-          <legend className="px-1 text-sm font-medium text-[var(--foreground)]">
-            How we reach you <span className="font-normal text-[var(--muted-foreground)]">(email or phone)</span>
-          </legend>
-          <p className="text-xs text-[var(--muted-foreground)]">
-            Provide <strong className="text-[var(--foreground)]">at least one</strong>. For SMS alerts when enabled by
-            MBKRU, use international format with + and country code (E.164).
-          </p>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-[var(--foreground)]">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={submitterEmail}
-              onChange={(e) => setSubmitterEmail(e.target.value)}
-              className={inputClass}
-              autoComplete="email"
-            />
-          </div>
-          <div>
-            <label htmlFor="submitter-phone" className="block text-sm font-medium text-[var(--foreground)]">
-              Mobile (optional)
-            </label>
-            <input
-              id="submitter-phone"
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel"
-              placeholder="+233201234567"
-              value={submitterPhone}
-              onChange={(e) => setSubmitterPhone(e.target.value)}
-              className={`${inputClass} font-mono text-sm`}
-            />
-          </div>
-        </fieldset>
-      ) : (
-        <p className="text-sm text-[var(--muted-foreground)]">
-          Signed in — we&apos;ll use your account email for updates. If your profile has an E.164 mobile, SMS alerts may
-          be sent when the organisation enables them.
+      <div className="rounded-xl border border-[var(--border)] bg-white/60 px-4 py-4">
+        <p className="text-sm font-medium text-[var(--foreground)]">
+          Approximate device location <span className="text-red-600">*</span>
         </p>
-      )}
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          We use your browser’s location feature (W3C Geolocation — not Google Maps). You must tap below and choose{" "}
+          <strong className="font-medium text-[var(--foreground)]">Allow</strong> so we can store a{" "}
+          <strong className="font-medium text-[var(--foreground)]">rounded</strong> point (~1 km) for triage — never a
+          precise pin. Region above may be suggested automatically; adjust if it does not match where you are reporting
+          from.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => void requestApproximateLocation()}
+            disabled={geoStatus === "loading"}
+            className="rounded-xl border border-[var(--border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--foreground)] shadow-sm transition hover:bg-[var(--section-light)] disabled:opacity-60 touch-manipulation"
+          >
+            {geoStatus === "loading" ? "Getting approximate location…" : "Use my approximate location"}
+          </button>
+          {approxCaptured ? (
+            <button
+              type="button"
+              onClick={clearApproximateLocation}
+              className="rounded-xl border border-[var(--border)] bg-transparent px-4 py-2.5 text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--section-light)] touch-manipulation"
+            >
+              Clear captured location
+            </button>
+          ) : null}
+        </div>
+        {geoStatus === "ok" ? (
+          <p className="mt-2 text-xs font-medium text-emerald-800" role="status">
+            Approximate location saved (~1 km). Region was suggested from regional centres — adjust if needed.
+          </p>
+        ) : null}
+        {geoStatus === "denied" ? (
+          <div
+            className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-3 text-xs text-amber-950"
+            role="alert"
+          >
+            <p className="font-semibold text-amber-950">Location access is blocked — submission stays disabled</p>
+            <p className="mt-2 text-amber-950/95">
+              You must allow location for this website before you can submit. On mobile: turn on device location services
+              (GPS), then in the browser allow location for this site. On desktop: use the lock or site-info icon in the
+              address bar → Site settings → Location → Allow. Reload the page if needed, then tap “Use my approximate
+              location” again.
+            </p>
+          </div>
+        ) : null}
+        {geoStatus === "error" ? (
+          <div
+            className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-3 text-xs text-amber-950"
+            role="alert"
+          >
+            <p className="font-semibold text-amber-950">Location is not available in this browser context</p>
+            <p className="mt-2 text-amber-950/95">
+              Try another browser, disable strict blocking for geolocation, or ensure system location is enabled. You
+              cannot submit until approximate location is captured successfully.
+            </p>
+          </div>
+        ) : null}
+      </div>
+
+      <p className="text-sm text-[var(--muted-foreground)]">
+        Signed in — we&apos;ll use your account email for updates. If your profile has an E.164 mobile, SMS alerts may be
+        sent when the organisation enables them.
+      </p>
 
       <div>
         <label htmlFor="report-files" className="block text-sm font-medium text-[var(--foreground)]">
@@ -763,7 +816,6 @@ export function VoiceReportForm({
         </label>
         <p className="mt-1 text-xs text-[var(--muted-foreground)]">
           Up to {MAX_ATTACH_FILES} files, 5 MB each — JPEG, PNG, WebP, or PDF.
-          {!hasMember ? " Anonymous uploads work when the site is configured for it; otherwise sign in to attach files." : null}
         </p>
         <input
           ref={fileInputRef}
@@ -788,9 +840,15 @@ export function VoiceReportForm({
         </p>
       ) : null}
 
+      {!locationGateOk ? (
+        <p className="text-sm text-[var(--muted-foreground)]" role="status">
+          Submit stays disabled until region, local area, and approximate location (with permission) are complete.
+        </p>
+      ) : null}
+
       <Button
         type="submit"
-        disabled={loading || (isTurnstileWidgetEnabled && !turnstileToken)}
+        disabled={loading || (isTurnstileWidgetEnabled && !turnstileToken) || !locationGateOk}
         size="lg"
         className="w-full min-w-0 justify-center sm:w-auto"
       >

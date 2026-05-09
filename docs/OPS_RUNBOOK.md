@@ -115,7 +115,7 @@ Example (every 2 minutes on host cron):
 
 - Files are stored in private storage under **`PRIVATE_UPLOADS_DIR/reports/{reportId}/...`** (default root: `var/private-uploads`).
 - **Signed-in members** can upload attachments for their own report via the **member session cookie** (no extra secret).
-- **Anonymous** reporters need **`REPORT_ATTACHMENT_HMAC_SECRET`** (≥32 characters, server-only). The app returns a short-lived **`attachmentUploadToken`** after **`POST /api/reports`**; without this secret, anonymous users cannot upload (the report is still accepted).
+- **`REPORT_ATTACHMENT_HMAC_SECRET`** (≥32 characters, server-only) is optional: when set, **`POST /api/reports`** returns a short-lived **`attachmentUploadToken`** so uploads can complete without the session cookie (e.g. another device within the token window). Submitting a report itself requires a member session.
 - **Antivirus:** optional in-app scanning is available with ClamAV (`MALWARE_SCAN_MODE=clamd`). By default scan failures are fail-closed; set `MALWARE_SCAN_FAIL_OPEN=1` only if your risk policy allows degraded operation.
 
 ## Election window & legal positioning

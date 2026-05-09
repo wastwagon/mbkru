@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import { AnalyticsScripts } from "@/components/analytics/AnalyticsScripts";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -23,7 +25,11 @@ export default function MainLayout({
         <div className="relative z-[60]">
           <TopBar />
         </div>
-        <Header />
+        <Suspense
+          fallback={<div className="min-h-[60px] border-b border-[var(--border)] bg-white/95 backdrop-blur-md" aria-hidden />}
+        >
+          <Header />
+        </Suspense>
       </div>
       <main
         id="main"

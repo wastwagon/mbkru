@@ -17,10 +17,11 @@ export const queuedReportPayloadSchema = z
     title: z.string().trim().min(5).max(300),
     body: z.string().trim().min(20).max(50_000),
     category: z.string().trim().max(120).optional(),
-    regionId: z.string().cuid().optional(),
+    regionId: z.string().cuid(),
     constituencyId: z.string().cuid().optional(),
-    latitude: z.number().gte(-90).lte(90).optional(),
-    longitude: z.number().gte(-180).lte(180).optional(),
+    localArea: z.string().trim().min(3).max(240),
+    latitude: z.number().gte(-90).lte(90),
+    longitude: z.number().gte(-180).lte(180),
     submitterEmail: z.string().trim().email().max(320).optional(),
     submitterPhone: z
       .string()
@@ -30,15 +31,6 @@ export const queuedReportPayloadSchema = z
       .transform((s) => (s && s.length > 0 ? s : undefined)),
   })
   .superRefine((data, ctx) => {
-    const hasLat = data.latitude !== undefined;
-    const hasLng = data.longitude !== undefined;
-    if (hasLat !== hasLng) {
-      ctx.addIssue({
-        code: "custom",
-        message: "Provide both latitude and longitude, or neither.",
-        path: ["latitude"],
-      });
-    }
     if (data.submitterPhone && !/^\+[1-9]\d{1,14}$/.test(data.submitterPhone)) {
       ctx.addIssue({
         code: "custom",

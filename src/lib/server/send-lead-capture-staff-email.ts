@@ -4,7 +4,7 @@ import type { LeadCaptureSource } from "@prisma/client";
 import { Resend } from "resend";
 
 const SOURCE_LABEL: Record<LeadCaptureSource, string> = {
-  PARLIAMENT_TRACKER: "Parliament tracker waitlist",
+  PARLIAMENT_TRACKER: "Parliamentarians tracker waitlist",
   EARLY_ACCESS: "Early access / pilot",
   NEWSLETTER: "Newsletter",
 };

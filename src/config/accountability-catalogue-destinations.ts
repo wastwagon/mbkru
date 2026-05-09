@@ -28,8 +28,8 @@ export const methodologyKeyTerms: readonly { term: string; body: string }[] = [
     body: "Editorial flag for rows that surface in the government-programme lens on the commitment catalogue. It is not a government seal of approval — it marks programme- or executive-typed items we follow in the same catalogue.",
   },
   {
-    term: "Parliament tracker",
-    body: "The name we use in the main navigation for the Accountability & Electoral Watch hub — roster, tool links, and how the programme fits together.",
+    term: "Parliamentarians tracker",
+    body: "Main navigation label for the Accountability & Electoral Watch hub at /parliament-tracker — roster, live stats, and links into the commitment catalogue. MP pledge sheets and roster browsing live under /promises and share the same active nav state.",
   },
   {
     term: "Commitment catalogue (Browse all)",
@@ -172,20 +172,20 @@ export const accountabilityProse = {
   /** Line before inline link to `/report-card` on the catalogue KPI strip (when public PRC is enabled). */
   statsStripPrcDisambiguation:
     "Not the People's Report Card — these numbers count catalogue pledge rows (same filters as the list). Published MP scorecards:",
-  /** `PageHeader` and `<title>` on `/parliament-tracker` — same label as the main site menu. */
-  parliamentPageDocumentTitle: "Parliament tracker",
+  /** `PageHeader` and `<title>` on `/parliament-tracker` — same label as the Accountability menu. */
+  parliamentPageDocumentTitle: "Parliamentarians tracker",
   /**
    * Legacy hub hero sentence when the H1 was the long programme name.
    * Kept for any tests or off-site copy; the hub now uses `parliamentPageDocumentTitle` as the visible H1.
    */
-  parliamentPageHeaderMenuAlias: "In the main site menu, this page is called Parliament tracker. ",
+  parliamentPageHeaderMenuAlias: "In the main site menu, this page is called Parliamentarians tracker. ",
   /** Hub PageHeader: subtitle after the H1, naming the full programme. */
   parliamentPageHeaderFullProgrammeLead: "Accountability & Electoral Watch",
   parliamentTrackerHubOrientation:
-    "Start from this hub for the MP roster, the People's Report Card entry point, and the commitment catalogue. One dashboard at Browse all commitments: switch between the full catalogue and the government-programme lens with the on-page control.",
+    "Start from this hub for the MP roster, the People's Report Card entry point, and the commitment catalogue. Open Browse all commitments from here to search the full catalogue — switch the on-page lens to government-programme rows only when you need that slice.",
   /** Blurb for the pre-election scorecards tool card (links to /methodology). */
   hubAccountabilityScorecardsCardDescription:
-    "The programme’s pre-election accountability scorecard roll-out (90 days before general elections), described in methodology. This is not the same as the published People's Report Card cycles — use Report card in the menu for those.",
+    "The programme’s pre-election accountability scorecard roll-out (90 days before general elections), described in methodology. This is not the same as the published People's Report Card cycles — use People's Report Card in the Accountability menu for those.",
   /** Tools grid intro line — "promises" avoided as a standalone public noun. */
   parliamentTrackerToolsSubline: "Data-driven tools to connect documented commitments, report-style views, and where we publish cycles.",
   /** /report-card index — one line so visitors don't confuse PRC with pre-election scorecards. */

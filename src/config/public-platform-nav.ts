@@ -12,21 +12,19 @@
  * `getServerPlatformPhase()` so server-rendered HTML matches client hydration.
  */
 
-import {
-  ACCOUNTABILITY_CATALOGUE_ROUTES,
-  accountabilityCatalogueNavMedium,
-  accountabilityCatalogueNavShort,
-} from "./accountability-catalogue-destinations";
+import { ACCOUNTABILITY_CATALOGUE_ROUTES } from "./accountability-catalogue-destinations";
 import type { PlatformPhase } from "./platform";
 import { platformFeatures } from "./platform";
 
 export type PublicNavLink = {
   href: string;
   label: string;
-  /** When set, treat any path under this prefix as active (header). */
-  activeWhenPathStartsWith?: string;
-  /** With prefix matching from `href`, suppress active state under this path (e.g. `/promises` vs `/promises/browse`). */
+  /** When set, treat any path under this prefix as active (header). Use an array if multiple roots apply (e.g. hub + MP routes). */
+  activeWhenPathStartsWith?: string | string[];
+  /** With prefix matching from `href`, suppress active state under this path (e.g. catalogue browse vs MP slug routes). */
   activeExcludePathStartsWith?: string;
+  /** When set, every key must match the current URL search string for the item to appear active. */
+  activeQuery?: Record<string, string>;
 };
 
 /** Participate — citizen voice, engagement, and related channels (header group). */
@@ -59,24 +57,41 @@ export function getParticipateNavLinks(phase: PlatformPhase): PublicNavLink[] {
   return links;
 }
 
-/** Accountability — parliament, commitments, promises, report card (header group or single link). */
+/**
+ * Accountability — three citizen-facing pillars (government lens, parliamentarians hub & MP routes, published PRC).
+ * Full catalogue (`/promises/browse`) remains reachable from the parliamentarians hub and deep links; it is not a fourth top-nav label.
+ */
 export function getAccountabilityNavLinks(phase: PlatformPhase): PublicNavLink[] {
-  const links: PublicNavLink[] = [{ href: "/parliament-tracker", label: "Parliament tracker" }];
+  const links: PublicNavLink[] = [];
+
   if (platformFeatures.parliamentTrackerData(phase)) {
     links.push({
-      href: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
-      label: accountabilityCatalogueNavShort.browseAll,
-      activeWhenPathStartsWith: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
-    });
-    links.push({
-      href: ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp,
-      label: accountabilityCatalogueNavShort.byMp,
-      activeExcludePathStartsWith: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
+      href: ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments,
+      label: "Government commitment tracker",
+      activeWhenPathStartsWith: "/promises/browse",
+      activeQuery: { governmentOnly: "1" },
     });
   }
+
+  links.push({
+    href: "/parliament-tracker",
+    label: "Parliamentarians tracker",
+    ...(platformFeatures.parliamentTrackerData(phase)
+      ? {
+          activeWhenPathStartsWith: ["/parliament-tracker", "/promises"],
+          activeExcludePathStartsWith: "/promises/browse",
+        }
+      : { activeWhenPathStartsWith: "/parliament-tracker" }),
+  });
+
   if (platformFeatures.publicReportCard(phase)) {
-    links.push({ href: "/report-card", label: "Report card", activeWhenPathStartsWith: "/report-card" });
+    links.push({
+      href: "/report-card",
+      label: "People's Report Card",
+      activeWhenPathStartsWith: "/report-card",
+    });
   }
+
   return links;
 }
 
@@ -138,20 +153,17 @@ export function getFooterPlatformFlowLinks(phase: PlatformPhase): PublicNavLink[
     links.push({ href: "/communities", label: "Communities" });
   }
 
-  links.push({ href: "/parliament-tracker", label: "Parliament tracker" });
-
   if (platformFeatures.parliamentTrackerData(phase)) {
     links.push({
-      href: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
-      label: accountabilityCatalogueNavMedium.browseAll,
-    });
-    links.push({
-      href: ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp,
-      label: accountabilityCatalogueNavMedium.byMp,
+      href: ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments,
+      label: "Government commitment tracker",
     });
   }
+
+  links.push({ href: "/parliament-tracker", label: "Parliamentarians tracker" });
+
   if (platformFeatures.publicReportCard(phase)) {
-    links.push({ href: "/report-card", label: "Report card" });
+    links.push({ href: "/report-card", label: "People's Report Card" });
   }
   if (platformFeatures.legalEmpowermentDesk(phase)) {
     links.push({ href: "/legal-empowerment", label: "Legal" });
@@ -218,16 +230,15 @@ export function getAboutPhaseQuickLinks(phase: PlatformPhase): PublicNavLink[] {
   }
   if (platformFeatures.parliamentTrackerData(phase)) {
     links.push({
-      href: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
-      label: accountabilityCatalogueNavMedium.browseAll,
-    });
-    links.push({
-      href: ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp,
-      label: accountabilityCatalogueNavMedium.byMp,
+      href: ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments,
+      label: "Government commitment tracker",
     });
   }
+
+  links.push({ href: "/parliament-tracker", label: "Parliamentarians tracker" });
+
   if (platformFeatures.publicReportCard(phase)) {
-    links.push({ href: "/report-card", label: "Report card" });
+    links.push({ href: "/report-card", label: "People's Report Card" });
   }
   links.push({ href: "/methodology", label: "Methodology" });
   if (platformFeatures.legalEmpowermentDesk(phase)) {
@@ -330,19 +341,15 @@ export function getAccountSidebarVoiceLinks(phase: PlatformPhase): PublicNavLink
  */
 export function getAccountSidebarExploreLinks(phase: PlatformPhase): PublicNavLink[] {
   const out: PublicNavLink[] = [];
-  out.push({ href: "/parliament-tracker", label: "Parliament tracker" });
   if (platformFeatures.parliamentTrackerData(phase)) {
     out.push({
-      href: ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises,
-      label: accountabilityCatalogueNavMedium.browseAll,
-    });
-    out.push({
-      href: ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp,
-      label: accountabilityCatalogueNavMedium.byMp,
+      href: ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments,
+      label: "Government commitment tracker",
     });
   }
+  out.push({ href: "/parliament-tracker", label: "Parliamentarians tracker" });
   if (platformFeatures.publicReportCard(phase)) {
-    out.push({ href: "/report-card", label: "Report card" });
+    out.push({ href: "/report-card", label: "People's Report Card" });
   }
   out.push({ href: "/methodology", label: "Methodology" });
   if (platformFeatures.partnerJsonProgramme(phase)) {

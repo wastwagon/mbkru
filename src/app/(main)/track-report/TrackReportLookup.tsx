@@ -1,9 +1,10 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
+import { redirectToMemberLogin } from "@/lib/client/member-login-redirect";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
 
 const inputClass =
@@ -27,13 +28,28 @@ type StatusPayload = {
 };
 
 function Inner() {
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const initial = searchParams.get("code")?.toUpperCase().trim() ?? "";
 
+  const [authStatus, setAuthStatus] = useState<"loading" | "signedOut" | "signedIn">("loading");
   const [code, setCode] = useState(initial);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<StatusPayload | null>(null);
+
+  useEffect(() => {
+    fetch("/api/auth/me", { credentials: "include" })
+      .then((r) => r.json())
+      .then((d: { member?: unknown }) => setAuthStatus(d.member ? "signedIn" : "signedOut"))
+      .catch(() => setAuthStatus("signedOut"));
+  }, []);
+
+  useEffect(() => {
+    if (authStatus !== "signedOut") return;
+    redirectToMemberLogin(router, pathname || "/track-report");
+  }, [authStatus, pathname, router]);
 
   async function lookup(e: React.FormEvent) {
     e.preventDefault();
@@ -46,8 +62,12 @@ function Inner() {
     }
     setLoading(true);
     try {
-      const res = await fetch(`/api/reports/track/${encodeURIComponent(c)}`);
+      const res = await fetch(`/api/reports/track/${encodeURIComponent(c)}`, { credentials: "include" });
       const data = (await res.json().catch(() => ({}))) as StatusPayload & { error?: string };
+      if (res.status === 401) {
+        redirectToMemberLogin(router, pathname || "/track-report");
+        return;
+      }
       if (!res.ok) {
         setError(data.error === "Not found" ? "No report matches that code." : data.error ?? "Lookup failed.");
         return;
@@ -58,6 +78,22 @@ function Inner() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (authStatus === "loading") {
+    return (
+      <div className="rounded-xl border border-[var(--border)] bg-white/80 px-6 py-10 text-center">
+        <p className="text-sm text-[var(--muted-foreground)]">Checking sign-in…</p>
+      </div>
+    );
+  }
+
+  if (authStatus === "signedOut") {
+    return (
+      <div className="rounded-xl border border-[var(--border)] bg-white/80 px-6 py-10 text-center">
+        <p className="text-sm text-[var(--muted-foreground)]">Redirecting to sign in…</p>
+      </div>
+    );
   }
 
   return (

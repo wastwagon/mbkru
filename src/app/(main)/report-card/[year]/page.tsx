@@ -143,7 +143,11 @@ export default async function ReportCardYearPage({
                 {topScored.map((e, i) => (
                   <span key={e.id}>
                     {i > 0 ? " · " : ""}
-                    <Link href={`/report-card/${cycle.year}?mp=${encodeURIComponent(e.member.slug)}`} className={primaryNavLinkClass}>
+                    <Link
+                      prefetch={false}
+                      href={`/report-card/${cycle.year}?mp=${encodeURIComponent(e.member.slug)}`}
+                      className={primaryNavLinkClass}
+                    >
                       {e.member.name}
                     </Link>
                   </span>
@@ -240,9 +244,13 @@ export default async function ReportCardYearPage({
                       </div>
                     </div>
                   ) : null}
-                  {e.member._count.promises > 0 ? (
+                  {(e.member._count?.promises ?? 0) > 0 ? (
                     <p className="mt-3 text-xs">
-                      <Link href={`/promises/${encodeURIComponent(e.member.slug)}`} className={primaryLinkClass}>
+                      <Link
+                        prefetch={false}
+                        href={`/promises/${encodeURIComponent(e.member.slug)}`}
+                        className={primaryLinkClass}
+                      >
                         {accountabilityProse.mpPledgeSheetLink}
                       </Link>
                     </p>

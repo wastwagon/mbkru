@@ -3,8 +3,10 @@ import "server-only";
 import { createHmac, timingSafeEqual } from "crypto";
 
 /**
- * Optional 1h scoped token so anonymous reporters can upload attachments after `POST /api/reports`.
- * Set `REPORT_ATTACHMENT_HMAC_SECRET` (≥32 chars). Members can upload via session without this token.
+ * Optional 1h scoped token so clients can upload attachments shortly after creating a report when the session
+ * cookie is unavailable (e.g. another device). `POST /api/reports` requires a signed-in member; this token is
+ * returned in the JSON response when `REPORT_ATTACHMENT_HMAC_SECRET` (≥32 chars) is set. Members normally upload
+ * via session without this token.
  */
 export function signReportAttachmentScope(reportId: string): string | null {
   const secret = process.env.REPORT_ATTACHMENT_HMAC_SECRET?.trim();

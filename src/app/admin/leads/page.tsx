@@ -12,7 +12,7 @@ import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 const SOURCE_TABS: { param: string; label: string; source?: LeadCaptureSource }[] = [
   { param: "", label: "All" },
-  { param: "PARLIAMENT_TRACKER", label: "Parliament tracker", source: "PARLIAMENT_TRACKER" },
+  { param: "PARLIAMENT_TRACKER", label: "Parliamentarians tracker", source: "PARLIAMENT_TRACKER" },
   { param: "NEWSLETTER", label: "Newsletter", source: "NEWSLETTER" },
   { param: "EARLY_ACCESS", label: "Early access", source: "EARLY_ACCESS" },
 ];
@@ -53,7 +53,7 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
         description={
           <>
             <p>
-              Newsletter, early access, and Parliament tracker waitlists. Rows are deduplicated by email within each
+              Newsletter, early access, and Parliamentarians tracker waitlists. Rows are deduplicated by email within each
               source.
             </p>
             <p className="mt-2">

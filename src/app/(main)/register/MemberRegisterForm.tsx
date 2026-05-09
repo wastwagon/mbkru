@@ -2,14 +2,22 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { safePostAuthRedirectPath } from "@/lib/member/safe-post-auth-redirect";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 
 const inputClass = `mt-1 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
 
 export function MemberRegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextParam = searchParams.get("next");
+  const postAuthPath = safePostAuthRedirectPath(nextParam, "/account");
+  const loginHref =
+    nextParam != null && nextParam !== ""
+      ? `/login?next=${encodeURIComponent(safePostAuthRedirectPath(nextParam, "/account"))}`
+      : "/login";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -44,7 +52,7 @@ export function MemberRegisterForm() {
         setError(data.error ?? "Registration failed.");
         return;
       }
-      router.push("/account");
+      router.push(postAuthPath);
       router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");
@@ -121,7 +129,7 @@ export function MemberRegisterForm() {
       </Button>
       <p className="text-sm text-[var(--muted-foreground)]">
         Already registered?{" "}
-        <Link href="/login" className={`${primaryLinkClass} font-semibold`}>
+        <Link href={loginHref} className={`${primaryLinkClass} font-semibold`}>
           Sign in
         </Link>
       </p>

@@ -55,7 +55,7 @@ export default async function SubmitSituationalAlertPage() {
             regions={regions}
             defaultKind="SITUATIONAL_ALERT"
             lockKind
-            bodyPlaceholder="State what you observed, when, and where (landmark or coordinates if safe to share). Avoid naming unverified individuals; stick to observable facts."
+            bodyPlaceholder="State what you observed, when, and where (landmark or general area — use Local area below, not a full street address). Avoid naming unverified individuals; stick to observable facts."
           />
         </div>
       </section>

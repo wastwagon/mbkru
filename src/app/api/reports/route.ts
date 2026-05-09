@@ -7,6 +7,7 @@ import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 import { requireTurnstileIfConfigured } from "@/lib/server/verify-turnstile";
 import { prisma } from "@/lib/db/prisma";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { roundApproximateCoord } from "@/lib/geo/round-approximate-coord";
 import { getMemberSession } from "@/lib/member/session";
 import { createReportBodySchema } from "@/lib/validation/reports";
 
@@ -33,26 +34,13 @@ export async function POST(request: Request) {
     if (turnstileBlock) return turnstileBlock;
 
     const member = await getMemberSession();
-
     if (!member) {
-      const hasEmail = Boolean(data.submitterEmail?.trim());
-      const hasPhone = Boolean(data.submitterPhone?.trim());
-      if (!hasEmail && !hasPhone) {
-        return NextResponse.json(
-          {
-            error:
-              "Provide an email or E.164 phone number (+country…), or sign in so we can reach you with updates.",
-          },
-          { status: 400 },
-        );
-      }
+      return NextResponse.json({ error: "Sign in to submit a report." }, { status: 401 });
     }
 
-    if (data.regionId) {
-      const region = await prisma.region.findUnique({ where: { id: data.regionId } });
-      if (!region) {
-        return NextResponse.json({ error: "Invalid region" }, { status: 400 });
-      }
+    const region = await prisma.region.findUnique({ where: { id: data.regionId } });
+    if (!region) {
+      return NextResponse.json({ error: "Invalid region" }, { status: 400 });
     }
 
     if (data.constituencyId) {
@@ -65,14 +53,8 @@ export async function POST(request: Request) {
       }
     }
 
-    const lat = data.latitude;
-    const lng = data.longitude;
-    if ((lat !== undefined && lng === undefined) || (lat === undefined && lng !== undefined)) {
-      return NextResponse.json(
-        { error: "Provide both latitude and longitude, or neither." },
-        { status: 400 },
-      );
-    }
+    const lat = roundApproximateCoord(data.latitude);
+    const lng = roundApproximateCoord(data.longitude);
 
     const trackingCode = await allocateTrackingCode(prisma);
 
@@ -86,10 +68,11 @@ export async function POST(request: Request) {
         title: data.title,
         body: data.body,
         category: data.category?.trim() || null,
-        regionId: data.regionId ?? null,
+        regionId: data.regionId,
         constituencyId: data.constituencyId ?? null,
-        latitude: lat ?? null,
-        longitude: lng ?? null,
+        localArea: data.localArea.trim(),
+        latitude: lat,
+        longitude: lng,
       },
       select: { trackingCode: true, id: true, createdAt: true },
     });

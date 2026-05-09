@@ -25,8 +25,24 @@ function isPlainObject(v: unknown): v is Record<string, unknown> {
 /**
  * Renders scorecard `metrics` JSON as readable labels and values (not a raw JSON dump).
  */
-export function MetricsDisplay({ value, className = "" }: { value: unknown; className?: string }) {
+export function MetricsDisplay({
+  value,
+  className = "",
+  maxDepth = 14,
+}: {
+  value: unknown;
+  className?: string;
+  /** Limits recursion so pathological JSON cannot blow the stack or stall SSR. */
+  maxDepth?: number;
+}) {
   if (value == null) return null;
+  if (maxDepth <= 0) {
+    return (
+      <p className={`text-xs text-[var(--muted-foreground)] ${className}`.trim()} title="Nested metrics truncated">
+        …
+      </p>
+    );
+  }
 
   const leaf = renderLeaf(value);
   if (leaf != null) {
@@ -53,7 +69,7 @@ export function MetricsDisplay({ value, className = "" }: { value: unknown; clas
           <li key={i} className="rounded-lg border border-[var(--border)] bg-[var(--section-light)]/40 p-3">
             <p className="text-xs font-medium text-[var(--muted-foreground)]">Item {i + 1}</p>
             <div className="mt-2">
-              <MetricsDisplay value={item} />
+              <MetricsDisplay value={item} maxDepth={maxDepth - 1} />
             </div>
           </li>
         ))}
@@ -76,7 +92,7 @@ export function MetricsDisplay({ value, className = "" }: { value: unknown; clas
                   innerLeaf
                 ) : (
                   <div className="rounded-md border border-[var(--border)]/60 bg-white/50 p-2">
-                    <MetricsDisplay value={v} />
+                    <MetricsDisplay value={v} maxDepth={maxDepth - 1} />
                   </div>
                 )}
               </dd>

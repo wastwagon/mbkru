@@ -41,6 +41,39 @@ export async function createMemberSessionToken(
   return token;
 }
 
+function memberSessionTokenFromCookieHeader(cookieHeader: string | null): string | undefined {
+  if (!cookieHeader) return undefined;
+  const prefix = `${MEMBER_SESSION_COOKIE}=`;
+  for (const segment of cookieHeader.split(";")) {
+    const part = segment.trim();
+    if (!part.startsWith(prefix)) continue;
+    const raw = part.slice(prefix.length);
+    try {
+      return decodeURIComponent(raw);
+    } catch {
+      return raw;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Resolve the member session from the incoming HTTP `Cookie` header.
+ * Prefer this in Route Handlers that receive `Request` — `cookies()` from `next/headers` can
+ * disagree with the actual request in some edge/runtime combinations.
+ */
+export async function getMemberSessionFromRequest(
+  request: Request,
+): Promise<{ memberId: string; email: string } | null> {
+  try {
+    const token = memberSessionTokenFromCookieHeader(request.headers.get("cookie"));
+    if (!token) return null;
+    return verifyMemberSessionToken(token);
+  } catch {
+    return null;
+  }
+}
+
 export async function verifyMemberSessionToken(token: string): Promise<{
   memberId: string;
   email: string;

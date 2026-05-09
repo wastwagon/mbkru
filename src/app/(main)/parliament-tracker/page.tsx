@@ -305,7 +305,7 @@ export default async function ParliamentTrackerPage() {
                       ·
                     </span>
                     <Link href="/report-card" className={primaryNavLinkClass}>
-                      Report card
+                      People&apos;s Report Card
                     </Link>
                   </>
                 ) : null}

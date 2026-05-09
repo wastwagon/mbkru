@@ -320,6 +320,8 @@ model CitizenReport {
   region                Region?                 @relation(fields: [regionId], references: [id], onDelete: SetNull)
   constituencyId        String?
   constituency          Constituency?           @relation(fields: [constituencyId], references: [id], onDelete: SetNull)
+  /// Human neighbourhood / town label — not a full street address (submitter-facing guidance).
+  localArea             String?                 @db.VarChar(240)
   status                CitizenReportStatus     @default(RECEIVED)
   slaDueAt              DateTime?
   operationsPlaybookKey String?

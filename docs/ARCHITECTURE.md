@@ -53,7 +53,7 @@ flowchart TB
 | Path | Purpose |
 |------|---------|
 | `src/app/(main)/` | Public marketing routes; route groups keep layouts consistent |
-| `src/proxy.ts` | Next.js 16 **proxy** (edge): JWT gates for **`/admin/*`** (except login) and **`/account/*`**, plus `X-Robots-Tag: noindex, nofollow` on those paths (complements `robots.ts`) |
+| `src/proxy.ts` | Next.js 16 **proxy** (edge): JWT gates for **`/admin/*`** (except login), **`/account/*`**, and (when the platform phase enables Voice) **`/citizens-voice/submit`**, **`/track-report`**, **`/situational-alerts/submit`**, **`/petitions/new`** — unauthenticated users redirect to **`/login?next=…`**. Also sets `X-Robots-Tag: noindex, nofollow` on those paths (complements `robots.ts`) |
 | `src/app/admin/` | Authenticated admin: login, posts CRUD, media library |
 | `src/app/api/` | Server-only HTTP API; admin login/logout/media upload + public form endpoints |
 | `src/components/` | UI; `forms/` holds client forms aligned with API routes |
@@ -74,7 +74,7 @@ flowchart TB
 | Public site + admin CMS | Yes | Yes | Yes |
 | Lead capture (forms) | Yes (Postgres + optional ESP) | Hardened + stored | Yes |
 | User registration / login | No | Yes (MVP) | Yes |
-| MBKRU Voice (complaints, geo) | Preview only | **Pilot:** `POST /api/reports`, track API, `/citizens-voice/submit`, admin queue; attachments TBD | Yes |
+| MBKRU Voice (complaints, geo) | Preview only | **Member-only submit & track;** `POST /api/reports`, `GET /api/reports/track`, proxy + API; admin queue; attachments | Yes |
 | Parliament / minister datasets | Preview only | Pipeline | Scorecards |
 | People’s Report Card (public pages + partner JSON) | No | **Yes** (published cycles) | Yes |
 | Pre-election flagship extras | No | Partial | **Reserved** (`accountabilityScorecards` Phase 3) |

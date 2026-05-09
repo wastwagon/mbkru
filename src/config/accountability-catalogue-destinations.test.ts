@@ -9,7 +9,7 @@ import {
 
 describe("parliament and home teaser copy", () => {
   it("exposes a stable page title and teaser caption for safe UI/UX", () => {
-    expect(accountabilityProse.parliamentPageDocumentTitle).toBe("Parliament tracker");
+    expect(accountabilityProse.parliamentPageDocumentTitle).toBe("Parliamentarians tracker");
     expect(accountabilityProse.browseHomeTeaserCaption(2, 5)).toContain("2 of 5");
   });
 });

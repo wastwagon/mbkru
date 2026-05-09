@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { PasswordInput } from "@/components/ui/PasswordInput";
+import { safePostAuthRedirectPath } from "@/lib/member/safe-post-auth-redirect";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 
 const inputClass = `mt-1 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
@@ -12,7 +13,12 @@ const inputClass = `mt-1 block w-full touch-manipulation rounded-xl border borde
 export function MemberLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") || "/account";
+  const nextParam = searchParams.get("next");
+  const next = safePostAuthRedirectPath(nextParam, "/account");
+  const registerHref =
+    nextParam != null && nextParam !== ""
+      ? `/register?next=${encodeURIComponent(safePostAuthRedirectPath(nextParam, "/account"))}`
+      : "/register";
   const configError = searchParams.get("error") === "config";
 
   const [email, setEmail] = useState("");
@@ -35,7 +41,7 @@ export function MemberLoginForm() {
         setError(data.error ?? "Sign-in failed.");
         return;
       }
-      router.push(next.startsWith("/") ? next : "/account");
+      router.push(next);
       router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");
@@ -83,7 +89,7 @@ export function MemberLoginForm() {
       </Button>
       <p className="text-sm text-[var(--muted-foreground)]">
         No account?{" "}
-        <Link href="/register" className={`${primaryLinkClass} font-semibold`}>
+        <Link href={registerHref} className={`${primaryLinkClass} font-semibold`}>
           Create one
         </Link>
       </p>

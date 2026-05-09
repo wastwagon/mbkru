@@ -169,7 +169,7 @@ export default async function MethodologyPage() {
               Whistleblowing guidance
             </Link>
             <Link href="/parliament-tracker" className={primaryNavLinkClass}>
-              ← Parliament tracker (Accountability &amp; Electoral Watch)
+              ← Parliamentarians tracker (Accountability &amp; Electoral Watch)
             </Link>
           </p>
         </div>

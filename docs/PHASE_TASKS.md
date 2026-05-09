@@ -58,7 +58,7 @@
 | [x] | Situational / election kinds + admin filters + submit routes |
 | [x] | Parliament **CSV import**, **`/admin/parliament`** (Parliament & catalogue), public **`/promises`**, **`GET /api/mps`**, **`GET /api/promises`** |
 | [x] | Maps (lazy Leaflet), region centroids, rate limits on public POSTs |
-| [x] | **Privacy policy** — Voice: location, attachments, anonymous/email + tracking, moderation; retention expanded *(counsel review still recommended)* |
+| [x] | **Privacy policy** — Voice: location, attachments, member account + tracking, moderation; retention expanded *(counsel review still recommended)* |
 | [x] | **Vitest:** `GET /api/health` JSON handler test (mock `getHealthStatus`) |
 | [x] | **Vitest:** partner JSON routes — `/api/mps`, `/api/promises`, `/api/report-card/[year]` (mocks) |
 | [x] | **Vitest:** **`POST /api/admin/login`** — rate limit, credentials, cookie (`route.test.ts`) |

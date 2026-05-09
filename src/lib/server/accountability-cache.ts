@@ -1,6 +1,7 @@
 import "server-only";
 
 import { unstable_cache } from "next/cache";
+import { cache } from "react";
 
 import { GHANA_ACCOUNTABILITY_PARLIAMENT_TERM } from "@/config/ghana-parliament-term";
 import { ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC } from "@/lib/accountability-http";
@@ -83,7 +84,8 @@ export async function getCachedMpsPublicRoster() {
   )();
 }
 
-export async function getCachedPromisesMemberPublic(slug: string) {
+/** React `cache` dedupes the same slug within one request (e.g. `generateMetadata` + page). */
+export const getCachedPromisesMemberPublic = cache(async (slug: string) => {
   return unstable_cache(
     async () => {
       const member = await prisma.parliamentMember.findFirst({
@@ -104,7 +106,7 @@ export async function getCachedPromisesMemberPublic(slug: string) {
     ["promises-member-v2", slug],
     { tags: [PROMISES_INDEX_TAG, promisesMemberTag(slug)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
-}
+});
 
 export async function getCachedPublishedReportCardCycles() {
   return unstable_cache(
@@ -120,7 +122,8 @@ export async function getCachedPublishedReportCardCycles() {
   )();
 }
 
-export async function getCachedPublishedReportCardYear(year: number) {
+/** React `cache` dedupes the same year within one request (metadata + page body). */
+export const getCachedPublishedReportCardYear = cache(async (year: number) => {
   return unstable_cache(
     async () => {
       return prisma.reportCardCycle.findFirst({
@@ -146,7 +149,7 @@ export async function getCachedPublishedReportCardYear(year: number) {
     ["report-card-year-v1", String(year)],
     { tags: [REPORT_CARD_INDEX_TAG, reportCardYearTag(year)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
-}
+});
 
 export type { PromisesApiFilters } from "@/lib/promises-api-filters";
 

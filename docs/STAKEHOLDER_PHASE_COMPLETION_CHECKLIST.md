@@ -77,7 +77,7 @@ For **go-live** or **staging sign-off**, walk through `[LAUNCH_VERIFICATION_PHAS
 
 - Phase 1 — Automated linkage + route health  
 - Phase 2 — API/DB contracts (health, track, notifications retry, migrations)  
-- Phase 3 — Admin / member / anonymous walkthroughs  
+- Phase 3 — Admin / member / signed-out public walkthroughs (Voice requires member session)  
 - Phase 4 — Cron, backup/restore, malware policy, outbox/audit review
 
 **Exit:** No P0/P1; Go/No-Go recorded.

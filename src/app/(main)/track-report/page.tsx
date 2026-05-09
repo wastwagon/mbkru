@@ -12,7 +12,7 @@ export default async function TrackReportPage() {
     <div>
       <PageHeader
         title="Track a report"
-        description="Enter the tracking code you received after submitting. We show status, type, and any team notes — not your original narrative text."
+        description="Members only: sign in, then enter the tracking code from your submission. We show status, type, and any team notes — not your original narrative text."
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16 sm:pb-20">
         <div className="mx-auto max-w-md px-4 sm:px-6 lg:px-8">

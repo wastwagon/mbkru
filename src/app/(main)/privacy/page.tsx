@@ -157,9 +157,10 @@ export default function PrivacyPage() {
             breaches our policies.
           </p>
           <p>
-            <strong>Anonymous or email-only submissions:</strong> If you submit without a member account, we may process
-            an <strong>email address</strong> you provide so we can send status updates or clarify your report. We also
-            issue a <strong>tracking code</strong> so you can check status on our site without logging in.
+            <strong>MBKRU Voice reports:</strong> Submitting a report requires a <strong>member account</strong>. We
+            process your account email and optional profile fields (for example phone or region) to operate the channel,
+            send updates where enabled, and tie submissions to your member record. We issue a <strong>tracking code</strong>;
+            checking status on the site also requires <strong>sign-in</strong>.
           </p>
           <p>
             <strong>Moderation:</strong> Staff and authorised reviewers may access submissions to assess
