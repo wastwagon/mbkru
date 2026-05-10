@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { AccountHomeRegionBanner } from "@/components/account/AccountHomeRegionBanner";
+import { AccountHomeLocationForm } from "@/components/account/AccountHomeLocationForm";
 import { AccountPrivacyTools } from "@/components/account/AccountPrivacyTools";
 import { AccountStatGrid } from "@/components/account/AccountStatGrid";
 import { getAccountabilityCatalogueCards } from "@/config/accountability-catalogue-destinations";
@@ -55,6 +57,8 @@ export default async function AccountPage() {
       email: true,
       displayName: true,
       createdAt: true,
+      regionId: true,
+      constituencyId: true,
       identityVerificationStatus: true,
       identityVerifiedAt: true,
       identityReviewRequestedAt: true,
@@ -139,6 +143,8 @@ export default async function AccountPage() {
         ) : null}
       </div>
 
+      <AccountHomeRegionBanner show={Boolean(member && !member.regionId)} />
+
       {member ? (
         <section
           className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--section-light)]/50 p-4 sm:p-5"
@@ -190,6 +196,11 @@ export default async function AccountPage() {
           ) : null}
         </section>
       ) : null}
+
+      <AccountHomeLocationForm
+        initialRegionId={member?.regionId ?? null}
+        initialConstituencyId={member?.constituencyId ?? null}
+      />
 
       {voiceOn ? (
         <AccountStatGrid

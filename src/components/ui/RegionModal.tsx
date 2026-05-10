@@ -3,6 +3,10 @@
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { ghanaRegionSlugFromDisplayName } from "@/lib/geo/ghana-region-slug";
+
+import { RegionModalEngagementLinks } from "@/components/ui/RegionModalEngagementLinks";
+
 const PILLAR_LABELS: Record<string, string> = {
   A: "Digital Platform",
   B: "Physical Engagement",
@@ -182,6 +186,8 @@ export function RegionModal({ region, onClose }: RegionModalProps) {
                 </div>
               </div>
             </dl>
+
+            <RegionModalEngagementLinks regionSlug={ghanaRegionSlugFromDisplayName(region.name)} />
           </motion.div>
         </>
       )}

@@ -268,6 +268,7 @@ model Constituency {
   region   Region   @relation(fields: [regionId], references: [id], onDelete: Cascade)
 
   members        ParliamentMember[]
+  memberAccounts Member[]
   reports        CitizenReport[]
   townHallEvents TownHallEvent[]
 
@@ -291,6 +292,8 @@ model Member {
   phone                          String?
   regionId                       String?
   region                         Region?                          @relation(fields: [regionId], references: [id], onDelete: SetNull)
+  constituencyId                 String?
+  constituency                   Constituency?                    @relation(fields: [constituencyId], references: [id], onDelete: SetNull)
   identityVerificationStatus     MemberIdentityVerificationStatus @default(UNVERIFIED)
   identityVerificationNote       String?                          @db.Text
   identityVerifiedAt             DateTime?
@@ -312,6 +315,7 @@ model Member {
   voiceCommentReactions  CitizenReportCommentReaction[]
 
   @@index([regionId])
+  @@index([constituencyId])
   @@index([identityVerificationStatus])
 }
 

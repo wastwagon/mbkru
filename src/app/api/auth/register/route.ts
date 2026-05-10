@@ -36,13 +36,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid input", details: parsed.error.flatten() }, { status: 400 });
     }
 
-    const { email, password, displayName, phone, regionId: rawRegionId } = parsed.data;
-    const region =
-      rawRegionId && rawRegionId.length > 0
-        ? await prisma.region.findUnique({ where: { id: rawRegionId } })
-        : null;
-    if (rawRegionId && rawRegionId.length > 0 && !region) {
+    const { email, password, displayName, phone, regionId: rawRegionId, constituencyId: rawConstituencyId } =
+      parsed.data;
+    const region = await prisma.region.findUnique({ where: { id: rawRegionId } });
+    if (!region) {
       return NextResponse.json({ error: "Invalid region" }, { status: 400 });
+    }
+
+    let constituencyId: string | null = null;
+    const rawC = rawConstituencyId?.trim() ?? "";
+    if (rawC.length > 0) {
+      const c = await prisma.constituency.findFirst({
+        where: { id: rawC, regionId: region.id },
+        select: { id: true },
+      });
+      if (!c) {
+        return NextResponse.json({ error: "Constituency does not match selected region" }, { status: 400 });
+      }
+      constituencyId = c.id;
     }
 
     const hash = await bcrypt.hash(password, 12);
@@ -52,7 +63,8 @@ export async function POST(request: Request) {
         password: hash,
         displayName: displayName?.trim() || null,
         phone: phone?.trim() || null,
-        regionId: region?.id ?? null,
+        regionId: region.id,
+        constituencyId,
       },
     });
 

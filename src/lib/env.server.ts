@@ -36,3 +36,13 @@ export function hasRedisUrl(): boolean {
   const url = getServerEnv().REDIS_URL;
   return typeof url === "string" && url.length > 0;
 }
+
+/**
+ * When `MBKRU_REGION_PRESENCE_COUNTS_PUBLIC` is `0` / `false` / `no`, guests do not see aggregate
+ * online counts (signed-in members still do). Default: public aggregate counts.
+ */
+export function regionHubOnlineCountsVisibleToGuests(): boolean {
+  const v = process.env.MBKRU_REGION_PRESENCE_COUNTS_PUBLIC?.trim().toLowerCase();
+  if (v === "0" || v === "false" || v === "no") return false;
+  return true;
+}

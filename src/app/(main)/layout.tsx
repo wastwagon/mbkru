@@ -7,6 +7,7 @@ import { TopBar } from "@/components/layout/TopBar";
 import { BackToTop } from "@/components/ui/BackToTop";
 import { MBKRUVoiceChatbot } from "@/components/voice/MBKRUVoiceChatbot";
 import { AccessibilityVoiceTools } from "@/components/accessibility/AccessibilityVoiceTools";
+import { MemberPresenceHeartbeat } from "@/components/member/MemberPresenceHeartbeat";
 
 export default function MainLayout({
   children,
@@ -48,6 +49,7 @@ export default function MainLayout({
         </div>
       </div>
       <AccessibilityVoiceTools />
+      <MemberPresenceHeartbeat />
       <AnalyticsScripts />
     </>
   );

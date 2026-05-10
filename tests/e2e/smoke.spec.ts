@@ -42,6 +42,27 @@ test.describe("public and auth smoke", () => {
     const res = await request.get("/api/reports/track/not-a-valid-tracking-code");
     expect(res.status()).toBe(401);
   });
+
+  test("regions hub API returns JSON envelope when a region exists", async ({ request }) => {
+    const listRes = await request.get("/api/regions");
+    test.skip(listRes.status() !== 200, "/api/regions unavailable (e.g. no DATABASE_URL)");
+
+    const listBody = (await listRes.json()) as { regions?: { slug: string }[] };
+    const slug = listBody.regions?.[0]?.slug;
+    test.skip(!slug, "no regions seeded");
+
+    const hubRes = await request.get(`/api/regions/${encodeURIComponent(slug)}/hub`);
+    expect(hubRes.status(), "hub route should not 5xx").toBeLessThan(500);
+    test.skip(hubRes.status() !== 200, "/api/regions/[slug]/hub not 200");
+
+    const j = (await hubRes.json()) as Record<string, unknown>;
+    expect(j).toHaveProperty("region");
+    expect(j).toHaveProperty("onlineCount");
+    expect(j).toHaveProperty("onlineCountsVisible");
+    expect(j).toHaveProperty("peerDetailsVisible");
+    expect(j).toHaveProperty("onlinePeers");
+    expect(j.peerDetailsVisible).toBe(false);
+  });
 });
 
 test.describe("proxy member gates (guest, no cookies)", () => {

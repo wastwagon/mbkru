@@ -31,12 +31,14 @@ export async function GET(request: Request) {
       displayName: true,
       phone: true,
       regionId: true,
+      constituencyId: true,
       identityVerificationStatus: true,
       identityVerifiedAt: true,
       identityReviewRequestedAt: true,
       createdAt: true,
       updatedAt: true,
       region: { select: { name: true } },
+      constituency: { select: { name: true, slug: true } },
     },
   });
 
@@ -120,7 +122,7 @@ export async function GET(request: Request) {
     }),
   ]);
 
-  const { region: regionRow, ...memberRest } = member;
+  const { region: regionRow, constituency: constRow, ...memberRest } = member;
 
   const payload = {
     schemaVersion: 1 as const,
@@ -128,6 +130,8 @@ export async function GET(request: Request) {
     member: {
       ...memberRest,
       regionName: regionRow?.name ?? null,
+      constituencyName: constRow?.name ?? null,
+      constituencySlug: constRow?.slug ?? null,
     },
     reports,
     petitionSignatures,

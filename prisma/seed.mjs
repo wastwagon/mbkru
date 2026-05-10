@@ -1149,6 +1149,105 @@ async function seedCommunitiesFromBundledJson() {
   console.log(`Communities from bundled JSON: ${n} upserted.`);
 }
 
+/** One MBKRU-managed OPEN hub per administrative region (slug `mbkru-region-hub-{region.slug}`). */
+async function seedRegionalHubCommunities() {
+  const regions = await prisma.region.findMany({ orderBy: { sortOrder: "asc" } });
+  let n = 0;
+  for (const reg of regions) {
+    const slug = `mbkru-region-hub-${reg.slug}`;
+    const name = `${reg.name} — regional hub`;
+    const description =
+      `Public discussion space for people in **${reg.name}**: local issues, MBKRU Voice themes, and regional coordination. ` +
+      `MBKRU hosts this civic hub — it is not a government channel. Be respectful; moderators may hide spam or abuse.`;
+    const saved = await prisma.community.upsert({
+      where: { slug },
+      create: {
+        slug,
+        name,
+        description,
+        regionId: reg.id,
+        visibility: "PUBLIC",
+        joinPolicy: "OPEN",
+        status: "ACTIVE",
+      },
+      update: {
+        name,
+        description,
+        regionId: reg.id,
+        visibility: "PUBLIC",
+        joinPolicy: "OPEN",
+        status: "ACTIVE",
+      },
+    });
+    await prisma.communityForum.upsert({
+      where: { communityId_slug: { communityId: saved.id, slug: "general" } },
+      create: {
+        communityId: saved.id,
+        slug: "general",
+        name: "General discussion",
+        description: `Regional conversation for ${reg.name}.`,
+      },
+      update: {},
+    });
+    n++;
+  }
+  console.log(`Regional hub communities upserted: ${n}.`);
+}
+
+/** Pinned welcome post per `mbkru-region-hub-*` (idempotent via body marker). Uses SEED_MEMBER_EMAIL pilot if present. */
+async function seedRegionalHubWelcomePosts() {
+  if (process.env.SEED_REGIONAL_HUB_WELCOME === "0" || process.env.SEED_REGIONAL_HUB_WELCOME === "false") {
+    console.log("SEED_REGIONAL_HUB_WELCOME=0 — skipping regional hub welcome posts.");
+    return;
+  }
+  const email = (process.env.SEED_MEMBER_EMAIL || "pilot.member@mbkru.local").trim().toLowerCase();
+  const byEmail = await prisma.member.findUnique({ where: { email } });
+  const author = byEmail ?? (await prisma.member.findFirst({ orderBy: { createdAt: "asc" } }));
+  if (!author) {
+    console.log("Regional hub welcome posts skipped — no members in database.");
+    return;
+  }
+
+  const marker = "[MBKRU regional hub welcome]";
+  const hubs = await prisma.community.findMany({
+    where: { slug: { startsWith: "mbkru-region-hub-" } },
+    select: { id: true, name: true, slug: true },
+    orderBy: { slug: "asc" },
+  });
+  let created = 0;
+  for (const hub of hubs) {
+    const forum = await prisma.communityForum.findFirst({
+      where: { communityId: hub.id, slug: "general" },
+    });
+    if (!forum) continue;
+
+    const exists = await prisma.communityPost.findFirst({
+      where: { communityId: hub.id, body: { contains: marker } },
+    });
+    if (exists) continue;
+
+    const regionLabel = hub.name.replace(/\s+—\s+regional hub$/i, "").trim() || hub.name;
+    await prisma.communityPost.create({
+      data: {
+        communityId: hub.id,
+        communityForumId: forum.id,
+        authorMemberId: author.id,
+        kind: "ANNOUNCEMENT",
+        title: `Welcome — ${regionLabel}`,
+        body:
+          `${marker}\n\n` +
+          `This is MBKRU's public regional space for civic conversation — local issues, Voice themes, and coordination. ` +
+          `MBKRU hosts this hub; it is not a government channel. Be respectful; moderators may hide spam or abuse.\n\n` +
+          `Use **Regional chat** and the **People's Report Card** from the map to connect with others in this region.`,
+        moderationStatus: "PUBLISHED",
+        pinned: true,
+      },
+    });
+    created++;
+  }
+  console.log(`Regional hub welcome posts: ${created} created (${hubs.length} hubs checked).`);
+}
+
 /**
  * Memberships + published posts so /communities and threads work.
  * Uses development Member accounts only; not palace-verified traditional authority.
@@ -2226,6 +2325,8 @@ async function main() {
     await seedConstituenciesFromBundledJson();
   }
 
+  await seedRegionalHubCommunities();
+
   const skipTownHallProgramme =
     process.env.SEED_TOWN_HALL_PROGRAMME === "0" || process.env.SEED_TOWN_HALL_PROGRAMME === "false";
   if (skipTownHallProgramme) {
@@ -2321,6 +2422,8 @@ async function main() {
   if (process.env.SEED_PRESENTATION_DEMO === "1" || process.env.SEED_PRESENTATION_DEMO?.toLowerCase() === "true") {
     await seedPresentationDemo();
   }
+
+  await seedRegionalHubWelcomePosts();
 
   console.log("MBKRU prisma seed: finished OK.");
 }
