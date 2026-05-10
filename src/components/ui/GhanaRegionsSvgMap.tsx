@@ -2,7 +2,7 @@
 
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 
-import type { RegionData } from "@/components/ui/RegionModal";
+import type { RegionData } from "@/components/regions/region-types";
 import { GHANA_REGION_MAP_COLORS } from "@/lib/geo/ghana-region-map-colors";
 import { GHANA_REGION_MAP_PATHS, GHANA_REGION_MAP_VIEWBOX } from "@/lib/geo/ghana-region-map-paths.generated";
 import { ghanaRegionsData } from "@/lib/site-content";
@@ -130,7 +130,7 @@ export function GhanaRegionsSvgMap({ onSelectRegion, selectedRegionName }: Props
                 }}
                 tabIndex={0}
                 role="button"
-                aria-label={`${name} region — open details`}
+                aria-label={`${name} region — open regional hub page`}
               />
             );
           })}

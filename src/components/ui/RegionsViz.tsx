@@ -1,17 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+import type { RegionData } from "@/components/regions/region-types";
 import { GhanaRegionsSvgMap } from "@/components/ui/GhanaRegionsSvgMap";
-import { RegionModal, type RegionData } from "@/components/ui/RegionModal";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
+import { ghanaRegionSlugFromDisplayName } from "@/lib/geo/ghana-region-slug";
 import { ghanaRegionsData } from "@/lib/site-content";
 
 /**
- * 16 Regions of Ghana — interactive data viz with modal lightbox
- * Click a region to view capital, population, area, and MBKRU engagement
+ * 16 Regions of Ghana — interactive map and grid; each region opens `/regions/{slug}`.
  */
 export function RegionsViz() {
-  const [selectedRegion, setSelectedRegion] = useState<RegionData | null>(null);
+  const router = useRouter();
+
+  function openRegion(r: RegionData) {
+    router.push(`/regions/${ghanaRegionSlugFromDisplayName(r.name)}`);
+  }
 
   return (
     <>
@@ -21,20 +27,22 @@ export function RegionsViz() {
             16 Regions of Ghana
           </h3>
           <p className="mt-1 flex items-center gap-1.5 text-xs text-[var(--muted-foreground)]">
-            <span className="inline-flex h-4 w-4 items-center justify-center rounded bg-[var(--primary)]/10 text-[var(--primary)]" aria-hidden>
+            <span
+              className="inline-flex h-4 w-4 items-center justify-center rounded bg-[var(--primary)]/10 text-[var(--primary)]"
+              aria-hidden
+            >
               <svg className="h-2.5 w-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </span>
-            Click a region or use the map below for details
+            Click a region or the map to open its regional hub page
           </p>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {ghanaRegionsData.map((region) => (
-            <button
+            <Link
               key={region.name}
-              type="button"
-              onClick={() => setSelectedRegion(region)}
+              href={`/regions/${ghanaRegionSlugFromDisplayName(region.name)}`}
               className={`group relative flex cursor-pointer items-center justify-between gap-3 overflow-hidden rounded-xl border border-[var(--border)] bg-gradient-to-br from-[var(--section-light)] to-white px-4 py-3 text-left text-sm font-medium text-[var(--foreground)] shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--primary)]/30 hover:shadow-md hover:shadow-[var(--primary)]/10 sm:text-base ${focusRingSmClass}`}
             >
               <span className="relative z-10">{region.name}</span>
@@ -43,17 +51,12 @@ export function RegionsViz() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </span>
-            </button>
+            </Link>
           ))}
         </div>
       </div>
 
-      <GhanaRegionsSvgMap
-        selectedRegionName={selectedRegion?.name ?? null}
-        onSelectRegion={setSelectedRegion}
-      />
-
-      <RegionModal region={selectedRegion} onClose={() => setSelectedRegion(null)} />
+      <GhanaRegionsSvgMap selectedRegionName={null} onSelectRegion={openRegion} />
     </>
   );
 }

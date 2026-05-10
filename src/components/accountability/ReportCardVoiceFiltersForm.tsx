@@ -46,21 +46,33 @@ type Props = {
   preserve: ReportCardVoiceFiltersPreserve;
   voice: ReportCardVoiceFiltersValues;
   resetHref: string;
+  /** Defaults to `/report-card` — set to `/regions/{slug}` on regional hub pages. */
+  browseBasePath?: string;
+  /** When set, Voice region is fixed (hidden field) for this browse context. */
+  lockedVoiceRegion?: { id: string; name: string };
 };
 
-export function ReportCardVoiceFiltersForm({ regions, preserve, voice, resetHref }: Props) {
+export function ReportCardVoiceFiltersForm({
+  regions,
+  preserve,
+  voice,
+  resetHref,
+  browseBasePath = "/report-card",
+  lockedVoiceRegion,
+}: Props) {
   const router = useRouter();
 
   function applyFilters(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const nextVoice: ReportCardVoiceFiltersValues = {
-      vregion: String(fd.get("vregion") ?? ""),
+      vregion: lockedVoiceRegion?.id ?? String(fd.get("vregion") ?? ""),
       vkind: String(fd.get("vkind") ?? ""),
       vq: String(fd.get("vq") ?? ""),
     };
     const qs = buildReportCardVoiceQuery(preserve, { ...nextVoice, vpage: 1 });
-    router.push(qs ? `/report-card?${qs}#browse-voice` : "/report-card#browse-voice");
+    const base = browseBasePath.replace(/\/$/, "") || "/report-card";
+    router.push(qs ? `${base}?${qs}#browse-voice` : `${base}#browse-voice`);
     router.refresh();
   }
 
@@ -68,21 +80,32 @@ export function ReportCardVoiceFiltersForm({ regions, preserve, voice, resetHref
 
   return (
     <form key={formKey} className="mt-4 grid gap-4 lg:grid-cols-12 lg:items-end" onSubmit={applyFilters}>
-      <label className="lg:col-span-3">
-        <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Region</span>
-        <select
-          name="vregion"
-          defaultValue={voice.vregion}
-          className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)]"
-        >
-          <option value="">All regions</option>
-          {regions.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.name}
-            </option>
-          ))}
-        </select>
-      </label>
+      {lockedVoiceRegion ? (
+        <div className="lg:col-span-3">
+          <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Region</span>
+          <p className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-3 py-2.5 text-sm text-[var(--foreground)]">
+            <span className="font-semibold">{lockedVoiceRegion.name}</span>
+            <span className="text-[var(--muted-foreground)]"> · this page</span>
+          </p>
+          <input type="hidden" name="vregion" value={lockedVoiceRegion.id} />
+        </div>
+      ) : (
+        <label className="lg:col-span-3">
+          <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Region</span>
+          <select
+            name="vregion"
+            defaultValue={voice.vregion}
+            className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)]"
+          >
+            <option value="">All regions</option>
+            {regions.map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       <label className="lg:col-span-3">
         <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Report type</span>
         <select

@@ -58,7 +58,7 @@ export async function GET(request: Request, { params }: Props) {
   const voiceOn = isCitizensVoiceEnabled();
   const reportCardOn = isReportCardPublicEnabled();
   const reportCardVoiceHref =
-    voiceOn || reportCardOn ? `/report-card?vregion=${encodeURIComponent(region.id)}` : null;
+    voiceOn || reportCardOn ? `/regions/${encodeURIComponent(region.slug)}#browse-voice` : null;
 
   const viewer = await getMemberSessionFromRequest(request);
 
