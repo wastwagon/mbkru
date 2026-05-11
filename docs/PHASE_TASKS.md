@@ -22,10 +22,18 @@
 | [ ] | **A (counsel / public terms)** Privacy, Terms, Voice disclosures, and **public** community/partner terms signed off for production marketing |
 | [x] | **B–D** Manifesto schema + admin (`/admin/manifestos`) + public **`/government-commitments`** |
 | [x] | **E** Constituency CSV import + MP dry-run reconcile APIs + runbook; EC-aligned bulk constituency file is editorial/ops |
-| [ ] | **F–M** Communities: Prisma, APIs, public UI, admin UI, FTS, notifications |
+| [x] | **F–M (communities) — Data + APIs** Prisma `Community` / forums / posts (kinds + premoderation) / memberships (incl. Queen Mother verified + moderator roles) / join & leave / **`GET /api/communities/[slug]/posts?kind=`** filters / post reports / verification uploads / membership **ban** fields + admin ban-unban server actions |
+| [x] | **F–M (communities) — Public & member UI** **`/communities`** browse, **`[slug]`** overview, forums, **`/portal` council workspace**, thread & post pages; shared **affairs-role** helper (`src/lib/communities/community-affairs-roles.ts`) for UI + APIs |
+| [x] | **F–M (communities) — Search** Postgres FTS + GIN indexes — **`GET /api/communities/search?q=`** (`src/lib/server/communities-search.ts`) |
+| [x] | **F–M (communities) — Admin** **`/admin/communities`**, per-community admin, **moderation** queue, **community verifications** |
+| [x] | **F–M (communities) — In-app notifications** `MemberNotification` rows for join approved, post published/rejected, thread reply, post reported, verification approved/rejected (see `member-notifications` + `notification-labels`) |
+| [x] | **F–M (regions + presence)** Public **`/regions/[slug]`**, regional hub JSON **`/api/regions/[slug]/hub`**, **scoped online presence** for region + community (`/api/communities/[slug]/presence`, `POST /api/member/presence`, unified guest-count env in [`SECURITY_CHECKLIST.md`](./SECURITY_CHECKLIST.md)) |
+| [ ] | **F–M (communities) — Delivery extension** Route every community-originated event through **`NotificationDeliveryJob`** with new `NotificationDeliveryKind` values (today the email/SMS **outbox** remains Voice-report-centric); optional **SMS** for announcements per [`FULL_PLATFORM_IMPLEMENTATION_PLAN.md`](./FULL_PLATFORM_IMPLEMENTATION_PLAN.md) §2 |
+| [ ] | **F–M (communities) — Full-plan extras** Standalone **`CommunityMembershipBan`** audit table + formal **appeals** workflow from [`FULL_PLATFORM_IMPLEMENTATION_PLAN.md`](./FULL_PLATFORM_IMPLEMENTATION_PLAN.md) §3.3 — *not in schema today; baseline uses membership ban fields* |
 | [x] | **N (public)** **`/whistleblowing`** when Phase ≥ 2 (`isWhistleblowerGuidancePageEnabled`) |
 | [x] | **N (admin)** Citizen-report **aggregates** for staff — **`/admin/analytics/citizen-reports`**, `GET /api/admin/analytics/citizen-reports`, `GET /api/admin/analytics/citizen-reports/export` (playbook + public-cause counts, UTF-8 CSV; no PII) |
-| [ ] | **O** Tests, security checklist, runbooks |
+| [x] | **O (baseline shipped)** Broad **Vitest** on APIs + libs; living [`SECURITY_CHECKLIST.md`](./SECURITY_CHECKLIST.md); [`OPS_RUNBOOK.md`](./OPS_RUNBOOK.md); automated preflight **`npm run verify:release-gates`** ([`SAFE_IMPLEMENTATION_PHASES.md`](./SAFE_IMPLEMENTATION_PHASES.md)) |
+| [ ] | **O (programme QA)** External penetration test; explicit matrix “every route handler has a Vitest file” — beyond current coverage |
 | [ ] | Partner onboarding (200+ communities) runs **after** software DoD — not a code MVP gate |
 
 ---

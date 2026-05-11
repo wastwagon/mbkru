@@ -52,9 +52,9 @@
 
 ## Tier 4 — Deferred (explicitly after 1–3)
 
-- **F–M** full communities programme  
+- **F–M** communities **extensions** only (email/SMS outbox kinds for all community events; standalone ban audit + appeals) — **baseline** communities + regions presence shipped; see granular rows in [`PHASE_TASKS.md`](./PHASE_TASKS.md) Phase 4+  
 - **N** deeper whistleblower / Voice **programme dashboards** (baseline: `/admin/analytics/citizen-reports` + CSV export)  
-- **O** extra test/security matrix beyond current checklist  
+- **O** programme QA (pen test; full per-route Vitest matrix) beyond current baseline  
 - **Prisma 7** spike  
 - **PMO** bills/votes stretch  
 
@@ -64,4 +64,5 @@
 
 | Date | Note |
 |------|------|
+| 2026-05 | Tier 4: clarify F–M baseline vs extensions (`PHASE_TASKS` Phase 4+ table) |
 | 2026-04 | Initial queue — phases 1–3 first |
