@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { OnlinePresenceCard } from "@/components/member/OnlinePresenceCard";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 
 type HubPayload = {
@@ -56,47 +57,22 @@ export function RegionModalEngagementLinks({ regionSlug }: { regionSlug: string 
 
       {data ? (
         <>
-          <div className="rounded-lg border border-[var(--border)] bg-white p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-              Who&apos;s online
-            </p>
-            {data.onlineCount !== null ? (
-              <p className="mt-1 text-2xl font-bold tabular-nums text-[var(--primary)]">{data.onlineCount}</p>
-            ) : (
-              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-                Sign in to see how many members are active in this region (last few minutes).
-              </p>
-            )}
-            <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-              Signed-in members with this region as <strong>home region</strong>, active in the last few minutes.
-            </p>
-            {!data.peerDetailsVisible && data.onlineCount !== null && data.onlineCount > 0 ? (
-              <p className="mt-2 text-xs text-[var(--muted-foreground)]">
-                <Link href="/login" className={`font-semibold ${primaryLinkClass}`}>
-                  Sign in
-                </Link>{" "}
-                to see who else is online in this region (aggregate count is public).
-              </p>
-            ) : null}
-            {data.peerDetailsVisible && data.onlinePeers.length > 0 ? (
-              <ul className="mt-3 flex flex-wrap gap-2">
-                {data.onlinePeers.map((p) => (
-                  <li
-                    key={p.id}
-                    className="rounded-full border border-[var(--border)] bg-[var(--section-light)] px-3 py-1 text-xs font-medium text-[var(--foreground)]"
-                  >
-                    {p.label}
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-            {data.peerDetailsVisible && data.onlinePeers.length === 0 ? (
-              <p className="mt-2 text-xs text-[var(--muted-foreground)]">
-                No other members visible right now — open the regional chat to start the conversation.
-              </p>
-            ) : null}
-            <p className="mt-2 text-[11px] leading-relaxed text-[var(--muted-foreground)]">{data.presenceNote}</p>
-          </div>
+          <OnlinePresenceCard
+            data={{
+              onlineCount: data.onlineCount,
+              peerDetailsVisible: data.peerDetailsVisible,
+              onlinePeers: data.onlinePeers,
+              presenceNote: data.presenceNote,
+            }}
+            audienceLine={
+              <>
+                Signed-in members with this region as <strong>home region</strong>, active in the last few minutes.
+              </>
+            }
+            signInToSeeCountLine="Sign in to see how many members are active in this region (last few minutes)."
+            aggregateGuestNote="to see who else is online in this region (aggregate count is public)."
+            emptyPeersLine="No other members visible right now — open the regional chat to start the conversation."
+          />
 
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
             {data.regionalChatHref ? (

@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { CommunityMemberPanel } from "@/components/communities/CommunityMemberPanel";
 import { CommunityThreadCard } from "@/components/communities/CommunityThreadCard";
+import { CommunityOnlinePresence } from "@/components/member/CommunityOnlinePresence";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
@@ -79,6 +80,16 @@ export default async function CommunityDetailPage({ params }: Props) {
               ← All communities
             </Link>
           </p>
+          <p className="mt-6 rounded-2xl border border-[var(--primary)]/25 bg-gradient-to-br from-[var(--primary)]/10 to-white px-5 py-4 text-sm leading-relaxed text-[var(--muted-foreground)]">
+            <span className="font-semibold text-[var(--foreground)]">Queen Mothers &amp; council workspace</span> — share
+            concerns, post announcements, and discuss with traditional council members in one focused portal.{" "}
+            <Link href={`/communities/${encodeURIComponent(c.slug)}/portal`} className={`${primaryLinkClass} font-semibold`}>
+              Open council workspace →
+            </Link>
+          </p>
+
+          <CommunityOnlinePresence communitySlug={c.slug} />
+
           <dl className="mt-6 space-y-2 text-sm text-[var(--muted-foreground)]">
             <div>
               <dt className="inline font-medium text-[var(--foreground)]">Visibility: </dt>
