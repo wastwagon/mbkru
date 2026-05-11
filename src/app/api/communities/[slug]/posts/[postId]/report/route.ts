@@ -5,6 +5,7 @@ import { z } from "zod";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { notifyCommunityModeratorsOfPostReport } from "@/lib/server/community-report-notify";
+import { processNotificationOutboxBatch } from "@/lib/server/notification-outbox";
 import {
   canReadCommunityPosts,
   findActiveCommunityBySlug,
@@ -122,7 +123,10 @@ export async function POST(request: Request, { params }: Props) {
     reason: parsed.data.reason,
     communitySlug: community.slug,
     communityName: community.name,
+    reporterMemberId: session.memberId,
   });
+
+  await processNotificationOutboxBatch(20);
 
   return NextResponse.json({ ok: true });
 }

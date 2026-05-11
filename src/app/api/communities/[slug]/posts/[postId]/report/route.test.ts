@@ -25,6 +25,14 @@ vi.mock("@/lib/server/community-report-notify", () => ({
   notifyCommunityModeratorsOfPostReport: vi.fn(),
 }));
 
+const processNotificationOutboxBatchMock = vi.hoisted(() =>
+  vi.fn().mockResolvedValue({ processed: 0, sent: 0, failed: 0 }),
+);
+
+vi.mock("@/lib/server/notification-outbox", () => ({
+  processNotificationOutboxBatch: processNotificationOutboxBatchMock,
+}));
+
 vi.mock("@/lib/member/session", () => ({
   getMemberSession: vi.fn(),
 }));
@@ -99,6 +107,7 @@ describe("POST /api/communities/[slug]/posts/[postId]/report", () => {
       ReturnType<typeof prisma.communityPostReport.create>
     >);
     vi.mocked(notifyCommunityModeratorsOfPostReport).mockResolvedValue();
+    processNotificationOutboxBatchMock.mockClear();
   });
 
   it("returns 400 for self-report attempts", async () => {
@@ -139,6 +148,8 @@ describe("POST /api/communities/[slug]/posts/[postId]/report", () => {
       reason: "Abusive content",
       communitySlug: "east-area",
       communityName: "East Area",
+      reporterMemberId: "m2",
     });
+    expect(processNotificationOutboxBatchMock).toHaveBeenCalledWith(20);
   });
 });

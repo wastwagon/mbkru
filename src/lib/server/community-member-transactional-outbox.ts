@@ -148,6 +148,41 @@ export async function enqueueCommunityVerificationOutcomeDelivery(
   });
 }
 
+/**
+ * Email/SMS (when enabled) to moderators / verified Queen Mothers — excludes the reporter
+ * so they are not notified about their own report.
+ */
+export async function enqueueCommunityPostReportModeratorDelivery(args: {
+  moderatorMemberIds: string[];
+  communityName: string;
+  communitySlug: string;
+  postId: string;
+  reason: string;
+}): Promise<void> {
+  const base = siteOrigin();
+  const path = `/communities/${encodeURIComponent(args.communitySlug)}/post/${args.postId}`;
+  const subject = `[MBKRU] Post reported — ${args.communityName}`;
+  const text =
+    `A member reported a post in "${args.communityName}".\n\n` +
+    `Reason (category): ${args.reason}\n\n` +
+    `Open the thread: ${base}${path}\n\n` +
+    `Use Admin → Communities → Moderation for the full queue.\n`;
+  const smsBody = `MBKRU: Post reported in ${args.communityName}. ${base}${path}`.slice(0, 300);
+  for (const memberId of args.moderatorMemberIds) {
+    await enqueueMemberTransactionalEmail({
+      memberId,
+      subject,
+      text,
+      tag: "community_post_reported_moderator",
+    });
+    await enqueueMemberTransactionalSmsIfEnabled({
+      memberId,
+      body: smsBody,
+      tag: "community_post_reported_moderator",
+    });
+  }
+}
+
 export async function enqueueCommunityThreadReplyDelivery(
   recipientMemberId: string,
   communityName: string,
