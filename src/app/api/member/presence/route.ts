@@ -3,12 +3,14 @@ import { NextResponse } from "next/server";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { guardMemberAuthApi } from "@/lib/member/auth-api-guard";
 import { getMemberSession } from "@/lib/member/session";
+import { touchMemberCommunityPresence } from "@/lib/server/community-presence";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 import { touchMemberRegionPresence } from "@/lib/server/region-presence";
+import { isCommunitySlug } from "@/lib/validation/communities";
 
 /**
- * Lightweight heartbeat so "who's online" can bucket signed-in members by **home region** (registration).
- * No-op when the member has not set a region yet.
+ * Heartbeat for **scoped** presence: always buckets by **home region** when set; optionally also
+ * buckets by **community** when the member has active membership there (same 3-minute window as regions).
  */
 export async function POST(request: Request) {
   const denied = guardMemberAuthApi();
@@ -27,14 +29,54 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Sign in required" }, { status: 401 });
   }
 
+  let communitySlug: string | undefined;
+  try {
+    const ct = request.headers.get("content-type") ?? "";
+    if (ct.includes("application/json")) {
+      const j = (await request.json()) as { communitySlug?: string };
+      if (typeof j.communitySlug === "string") {
+        const s = j.communitySlug.trim().toLowerCase();
+        communitySlug = s.length > 0 ? s : undefined;
+      }
+    }
+  } catch {
+    // ignore invalid JSON — region-only ping still allowed
+  }
+
   const member = await prisma.member.findUnique({
     where: { id: session.memberId },
     select: { regionId: true },
   });
-  if (!member?.regionId) {
-    return NextResponse.json({ ok: true, recorded: false });
+
+  let recordedRegion = false;
+  if (member?.regionId) {
+    await touchMemberRegionPresence(member.regionId, session.memberId);
+    recordedRegion = true;
   }
 
-  await touchMemberRegionPresence(member.regionId, session.memberId);
-  return NextResponse.json({ ok: true, recorded: true });
+  let recordedCommunity = false;
+  if (communitySlug && isCommunitySlug(communitySlug)) {
+    const community = await prisma.community.findFirst({
+      where: { slug: communitySlug, status: "ACTIVE" },
+      select: { id: true },
+    });
+    if (community) {
+      const membership = await prisma.communityMembership.findUnique({
+        where: {
+          communityId_memberId: { communityId: community.id, memberId: session.memberId },
+        },
+        select: { state: true },
+      });
+      if (membership?.state === "ACTIVE") {
+        await touchMemberCommunityPresence(community.id, session.memberId);
+        recordedCommunity = true;
+      }
+    }
+  }
+
+  return NextResponse.json({
+    ok: true,
+    recordedRegion,
+    recordedCommunity,
+  });
 }

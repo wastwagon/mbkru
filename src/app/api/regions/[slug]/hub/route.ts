@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
-import { regionHubOnlineCountsVisibleToGuests } from "@/lib/env.server";
+import { presenceGuestAggregateCountsVisible } from "@/lib/env.server";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { getMemberSessionFromRequest } from "@/lib/member/session";
 import { isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
@@ -62,8 +62,7 @@ export async function GET(request: Request, { params }: Props) {
 
   const viewer = await getMemberSessionFromRequest(request);
 
-  const countsVisibleToThisViewer =
-    viewer != null || regionHubOnlineCountsVisibleToGuests();
+  const countsVisibleToThisViewer = viewer != null || presenceGuestAggregateCountsVisible();
   let onlineCount: number | null = null;
   if (countsVisibleToThisViewer) {
     onlineCount = await countOnlineInRegion(region.id);

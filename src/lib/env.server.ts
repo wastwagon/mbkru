@@ -38,11 +38,23 @@ export function hasRedisUrl(): boolean {
 }
 
 /**
- * When `MBKRU_REGION_PRESENCE_COUNTS_PUBLIC` is `0` / `false` / `no`, guests do not see aggregate
- * online counts (signed-in members still do). Default: public aggregate counts.
+ * Guest visibility for **aggregate** online counts (regions + communities). Signed-in members always see counts.
+ * - Prefer `MBKRU_PRESENCE_COUNTS_PUBLIC` when set (`0` / `false` / `no` → hide from guests).
+ * - Else fall back to `MBKRU_REGION_PRESENCE_COUNTS_PUBLIC` for backward compatibility.
  */
-export function regionHubOnlineCountsVisibleToGuests(): boolean {
-  const v = process.env.MBKRU_REGION_PRESENCE_COUNTS_PUBLIC?.trim().toLowerCase();
-  if (v === "0" || v === "false" || v === "no") return false;
+export function presenceGuestAggregateCountsVisible(): boolean {
+  const primary = process.env.MBKRU_PRESENCE_COUNTS_PUBLIC?.trim();
+  if (primary !== undefined && primary.length > 0) {
+    const v = primary.toLowerCase();
+    if (v === "0" || v === "false" || v === "no") return false;
+    return true;
+  }
+  const legacy = process.env.MBKRU_REGION_PRESENCE_COUNTS_PUBLIC?.trim().toLowerCase();
+  if (legacy === "0" || legacy === "false" || legacy === "no") return false;
   return true;
+}
+
+/** @deprecated Use `presenceGuestAggregateCountsVisible` (same behaviour; name kept for older imports). */
+export function regionHubOnlineCountsVisibleToGuests(): boolean {
+  return presenceGuestAggregateCountsVisible();
 }
