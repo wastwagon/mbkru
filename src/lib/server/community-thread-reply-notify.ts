@@ -1,6 +1,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/db/prisma";
+import { enqueueCommunityThreadReplyDelivery } from "@/lib/server/community-member-transactional-outbox";
 import { createMemberNotification } from "@/lib/server/member-notifications";
 
 /** Move the root thread up in “recent activity” forum sorts when a reply is published. */
@@ -37,4 +38,11 @@ export async function notifyThreadAuthorOfPublishedReply(opts: {
     threadPostId: root.id,
     replyPostId,
   });
+
+  await enqueueCommunityThreadReplyDelivery(
+    root.authorMemberId,
+    communityName,
+    communitySlug,
+    root.id,
+  );
 }

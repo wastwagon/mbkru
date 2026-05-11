@@ -2,11 +2,13 @@ import "server-only";
 
 import { prisma } from "@/lib/db/prisma";
 import { sendReportAdminReplyEmail, sendReportAdminReplyVisibleAgainEmail } from "@/lib/server/send-report-admin-reply-email";
+import { sendMemberTransactionalEmail } from "@/lib/server/send-member-transactional-email";
 import { sendReportStatusNotification } from "@/lib/server/send-report-status-email";
 import {
   sendReportAdminReplySms,
   sendReportAdminReplyVisibleAgainSms,
   sendReportStatusSms,
+  sendTransactionalSmsRaw,
 } from "@/lib/server/send-report-status-sms";
 
 import type { CitizenReportKind, CitizenReportStatus, NotificationDeliveryChannel, NotificationDeliveryKind } from "@prisma/client";
@@ -102,6 +104,24 @@ async function deliverJob(job: {
     const kind = asString(payload.kind) as CitizenReportKind | null;
     if (!to || !trackingCode || !kind) return { ok: false, detail: "invalid_payload_fields" };
     const result = await sendReportAdminReplyVisibleAgainSms({ to, trackingCode, kind });
+    return { ok: result.mode === "sent" || result.mode === "skipped", detail: result.detail };
+  }
+
+  if (job.channel === "EMAIL" && job.kind === "MEMBER_TRANSACTIONAL_EMAIL") {
+    const to = asString(payload.to);
+    const subject = asString(payload.subject);
+    const text = asString(payload.text);
+    if (!to || !subject || !text) return { ok: false, detail: "invalid_payload_fields" };
+    const result = await sendMemberTransactionalEmail({ to, subject, text });
+    return { ok: result.mode === "sent" || result.mode === "skipped", detail: result.detail };
+  }
+
+  if (job.channel === "SMS" && job.kind === "MEMBER_TRANSACTIONAL_SMS") {
+    const to = asString(payload.to);
+    const body = asString(payload.body);
+    if (!to || !body) return { ok: false, detail: "invalid_payload_fields" };
+    const tag = asString(payload.tag) || "member_transactional_sms";
+    const result = await sendTransactionalSmsRaw({ to, body, logPrefix: tag });
     return { ok: result.mode === "sent" || result.mode === "skipped", detail: result.detail };
   }
 

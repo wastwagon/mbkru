@@ -52,7 +52,7 @@
 
 ## Tier 4 — Deferred (explicitly after 1–3)
 
-- **F–M** communities **extensions** only (email/SMS outbox kinds for all community events; standalone ban audit + appeals) — **baseline** communities + regions presence shipped; see granular rows in [`PHASE_TASKS.md`](./PHASE_TASKS.md) Phase 4+  
+- **F–M** communities **extensions** only (moderator/digest delivery; standalone ban audit + appeals) — **baseline** communities + regions presence + **member** transactional outbox shipped; see granular rows in [`PHASE_TASKS.md`](./PHASE_TASKS.md) Phase 4+  
 - **N** deeper whistleblower / Voice **programme dashboards** (baseline: `/admin/analytics/citizen-reports` + CSV export)  
 - **O** programme QA (pen test; full per-route Vitest matrix) beyond current baseline  
 - **Prisma 7** spike  

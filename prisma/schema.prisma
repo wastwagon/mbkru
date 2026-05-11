@@ -195,6 +195,10 @@ enum NotificationDeliveryKind {
   REPORT_STATUS
   REPORT_ADMIN_REPLY
   REPORT_ADMIN_REPLY_VISIBLE_AGAIN
+  /// Plain Resend email for member-facing community (and future) alerts — payload: `{ to, subject, text, tag? }`.
+  MEMBER_TRANSACTIONAL_EMAIL
+  /// Optional Twilio SMS — payload: `{ to, body, tag? }` (E.164 `to` only).
+  MEMBER_TRANSACTIONAL_SMS
 }
 
 enum NotificationDeliveryJobStatus {

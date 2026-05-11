@@ -18,6 +18,7 @@ import {
   notifyThreadAuthorOfPublishedReply,
 } from "@/lib/server/community-thread-reply-notify";
 import { defaultCommunityPostPremoderation } from "@/lib/server/community-premoderate";
+import { processNotificationOutboxBatch } from "@/lib/server/notification-outbox";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 import { toCommunityPostListApiJson } from "@/lib/community-post-api-json";
 import { communityPostCreateSchema, isCommunitySlug } from "@/lib/validation/communities";
@@ -239,6 +240,7 @@ export async function POST(request: Request, { params }: Props) {
       communityName: community.name,
       parentPostId: resolvedParentId,
     });
+    await processNotificationOutboxBatch(12);
   }
 
   return NextResponse.json({ post: toCommunityPostListApiJson(created) }, { status: 201 });

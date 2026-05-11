@@ -52,6 +52,14 @@ vi.mock("@/lib/server/community-thread-reply-notify", () => ({
   notifyThreadAuthorOfPublishedReply: vi.fn(),
 }));
 
+const processNotificationOutboxBatchMock = vi.hoisted(() =>
+  vi.fn().mockResolvedValue({ processed: 0, sent: 0, failed: 0 }),
+);
+
+vi.mock("@/lib/server/notification-outbox", () => ({
+  processNotificationOutboxBatch: processNotificationOutboxBatchMock,
+}));
+
 vi.mock("@/lib/server/community-premoderate", () => ({
   defaultCommunityPostPremoderation: vi.fn(),
 }));
@@ -133,6 +141,7 @@ describe("POST /api/communities/[slug]/posts", () => {
     vi.mocked(communityPostCreateSchema.safeParse).mockReset();
     vi.mocked(bumpThreadRootAfterReplyPublished).mockReset();
     vi.mocked(notifyThreadAuthorOfPublishedReply).mockReset();
+    processNotificationOutboxBatchMock.mockClear();
   });
 
   it("creates a root thread in selected forum", async () => {
@@ -194,5 +203,44 @@ describe("POST /api/communities/[slug]/posts", () => {
     expect(res.status).toBe(403);
     await expect(res.json()).resolves.toEqual({ error: "Thread is not available" });
     expect(mockPrisma.communityPost.create).not.toHaveBeenCalled();
+  });
+
+  it("on published reply, bumps thread, notifies author, and drains notification outbox", async () => {
+    vi.mocked(communityPostCreateSchema.safeParse).mockReturnValue({
+      success: true,
+      data: { kind: "GENERAL", body: "Reply text", parentPostId: ROOT_POST_ID },
+    } as ReturnType<typeof communityPostCreateSchema.safeParse>);
+    mockPrisma.communityPost.findFirst.mockResolvedValue({
+      id: ROOT_POST_ID,
+      parentPostId: null,
+      communityForumId: FORUM_ID,
+      moderationStatus: "PUBLISHED",
+    });
+    mockPrisma.communityForum.findFirst.mockResolvedValue({ locked: false });
+    mockPrisma.communityPost.create.mockResolvedValue({
+      id: "reply-post-1",
+      communityId: COMMUNITY_ID,
+      communityForumId: FORUM_ID,
+      parentPostId: ROOT_POST_ID,
+      authorMemberId: MEMBER_ID,
+      kind: "GENERAL",
+      title: null,
+      body: "Reply text",
+      moderationStatus: "PUBLISHED",
+      author: { id: MEMBER_ID, displayName: "Ama" },
+      communityForum: { slug: "general", name: "General" },
+    });
+
+    const req = new Request("http://localhost/api/communities/east-area/posts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kind: "GENERAL", body: "Reply text", parentPostId: ROOT_POST_ID }),
+    });
+
+    const res = await POST(req, params);
+    expect(res.status).toBe(201);
+    expect(bumpThreadRootAfterReplyPublished).toHaveBeenCalledWith(ROOT_POST_ID);
+    expect(notifyThreadAuthorOfPublishedReply).toHaveBeenCalled();
+    expect(processNotificationOutboxBatchMock).toHaveBeenCalledWith(12);
   });
 });

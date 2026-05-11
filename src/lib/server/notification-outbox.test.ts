@@ -26,6 +26,7 @@ vi.mock("@/lib/server/send-report-status-sms", () => ({
   sendReportStatusSms: vi.fn(),
   sendReportAdminReplySms: vi.fn(),
   sendReportAdminReplyVisibleAgainSms: vi.fn(),
+  sendTransactionalSmsRaw: vi.fn(),
 }));
 
 vi.mock("@/lib/server/send-report-admin-reply-email", () => ({
@@ -33,7 +34,13 @@ vi.mock("@/lib/server/send-report-admin-reply-email", () => ({
   sendReportAdminReplyVisibleAgainEmail: vi.fn(),
 }));
 
+vi.mock("@/lib/server/send-member-transactional-email", () => ({
+  sendMemberTransactionalEmail: vi.fn(),
+}));
+
+import { sendMemberTransactionalEmail } from "@/lib/server/send-member-transactional-email";
 import { sendReportStatusNotification } from "@/lib/server/send-report-status-email";
+import { sendTransactionalSmsRaw } from "@/lib/server/send-report-status-sms";
 import { enqueueNotificationJob, processNotificationOutboxBatch } from "@/lib/server/notification-outbox";
 
 describe("notification outbox", () => {
@@ -43,6 +50,8 @@ describe("notification outbox", () => {
     mockPrisma.notificationDeliveryJob.updateMany.mockReset();
     mockPrisma.notificationDeliveryJob.update.mockReset();
     vi.mocked(sendReportStatusNotification).mockReset();
+    vi.mocked(sendMemberTransactionalEmail).mockReset();
+    vi.mocked(sendTransactionalSmsRaw).mockReset();
   });
 
   it("enqueues notification jobs", async () => {
@@ -110,5 +119,59 @@ describe("notification outbox", () => {
     expect(mockPrisma.notificationDeliveryJob.update).toHaveBeenCalledWith(
       expect.objectContaining({ data: expect.objectContaining({ status: "FAILED" }) }),
     );
+  });
+
+  it("processes MEMBER_TRANSACTIONAL_EMAIL job", async () => {
+    mockPrisma.notificationDeliveryJob.findMany.mockResolvedValue([
+      {
+        id: "job-email-1",
+        channel: "EMAIL",
+        kind: "MEMBER_TRANSACTIONAL_EMAIL",
+        payload: { to: "m@example.com", subject: "Hi", text: "Body", tag: "community_join_approved" },
+        status: "PENDING",
+        attempts: 0,
+        maxAttempts: 5,
+        availableAt: new Date(),
+        createdAt: new Date(),
+      },
+    ]);
+    mockPrisma.notificationDeliveryJob.updateMany.mockResolvedValue({ count: 1 });
+    vi.mocked(sendMemberTransactionalEmail).mockResolvedValue({ mode: "sent" });
+
+    const result = await processNotificationOutboxBatch(10);
+
+    expect(result.sent).toBe(1);
+    expect(sendMemberTransactionalEmail).toHaveBeenCalledWith({
+      to: "m@example.com",
+      subject: "Hi",
+      text: "Body",
+    });
+  });
+
+  it("processes MEMBER_TRANSACTIONAL_SMS job", async () => {
+    mockPrisma.notificationDeliveryJob.findMany.mockResolvedValue([
+      {
+        id: "job-sms-1",
+        channel: "SMS",
+        kind: "MEMBER_TRANSACTIONAL_SMS",
+        payload: { to: "+233201111111", body: "Ping", tag: "community_thread_reply" },
+        status: "PENDING",
+        attempts: 0,
+        maxAttempts: 5,
+        availableAt: new Date(),
+        createdAt: new Date(),
+      },
+    ]);
+    mockPrisma.notificationDeliveryJob.updateMany.mockResolvedValue({ count: 1 });
+    vi.mocked(sendTransactionalSmsRaw).mockResolvedValue({ mode: "sent" });
+
+    const result = await processNotificationOutboxBatch(10);
+
+    expect(result.sent).toBe(1);
+    expect(sendTransactionalSmsRaw).toHaveBeenCalledWith({
+      to: "+233201111111",
+      body: "Ping",
+      logPrefix: "community_thread_reply",
+    });
   });
 });

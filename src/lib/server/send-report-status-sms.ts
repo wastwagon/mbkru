@@ -176,3 +176,30 @@ export async function sendReportAdminReplyVisibleAgainSms(params: {
 
   return sendViaTwilio(to, body);
 }
+
+/** Raw SMS for member/community transactional jobs (E.164 `to` only). Reuses Twilio/log configuration. */
+export async function sendTransactionalSmsRaw(params: {
+  to: string;
+  body: string;
+  logPrefix: string;
+}): Promise<SendResult> {
+  const provider = getProvider();
+  const to = params.to.trim();
+  if (!to.startsWith("+")) {
+    console.warn(`[${params.logPrefix}] reject non-E.164 to`, maskPhone(to));
+    return { mode: "failed", detail: "phone_not_e164" };
+  }
+  const body = params.body.trim();
+  if (!body) {
+    return { mode: "failed", detail: "empty_body" };
+  }
+  if (provider === "none") {
+    console.info(`[${params.logPrefix}] SMS_PROVIDER unset — skip SMS to`, maskPhone(to));
+    return { mode: "skipped" };
+  }
+  if (provider === "log") {
+    console.info(`[${params.logPrefix}] log provider →`, maskPhone(to), body);
+    return { mode: "sent" };
+  }
+  return sendViaTwilio(to, body);
+}

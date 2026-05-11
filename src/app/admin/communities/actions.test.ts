@@ -47,6 +47,27 @@ vi.mock("@/lib/db/prisma", () => ({
   prisma,
 }));
 
+const enqueueCommunityJoinApprovedDelivery = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
+const enqueueCommunityPostPublishedDelivery = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
+const enqueueCommunityPostRejectedDelivery = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
+const enqueueCommunityVerificationOutcomeDelivery = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
+
+vi.mock("@/lib/server/community-member-transactional-outbox", () => ({
+  enqueueCommunityJoinApprovedDelivery,
+  enqueueCommunityPostPublishedDelivery,
+  enqueueCommunityPostRejectedDelivery,
+  enqueueCommunityVerificationOutcomeDelivery,
+}));
+
+const processNotificationOutboxBatch = vi.hoisted(() =>
+  vi.fn().mockResolvedValue({ processed: 0, sent: 0, failed: 0 }),
+);
+
+vi.mock("@/lib/server/notification-outbox", () => ({
+  enqueueNotificationJob: vi.fn().mockResolvedValue(undefined),
+  processNotificationOutboxBatch,
+}));
+
 import {
   publishCommunityPostAction,
   rejectCommunityPostAction,
@@ -106,6 +127,8 @@ describe("admin communities actions", () => {
         communityName: "East Area",
         parentPostId: null,
       });
+      expect(enqueueCommunityPostPublishedDelivery).toHaveBeenCalledWith(MEM, POST, "east-area");
+      expect(processNotificationOutboxBatch).toHaveBeenCalled();
       expect(bumpThreadRootAfterReplyPublished).not.toHaveBeenCalled();
     });
 
@@ -129,6 +152,8 @@ describe("admin communities actions", () => {
         communityName: "East Area",
         parentPostId: ROOT,
       });
+      expect(enqueueCommunityPostPublishedDelivery).toHaveBeenCalledWith(MEM, POST, "east-area");
+      expect(processNotificationOutboxBatch).toHaveBeenCalled();
     });
 
     it("no-ops when post is missing", async () => {
@@ -169,6 +194,8 @@ describe("admin communities actions", () => {
         communitySlug: "east-area",
         reason: "Off-topic",
       });
+      expect(enqueueCommunityPostRejectedDelivery).toHaveBeenCalledWith(MEM, POST, "east-area", "Off-topic");
+      expect(processNotificationOutboxBatch).toHaveBeenCalled();
     });
   });
 

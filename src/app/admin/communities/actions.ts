@@ -9,7 +9,14 @@ import {
   bumpThreadRootAfterReplyPublished,
   notifyThreadAuthorOfPublishedReply,
 } from "@/lib/server/community-thread-reply-notify";
+import {
+  enqueueCommunityJoinApprovedDelivery,
+  enqueueCommunityPostPublishedDelivery,
+  enqueueCommunityPostRejectedDelivery,
+  enqueueCommunityVerificationOutcomeDelivery,
+} from "@/lib/server/community-member-transactional-outbox";
 import { createMemberNotification } from "@/lib/server/member-notifications";
+import { processNotificationOutboxBatch } from "@/lib/server/notification-outbox";
 import {
   communityForumCreateSchema,
   forumSlugFromName,
@@ -130,6 +137,9 @@ export async function approveCommunityMembershipAction(formData: FormData): Prom
     communityName: row.community.name,
   });
 
+  await enqueueCommunityJoinApprovedDelivery(row.memberId, row.community.name, row.community.slug);
+  await processNotificationOutboxBatch(12);
+
   revalidatePath(`/admin/communities/${m.data.communityId}`);
   revalidatePath("/admin/communities");
   revalidatePath(`/communities/${row.community.slug}`);
@@ -172,6 +182,8 @@ export async function publishCommunityPostAction(formData: FormData): Promise<vo
     communitySlug: post.community.slug,
   });
 
+  await enqueueCommunityPostPublishedDelivery(post.authorMemberId, post.id, post.community.slug);
+
   if (post.parentPostId) {
     await bumpThreadRootAfterReplyPublished(post.parentPostId);
   }
@@ -182,6 +194,8 @@ export async function publishCommunityPostAction(formData: FormData): Promise<vo
     communityName: post.community.name,
     parentPostId: post.parentPostId,
   });
+
+  await processNotificationOutboxBatch(15);
 
   revalidatePath(`/admin/communities/${p.data.communityId}`);
   revalidatePath("/admin/communities/moderation");
@@ -231,6 +245,14 @@ export async function rejectCommunityPostAction(formData: FormData): Promise<voi
     communitySlug: post.community.slug,
     reason: reason.length ? reason : null,
   });
+
+  await enqueueCommunityPostRejectedDelivery(
+    post.authorMemberId,
+    post.id,
+    post.community.slug,
+    reason.length ? reason : null,
+  );
+  await processNotificationOutboxBatch(12);
 
   revalidatePath(`/admin/communities/${p.data.communityId}`);
   revalidatePath("/admin/communities/moderation");
@@ -457,6 +479,15 @@ export async function reviewCommunityVerificationAction(formData: FormData): Pro
       notes: parsed.data.notes ?? null,
     },
   );
+
+  await enqueueCommunityVerificationOutcomeDelivery(
+    req.memberId,
+    parsed.data.status === "APPROVED",
+    req.community.name,
+    req.community.slug,
+    parsed.data.notes ?? null,
+  );
+  await processNotificationOutboxBatch(12);
 
   revalidatePath("/admin/community-verifications");
   revalidatePath(`/admin/communities/${req.communityId}`);
