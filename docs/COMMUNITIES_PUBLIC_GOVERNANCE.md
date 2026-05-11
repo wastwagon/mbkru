@@ -36,7 +36,7 @@
 
 ## 4. Full build (F–M workstream)
 
-Deep features (FTS, notifications, full admin) are tracked in [`PHASE_TASKS.md`](./PHASE_TASKS.md) (Phase 4+ table) and [`FULL_PLATFORM_IMPLEMENTATION_PLAN.md`](./FULL_PLATFORM_IMPLEMENTATION_PLAN.md). This file satisfies **interim governance copy** for early recognition launches.
+**Baseline shipped in repo:** browse + forums + council **`/portal`**, Queen Mother verification, moderation admin, Postgres FTS search, in-app `MemberNotification` flows, membership bans, regional **`/regions/[slug]`** + presence APIs — see **`[x]`** rows under **F–M** in [`PHASE_TASKS.md`](./PHASE_TASKS.md) Phase 4+. **Extensions** (email/SMS outbox for all community events; standalone ban audit + appeals) remain **`[ ]`** there and in [`FULL_PLATFORM_IMPLEMENTATION_PLAN.md`](./FULL_PLATFORM_IMPLEMENTATION_PLAN.md). This file satisfies **interim governance copy** for early recognition launches.
 
 ---
 
@@ -46,3 +46,4 @@ Deep features (FTS, notifications, full admin) are tracked in [`PHASE_TASKS.md`]
 |------|------|
 | 2026-04 | Initial snapshot |
 | 2026-04 | Forums / threads / replies terminology aligned with product UI |
+| 2026-05 | §4: baseline vs extensions aligned with `PHASE_TASKS` Phase 4+ |

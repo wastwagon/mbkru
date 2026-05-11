@@ -1,6 +1,6 @@
 # Phase gaps — closure queue (Phases 1–3 first)
 
-**Rule:** Work **this queue top to bottom** for Phases **1 → 2 → 3**. Do **not** start Phase **4+** (`F–M` communities depth, PMO stretch, Prisma 7 spike) until items here are either **done** or **explicitly waived in writing** by programme lead — otherwise “recognition launch” and “full platform” get mixed.
+**Rule:** Work **this queue top to bottom** for Phases **1 → 2 → 3**. **Baseline** Phase 4+ (communities + regions presence — see [`PHASE_TASKS.md`](./PHASE_TASKS.md) Phase 4+ `[x]` rows) is **not** blocked by this queue. Do **not** treat **F–M extensions** (community email/SMS outbox matrix; ban audit + appeals), **PMO** stretch, or **Prisma 7** as mandatory pre-launch gates **unless** the programme lead explicitly re-prioritises — otherwise “recognition launch” and “full programme completeness” get mixed.
 
 **Living backlog with checkboxes:** [`PHASE_TASKS.md`](./PHASE_TASKS.md)  
 **Earlier public launch:** [`EARLY_RECOGNITION_LAUNCH_PLAN.md`](./EARLY_RECOGNITION_LAUNCH_PLAN.md)  
@@ -64,5 +64,6 @@
 
 | Date | Note |
 |------|------|
+| 2026-05 | Opening rule: baseline Phase 4+ not blocked by this queue; extensions sequenced separately |
 | 2026-05 | Tier 4: clarify F–M baseline vs extensions (`PHASE_TASKS` Phase 4+ table) |
 | 2026-04 | Initial queue — phases 1–3 first |

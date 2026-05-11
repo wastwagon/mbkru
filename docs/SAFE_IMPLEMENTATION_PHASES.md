@@ -61,9 +61,9 @@
 
 ## Phase 4+ — Full platform (explicit waiver or completion of Phases 0–3)
 
-Workstreams **F–M** (full communities depth), **O** (extended test/security matrix), **Prisma 7** spike, **PMO** stretch — see [`PHASE_TASKS.md`](./PHASE_TASKS.md) Phase 4+ table and [`FULL_PLATFORM_IMPLEMENTATION_PLAN.md`](./FULL_PLATFORM_IMPLEMENTATION_PLAN.md).
+**F–M baseline** (communities data/UI/search/admin/in-app notifications + regions + presence), **O baseline** (Vitest + checklist + release gates), **N** (whistleblowing + staff aggregates) — see [`PHASE_TASKS.md`](./PHASE_TASKS.md) Phase 4+ **`[x]`** rows. **Remaining:** F–M **delivery extension** + **full-plan extras**, **O** programme QA, **Prisma 7**, **PMO** — details in the same table and [`FULL_PLATFORM_IMPLEMENTATION_PLAN.md`](./FULL_PLATFORM_IMPLEMENTATION_PLAN.md).
 
-**Rule:** Do not start F–M until programme lead **waives in writing** or Tier 0–3 items intended for your launch are done — see [`PHASE_GAPS_CLOSURE_QUEUE.md`](./PHASE_GAPS_CLOSURE_QUEUE.md).
+**Rule:** Keep **Tier 0–3** in [`PHASE_GAPS_CLOSURE_QUEUE.md`](./PHASE_GAPS_CLOSURE_QUEUE.md) as the default **recognition-launch** path. Do **not** block shipping baseline Phase 4+ code on that queue; **do** sequence **F–M extensions** and partner-scale claims after ops/legal/data gates unless the programme lead **waives in writing**.
 
 ---
 
@@ -71,4 +71,5 @@ Workstreams **F–M** (full communities depth), **O** (extended test/security ma
 
 | Date | Note |
 |------|------|
+| 2026-05 | Phase 4+: baseline vs extensions aligned with `PHASE_TASKS` |
 | 2026-04 | Initial safe phased rollout doc + `npm run verify:release-gates` |
