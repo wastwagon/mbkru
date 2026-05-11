@@ -6,6 +6,13 @@
  * Town hall / forum / constituency debate programme: `TownHallEvent` after bundled constituencies (see `prisma/data/TOWN_HALL_SEED_SOURCES.txt`). Opt out: `SEED_TOWN_HALL_PROGRAMME=0`.
  * NDC 2024 manifesto promise catalogue (editorial JSON → `CampaignPromise`): set `SEED_NDC_2024_MANIFESTO_CATALOGUE=1` when running accountability seed (`SEED_ACCOUNTABILITY_DEMO` not `0`). Rows are tagged in `verificationNotes` for idempotent re-seed.
  * Opt out: `SEED_COMMUNITIES_DEMO=0`. Pilot posts need `SEED_MEMBER_DEMO=1`.
+ *
+ * **Quick member logins** (after `SEED_MEMBER_DEMO=1`, e.g. `npm run db:seed:pilots`):
+ * | Account | Password (override with `SEED_MEMBER_PASSWORD`) |
+ * |---------|--------------------------------------------------|
+ * | `pilot.member@mbkru.local` (or `SEED_MEMBER_EMAIL`) | `PilotMember!change-me-2026` |
+ * | `pilot.two@mbkru.local` (or `SEED_MEMBER_2_EMAIL`) | `SEED_MEMBER_2_PASSWORD` or same as pilot |
+ * With communities seed + pilot interactions: **pilot.member** is **Queen Mother (verified)** on Ajumako community; **pilot.two** is **Moderator** on Sunyani community (`SEED_COMMUNITIES_DEMO` not `0`).
  * Optional admin fixtures (Voice + attachment, situational/election rows, contact, verification queue): `SEED_ENGAGEMENT_DEMOS=1` or `SEED_VOICE_DEMO=1`. Internal origin is noted in `CitizenReport.staffNotes` / contact message footer where applicable.
  * With `SEED_ENGAGEMENT_DEMOS=1`, also seeds **10 demo members** (`demo.cohort01@mbkru.local` … `demo.cohort10@mbkru.local`), member-linked Voice/Situational/Election reports (incl. whistleblow-tagged Voice), community memberships/posts, **petitions** (with **signatures** from other cohort members), a **public cause** thread (**supports** + **comments**), extra **community reply** posts, sample **notifications**, and lead captures — password: `SEED_DEMO_COHORT_PASSWORD` or `SEED_MEMBER_PASSWORD` or default `DemoCohort!change-2026`.
  * **Stakeholder Phase 3 walkthrough (simulated accountability data):** `SEED_STAKEHOLDER_ACCOUNTABILITY_SIM=1` after you have loaded the MP roster (`prisma/data/parliament-members.seed.json`, default on). Upserts a **ScorecardEntry** for every **active** `ParliamentMember`, sets illustrative `overallScore` + `metrics` JSON, rewrites the default cycle label/methodology as **simulation**. Optional: one **CampaignPromise** per active MP (`verificationNotes` prefix `mbkru-seed:stakeholder-accountability-sim-v1`) — disable with `SEED_STAKEHOLDER_SIM_PROMISES=0` if the browse catalogue should stay lighter.
@@ -1087,6 +1094,61 @@ async function seedMemberDemo() {
   console.warn(
     "SEED_MEMBER_DEMO: change passwords before any real pilot — credentials are in env or defaults above.",
   );
+}
+
+/** Prints resolved dev passwords to stdout so operators know what to use on `/login`. */
+function logDevelopmentLoginReference() {
+  const lines = [
+    "",
+    "----------------------------------------------------------------",
+    "MBKRU development logins — use https://your-host/login (rotate before production)",
+    "----------------------------------------------------------------",
+  ];
+
+  if (process.env.SEED_MEMBER_DEMO === "1") {
+    const e1 = (process.env.SEED_MEMBER_EMAIL || "pilot.member@mbkru.local").trim().toLowerCase();
+    const e2 = (process.env.SEED_MEMBER_2_EMAIL || "pilot.two@mbkru.local").trim().toLowerCase();
+    const p1 = process.env.SEED_MEMBER_PASSWORD || "PilotMember!change-me-2026";
+    const p2 = process.env.SEED_MEMBER_2_PASSWORD || process.env.SEED_MEMBER_PASSWORD || "PilotMember!change-me-2026";
+    lines.push("Member accounts (SEED_MEMBER_DEMO=1):");
+    lines.push(`  Email: ${e1}`);
+    lines.push(`  Password: ${p1}`);
+    lines.push(`  Email: ${e2}`);
+    lines.push(`  Password: ${p2}`);
+    const skipCommunities =
+      process.env.SEED_COMMUNITIES_DEMO === "0" || process.env.SEED_COMMUNITIES_DEMO === "false";
+    if (!skipCommunities) {
+      lines.push(
+        "  (With communities seed) pilot.member → Queen Mother verified @ ajumako-traditional-council; pilot.two → Moderator @ sunyani-traditional-council.",
+      );
+    }
+  } else {
+    lines.push("Member pilots not created this run (set SEED_MEMBER_DEMO=1 — see npm run db:seed:pilots).");
+  }
+
+  if (process.env.SEED_ENGAGEMENT_DEMOS === "1" || process.env.SEED_VOICE_DEMO === "1") {
+    const cohortPw = (
+      process.env.SEED_DEMO_COHORT_PASSWORD ||
+      process.env.SEED_MEMBER_PASSWORD ||
+      "DemoCohort!change-2026"
+    ).trim();
+    lines.push("Demo cohort (SEED_ENGAGEMENT_DEMOS / SEED_VOICE_DEMO):");
+    lines.push("  demo.cohort01@mbkru.local … demo.cohort10@mbkru.local");
+    lines.push(`  Password: ${cohortPw}`);
+  }
+
+  if (process.env.SEED_PRESENTATION_DEMO === "1" || process.env.SEED_PRESENTATION_DEMO?.toLowerCase() === "true") {
+    const presPw =
+      process.env.SEED_PRESENTATION_DEMO_PASSWORD ||
+      process.env.SEED_MEMBER_PASSWORD ||
+      "DemoCohort!change-2026";
+    lines.push("Presentation demo members (SEED_PRESENTATION_DEMO):");
+    lines.push("  presentation.demo.01@mbkru.local … presentation.demo.20@mbkru.local");
+    lines.push(`  Password: ${presPw}`);
+  }
+
+  lines.push("----------------------------------------------------------------", "");
+  console.log(lines.join("\n"));
 }
 
 /** Real-world-themed communities (citations in JSON descriptions). Upsert by slug. */
@@ -2425,6 +2487,7 @@ async function main() {
 
   await seedRegionalHubWelcomePosts();
 
+  logDevelopmentLoginReference();
   console.log("MBKRU prisma seed: finished OK.");
 }
 

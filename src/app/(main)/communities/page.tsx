@@ -146,6 +146,9 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
                             <Link href={`/communities/${c.slug}`} className={primaryNavLinkClass}>
                               Overview
                             </Link>
+                            <Link href={`/communities/${c.slug}/portal`} className={primaryNavLinkClass}>
+                              Council workspace
+                            </Link>
                             <Link href={`/communities/${c.slug}/forums`} className={primaryNavLinkClass}>
                               Forums &amp; threads
                             </Link>
@@ -221,6 +224,9 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
                       <p className="mt-3 flex flex-wrap gap-x-3 gap-y-1 border-t border-[var(--border)] pt-3 text-xs font-medium">
                         <Link href={`/communities/${c.slug}`} className={primaryNavLinkClass}>
                           Overview
+                        </Link>
+                        <Link href={`/communities/${c.slug}/portal`} className={primaryNavLinkClass}>
+                          Council workspace
                         </Link>
                         <Link href={`/communities/${c.slug}/forums`} className={primaryNavLinkClass}>
                           Forums &amp; threads

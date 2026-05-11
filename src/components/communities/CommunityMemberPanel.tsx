@@ -3,8 +3,13 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { CommunityMembershipRole } from "@prisma/client";
 
 import { Button } from "@/components/ui/Button";
+import {
+  canManageCommunityAffairs,
+  communityMembershipRoleLabel,
+} from "@/lib/communities/community-affairs-roles";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 type MembershipRow = { state: string; role: string };
@@ -28,6 +33,8 @@ type Props = {
   postForumSlug?: string;
   /** Optional thread title for new root posts (forums / structured discussion). */
   showThreadTitleField?: boolean;
+  /** Path after sign-in (default: community home). Use `/communities/{slug}/portal` on the council workspace page. */
+  signInReturnPath?: string;
 };
 
 export function CommunityMemberPanel({
@@ -38,6 +45,7 @@ export function CommunityMemberPanel({
   memberAccountsEnabled,
   postForumSlug,
   showThreadTitleField = false,
+  signInReturnPath,
 }: Props) {
   const router = useRouter();
   const [membership, setMembership] = useState<MembershipRow | null | undefined>(undefined);
@@ -92,8 +100,7 @@ export function CommunityMemberPanel({
   }, [base]);
 
   const canAnnounce =
-    membership?.state === "ACTIVE" &&
-    (membership.role === "MODERATOR" || membership.role === "QUEEN_MOTHER_VERIFIED");
+    membership?.state === "ACTIVE" && canManageCommunityAffairs(membership.role as CommunityMembershipRole);
 
   useEffect(() => {
     if (!memberAccountsEnabled) {
@@ -249,7 +256,7 @@ export function CommunityMemberPanel({
     return <p className="mt-8 text-sm text-[var(--muted-foreground)]">Loading…</p>;
   }
 
-  const next = encodeURIComponent(`/communities/${communitySlug}`);
+  const next = encodeURIComponent(signInReturnPath ?? `/communities/${communitySlug}`);
 
   return (
     <div className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
@@ -303,7 +310,10 @@ export function CommunityMemberPanel({
         <div className="mt-4 space-y-4">
           <p className="text-sm text-[var(--muted-foreground)]">
             You are a member
-            {membership.role !== "MEMBER" ? ` (${membership.role.replaceAll("_", " ").toLowerCase()})` : ""}.
+            {membership.role !== "MEMBER"
+              ? ` (${communityMembershipRoleLabel(membership.role as CommunityMembershipRole)})`
+              : ""}
+            .
           </p>
           <Button type="button" variant="outline" size="sm" disabled={busy} onClick={() => void onLeave()}>
             Leave community

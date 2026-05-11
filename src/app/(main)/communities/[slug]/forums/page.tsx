@@ -13,6 +13,7 @@ import {
   canReadCommunityPosts,
   findMembership,
 } from "@/lib/server/communities-access";
+import { canManageCommunityAffairs } from "@/lib/communities/community-affairs-roles";
 import { listCommunityForums } from "@/lib/server/community-forums-public";
 import { isCommunitySlug } from "@/lib/validation/communities";
 
@@ -51,9 +52,7 @@ export default async function CommunityForumsIndexPage({ params }: Props) {
   if (!showPosts && !showFullAbout) notFound();
 
   const forums = await listCommunityForums(c.id);
-  const canManageForum =
-    membership?.state === "ACTIVE" &&
-    (membership.role === "MODERATOR" || membership.role === "QUEEN_MOTHER_VERIFIED");
+  const canManageForum = membership?.state === "ACTIVE" && canManageCommunityAffairs(membership.role);
 
   return (
     <div>

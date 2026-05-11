@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Prisma } from "@prisma/client";
+import type { CommunityPostKind, Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/db/prisma";
 
@@ -15,11 +15,11 @@ function visibilityOrClause(viewerMemberId: string | null): Prisma.CommunityPost
   return or;
 }
 
-/** Root posts only (threads). Optionally filter to one forum. */
+/** Root posts only (threads). Optionally filter to one forum and/or post kinds. */
 export async function listCommunityPostsVisibleToViewer(
   communityId: string,
   viewerMemberId: string | null,
-  opts?: { forumId?: string | null },
+  opts?: { forumId?: string | null; kinds?: CommunityPostKind[] },
 ) {
   const forumFilter: Prisma.CommunityPostWhereInput =
     opts?.forumId === undefined
@@ -28,11 +28,15 @@ export async function listCommunityPostsVisibleToViewer(
         ? { communityForumId: null }
         : { communityForumId: opts.forumId };
 
+  const kindFilter: Prisma.CommunityPostWhereInput =
+    opts?.kinds && opts.kinds.length > 0 ? { kind: { in: opts.kinds } } : {};
+
   return prisma.communityPost.findMany({
     where: {
       communityId,
       parentPostId: null,
       ...forumFilter,
+      ...kindFilter,
       OR: visibilityOrClause(viewerMemberId),
     },
     orderBy: [{ pinned: "desc" }, { lastActivityAt: "desc" }, { createdAt: "desc" }],

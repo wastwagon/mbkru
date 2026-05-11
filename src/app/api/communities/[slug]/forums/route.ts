@@ -1,6 +1,7 @@
 import { CommunityMembershipRole, Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 
+import { canManageCommunityAffairs } from "@/lib/communities/community-affairs-roles";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { guardMemberAuthApi } from "@/lib/member/auth-api-guard";
@@ -21,7 +22,7 @@ import {
 type Props = { params: Promise<{ slug: string }> };
 
 function canCreateForum(role: CommunityMembershipRole): boolean {
-  return role === "MODERATOR" || role === "QUEEN_MOTHER_VERIFIED";
+  return canManageCommunityAffairs(role);
 }
 
 export async function GET(request: Request, { params }: Props) {

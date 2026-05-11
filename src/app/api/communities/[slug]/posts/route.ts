@@ -1,6 +1,7 @@
 import { CommunityPostKind, CommunityMembershipRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
+import { canManageCommunityAffairs } from "@/lib/communities/community-affairs-roles";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { guardMemberAuthApi } from "@/lib/member/auth-api-guard";
@@ -23,8 +24,10 @@ import { communityPostCreateSchema, isCommunitySlug } from "@/lib/validation/com
 
 type Props = { params: Promise<{ slug: string }> };
 
+const VALID_POST_KINDS = new Set<CommunityPostKind>(["GENERAL", "CONCERN", "ANNOUNCEMENT"]);
+
 function canPostAnnouncement(role: CommunityMembershipRole): boolean {
-  return role === "MODERATOR" || role === "QUEEN_MOTHER_VERIFIED";
+  return canManageCommunityAffairs(role);
 }
 
 function moderationStatusForNewPost(
@@ -33,7 +36,7 @@ function moderationStatusForNewPost(
 ): "PUBLISHED" | "PENDING" {
   if (kind === "ANNOUNCEMENT") return "PUBLISHED";
   if (!defaultCommunityPostPremoderation()) return "PUBLISHED";
-  if (role === "MODERATOR" || role === "QUEEN_MOTHER_VERIFIED") return "PUBLISHED";
+  if (canManageCommunityAffairs(role)) return "PUBLISHED";
   return "PENDING";
 }
 
@@ -80,7 +83,22 @@ export async function GET(request: Request, { params }: Props) {
     forumId = forum.id;
   }
 
-  const rows = await listCommunityPostsVisibleToViewer(community.id, viewerId, { forumId });
+  const kindRaw = url.searchParams.get("kind")?.trim() ?? "";
+  let kinds: CommunityPostKind[] | undefined;
+  if (kindRaw) {
+    const parsed = kindRaw
+      .split(",")
+      .map((s) => s.trim().toUpperCase())
+      .filter(Boolean);
+    for (const k of parsed) {
+      if (!VALID_POST_KINDS.has(k as CommunityPostKind)) {
+        return NextResponse.json({ error: "Invalid kind filter" }, { status: 400 });
+      }
+    }
+    kinds = parsed as CommunityPostKind[];
+  }
+
+  const rows = await listCommunityPostsVisibleToViewer(community.id, viewerId, { forumId, kinds });
 
   return NextResponse.json({
     posts: rows.map(toCommunityPostListApiJson),

@@ -1,6 +1,10 @@
 import "server-only";
 
-import type { CommunityMembershipState, CommunityVisibility } from "@prisma/client";
+import type {
+  CommunityMembershipRole,
+  CommunityMembershipState,
+  CommunityVisibility,
+} from "@prisma/client";
 
 import { prisma } from "@/lib/db/prisma";
 
@@ -42,7 +46,7 @@ export async function findActiveCommunityBySlug(
 export async function findMembership(
   communityId: string,
   memberId: string,
-): Promise<{ state: CommunityMembershipState; role: string } | null> {
+): Promise<{ state: CommunityMembershipState; role: CommunityMembershipRole } | null> {
   const m = await prisma.communityMembership.findUnique({
     where: { communityId_memberId: { communityId, memberId } },
     select: { state: true, role: true },
