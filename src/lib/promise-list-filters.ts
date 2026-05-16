@@ -9,6 +9,7 @@ export const PROMISE_LIST_STATUS_FILTER = [
   "FULFILLED",
   "BROKEN",
   "DEFERRED",
+  "BLOCKED",
 ] as const;
 
 export const PROMISE_LIST_STATUS_LABELS: Record<
@@ -20,6 +21,7 @@ export const PROMISE_LIST_STATUS_LABELS: Record<
   FULFILLED: "Fulfilled",
   BROKEN: "Broken",
   DEFERRED: "Deferred",
+  BLOCKED: "Blocked",
 };
 
 export function parsePromiseListStatusFilter(raw: string | undefined): PromiseStatus | undefined {

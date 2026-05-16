@@ -50,7 +50,26 @@ export async function GET(request: Request, { params }: Props) {
     );
   }
 
-  return NextResponse.json(payload, {
+  const phase = getServerPlatformPhase();
+  const responseBody =
+    platformFeatures.accountabilityScorecards(phase)
+      ? payload
+      : {
+          ...payload,
+          disputeWindowEndsAt: null,
+          entries: payload.entries.map((e) => {
+            const { indexAScore: _a, indexBScore: _b, indexCScore: _c, headlineBlend: _h, ...rest } = e;
+            return {
+              ...rest,
+              indexAScore: null,
+              indexBScore: null,
+              indexCScore: null,
+              headlineBlend: "phase2Summary" as const,
+            };
+          }),
+        };
+
+  return NextResponse.json(responseBody, {
     headers: { "Cache-Control": accountabilityPublicCacheControl() },
   });
 }

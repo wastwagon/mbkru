@@ -129,6 +129,7 @@ export default async function PromisesByMemberPage({ params }: Props) {
                   title={p.title}
                   description={p.description}
                   status={p.status}
+                  blockedReason={p.blockedReason}
                   sourceLabel={p.sourceLabel}
                   sourceDate={p.sourceDate}
                   sourceUrl={p.sourceUrl}

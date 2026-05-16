@@ -8,7 +8,9 @@ import {
   methodologyKeyTerms,
 } from "@/config/accountability-catalogue-destinations";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { MethodologyGhanaReportCardSection } from "@/components/methodology/MethodologyGhanaReportCardSection";
 import {
+  isGhanaReportCardMethodologyPublicEnabled,
   isPartnerApiTermsPageEnabled,
   isPromisesBrowseEnabled,
   isReportCardPublicEnabled,
@@ -23,6 +25,7 @@ export default async function MethodologyPage() {
   const showPromises = isPromisesBrowseEnabled();
   const showReportCard = isReportCardPublicEnabled();
   const showPartnerApi = isPartnerApiTermsPageEnabled();
+  const methodologyLive = isGhanaReportCardMethodologyPublicEnabled();
 
   return (
     <div>
@@ -107,15 +110,26 @@ export default async function MethodologyPage() {
 
           <h2 className="mt-12 font-display text-xl font-bold">Score-style views (People&apos;s Report Card)</h2>
           <p className="mt-4 text-[var(--muted-foreground)]">
-            Future scorecards will summarise multiple dimensions (e.g. accessibility, follow-through on commitments,
-            use of public resources) using published methodologies. Dimensions are inspired by international
-            transparency and parliamentary openness frameworks, then adapted to Ghanaian institutions and data
-            availability — not copied wholesale.
+            Report cards summarise multiple dimensions using a <strong className="text-[var(--foreground)]">published</strong>{" "}
+            methodology. Scores are explanatory, not legal findings — they complement CHRAJ, the Auditor-General, and
+            the Electoral Commission; they never substitute for them.
           </p>
-          <p className="mt-4 text-[var(--muted-foreground)]">
-            Scores are explanatory, not legal findings. They complement — and never substitute for — official
-            oversight by bodies such as CHRAJ, the Auditor-General, or the Electoral Commission.
-          </p>
+
+          {showReportCard && !methodologyLive ? (
+            <p
+              className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--section-light)]/50 px-4 py-3 text-sm text-[var(--muted-foreground)]"
+              role="note"
+            >
+              <strong className="text-[var(--foreground)]">Deployment note:</strong> when the People&apos;s Report Card is
+              public but the site is not yet in flagship configuration, cycle pages show the headline score and
+              narrative only. Triple-index breakdowns, public dispute-window banners, full weighted headline detail in
+              partner JSON, and optional MP performance rubric fields on Citizens Voice follow the same{" "}
+              <strong className="text-[var(--foreground)]">platform phase</strong> rules as other programme surfaces —
+              see project architecture documentation for <code className="font-mono text-xs">NEXT_PUBLIC_PLATFORM_PHASE</code>.
+            </p>
+          ) : null}
+
+          <MethodologyGhanaReportCardSection />
 
           <h2 id="claims-and-citations" className="mt-10 font-display text-xl font-bold">
             Claims, citations &amp; limitations

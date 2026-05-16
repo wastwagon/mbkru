@@ -21,6 +21,7 @@ import {
 import { prisma } from "@/lib/db/prisma";
 import { getPromiseCatalogueApiFields } from "@/lib/promise-catalogue-display";
 import { publicReportCardCycleTitle } from "@/lib/report-card-public-label";
+import { REPORT_CARD_HEADLINE_WEIGHTS } from "@/lib/report-card-headline";
 import { getPromiseTrackerStats } from "@/lib/server/promise-tracker-stats";
 
 export {
@@ -155,10 +156,11 @@ export async function getCachedPublishedReportCardCycleMeta(year: number) {
           label: true,
           methodology: true,
           publishedAt: true,
+          disputeWindowEndsAt: true,
         },
       });
     },
-    ["report-card-cycle-meta-v3", String(year)],
+    ["report-card-cycle-meta-v4", String(year)],
     { tags: [REPORT_CARD_INDEX_TAG, reportCardYearTag(year)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
 }
@@ -181,7 +183,7 @@ export async function getCachedPublishedReportCardMpIndex(year: number): Promise
       });
       return rows.map((r) => ({ slug: r.member.slug, name: r.member.name }));
     },
-    ["report-card-mp-index-v3", String(year)],
+    ["report-card-mp-index-v4", String(year)],
     { tags: [REPORT_CARD_INDEX_TAG, reportCardYearTag(year)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
 }
@@ -221,7 +223,7 @@ export async function getCachedPublishedReportCardYearStats(year: number) {
         topScored: topRows,
       };
     },
-    ["report-card-year-stats-v3", String(year)],
+    ["report-card-year-stats-v4", String(year)],
     { tags: [REPORT_CARD_INDEX_TAG, reportCardYearTag(year)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
 }
@@ -290,7 +292,7 @@ export async function getCachedPublishedReportCardEntriesPage(
 
       return { entries, totalFiltered, page: safePage };
     },
-    ["report-card-entries-v3", String(year), String(safePage), mpKey],
+    ["report-card-entries-v4", String(year), String(safePage), mpKey],
     { tags: [REPORT_CARD_INDEX_TAG, reportCardYearTag(year)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
 }
@@ -300,6 +302,9 @@ export const REPORT_CARD_INDEX_PAGE_SIZE = 24;
 
 export type ReportCardBrowseRow = {
   id: string;
+  indexAScore: number | null;
+  indexBScore: number | null;
+  indexCScore: number | null;
   overallScore: number | null;
   narrative: string | null;
   member: {
@@ -355,6 +360,9 @@ export async function getReportCardBrowseEntries(opts: {
       take: REPORT_CARD_INDEX_PAGE_SIZE,
       select: {
         id: true,
+        indexAScore: true,
+        indexBScore: true,
+        indexCScore: true,
         overallScore: true,
         narrative: true,
         member: {
@@ -378,6 +386,9 @@ export async function getReportCardBrowseEntries(opts: {
 
   const rows: ReportCardBrowseRow[] = raw.map((r) => ({
     id: r.id,
+    indexAScore: r.indexAScore,
+    indexBScore: r.indexBScore,
+    indexCScore: r.indexCScore,
     overallScore: r.overallScore,
     narrative: r.narrative,
     member: {
@@ -602,6 +613,7 @@ async function loadPromisesApiRows(filters: PromisesApiFilters) {
     sourceDate: p.sourceDate?.toISOString() ?? null,
     verificationNotes: p.verificationNotes,
     status: p.status,
+    blockedReason: p.blockedReason,
     updatedAt: p.updatedAt.toISOString(),
     electionCycle: p.electionCycle,
     partySlug: p.partySlug,
@@ -647,7 +659,7 @@ export async function getCachedPromisesApiRows(filters: PromisesApiFilters) {
 
   return unstable_cache(
     async () => loadPromisesApiRows(filters),
-    ["api-promises-v8", key],
+    ["api-promises-v9", key],
     {
       tags: memberSlug
         ? [PROMISES_INDEX_TAG, promisesMemberTag(memberSlug)]
@@ -668,7 +680,7 @@ export async function getCachedPromiseTrackerStats(filters: PromisesApiFilters) 
 
   return unstable_cache(
     async () => getPromiseTrackerStats(filters),
-    ["promise-tracker-stats-v1", key],
+    ["promise-tracker-stats-v2", key],
     {
       tags: memberSlug
         ? [PROMISES_INDEX_TAG, promisesMemberTag(memberSlug)]
@@ -702,16 +714,17 @@ async function loadPromisesCsvRows(filters: PromisesApiFilters) {
   return items.map((p) => {
     const cat = getPromiseCatalogueApiFields(p.verificationNotes);
     return {
-        id: p.id,
-        title: p.title,
-        description: p.description,
-        sourceLabel: p.sourceLabel,
-        sourceUrl: p.sourceUrl,
-        sourceDate: p.sourceDate?.toISOString() ?? null,
-        verificationNotes: p.verificationNotes,
-        status: p.status,
-        updatedAt: p.updatedAt.toISOString(),
-        electionCycle: p.electionCycle,
+    id: p.id,
+    title: p.title,
+    description: p.description,
+    sourceLabel: p.sourceLabel,
+    sourceUrl: p.sourceUrl,
+    sourceDate: p.sourceDate?.toISOString() ?? null,
+    verificationNotes: p.verificationNotes,
+    status: p.status,
+    blockedReason: p.blockedReason,
+    updatedAt: p.updatedAt.toISOString(),
+    electionCycle: p.electionCycle,
         partySlug: p.partySlug,
         manifestoDocumentId: p.manifestoDocumentId,
         manifestoPageRef: p.manifestoPageRef,
@@ -805,6 +818,7 @@ export async function getCachedReportCardApiPayload(
           label: true,
           methodology: true,
           publishedAt: true,
+          disputeWindowEndsAt: true,
           id: true,
         },
       });
@@ -824,6 +838,7 @@ export async function getCachedReportCardApiPayload(
 
       const totalPages = Math.max(1, Math.ceil(totalEntries / pageSize));
 
+      const w = REPORT_CARD_HEADLINE_WEIGHTS;
       return {
         year: cycle.year,
         label: publicReportCardCycleTitle(cycle.year, cycle.label),
@@ -833,6 +848,7 @@ export async function getCachedReportCardApiPayload(
         },
         publishedAt: cycle.publishedAt!.toISOString(),
         methodology: cycle.methodology,
+        disputeWindowEndsAt: cycle.disputeWindowEndsAt?.toISOString() ?? null,
         pagination: {
           page,
           pageSize,
@@ -848,13 +864,17 @@ export async function getCachedReportCardApiPayload(
             party: e.member.party,
           },
           narrative: e.narrative,
+          indexAScore: e.indexAScore,
+          indexBScore: e.indexBScore,
+          indexCScore: e.indexCScore,
           overallScore: e.overallScore,
+          headlineBlend: `${w.a}A+${w.b}B+${w.c}C` as const,
           metrics: e.metrics,
           updatedAt: e.updatedAt.toISOString(),
         })),
       };
     },
-    ["api-report-card-v4", String(year), String(page), String(pageSize)],
+    ["api-report-card-v6", String(year), String(page), String(pageSize)],
     { tags: [REPORT_CARD_INDEX_TAG, reportCardYearTag(year)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
 }

@@ -7,6 +7,7 @@ vi.mock("@/config/platform", () => ({
   getServerPlatformPhase: () => platformPhase.value,
   platformFeatures: {
     publicReportCard: (p: number) => p >= 2,
+    accountabilityScorecards: (p: number) => p >= 3,
   },
 }));
 
@@ -65,6 +66,7 @@ describe("GET /api/report-card/[year]", () => {
       parliamentTerm: { startYear: 2024, generalElectionYear: 2028 },
       publishedAt: "2026-03-28T00:00:00.000Z",
       methodology: null,
+      disputeWindowEndsAt: null,
       pagination: {
         page: 1,
         pageSize: 150,
@@ -82,5 +84,55 @@ describe("GET /api/report-card/[year]", () => {
     expect(json.parliamentTerm).toEqual({ startYear: 2024, generalElectionYear: 2028 });
     expect(json.entries).toEqual([]);
     expect(json.pagination?.totalEntries).toBe(0);
+  });
+
+  it("redacts triple-index fields in partner JSON when Phase 2 (no flagship)", async () => {
+    platformPhase.value = 2;
+    vi.mocked(getCachedReportCardApiPayload).mockResolvedValue({
+      year: 2099,
+      label: "Demo",
+      parliamentTerm: { startYear: 2024, generalElectionYear: 2028 },
+      publishedAt: "2026-03-28T00:00:00.000Z",
+      methodology: null,
+      disputeWindowEndsAt: "2026-04-01T00:00:00.000Z",
+      pagination: {
+        page: 1,
+        pageSize: 150,
+        totalEntries: 1,
+        totalPages: 1,
+        sort: "memberNameAsc",
+      },
+      entries: [
+        {
+          member: { name: "Test MP", slug: "test-mp", role: "MP", party: "Ind" },
+          narrative: "Hello",
+          indexAScore: 80,
+          indexBScore: 70,
+          indexCScore: 60,
+          overallScore: 75,
+          headlineBlend: "0.5A+0.35B+0.15C",
+          metrics: null,
+          updatedAt: "2026-03-28T00:00:00.000Z",
+        },
+      ],
+    });
+    const res = await GET(new Request("https://example.com/api/report-card/2099"), ctx("2099"));
+    expect(res.status).toBe(200);
+    const json = (await res.json()) as {
+      disputeWindowEndsAt: string | null;
+      entries: Array<{
+        indexAScore: number | null;
+        indexBScore: number | null;
+        indexCScore: number | null;
+        headlineBlend: string;
+        overallScore: number | null;
+      }>;
+    };
+    expect(json.disputeWindowEndsAt).toBeNull();
+    expect(json.entries[0].indexAScore).toBeNull();
+    expect(json.entries[0].indexBScore).toBeNull();
+    expect(json.entries[0].indexCScore).toBeNull();
+    expect(json.entries[0].headlineBlend).toBe("phase2Summary");
+    expect(json.entries[0].overallScore).toBe(75);
   });
 });

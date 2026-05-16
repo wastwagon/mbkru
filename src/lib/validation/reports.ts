@@ -1,6 +1,8 @@
 import { CitizenReportKind } from "@prisma/client";
 import { z } from "zod";
 
+import { mpPerformanceRubricSchema } from "@/lib/mp-performance-rubric";
+
 const kindSchema = z.nativeEnum(CitizenReportKind);
 
 const turnstileField = z.object({
@@ -17,6 +19,8 @@ export const createReportBodySchema = z
     constituencyId: z.string().cuid().optional(),
     /** Required when kind is MP_PERFORMANCE — roster MP id. */
     parliamentMemberId: z.string().cuid().optional(),
+    /** Optional 1–5 self-rubric for MP performance (methodology citizen-experience inputs). */
+    mpPerformanceRubric: mpPerformanceRubricSchema.optional(),
     localArea: z.string().trim().min(3).max(512),
     latitude: z.number().gte(-90).lte(90),
     longitude: z.number().gte(-180).lte(180),
@@ -46,6 +50,12 @@ export const createReportBodySchema = z
           path: ["parliamentMemberId"],
         });
       }
+    } else if (data.mpPerformanceRubric != null) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Rubric applies only to MP performance reports.",
+        path: ["mpPerformanceRubric"],
+      });
     }
   });
 

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath, revalidateTag } from "next/cache";
-import { PromiseStatus } from "@prisma/client";
+import { Prisma, PromiseStatus } from "@prisma/client";
 import { z } from "zod";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
@@ -158,6 +158,13 @@ export async function updateCampaignPromiseStatusAction(formData: FormData): Pro
   if (!parsed.success) return;
 
   const status = parsePromiseStatus(formData.get("status"));
+  const blockedReasonRaw = String(formData.get("blockedReason") ?? "").trim();
+  const blockedReason =
+    status === "BLOCKED"
+      ? blockedReasonRaw.length > 0
+        ? blockedReasonRaw.slice(0, 2000)
+        : null
+      : null;
 
   const row = await prisma.campaignPromise.findFirst({
     where: { id: parsed.data.promiseId, memberId: parsed.data.memberId },
@@ -167,7 +174,7 @@ export async function updateCampaignPromiseStatusAction(formData: FormData): Pro
 
   await prisma.campaignPromise.update({
     where: { id: parsed.data.promiseId },
-    data: { status },
+    data: { status, blockedReason },
   });
 
   const member = await prisma.parliamentMember.findUnique({
@@ -257,4 +264,32 @@ export async function updateCampaignPromiseEvidenceAction(formData: FormData): P
   revalidatePath("/promises");
   revalidatePath("/promises/browse");
   revalidatePath("/government-commitments");
+}
+
+export async function updateParliamentMemberFairnessMetadataAction(formData: FormData) {
+  await requireAdminSession();
+
+  const memberIdRaw = formData.get("memberId");
+  if (typeof memberIdRaw !== "string" || !memberIdRaw.trim()) return;
+
+  const speakerRole = formData.get("speakerRole") === "on";
+  const excludeAttendanceMetric = formData.get("excludeAttendanceMetric") === "on";
+  const notesRaw = formData.get("fairnessNotes");
+  const notes = typeof notesRaw === "string" ? notesRaw.trim().slice(0, 4000) : "";
+
+  const meta: Record<string, unknown> = {};
+  if (speakerRole) meta.speakerRole = true;
+  if (excludeAttendanceMetric) meta.excludeAttendanceMetric = true;
+  if (notes.length > 0) meta.notes = notes;
+
+  await prisma.parliamentMember.update({
+    where: { id: memberIdRaw.trim() },
+    data: {
+      fairnessMetadata:
+        Object.keys(meta).length > 0 ? (meta as Prisma.InputJsonValue) : Prisma.JsonNull,
+    },
+  });
+
+  revalidatePath(`/admin/parliament/${memberIdRaw.trim()}`);
+  revalidateTag(MPS_ROSTER_TAG, "max");
 }

@@ -5,6 +5,7 @@ import {
   createCampaignPromiseAction,
   updateCampaignPromiseEvidenceAction,
   updateCampaignPromiseStatusAction,
+  updateParliamentMemberFairnessMetadataAction,
 } from "@/app/admin/parliament/actions";
 import {
   accountabilityCatalogueNavMedium,
@@ -25,6 +26,7 @@ const STATUS_OPTIONS: { value: PromiseStatus; label: string }[] = [
   { value: "FULFILLED", label: "Fulfilled" },
   { value: "BROKEN", label: "Broken" },
   { value: "DEFERRED", label: "Deferred" },
+  { value: "BLOCKED", label: "Blocked" },
 ];
 
 type Props = { params: Promise<{ id: string }> };
@@ -51,6 +53,16 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
   ]);
 
   if (!member) notFound();
+
+  const fairnessRaw = member.fairnessMetadata;
+  const fairnessObj =
+    fairnessRaw != null && typeof fairnessRaw === "object" && !Array.isArray(fairnessRaw)
+      ? (fairnessRaw as Record<string, unknown>)
+      : null;
+  const fairnessSpeakerRole = Boolean(fairnessObj?.speakerRole === true);
+  const fairnessExcludeAttendance = Boolean(fairnessObj?.excludeAttendanceMetric === true);
+  const fairnessNotes =
+    typeof fairnessObj?.notes === "string" ? fairnessObj.notes : "";
 
   return (
     <AdminPageContainer width="form">
@@ -89,6 +101,56 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
           <dd className="inline">{member.active ? "Yes" : "No"}</dd>
         </div>
       </dl>
+
+      <section className="mt-10 rounded-xl border border-[var(--border)] bg-white p-5">
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">Methodology fairness metadata</h2>
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          Optional flags for editorial methodology (e.g. Speaker of Parliament, attendance metric exclusions). Stored as JSON on this roster row.
+        </p>
+        <form action={updateParliamentMemberFairnessMetadataAction} className="mt-4 space-y-4">
+          <input type="hidden" name="memberId" value={member.id} />
+          <label className="flex items-start gap-2 text-sm text-[var(--foreground)]">
+            <input
+              type="checkbox"
+              name="speakerRole"
+              defaultChecked={fairnessSpeakerRole}
+              className="mt-1 h-4 w-4 rounded border-[var(--border)]"
+            />
+            <span>
+              Treat as Speaker / presiding role for fairness rules (exclusions noted in methodology).
+            </span>
+          </label>
+          <label className="flex items-start gap-2 text-sm text-[var(--foreground)]">
+            <input
+              type="checkbox"
+              name="excludeAttendanceMetric"
+              defaultChecked={fairnessExcludeAttendance}
+              className="mt-1 h-4 w-4 rounded border-[var(--border)]"
+            />
+            <span>Exclude attendance-heavy metrics where methodology allows.</span>
+          </label>
+          <div>
+            <label htmlFor="fairnessNotes" className="block text-xs font-medium text-[var(--foreground)]">
+              Notes <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+            </label>
+            <textarea
+              id="fairnessNotes"
+              name="fairnessNotes"
+              rows={4}
+              maxLength={4000}
+              defaultValue={fairnessNotes}
+              placeholder="Short editorial notes (e.g. caretaker period, dual mandate)…"
+              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            />
+          </div>
+          <button
+            type="submit"
+            className="rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
+          >
+            Save fairness metadata
+          </button>
+        </form>
+      </section>
 
       <section className="mt-10 rounded-xl border border-[var(--border)] bg-white p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">{accountabilityProse.adminAddPromiseHeading}</h2>
@@ -337,30 +399,46 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                     </span>
                   ) : null}
                 </div>
-                <form action={updateCampaignPromiseStatusAction} className="mt-3 flex flex-wrap items-end gap-2">
+                <form action={updateCampaignPromiseStatusAction} className="mt-3 space-y-2">
                   <input type="hidden" name="promiseId" value={p.id} />
                   <input type="hidden" name="memberId" value={member.id} />
-                  <label htmlFor={`st-${p.id}`} className="sr-only">
-                    Status for {p.title}
-                  </label>
-                  <select
-                    id={`st-${p.id}`}
-                    name="status"
-                    defaultValue={p.status}
-                    className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
-                  >
-                    {STATUS_OPTIONS.map((o) => (
-                      <option key={o.value} value={o.value}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    type="submit"
-                    className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-2 text-sm font-medium hover:bg-[var(--muted)]"
-                  >
-                    Update status
-                  </button>
+                  <div className="flex flex-wrap items-end gap-2">
+                    <label htmlFor={`st-${p.id}`} className="sr-only">
+                      Status for {p.title}
+                    </label>
+                    <select
+                      id={`st-${p.id}`}
+                      name="status"
+                      defaultValue={p.status}
+                      className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                    >
+                      {STATUS_OPTIONS.map((o) => (
+                        <option key={o.value} value={o.value}>
+                          {o.label}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="submit"
+                      className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-2 text-sm font-medium hover:bg-[var(--muted)]"
+                    >
+                      Update status
+                    </button>
+                  </div>
+                  <div>
+                    <label htmlFor={`blocked-${p.id}`} className="block text-[11px] font-medium text-[var(--foreground)]">
+                      Blocked reason <span className="font-normal text-[var(--muted-foreground)]">(public when status is Blocked)</span>
+                    </label>
+                    <textarea
+                      id={`blocked-${p.id}`}
+                      name="blockedReason"
+                      rows={2}
+                      maxLength={2000}
+                      defaultValue={p.blockedReason ?? ""}
+                      placeholder="e.g. Awaiting court determination — pledge on hold."
+                      className="mt-1 w-full max-w-xl rounded-lg border border-[var(--border)] px-2 py-1.5 text-sm"
+                    />
+                  </div>
                 </form>
                 <form action={updateCampaignPromiseEvidenceAction} className="mt-4 space-y-2 border-t border-[var(--border)] pt-4">
                   <input type="hidden" name="promiseId" value={p.id} />

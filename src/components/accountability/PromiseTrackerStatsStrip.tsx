@@ -25,18 +25,21 @@ function conicStops(
   met: number,
   inProgress: number,
   broken: number,
+  blocked: number,
   tracking: number,
 ): string {
-  const t = met + inProgress + broken + tracking;
+  const t = met + inProgress + broken + blocked + tracking;
   if (t <= 0) return "transparent 0% 100%";
   const s1 = (met / t) * 100;
   const s2 = s1 + (inProgress / t) * 100;
   const s3 = s2 + (broken / t) * 100;
+  const s4 = s3 + (blocked / t) * 100;
   return [
     `rgb(16 185 129) 0% ${s1}%`,
     `rgb(14 165 233) ${s1}% ${s2}%`,
     `rgb(244 63 94) ${s2}% ${s3}%`,
-    `rgb(148 163 184) ${s3}% 100%`,
+    `rgb(245 158 11) ${s3}% ${s4}%`,
+    `rgb(148 163 184) ${s4}% 100%`,
   ].join(", ");
 }
 
@@ -73,6 +76,7 @@ function StatusDonutWithLegend({
   met,
   inProgress,
   broken,
+  blocked,
   tracking,
   fulfilledPct,
   variant,
@@ -80,14 +84,15 @@ function StatusDonutWithLegend({
   met: number;
   inProgress: number;
   broken: number;
+  blocked: number;
   tracking: number;
   fulfilledPct: number;
   variant: "light" | "dark";
 }) {
-  const t = met + inProgress + broken + tracking;
+  const t = met + inProgress + broken + blocked + tracking;
   const pieStyle: CSSProperties =
     t > 0
-      ? { background: `conic-gradient(${conicStops(met, inProgress, broken, tracking)})` }
+      ? { background: `conic-gradient(${conicStops(met, inProgress, broken, blocked, tracking)})` }
       : { background: "repeating-conic-gradient(rgb(148 163 184 / 0.35) 0% 25%, transparent 25% 50%)" };
   const holeClass =
     variant === "dark"
@@ -139,10 +144,12 @@ function StatusDonutWithLegend({
             ) : null}
           </div>
           {variant === "light" ? (
-            <p className="mt-1 text-xs text-slate-500">Fulfilled, in progress, broken, and tracking / deferred.</p>
+            <p className="mt-1 text-xs text-slate-500">
+              Fulfilled, in progress, broken, blocked, and tracking / deferred.
+            </p>
           ) : (
             <p className="mt-2 text-xs leading-snug text-slate-300/90">
-              How rows are classified in this view — all five workflow states are included in the total.
+              How rows are classified in this view — all workflow states are included in the total.
             </p>
           )}
           <ul className={`mt-4 flex flex-wrap gap-x-6 gap-y-2 ${legendClass}`}>

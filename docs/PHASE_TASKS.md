@@ -53,6 +53,7 @@
 | [ ] | **Verify** production: backups, `SKIP_DB_SEED`, secrets rotation ([`OPS_RUNBOOK.md`](./OPS_RUNBOOK.md)) |
 | [ ] | **Content:** replace/refresh seeded posts for live voice; legal pages reviewed by counsel |
 | [x] | **Phase 1 polish (baseline):** mobile PageHeader padding, main `overflow-x` + safe-area, optional `NEXT_PUBLIC_CONTACT_PHONE`, footer gallery alts, `touch-manipulation` on buttons — **Lighthouse CI** (mobile 390×844) on `/`, `/about`, `/contact`, `/news`; *tune thresholds in `lighthouserc.cjs` before major launch* |
+| [x] | **Diaspora (cross-phase UI):** `DiasporaProgrammePhaseNotice` on `/diaspora` + `/diaspora/feedback`; “choose your path” cards; feedback **`RECENT_VISIT`** vs **`ABROAD_SUPPORTER`** + Prisma `engagementKind` migration; admin path column; **Ghana v1** methodology block on **`/methodology`**; optional **Resend** submitter ack from `POST /api/diaspora-feedback` — programme table in [`EARLY_RECOGNITION_LAUNCH_PLAN.md`](./EARLY_RECOGNITION_LAUNCH_PLAN.md) §2.5; **ops:** match five-business-day human follow-up or edit copy |
 
 ---
 
@@ -76,6 +77,7 @@
 | [x] | **Situational / ops:** `slaDueAt`, `operationsPlaybookKey`, `staffNotes` on `CitizenReport` + admin detail form + SLA overdue hint on queue |
 | [x] | **SMS (optional):** `SMS_PROVIDER=log|twilio` + `sendReportStatusSms` on status change; `submitterPhone` on `CitizenReport` + Voice form E.164; prefers member profile phone when signed in |
 | [x] | **Offline drafts (MVP):** text-only queue in `localStorage` on network / retryable HTTP errors; restore + Turnstile on submit (`VoiceReportForm`, `src/lib/client/report-submit-queue.ts`) |
+| [x] | **Phase 2 report card (public):** published cycles and `/report-card/[year]` show **headline + narrative + metrics** only; partner `GET /api/report-card/[year]` omits triple-index values and dispute window until flagship (`accountabilityScorecards` / Phase 3) — see `isGhanaReportCardMethodologyPublicEnabled` |
 
 ---
 
@@ -88,6 +90,7 @@
 | [x] | **`ReportCardCycle`** + **`ScorecardEntry`**, admin CRUD, public pages + **`GET /api/report-card/[year]`** |
 | [x] | Tagged cache + `revalidateTag`; accountability **HTTP** helpers tested |
 | [x] | **`/methodology`**, election-observation form notices, OPS notes in docs |
+| [x] | **Flagship methodology (Phase 3):** triple-index UI + dispute banners on `/report-card/[year]`; optional MP rubric on Citizens Voice; full index A/B/C + `headlineBlend` in partner JSON (`accountabilityScorecards`) |
 | [x] | Pillar routes **`/legal-empowerment`**, **`/town-halls`** when phase ≥ 2 |
 | [x] | **Partner programme (draft):** [`docs/PARTNER_API.md`](PARTNER_API.md) — attribution, caching, rate limits, versioning *recommendation* · **public summary:** **`/partner-api`** (Phase 2+) *(MOU / contractual terms with legal still TBD)* |
 | [ ] | **Real datasets:** vetted CSV import + editorial sign-off before toggling Phase 3 in prod — procedure: [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md); source pointers: [`DATA_SOURCES.md`](./DATA_SOURCES.md) |

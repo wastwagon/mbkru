@@ -4,7 +4,7 @@
 **Principle:** Separate **(A) calendar milestones** (election cycle, scorecard publication windows) from **(B) recognition milestones** (when MBKRU is discoverable, trustworthy, and minimally interactive).  
 **Execution order:** Close **Phases 1–3** gaps before Phase 4+ build — see [`PHASE_GAPS_CLOSURE_QUEUE.md`](./PHASE_GAPS_CLOSURE_QUEUE.md).
 
-**Last updated:** April 2026
+**Last updated:** May 2026
 
 ---
 
@@ -65,8 +65,21 @@ Below is what still typically blocks a **credible early launch** even when code 
 |-----|--------|
 | Media kit & spokesperson training | Short quotes, fact checks, escalation tree |
 | Pilot geography narrative | “Greater Accra first” beats “all 16 regions” if that is the truth |
-| Diaspora and youth channel strategy | Already have routes; needs campaign not only UI |
+| Diaspora and youth channel strategy | **Site:** phase notice, “choose your path”, dual feedback (visit vs abroad), methodology link, 5-day SLA copy — shipped (see §2.5). **Still:** outbound campaign, partner liaisons, optional auto-ack email, youth-specific slice |
 | CHRAJ / EC / party engagement **paper trail** | Programme doc ≠ regulatory endorsement |
+
+### 2.5 Diaspora programme — site alignment (implemented)
+
+This mirrors what visitors see on **`/diaspora`** and **`/diaspora/feedback`** and ties diaspora messaging to **`NEXT_PUBLIC_PLATFORM_PHASE`** (same rules as the rest of the site).
+
+| Layer | What shipped | Ops / programme expectation |
+|-------|----------------|------------------------------|
+| **Phase strip** | `DiasporaProgrammePhaseNotice`: Phase **1** = signposting + feedback + methodology link; Phase **≥2** with accountability data = adds government commitments card, petitions when enabled, methodology | Comms must not promise “live promise catalogue” on hosts still at Phase 1 |
+| **Three paths** | Cards: documentation anchor (`#documentation-journeys`), accountability (catalogue **or** `/methodology` if data off), feedback form | Keep official NIA/MFA/GIS links audited quarterly |
+| **Feedback** | `RECENT_VISIT` vs `ABROAD_SUPPORTER`; nullable visit fields in DB (`DiasporaEngagementKind` migration); optional **Resend** auto-ack to submitter when `RESEND_API_KEY` is set | **Acknowledge within five business days (Ghana / GMT)** — if you cannot meet this, update copy sitewide; auto-ack does not replace human follow-up |
+| **Methodology** | `/methodology` includes Ghana v1 Report Card section (weights, evidence ladder, medians/caps, references) | Editorial council owns annual weight review; page copy must stay in sync with what you actually publish |
+
+**Youth channel** is still a separate line item (content/partnerships), not only a diaspora clone — track under GTM once scoped.
 
 ---
 
@@ -108,6 +121,8 @@ Order assumes you want **recognition before** full national rollout. Adjust date
 | [`docs/PHASE_TASKS.md`](./PHASE_TASKS.md) | Engineering backlog by `NEXT_PUBLIC_PLATFORM_PHASE` |
 | [`docs/PLATFORM_EXPANSION_PLAN.md`](./PLATFORM_EXPANSION_PLAN.md) | Broader product expansion |
 | [`docs/FULL_PLATFORM_IMPLEMENTATION_PLAN.md`](./FULL_PLATFORM_IMPLEMENTATION_PLAN.md) | Deep build order (A–O) |
+| Public **`/methodology`** (People’s Report Card — Ghana v1 block) | Canonical web copy for weights, evidence tiers, dispute window; keep aligned with editorial cycles |
+| **`/diaspora`**, **`/diaspora/feedback`** | `DiasporaProgrammePhaseNotice`, paths, form modes — see §2.5 |
 
 ---
 

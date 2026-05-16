@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { DiasporaProgrammePhaseNotice } from "@/components/diaspora/DiasporaProgrammePhaseNotice";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { MbkruVoiceCallout } from "@/components/voice/MbkruVoiceCallout";
 import { Card } from "@/components/ui/Card";
@@ -102,12 +103,60 @@ export default function DiasporaPage() {
         description="For Ghanaians abroad and returnees: signposting to official channels for Ghana Card, passport, and nationality—plus how to join MBKRU’s citizen accountability work. The “17th Region” policy context lives in our News briefing."
       />
 
+      <section className="section-spacing section-full border-b border-[var(--border)] bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-3xl">
+            <DiasporaProgrammePhaseNotice />
+          </div>
+          <h2 className="mt-10 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
+            Choose your path
+          </h2>
+          <p className="mt-2 max-w-3xl text-[15px] text-[var(--muted-foreground)] sm:text-base">
+            Three ways diaspora supporters typically use MBKRU — pick what matches you today. All paths are non-partisan
+            and evidence-led; we never replace embassies, NIA, or courts.
+          </p>
+          <div className="mt-8 grid gap-5 sm:grid-cols-3">
+            <Card
+              href="#documentation-journeys"
+              title="1. Official documentation"
+              description="Ghana Card, passport, nationality: start from NIA, MFA, and GIS — verify fees and rules on .gov.gh before you pay or travel."
+            />
+            <Card
+              href={accountabilityOn ? ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments : "/methodology"}
+              title="2. Accountability from abroad"
+              description={
+                accountabilityOn
+                  ? "Browse documented government commitments and MP-linked promises — same transparency demand as at home."
+                  : "Read our methodology and phase rollout; the full public catalogue appears when this deployment enables Phase 2+ accountability data."
+              }
+            />
+            <Card
+              href="/diaspora/feedback"
+              title="3. Tell us your experience"
+              description="Structured feedback after a visit, or engagement from abroad only — we triage submissions to improve this hub and programmes."
+            />
+          </div>
+          <p className="mt-8 max-w-3xl text-sm leading-relaxed text-[var(--muted-foreground)]">
+            <strong className="text-[var(--foreground)]">Response times:</strong> we aim to acknowledge diaspora
+            feedback within <strong className="text-[var(--foreground)]">five business days</strong> (Ghana / GMT).
+            Urgent consular or immigration matters must go to your{" "}
+            <strong className="text-[var(--foreground)]">embassy, high commission, or official portal</strong> — not
+            only MBKRU. For how we score and cite accountability content, see the{" "}
+            <Link href="/methodology" className={primaryLinkClass}>
+              methodology
+            </Link>{" "}
+            page.
+          </p>
+        </div>
+      </section>
+
       <div className="border-b border-[var(--primary)]/20 bg-gradient-to-r from-[var(--primary)]/[0.08] via-white to-[var(--accent-gold)]/[0.12]">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-4 py-5 sm:flex-row sm:items-center sm:px-6 lg:px-8">
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">Visiting or reconnecting with Ghana?</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">Feedback — visits or abroad-only</p>
             <p className="mt-1 max-w-2xl text-sm text-[var(--muted-foreground)]">
-              Tell us about your experience—submissions are stored for programme planning and help us improve this hub.
+              Use the form after a trip, or choose “engaging from abroad” if you have not travelled recently — both help
+              us prioritise signposting and partnerships.
             </p>
           </div>
           <Link
@@ -192,7 +241,10 @@ export default function DiasporaPage() {
         </div>
       </section>
 
-      <section className="section-spacing section-full border-y border-[var(--border)] bg-white">
+      <section
+        id="documentation-journeys"
+        className="section-spacing section-full border-y border-[var(--border)] bg-white scroll-mt-24"
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="font-display text-2xl font-bold text-balance text-[var(--foreground)] sm:text-3xl">
             Common documentation journeys

@@ -3,12 +3,16 @@ import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 
 import { MetricsDisplay } from "@/components/accountability/MetricsDisplay";
+import { ReportCardTripleLedger } from "@/components/accountability/ReportCardTripleLedger";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { publicReportCardCycleTitle } from "@/lib/report-card-public-label";
-import { isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
+import {
+  isGhanaReportCardMethodologyPublicEnabled,
+  isReportCardPublicEnabled,
+} from "@/lib/reports/accountability-pages";
 import {
   getCachedPublishedReportCardCycleMeta,
   getCachedPublishedReportCardEntriesPage,
@@ -89,6 +93,11 @@ export default async function ReportCardYearPage({
       })
     : "n/a";
 
+  const methodologyDepth = isGhanaReportCardMethodologyPublicEnabled();
+  const disputeEndsAt = meta.disputeWindowEndsAt;
+  const disputeWindowOpen =
+    methodologyDepth && disputeEndsAt != null && disputeEndsAt.getTime() > Date.now();
+
   const totalFiltered = entriesPage.totalFiltered;
   const totalPages = Math.max(1, Math.ceil(totalFiltered / REPORT_CARD_PUBLIC_PAGE_SIZE));
   if (totalFiltered > 0 && page > totalPages) {
@@ -136,6 +145,44 @@ export default async function ReportCardYearPage({
               <span className="font-medium text-[var(--foreground)]">{publishedDateLabel}</span>
             </span>
           </p>
+          {!methodologyDepth ? (
+            <p className="mt-4 text-xs text-[var(--muted-foreground)]">
+              This cycle page shows the <strong className="text-[var(--foreground)]">headline</strong> score and
+              narrative for each MP. The <strong className="text-[var(--foreground)]">triple-index</strong> breakdown
+              (legislative, constituency, citizen experience) and public dispute-window banners appear when the
+              programme runs in <strong className="text-[var(--foreground)]">flagship</strong> configuration — see{" "}
+              <Link href="/methodology" className={primaryNavLinkClass}>
+                methodology
+              </Link>
+              .
+            </p>
+          ) : null}
+          {disputeWindowOpen && disputeEndsAt ? (
+            <div
+              className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950"
+              role="status"
+            >
+              <p className="font-semibold">Dispute / correction window</p>
+              <p className="mt-1 text-amber-900/95">
+                Editorial corrections may still be logged for this cycle until{" "}
+                <time dateTime={disputeEndsAt.toISOString()}>
+                  {disputeEndsAt.toLocaleString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    timeZone: "Africa/Accra",
+                  })}
+                </time>{" "}
+                (Ghana programme time). Published rows remain dated snapshots — see{" "}
+                <Link href="/methodology" className={primaryNavLinkClass}>
+                  methodology
+                </Link>
+                .
+              </p>
+            </div>
+          ) : null}
           {meta.methodology?.trim() ? (
             <div className="mt-6 rounded-xl border border-[var(--border)] bg-white p-4 text-sm text-[var(--muted-foreground)]">
               <p className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground)]">
@@ -248,16 +295,29 @@ export default async function ReportCardYearPage({
                         {e.member.party ? ` · ${e.member.party}` : ""}
                       </p>
                     </div>
-                    {e.overallScore != null ? (
-                      <span className="rounded-full bg-[var(--primary)]/10 px-3 py-1 text-sm font-semibold text-[var(--primary)]">
-                        {e.overallScore}
-                      </span>
-                    ) : (
-                      <span className="rounded-full bg-[var(--muted)]/25 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
-                        Score pending
-                      </span>
-                    )}
+                    {!methodologyDepth ? (
+                      e.overallScore != null ? (
+                        <span className="rounded-full bg-[var(--primary)]/10 px-3 py-1 text-sm font-semibold text-[var(--primary)]">
+                          {e.overallScore}
+                        </span>
+                      ) : (
+                        <span className="rounded-full bg-[var(--muted)]/25 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                          Score pending
+                        </span>
+                      )
+                    ) : null}
                   </div>
+                  {methodologyDepth ? (
+                    <div className="mt-4">
+                      <ReportCardTripleLedger
+                        indexA={e.indexAScore}
+                        indexB={e.indexBScore}
+                        indexC={e.indexCScore}
+                        headline={e.overallScore}
+                        compact
+                      />
+                    </div>
+                  ) : null}
                   {e.narrative ? (
                     <p className="mt-3 whitespace-pre-wrap text-sm text-[var(--muted-foreground)]">
                       {e.narrative}

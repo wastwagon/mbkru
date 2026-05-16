@@ -55,6 +55,13 @@ export type VoiceReportFormStrings = {
   mpLabel: string;
   mpPlaceholder: string;
   mpRosterUnavailable: string;
+  mpRubricSectionTitle: string;
+  mpRubricHelp: string;
+  mpRubricAccessibility: string;
+  mpRubricResponsiveness: string;
+  mpRubricFollowThrough: string;
+  mpRubricScaleHint: string;
+  mpRubricOptional: string;
   govNoteTitle: string;
   govNoteBody: string;
   govNoteBody2Before: string;
@@ -136,6 +143,14 @@ const BASE_EN: VoiceReportFormStrings = {
   mpPlaceholder: "Select an MP from the roster…",
   mpRosterUnavailable:
     "MP roster is unavailable (database or configuration). You cannot submit an MP performance report until the roster loads — refresh the page or try again later.",
+  mpRubricSectionTitle: "Optional experience check-in (1–5)",
+  mpRubricHelp:
+    "These quick ratings are optional. They help staff sort structured citizen experience signals — they are not a formal score and do not replace the written report above.",
+  mpRubricAccessibility: "Accessibility of your MP or their office",
+  mpRubricResponsiveness: "Responsiveness to issues you raised",
+  mpRubricFollowThrough: "Follow-through on commitments or casework",
+  mpRubricScaleHint: "1 = poor · 5 = strong",
+  mpRubricOptional: "Skip any row you prefer not to rate.",
   govNoteTitle: "Government performance",
   govNoteBody:
     "Use this for ministry, agency, or programme delivery you want documented — facts and observed outcomes, not speculation. MBKRU triages submissions; use official agency channels where you need a binding government response.",

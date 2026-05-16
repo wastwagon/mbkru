@@ -569,6 +569,7 @@ export function PromisesBrowseLive({
                   title={p.title}
                   description={p.description}
                   status={p.status}
+                  blockedReason={p.blockedReason}
                   sourceLabel={p.sourceLabel}
                   sourceDate={p.sourceDate ? new Date(p.sourceDate) : null}
                   sourceUrl={p.sourceUrl}

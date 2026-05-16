@@ -1,16 +1,21 @@
 import "server-only";
 
-import type { DiasporaFeedbackOverallRating, DiasporaFeedbackReturnIntent } from "@prisma/client";
+import type {
+  DiasporaEngagementKind,
+  DiasporaFeedbackOverallRating,
+  DiasporaFeedbackReturnIntent,
+} from "@prisma/client";
 
 import { prisma } from "@/lib/db/prisma";
 import { normalizeLeadEmail } from "@/lib/normalize-email";
 
 export type DiasporaFeedbackSubmissionInput = {
+  engagementKind: DiasporaEngagementKind;
   fullName: string;
   email: string;
-  dateOfVisit: Date;
-  durationOfStay: string;
-  eventsAttended: string;
+  dateOfVisit: Date | null;
+  durationOfStay: string | null;
+  eventsAttended: string | null;
   overallRating: DiasporaFeedbackOverallRating;
   meaningfulAspects: string;
   suggestionsImprovement: string;
@@ -24,11 +29,12 @@ export async function createDiasporaFeedbackSubmission(
 ): Promise<{ createdAt: Date }> {
   const row = await prisma.diasporaFeedbackSubmission.create({
     data: {
+      engagementKind: input.engagementKind,
       fullName: input.fullName.trim(),
       email: normalizeLeadEmail(input.email),
       dateOfVisit: input.dateOfVisit,
-      durationOfStay: input.durationOfStay.trim(),
-      eventsAttended: input.eventsAttended.trim(),
+      durationOfStay: input.durationOfStay?.trim() ?? null,
+      eventsAttended: input.eventsAttended?.trim() ?? null,
       overallRating: input.overallRating,
       meaningfulAspects: input.meaningfulAspects.trim(),
       suggestionsImprovement: input.suggestionsImprovement.trim(),

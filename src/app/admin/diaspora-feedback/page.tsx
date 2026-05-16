@@ -21,6 +21,11 @@ const returnLabel: Record<string, string> = {
   MAYBE: "Maybe",
 };
 
+const engagementLabel: Record<string, string> = {
+  RECENT_VISIT: "Visit",
+  ABROAD_SUPPORTER: "Abroad",
+};
+
 function formatDate(d: Date) {
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 }
@@ -60,6 +65,7 @@ export default async function AdminDiasporaFeedbackPage() {
           <thead className="border-b border-[var(--border)] bg-[var(--section-light)]/80 text-[var(--muted-foreground)]">
             <tr>
               <th className="px-4 py-3 font-medium">Received</th>
+              <th className="px-4 py-3 font-medium">Path</th>
               <th className="px-4 py-3 font-medium">Name</th>
               <th className="px-4 py-3 font-medium">Email</th>
               <th className="px-4 py-3 font-medium">Visit</th>
@@ -72,7 +78,7 @@ export default async function AdminDiasporaFeedbackPage() {
           <tbody className="divide-y divide-[var(--border)]">
             {rows.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-4 py-8 text-center text-[var(--muted-foreground)]">
+                <td colSpan={9} className="px-4 py-8 text-center text-[var(--muted-foreground)]">
                   <AdminEmptyState message="No submissions yet." className="text-center" />
                 </td>
               </tr>
@@ -81,6 +87,9 @@ export default async function AdminDiasporaFeedbackPage() {
                 <tr key={row.id} className="align-top hover:bg-[var(--section-light)]/40">
                   <td className="whitespace-nowrap px-4 py-3 text-[var(--muted-foreground)]">
                     {row.createdAt.toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-3 text-[var(--foreground)]">
+                    {engagementLabel[row.engagementKind] ?? row.engagementKind}
                   </td>
                   <td className="px-4 py-3">
                     <p className="font-medium text-[var(--foreground)]">{row.fullName}</p>
@@ -93,8 +102,10 @@ export default async function AdminDiasporaFeedbackPage() {
                       {row.email}
                     </a>
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-[var(--foreground)]">{formatDate(row.dateOfVisit)}</td>
-                  <td className="max-w-[140px] px-4 py-3 text-[var(--muted-foreground)]">{row.durationOfStay}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-[var(--foreground)]">
+                    {row.dateOfVisit ? formatDate(row.dateOfVisit) : "—"}
+                  </td>
+                  <td className="max-w-[140px] px-4 py-3 text-[var(--muted-foreground)]">{row.durationOfStay ?? "—"}</td>
                   <td className="px-4 py-3 text-[var(--foreground)]">{ratingLabel[row.overallRating] ?? row.overallRating}</td>
                   <td className="px-4 py-3 text-[var(--foreground)]">{returnLabel[row.returnOrInvest] ?? row.returnOrInvest}</td>
                   <td className="max-w-md px-4 py-3 text-[var(--muted-foreground)]">
@@ -105,7 +116,7 @@ export default async function AdminDiasporaFeedbackPage() {
                           <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
                             Events / programmes
                           </p>
-                          <p className="mt-1 whitespace-pre-wrap">{row.eventsAttended}</p>
+                          <p className="mt-1 whitespace-pre-wrap">{row.eventsAttended ?? "—"}</p>
                         </div>
                         <div>
                           <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">

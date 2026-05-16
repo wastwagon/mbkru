@@ -14,7 +14,7 @@ import {
   operationsPlaybookKeyField,
   staffNotesField,
 } from "@/lib/validation/admin-reports";
-import type { CitizenReportStatus } from "@prisma/client";
+import type { CitizenReportExperienceVerificationTier, CitizenReportStatus } from "@prisma/client";
 
 import { MPS_ROSTER_TAG } from "@/lib/accountability-tags";
 
@@ -25,6 +25,40 @@ const STATUSES: CitizenReportStatus[] = [
   "CLOSED",
   "ARCHIVED",
 ];
+
+const EXPERIENCE_TIERS: CitizenReportExperienceVerificationTier[] = ["UNVERIFIED", "CORROBORATED", "DOCUMENTED"];
+
+export async function updateCitizenReportExperienceVerificationTierAction(formData: FormData) {
+  await requireAdminSession();
+
+  const id = formData.get("id");
+  const tierRaw = formData.get("experienceVerificationTier");
+  if (typeof id !== "string" || !id) {
+    redirect("/admin/reports?error=invalid");
+  }
+  if (
+    typeof tierRaw !== "string" ||
+    !EXPERIENCE_TIERS.includes(tierRaw as CitizenReportExperienceVerificationTier)
+  ) {
+    redirect(`/admin/reports/${id}?error=tier_invalid`);
+  }
+  const tier = tierRaw as CitizenReportExperienceVerificationTier;
+
+  const prev = await prisma.citizenReport.findUnique({ where: { id }, select: { id: true } });
+  if (!prev) {
+    redirect("/admin/reports?error=notfound");
+  }
+
+  await prisma.citizenReport.update({
+    where: { id },
+    data: { experienceVerificationTier: tier },
+  });
+
+  revalidatePath("/admin/reports");
+  revalidatePath(`/admin/reports/${id}`);
+  revalidatePath("/admin/analytics/mp-performance-signals");
+  redirect(`/admin/reports/${id}?saved=tier`);
+}
 
 export async function updateCitizenReportStatusAction(formData: FormData) {
   await requireAdminSession();

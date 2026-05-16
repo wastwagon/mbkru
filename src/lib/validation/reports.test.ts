@@ -61,4 +61,23 @@ describe("createReportBodySchema", () => {
     });
     expect(r.success).toBe(true);
   });
+
+  it("accepts optional mpPerformanceRubric for MP_PERFORMANCE", () => {
+    const r = createReportBodySchema.safeParse({
+      ...mpBase,
+      submitterEmail: "a@b.co",
+      parliamentMemberId: "cjld2cjxh0000qzrmn831i7rn",
+      mpPerformanceRubric: { accessibility: 4, responsiveness: 3 },
+    });
+    expect(r.success).toBe(true);
+  });
+
+  it("rejects mpPerformanceRubric for VOICE", () => {
+    const r = createReportBodySchema.safeParse({
+      ...base,
+      submitterEmail: "a@b.co",
+      mpPerformanceRubric: { followThrough: 2 },
+    });
+    expect(r.success).toBe(false);
+  });
 });

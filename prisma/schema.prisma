@@ -108,6 +108,11 @@ model ContactSubmission {
 }
 
 /// Diaspora visit experience & feedback — public form; staff review in admin CMS.
+enum DiasporaEngagementKind {
+  RECENT_VISIT
+  ABROAD_SUPPORTER
+}
+
 enum DiasporaFeedbackOverallRating {
   EXCELLENT
   GOOD
@@ -124,11 +129,13 @@ enum DiasporaFeedbackReturnIntent {
 model DiasporaFeedbackSubmission {
   id                     String                         @id @default(cuid())
   createdAt              DateTime                       @default(now())
+  /// Visit-centred feedback vs structured input from supporters who have not travelled recently.
+  engagementKind         DiasporaEngagementKind        @default(RECENT_VISIT)
   fullName               String                         @db.VarChar(200)
   email                  String                         @db.VarChar(320)
-  dateOfVisit            DateTime                       @db.Date
-  durationOfStay         String                         @db.VarChar(240)
-  eventsAttended         String                         @db.Text
+  dateOfVisit            DateTime?                      @db.Date
+  durationOfStay         String?                        @db.VarChar(240)
+  eventsAttended         String?                        @db.Text
   overallRating          DiasporaFeedbackOverallRating
   meaningfulAspects      String                         @db.Text
   suggestionsImprovement String                         @db.Text
@@ -138,6 +145,7 @@ model DiasporaFeedbackSubmission {
 
   @@index([createdAt])
   @@index([email])
+  @@index([engagementKind])
 }
 
 // --- Phase 2 & 3 — see docs/PHASES_2_3_IMPLEMENTATION.md ---
@@ -166,6 +174,14 @@ enum PromiseStatus {
   FULFILLED
   BROKEN
   DEFERRED
+  BLOCKED
+}
+
+/// Editorial corroboration ladder for citizen experience intakes (esp. MP performance).
+enum CitizenReportExperienceVerificationTier {
+  UNVERIFIED
+  CORROBORATED
+  DOCUMENTED
 }
 
 enum PetitionStatus {
@@ -332,6 +348,10 @@ model CitizenReport {
   /// MP performance intake — links submitter narrative to a roster MP (parliamentary tracker / pledge sheet).
   parliamentMemberId    String?
   parliamentMember      ParliamentMember?       @relation(fields: [parliamentMemberId], references: [id], onDelete: SetNull)
+  /// Staff-set corroboration tier (methodology evidence ladder — not automatic from reactions).
+  experienceVerificationTier CitizenReportExperienceVerificationTier @default(UNVERIFIED)
+  /// Optional structured rubric from MP performance submitters (1–5 scales, etc.).
+  mpPerformanceRubric   Json?
   submitterEmail        String?
   submitterPhone        String?
   title                 String
@@ -366,6 +386,7 @@ model CitizenReport {
   adminReplyAuditLogs        CitizenReportAdminReplyAuditLog[]
 
   @@index([kind, status])
+  @@index([experienceVerificationTier])
   @@index([memberId])
   @@index([parliamentMemberId])
   @@index([slaDueAt])
@@ -535,6 +556,8 @@ model ParliamentMember {
   active             Boolean       @default(true)
   lastVerifiedAt     DateTime?
   externalSourceKey  String?
+  /// Optional JSON for methodology fairness (e.g. `{ "speakerRole": true, "excludeAttendanceMetric": true, "notes": "..." }`).
+  fairnessMetadata   Json?
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
   promises           CampaignPromise[]
@@ -582,6 +605,8 @@ model CampaignPromise {
   isGovernmentProgramme Boolean            @default(false)
   /// Optional theme for filters (e.g. FISCAL, EDUCATION). See `POLICY_SECTORS` in app code.
   policySector          String?
+  /// Shown when status is BLOCKED (short public explanation).
+  blockedReason         String?            @db.Text
   createdAt             DateTime           @default(now())
   updatedAt             DateTime           @updatedAt
 
@@ -597,6 +622,8 @@ model ReportCardCycle {
   label       String
   publishedAt DateTime?
   methodology String?          @db.Text
+  /// Optional editorial dispute / correction window for this cycle (shown on public cycle page when set).
+  disputeWindowEndsAt DateTime?
   entries     ScorecardEntry[]
 }
 
@@ -607,6 +634,10 @@ model ScorecardEntry {
   memberId     String
   member       ParliamentMember   @relation(fields: [memberId], references: [id], onDelete: Cascade)
   narrative    String?            @db.Text
+  /// Ghana triple ledger (0–100 each). Headline may still be set manually in `overallScore`.
+  indexAScore  Float?
+  indexBScore  Float?
+  indexCScore  Float?
   overallScore Float?
   metrics      Json?
   createdAt    DateTime           @default(now())

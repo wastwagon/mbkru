@@ -32,7 +32,7 @@ describe("platformFeatures", () => {
     expect(platformFeatures.partnerJsonProgramme(2)).toBe(true);
   });
 
-  it("phase 3: election observatory + reserved flagship flag", () => {
+  it("phase 3: election observatory + flagship scorecard / Ghana methodology depth", () => {
     expect(platformFeatures.publicReportCard(3)).toBe(true);
     expect(platformFeatures.publicVoiceStatistics(3)).toBe(true);
     expect(platformFeatures.accountabilityScorecards(3)).toBe(true);

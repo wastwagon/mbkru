@@ -40,6 +40,8 @@ type Props = {
   title: string;
   description: string | null;
   status: string;
+  /** Public explanation when status is BLOCKED. */
+  blockedReason?: string | null;
   sourceLabel: string;
   sourceDate: Date | null;
   sourceUrl: string | null;
@@ -60,6 +62,7 @@ export function PromiseEvidenceCard({
   title,
   description,
   status,
+  blockedReason,
   sourceLabel,
   sourceDate,
   sourceUrl,
@@ -107,6 +110,12 @@ export function PromiseEvidenceCard({
           {meta ? <div className="mt-2 text-sm text-[var(--muted-foreground)]">{meta}</div> : null}
           {brief ? (
             <p className="mt-2 line-clamp-2 text-sm leading-snug text-[var(--muted-foreground)]">{brief}</p>
+          ) : null}
+          {status === "BLOCKED" && blockedReason?.trim() ? (
+            <p className="mt-2 rounded-lg border border-amber-200/80 bg-amber-50/90 px-3 py-2 text-xs leading-snug text-amber-950">
+              <span className="font-semibold">Blocked: </span>
+              {blockedReason.trim()}
+            </p>
           ) : null}
           {showRefStrip ? (
             <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-[var(--muted-foreground)]">

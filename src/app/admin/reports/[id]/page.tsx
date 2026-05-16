@@ -12,6 +12,7 @@ import {
   updateCitizenReportAdminReplyAction,
   updateCitizenReportDiscussionEnabledAction,
   updateCitizenReportOperationsAction,
+  updateCitizenReportExperienceVerificationTierAction,
   updateCitizenReportStatusAction,
 } from "@/app/admin/reports/actions";
 import {
@@ -25,7 +26,11 @@ import { prisma } from "@/lib/db/prisma";
 import { roundApproximateCoord } from "@/lib/geo/round-approximate-coord";
 import { destructiveTextControlClass, primaryLinkClass } from "@/lib/primary-link-styles";
 
-import type { CitizenReportKind, CitizenReportStatus } from "@prisma/client";
+import type {
+  CitizenReportExperienceVerificationTier,
+  CitizenReportKind,
+  CitizenReportStatus,
+} from "@prisma/client";
 import { reportKindLabel } from "@/lib/report-status-text";
 
 const STATUS_OPTIONS: { value: CitizenReportStatus; label: string }[] = [
@@ -34,6 +39,12 @@ const STATUS_OPTIONS: { value: CitizenReportStatus; label: string }[] = [
   { value: "ESCALATED", label: "Escalated" },
   { value: "CLOSED", label: "Closed" },
   { value: "ARCHIVED", label: "Archived" },
+];
+
+const EXPERIENCE_TIER_OPTIONS: { value: CitizenReportExperienceVerificationTier; label: string }[] = [
+  { value: "UNVERIFIED", label: "Unverified (default)" },
+  { value: "CORROBORATED", label: "Corroborated" },
+  { value: "DOCUMENTED", label: "Documented" },
 ];
 
 type Props = {
@@ -51,6 +62,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
     include: {
       region: true,
       constituency: true,
+      parliamentMember: { select: { id: true, name: true, slug: true } },
       member: { select: { id: true, email: true, displayName: true, phone: true } },
       attachments: { orderBy: { createdAt: "asc" } },
       publicCauseComments: {
@@ -124,6 +136,11 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
           Note visibility saved.
         </p>
       ) : null}
+      {sp.saved === "tier" ? (
+        <p className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900" role="status">
+          Experience verification tier saved.
+        </p>
+      ) : null}
       {sp.error === "reply_invalid" ? (
         <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
           Enter a non-empty message for the team note (max 12,000 characters).
@@ -142,6 +159,11 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
       {sp.error === "discussion_invalid" ? (
         <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
           Discussion setting could not be saved. Choose Open or Closed.
+        </p>
+      ) : null}
+      {sp.error === "tier_invalid" ? (
+        <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
+          Experience tier could not be saved. Pick Unverified, Corroborated, or Documented.
         </p>
       ) : null}
 
@@ -240,6 +262,23 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
           <dt className="inline font-medium text-[var(--foreground)]">Status: </dt>
           <dd className="inline">{report.status.replace(/_/g, " ")}</dd>
         </div>
+        <div>
+          <dt className="inline font-medium text-[var(--foreground)]">Experience verification tier: </dt>
+          <dd className="inline">{report.experienceVerificationTier.replace(/_/g, " ")}</dd>
+        </div>
+        {report.parliamentMember ? (
+          <div>
+            <dt className="inline font-medium text-[var(--foreground)]">Roster MP: </dt>
+            <dd className="inline">
+              <Link href={`/admin/parliament/${report.parliamentMember.id}`} className={primaryLinkClass}>
+                {report.parliamentMember.name}
+              </Link>{" "}
+              <span className="font-mono text-xs text-[var(--muted-foreground)]">
+                ({report.parliamentMember.slug})
+              </span>
+            </dd>
+          </div>
+        ) : null}
         {report.slaDueAt ? (
           <div>
             <dt className="inline font-medium text-[var(--foreground)]">SLA target (UTC): </dt>
@@ -312,6 +351,53 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
           </div>
         ) : null}
       </dl>
+
+      {report.kind === "MP_PERFORMANCE" ? (
+        <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
+          <h2 className="text-sm font-semibold text-[var(--foreground)]">MP methodology signals</h2>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            Tier is staff-set (evidence ladder). Optional submitter rubric is stored as structured JSON from Citizens Voice.
+          </p>
+          <form action={updateCitizenReportExperienceVerificationTierAction} className="mt-4 flex flex-wrap items-end gap-3">
+            <input type="hidden" name="id" value={report.id} />
+            <label htmlFor="experienceVerificationTier" className="block text-sm font-medium text-[var(--foreground)]">
+              Verification tier
+            </label>
+            <select
+              id="experienceVerificationTier"
+              name="experienceVerificationTier"
+              defaultValue={report.experienceVerificationTier}
+              className="rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm sm:max-w-md"
+            >
+              {EXPERIENCE_TIER_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+            <button
+              type="submit"
+              className="rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
+            >
+              Save tier
+            </button>
+          </form>
+          {report.mpPerformanceRubric != null &&
+          typeof report.mpPerformanceRubric === "object" &&
+          !Array.isArray(report.mpPerformanceRubric) ? (
+            <div className="mt-5 border-t border-[var(--border)] pt-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                Submitter rubric (JSON)
+              </p>
+              <pre className="mt-2 max-h-48 overflow-auto rounded-lg bg-[var(--section-light)] p-3 font-mono text-xs text-[var(--foreground)]">
+                {JSON.stringify(report.mpPerformanceRubric, null, 2)}
+              </pre>
+            </div>
+          ) : (
+            <p className="mt-4 text-sm text-[var(--muted-foreground)]">No optional rubric fields on this intake.</p>
+          )}
+        </div>
+      ) : null}
 
       <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Narrative</h2>

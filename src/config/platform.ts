@@ -55,7 +55,11 @@ export const platformFeatures = {
    */
   publicReportCard: (phase: PlatformPhase) => phase >= 2,
 
-  /** Reserved: pre-election flagship messaging / future scorecard-only gates (Phase 3). */
+  /**
+   * Phase 3 flagship: full Ghana People’s Report Card methodology on the **public** site and partner JSON —
+   * triple-index breakdown, dispute-window metadata, weighted headline blend in API, and optional MP rubric on Voice.
+   * Phase 2 still publishes cycles with headline + narrative + metrics only (`publicReportCard`).
+   */
   accountabilityScorecards: (phase: PlatformPhase) => phase >= 3,
 
   /** Aggregate, non-identifying MBKRU Voice statistics on the public site. */

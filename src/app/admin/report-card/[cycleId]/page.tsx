@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { upsertScorecardEntryAction } from "@/app/admin/report-card/actions";
+import { updateReportCardCycleDisputeWindowAction, upsertScorecardEntryAction } from "@/app/admin/report-card/actions";
+import { formatUtcForDatetimeLocalInput } from "@/lib/admin/report-operations-datetime";
 import { MetricsDisplay } from "@/components/accountability/MetricsDisplay";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
@@ -61,11 +62,41 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
         )}
       </div>
 
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6">
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">Dispute window</h2>
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          Optional end datetime (UTC) for a published correction / dispute period — shown on the public cycle page when
+          set. Clear the field and save to remove.
+        </p>
+        <form action={updateReportCardCycleDisputeWindowAction} className="mt-3 flex flex-wrap items-end gap-3">
+          <input type="hidden" name="cycleId" value={cycle.id} />
+          <div>
+            <label htmlFor="disputeWindowEndsAt" className="block text-xs font-medium">
+              Dispute window ends (UTC)
+            </label>
+            <input
+              id="disputeWindowEndsAt"
+              name="disputeWindowEndsAt"
+              type="datetime-local"
+              defaultValue={cycle.disputeWindowEndsAt ? formatUtcForDatetimeLocalInput(cycle.disputeWindowEndsAt) : ""}
+              className="mt-1 rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            />
+          </div>
+          <button
+            type="submit"
+            className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-2 text-sm font-medium hover:bg-[var(--muted)]"
+          >
+            Save dispute window
+          </button>
+        </form>
+      </section>
+
       <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Add or update entry</h2>
         <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-          Same member + cycle updates the existing row. Metrics are stored as JSON in the database but shown as
-          readable fields on the public report card.
+          Same member + cycle updates the existing row. Index A/B/C are the Ghana triple ledger (0–100 each). Checking
+          &quot;Set headline from triple&quot; overwrites the overall score with 0.5·A + 0.35·B + 0.15·C when all three
+          are filled. Metrics remain optional structured JSON.
         </p>
         <form action={upsertScorecardEntryAction} className="mt-4 space-y-3">
           <input type="hidden" name="cycleId" value={cycle.id} />
@@ -99,9 +130,47 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
               className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             />
           </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div>
+              <label htmlFor="indexAScore" className="block text-xs font-medium">
+                Index A (0–100)
+              </label>
+              <input
+                id="indexAScore"
+                name="indexAScore"
+                type="text"
+                inputMode="decimal"
+                className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label htmlFor="indexBScore" className="block text-xs font-medium">
+                Index B (0–100)
+              </label>
+              <input
+                id="indexBScore"
+                name="indexBScore"
+                type="text"
+                inputMode="decimal"
+                className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label htmlFor="indexCScore" className="block text-xs font-medium">
+                Index C (0–100)
+              </label>
+              <input
+                id="indexCScore"
+                name="indexCScore"
+                type="text"
+                inputMode="decimal"
+                className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
           <div>
             <label htmlFor="overallScore" className="block text-xs font-medium">
-              Overall score <span className="font-normal text-[var(--muted-foreground)]">(optional, e.g. 72.5)</span>
+              Headline score <span className="font-normal text-[var(--muted-foreground)]">(optional, e.g. 72.5)</span>
             </label>
             <input
               id="overallScore"
@@ -110,6 +179,12 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
               inputMode="decimal"
               className="mt-1 w-full max-w-xs rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             />
+          </div>
+          <div className="flex items-center gap-2">
+            <input id="syncHeadlineFromTriple" name="syncHeadlineFromTriple" type="checkbox" value="1" className="h-4 w-4 rounded border-[var(--border)]" />
+            <label htmlFor="syncHeadlineFromTriple" className="text-xs text-[var(--foreground)]">
+              Set headline from triple (requires A, B, and C)
+            </label>
           </div>
           <div>
             <label htmlFor="metrics" className="block text-xs font-medium">
@@ -142,7 +217,12 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
               <li key={e.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
                 <p className="font-medium text-[var(--foreground)]">{e.member.name}</p>
                 {e.overallScore != null ? (
-                  <p className="mt-1 text-sm text-[var(--primary)]">Score: {e.overallScore}</p>
+                  <p className="mt-1 text-sm text-[var(--primary)]">Headline score: {e.overallScore}</p>
+                ) : null}
+                {e.indexAScore != null || e.indexBScore != null || e.indexCScore != null ? (
+                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                    Triple: A {e.indexAScore ?? "—"} · B {e.indexBScore ?? "—"} · C {e.indexCScore ?? "—"}
+                  </p>
                 ) : null}
                 {e.narrative ? (
                   <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--muted-foreground)]">{e.narrative}</p>
@@ -174,9 +254,50 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
                         className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
                       />
                     </div>
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      <div>
+                        <label className="block text-xs font-medium" htmlFor={`idxA-${e.id}`}>
+                          Index A
+                        </label>
+                        <input
+                          id={`idxA-${e.id}`}
+                          name="indexAScore"
+                          type="text"
+                          inputMode="decimal"
+                          defaultValue={e.indexAScore != null ? String(e.indexAScore) : ""}
+                          className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium" htmlFor={`idxB-${e.id}`}>
+                          Index B
+                        </label>
+                        <input
+                          id={`idxB-${e.id}`}
+                          name="indexBScore"
+                          type="text"
+                          inputMode="decimal"
+                          defaultValue={e.indexBScore != null ? String(e.indexBScore) : ""}
+                          className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium" htmlFor={`idxC-${e.id}`}>
+                          Index C
+                        </label>
+                        <input
+                          id={`idxC-${e.id}`}
+                          name="indexCScore"
+                          type="text"
+                          inputMode="decimal"
+                          defaultValue={e.indexCScore != null ? String(e.indexCScore) : ""}
+                          className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                        />
+                      </div>
+                    </div>
                     <div>
                       <label className="block text-xs font-medium" htmlFor={`score-${e.id}`}>
-                        Overall score <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+                        Headline score <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
                       </label>
                       <input
                         id={`score-${e.id}`}
@@ -186,6 +307,18 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
                         defaultValue={e.overallScore != null ? String(e.overallScore) : ""}
                         className="mt-1 w-full max-w-xs rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
                       />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        id={`sync-${e.id}`}
+                        name="syncHeadlineFromTriple"
+                        type="checkbox"
+                        value="1"
+                        className="h-4 w-4 rounded border-[var(--border)]"
+                      />
+                      <label htmlFor={`sync-${e.id}`} className="text-xs text-[var(--foreground)]">
+                        Set headline from triple
+                      </label>
                     </div>
                     <div>
                       <label className="block text-xs font-medium" htmlFor={`met-${e.id}`}>

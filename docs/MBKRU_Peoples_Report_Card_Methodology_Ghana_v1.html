@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MBKRU People’s Report Card &amp; Government Performance Methodology (Ghana v1)</title>
+  <style>
+    :root {
+      --ink: #1a1a1a;
+      --muted: #444;
+      --line: #ccc;
+      --bg: #fafafa;
+      --accent: #0d4f3c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Georgia", "Times New Roman", serif;
+      line-height: 1.55;
+      color: var(--ink);
+      max-width: 48rem;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+      background: #fff;
+    }
+    h1 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 0.5rem;
+      margin-top: 0;
+    }
+    h2 {
+      font-size: 1.2rem;
+      margin-top: 2rem;
+      color: var(--accent);
+    }
+    h3 { font-size: 1.05rem; margin-top: 1.5rem; }
+    p { margin: 0.75rem 0; }
+    ul, ol { margin: 0.5rem 0 1rem; padding-left: 1.35rem; }
+    li { margin: 0.35rem 0; }
+    .meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin: 1rem 0;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 0.5rem 0.6rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: var(--bg); font-weight: 600; }
+    a { color: var(--accent); word-break: break-all; }
+    .disclaimer {
+      background: var(--bg);
+      border-left: 4px solid var(--accent);
+      padding: 0.75rem 1rem;
+      margin: 1.5rem 0;
+      font-size: 0.92rem;
+    }
+    @media print {
+      body { padding: 1rem; max-width: 100%; }
+      h2 { page-break-after: avoid; }
+      table { page-break-inside: avoid; }
+      a { color: #000; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>MBKRU People’s Report Card &amp; Government Performance Methodology (Ghana v1)</h1>
+  <p class="meta">Collated recommendation for editorial, data, and communications teams. Document version 1.0 — May 2026. MBKRU / mbkru-website.</p>
+  <p class="meta" style="background:#f0f7f4;border-left:4px solid var(--accent);padding:0.75rem 1rem;margin-top:1rem;">
+    <strong>Canonical public copy</strong> is maintained on the live site at <strong>/methodology</strong> (People’s Report Card — Ghana methodology block). Refresh this export when weights or governance rules change.
+  </p>
+
+  <h2>1. Purpose</h2>
+  <p>MBKRU exists to <strong>strengthen informed citizenship</strong> in Ghana’s <strong>constitutional democracy</strong> (1992 Constitution): voters and communities should see <strong>clear, sourced, and comparable</strong> information about <strong>how MPs perform their parliamentary duties</strong>, <strong>how accessible and responsive they are to constituents</strong>, and <strong>how the executive and governing majority deliver on published commitments</strong>—without pretending to be the <strong>Electoral Commission</strong>, <strong>Parliament</strong>, <strong>courts</strong>, or <strong>law enforcement</strong>.</p>
+  <p>This methodology defines <strong>what we measure</strong>, <strong>what data we accept</strong>, <strong>how scores are built</strong>, <strong>how citizen input is used</strong>, and <strong>what we will never claim</strong>.</p>
+
+  <h2>2. Core principles (non-negotiable)</h2>
+  <ol>
+    <li><strong>Separation of roles</strong>
+      <ul>
+        <li><strong>MP index</strong> = representative and parliamentary function (representation, law-making, oversight, constituency linkage).</li>
+        <li><strong>Government / programme index</strong> = executive and governing programme delivery (manifesto and policy commitments, national programmes).</li>
+      </ul>
+      We do not blame MPs for pure executive delivery failures unless the MP’s <strong>parliamentary oversight</strong> role is in scope and evidence exists.
+    </li>
+    <li><strong>Evidence ladder</strong>
+      <ul>
+        <li><strong>Tier A — Official / primary:</strong> Parliament of Ghana materials (e.g. Hansard via parliament.gh), parliamentary business lists, official registers, <strong>cited</strong> manifesto excerpts, gazettes, ministerial press statements where treated as primary for a specific claim.</li>
+        <li><strong>Tier B — Authoritative secondary:</strong> Supreme Court / CHRAJ / Auditor-General / reputable parliamentary monitors (e.g. ecosystem around Odekro-style Hansard aggregation) <strong>only</strong> as labelled secondary with links.</li>
+        <li><strong>Tier C — Citizen experience:</strong> structured, moderated MBKRU Voice and related submissions—<strong>reported experience</strong>, not adjudicated fact.</li>
+      </ul>
+    </li>
+    <li><strong>Non-ideological measurement</strong> We score <strong>presence, process, transparency, responsiveness, and documented outputs</strong>, not whether we agree with a party’s ideology or how an MP votes on value-laden bills—except where we publish a <strong>separate, optional</strong> “voting record viewer” with <strong>no value judgment</strong> (fact display only).</li>
+    <li><strong>Transparency and replicability</strong> Every published score lists: <strong>definition</strong>, <strong>formula</strong>, <strong>source</strong>, <strong>date pulled</strong>, <strong>known gaps</strong>, and <strong>change log</strong> between cycles.</li>
+    <li><strong>Harm reduction</strong> Serious allegations require <strong>strict moderation</strong>; we distinguish <strong>opinion</strong>, <strong>disputed fact</strong>, and <strong>proven fact</strong>; we comply with <strong>defamation and data-protection</strong> guidance.</li>
+  </ol>
+
+  <h2>3. What makes this “Ghana-style” and unique to MBKRU</h2>
+  <h3>Ghana anchors</h3>
+  <ul>
+    <li><strong>Constitutional duty to attend:</strong> Public discourse references <strong>Article 97(1)(c)</strong> and the <strong>15 sitting-days</strong> absence rule as a constitutional expectation. MBKRU uses this <strong>only as a published benchmark</strong> for interpreting attendance statistics—not as a legal determination of disqualification (that is for Parliament/courts).</li>
+    <li><strong>Hansard-first legislature:</strong> Official Hansard is published via Parliament of Ghana; civil society has increased access (e.g. Odekro). MBKRU prefers <strong>Hansard-derived metrics</strong> where machine access is reliable.</li>
+    <li><strong>Constituency development reality:</strong> Ghana’s MP-linked constituency project funding (DACF-related streams) is documented as politicised and often opaque. MBKRU treats <strong>constituency project visibility, procurement breadcrumbs, and citizen verification</strong> as a <strong>Ghana-specific “constituency delivery transparency”</strong> pillar.</li>
+  </ul>
+  <h3>MBKRU differentiators</h3>
+  <ol>
+    <li><strong>Triple ledger:</strong> One <strong>Legislative Duty Score</strong>, one <strong>Constituency Accountable Representation Score</strong>, one <strong>Citizen-Verified Experience Score</strong>—then a <strong>headline</strong> that <strong>never hides</strong> which ledger moved.</li>
+    <li><strong>Single citizen pipeline:</strong> The same structured MP performance reports feed both journalism/advocacy and the Experience Score, with <strong>published triage rules</strong>.</li>
+    <li><strong>Promise bridge:</strong> Government performance is explicitly tied to MBKRU-tracked manifesto commitments (dated, status-coded)—aligned with open-government commitment tracking, adapted to Ghana’s manifesto-led electoral cycles.</li>
+    <li><strong>Ghana fairness rules:</strong> Published adjustments for Speaker/Deputy, Majority/Minority leaders, ministers/parliamentary secretaries, long medical leave, by-election mid-term entry, and rural connectivity bias in citizen submissions.</li>
+  </ol>
+
+  <h2>4. Scope: two public products</h2>
+  <h3>4.1 People’s Report Card — MP &amp; constituency representation</h3>
+  <p><strong>Units:</strong> each ParliamentMember tied to an EC-aligned constituency.</p>
+  <p><strong>Output:</strong> per MP, per published cycle (e.g. half-year or annual): sub-indices + headline + narrative appendix.</p>
+  <h3>4.2 Government performance tracker — programmes and commitments</h3>
+  <p><strong>Units:</strong> government programme clusters and/or party manifesto commitments flagged as government programme, plus cross-cutting service delivery themes (health, roads, education, jobs, energy, sanitation).</p>
+  <p><strong>Output:</strong> completion / progress bands with evidence links; prefer theme dashboards before a single composite “president score.”</p>
+
+  <h2>5. MP methodology: three indices → one headline</h2>
+  <h3>5.1 Index A — Legislative Duty (0–100 points)</h3>
+  <p><strong>Intent:</strong> Does the MP show up and do the job of a legislator in Parliament?</p>
+  <p><strong>Structure:</strong> Four categories × 25 points = 100; each category may use five sub-metrics × 5 points (adjust to data you can maintain).</p>
+  <table>
+    <thead>
+      <tr><th>Category (25 pts each)</th><th>Ghana-adapted examples (sub-metrics 0–5)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>A1 Plenary &amp; voting presence</td><td>Sitting attendance; voting participation where roll-call exists; benchmark note vs public/constitutional expectations (context only); exclusions for Speaker/deputies and documented medical leave.</td></tr>
+      <tr><td>A2 Legislative initiative</td><td>Bills/motions/questions authored or formally moved (per Hansard/Order Paper); progression where trackable.</td></tr>
+      <tr><td>A3 Committee &amp; oversight</td><td>Committee membership, attendance, chairing; oversight tools (questions, Urgent Statements) if consistently codable.</td></tr>
+      <tr><td>A4 Integrity of parliamentary conduct</td><td>Only Tier A/B proven findings (formal sanctions, definitive committee findings)—zero points from raw allegations.</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Peer fairness:</strong> Use cohort-relative bands (e.g. quartiles vs median MP) where role mix would otherwise distort comparisons.</p>
+
+  <h3>5.2 Index B — Constituency Accountable Representation (0–50 points)</h3>
+  <p><strong>Intent:</strong> Can constituents reach the MP’s office and get meaningful engagement?</p>
+  <p><strong>Weighting (total 50):</strong></p>
+  <ul>
+    <li><strong>30 points — Availability &amp; constituency infrastructure:</strong> constituency office (yes/partial/no; address optional for security); surgeries/town halls frequency; casework capacity; declared outside roles (register of interests where complete); consistent public contact path.</li>
+    <li><strong>10 points — Parliamentary voice for the constituency:</strong> constituency-named interventions in Hansard, adjusted for ministerial speech constraints.</li>
+    <li><strong>10 points — Constituency project transparency (Ghana-specific):</strong> published project lists, budgets, locations, status attributable to MP/constituency role; points for documented public accounting; no points for uncited rumour.</li>
+  </ul>
+
+  <h3>5.3 Index C — Citizen-Verified Experience (0–30 points)</h3>
+  <p><strong>Intent:</strong> What do constituents report about responsiveness and respect in real interactions?</p>
+  <p><strong>Rule:</strong> This index measures service experience signals, not criminal guilt or EC outcomes.</p>
+  <p><strong>Structured fields (minimum):</strong> issue category; channel; date range; requested outcome; first response time if known; final status (open/referred/resolved/ignored); optional evidence; consent.</p>
+  <p><strong>Staff triage codes (publish taxonomy):</strong></p>
+  <ul>
+    <li><strong>V1 Verified experience</strong> — narrative + corroboration (second report, document, or staff check).</li>
+    <li><strong>V2 Partially supported</strong> — plausible, single source, no contradiction.</li>
+    <li><strong>V3 Unsupported / disputed</strong> — excluded from scoring; may inform qualitative annex only if ethically cleared.</li>
+  </ul>
+  <p><strong>Aggregation (brigade-resistant):</strong> medians and trimmed means; cap per verified cluster; publish response-time distribution and theme mix; optional normalisation by digital access proxy—publish proxy source.</p>
+
+  <h3>5.4 Headline MP score</h3>
+  <p><strong>Recommended v1 formula:</strong></p>
+  <p class="disclaimer"><strong>Headline = 0.50 × A (Legislative Duty) + 0.35 × B (Constituency Representation) + 0.15 × C (Citizen Experience)</strong></p>
+  <p>Rationale: parliamentary work carries largest weight for credibility; constituency representation matches Ghanaian political practice; citizen experience is meaningful but capped to limit gaming and selection bias.</p>
+  <p><strong>Display:</strong> optional letter bands or colour bands (“Strong / Adequate / Weak / Insufficient data”).</p>
+
+  <h2>6. Government performance methodology (parallel)</h2>
+  <p>Per commitment or programme item: (1) source artefact; (2) status: Not started → In progress → Substantially complete → Complete / Blocked (with reason); (3) evidence pack (1–3 citations per status change); (4) citizen reports as case evidence only—they do not alone mark a commitment complete.</p>
+  <p><strong>Dashboards:</strong> theme completion rates, stalled items, regional disparity where geotagged reports exist.</p>
+
+  <h2>7. Publication cycle and governance</h2>
+  <ol>
+    <li>Fixed cycles (e.g. biannual MP headline; quarterly component dashboards).</li>
+    <li>Freeze dates for datasets (Hansard pull, attendance, citizen report window).</li>
+    <li>Methodology council: review weights annually; no mid-cycle weight changes.</li>
+    <li>Pre-publication factual dispute window: MPs/staff may contest Tier A factual errors with evidence; no veto over Tier C experience summaries except factual mis-identification (wrong MP/constituency).</li>
+  </ol>
+
+  <h2>8. Ethics, limitations, mandatory disclaimers</h2>
+  <ul>
+    <li>Selection bias in digital submissions.</li>
+    <li>Constituency inequality; normalise where possible.</li>
+    <li>Coordinated campaigns: rate limits, dedupe, velocity anomalies.</li>
+    <li>Serious allegations: legal review before naming in scored components.</li>
+    <li>Scores are editorial analytics, not legal sanctions.</li>
+  </ul>
+
+  <h2>9. Implementation checklist</h2>
+  <ol>
+    <li>Data register: one row per metric → owner → frequency → URL template.</li>
+    <li>Hansard parser / manual coding SOP for A2/A3/B2 (start narrow).</li>
+    <li>MP onboarding survey for Index B.</li>
+    <li>Citizen form rubric + triage UI for staff.</li>
+    <li>Scorecard cycle objects + immutable cycle methodology snapshot.</li>
+    <li>Public methodology page + optional downloadable CSV of components for researchers.</li>
+  </ol>
+
+  <h2>10. One-sentence positioning</h2>
+  <p class="disclaimer">MBKRU’s Ghana methodology combines Hansard-grounded legislative duty, constituency transparency suited to Ghana’s project-fund politics, and structured citizen experience—merged only with explicit weights—while tracking government delivery against cited manifesto commitments like an open-government commitment register.</p>
+
+  <h2>11. Reference inspirations (external)</h2>
+  <ul>
+    <li>Grading Congress — Legislative Performance Index: <a href="https://gradingcongress.com/methodology">https://gradingcongress.com/methodology</a></li>
+    <li>Change.org — People-Power Index methodology: <a href="https://www.change.org/l/uk/the-people-power-index-methodology">https://www.change.org/l/uk/the-people-power-index-methodology</a></li>
+    <li>Scorecard Nigeria: <a href="https://scorecardnigeria.com/">https://scorecardnigeria.com/</a></li>
+    <li>IPU — Indicators for Democratic Parliaments (4.1.1): <a href="https://www.parliamentaryindicators.org/indicators/responsive/valuing-public-concerns/responding-public-concerns">https://www.parliamentaryindicators.org/indicators/responsive/valuing-public-concerns/responding-public-concerns</a></li>
+    <li>Open Government Partnership — IRM: <a href="https://www.opengovpartnership.org/irm-guidance-overview/">https://www.opengovpartnership.org/irm-guidance-overview/</a></li>
+    <li>Parliament of Ghana — Hansard docs: <a href="https://www.parliament.gh/docs?type=HS">https://www.parliament.gh/docs?type=HS</a></li>
+  </ul>
+
+  <p class="meta" style="margin-top:3rem;">End of document. To save as PDF: open this file in a browser → Print → Save as PDF.</p>
+</body>
+</html>

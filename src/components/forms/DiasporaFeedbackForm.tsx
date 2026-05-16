@@ -4,27 +4,14 @@ import type { TurnstileInstance } from "@marsidev/react-turnstile";
 import { useRef, useState } from "react";
 import { useForm, Controller, type DefaultValues } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
 import { focusRingSmClass, focusRingWithinSmClass } from "@/lib/primary-link-styles";
+import {
+  diasporaFeedbackFormSchema,
+  type DiasporaFeedbackFormInput,
+} from "@/lib/validation/public-forms";
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
-
-const schema = z.object({
-  fullName: z.string().min(1, "Please enter your full name").max(200),
-  email: z.string().min(1, "Please enter your email").email("Please enter a valid email").max(320),
-  dateOfVisit: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Choose the date of your visit"),
-  durationOfStay: z.string().min(1, "Please describe duration of stay").max(240),
-  eventsAttended: z.string().min(1, "Please list events or programmes").max(10_000),
-  overallRating: z.enum(["EXCELLENT", "GOOD", "FAIR", "POOR"]),
-  meaningfulAspects: z.string().min(1, "Please share what was most meaningful").max(10_000),
-  suggestionsImprovement: z.string().min(1, "Please share suggestions").max(10_000),
-  returnOrInvest: z.enum(["YES", "NO", "MAYBE"]),
-  signature: z.string().min(1, "Please type your full name as signature").max(200),
-  formSignedDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Choose the form date"),
-});
-
-type FormData = z.infer<typeof schema>;
 
 const inputBase = `mt-1.5 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition-shadow placeholder:text-[var(--muted-foreground)]/70 hover:border-[var(--primary)]/25 focus-visible:border-[var(--primary)]/35 ${focusRingSmClass} disabled:opacity-60`;
 
@@ -83,11 +70,13 @@ export function DiasporaFeedbackForm() {
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<FormData>({
-    resolver: zodResolver(schema),
+  } = useForm<DiasporaFeedbackFormInput>({
+    resolver: zodResolver(diasporaFeedbackFormSchema),
     defaultValues: {
+      engagementKind: "RECENT_VISIT",
       fullName: "",
       email: "",
       dateOfVisit: "",
@@ -97,10 +86,12 @@ export function DiasporaFeedbackForm() {
       suggestionsImprovement: "",
       signature: "",
       formSignedDate: todayIsoDate(),
-    } as DefaultValues<FormData>,
+    } as DefaultValues<DiasporaFeedbackFormInput>,
   });
 
-  async function onSubmit(data: FormData) {
+  const engagementKind = watch("engagementKind");
+
+  async function onSubmit(data: DiasporaFeedbackFormInput) {
     setStatus("idle");
     setErrorMessage(null);
     const ac = new AbortController();
@@ -110,7 +101,22 @@ export function DiasporaFeedbackForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...data,
+          engagementKind: data.engagementKind,
+          fullName: data.fullName,
+          email: data.email,
+          ...(data.engagementKind === "RECENT_VISIT"
+            ? {
+                dateOfVisit: data.dateOfVisit,
+                durationOfStay: data.durationOfStay,
+                eventsAttended: data.eventsAttended,
+              }
+            : {}),
+          overallRating: data.overallRating,
+          meaningfulAspects: data.meaningfulAspects,
+          suggestionsImprovement: data.suggestionsImprovement,
+          returnOrInvest: data.returnOrInvest,
+          signature: data.signature,
+          formSignedDate: data.formSignedDate,
           turnstileToken: turnstileToken ?? undefined,
         }),
         signal: ac.signal,
@@ -124,6 +130,7 @@ export function DiasporaFeedbackForm() {
       setReceivedAtIso(okJson.receivedAt ?? new Date().toISOString());
       setStatus("success");
       reset({
+        engagementKind: "RECENT_VISIT",
         fullName: "",
         email: "",
         dateOfVisit: "",
@@ -133,7 +140,7 @@ export function DiasporaFeedbackForm() {
         suggestionsImprovement: "",
         signature: "",
         formSignedDate: todayIsoDate(),
-      } as DefaultValues<FormData>);
+      } as DefaultValues<DiasporaFeedbackFormInput>);
       setTurnstileToken(null);
       turnstileRef.current?.reset();
     } catch (e) {
@@ -147,8 +154,58 @@ export function DiasporaFeedbackForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-10" noValidate>
+      <section className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-sm)] sm:p-8">
+        <h2 className={sectionTitle}>How are you engaging?</h2>
+        <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+          Pick one path so we ask the right questions. You can switch before you submit.
+        </p>
+        <Controller
+          name="engagementKind"
+          control={control}
+          render={({ field }) => (
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <label className={radioCard}>
+                <input
+                  type="radio"
+                  value="RECENT_VISIT"
+                  checked={field.value === "RECENT_VISIT"}
+                  onChange={() => field.onChange("RECENT_VISIT")}
+                  className="h-4 w-4 shrink-0 border-[var(--border)] text-[var(--primary)] focus:ring-[var(--primary)]"
+                />
+                <span>
+                  <span className="block font-semibold text-[var(--foreground)]">Recent visit to Ghana</span>
+                  <span className="mt-1 block text-xs font-normal text-[var(--muted-foreground)]">
+                    Summits, homecoming, family trips — tell us dates, stay length, and programmes.
+                  </span>
+                </span>
+              </label>
+              <label className={radioCard}>
+                <input
+                  type="radio"
+                  value="ABROAD_SUPPORTER"
+                  checked={field.value === "ABROAD_SUPPORTER"}
+                  onChange={() => field.onChange("ABROAD_SUPPORTER")}
+                  className="h-4 w-4 shrink-0 border-[var(--border)] text-[var(--primary)] focus:ring-[var(--primary)]"
+                />
+                <span>
+                  <span className="block font-semibold text-[var(--foreground)]">Engaging from abroad</span>
+                  <span className="mt-1 block text-xs font-normal text-[var(--muted-foreground)]">
+                    You support accountability, remittances, or networks without a recent trip — skip visit-only fields.
+                  </span>
+                </span>
+              </label>
+            </div>
+          )}
+        />
+        {errors.engagementKind && (
+          <p className="mt-2 text-sm text-red-600" role="alert">
+            {errors.engagementKind.message}
+          </p>
+        )}
+      </section>
+
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--section-light)]/40 p-6 sm:p-8">
-        <h2 className={sectionTitle}>Your visit</h2>
+        <h2 className={sectionTitle}>{engagementKind === "RECENT_VISIT" ? "Your visit" : "Your details"}</h2>
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <label htmlFor="fullName" className={labelClass}>
@@ -182,58 +239,74 @@ export function DiasporaFeedbackForm() {
               </p>
             )}
           </div>
-          <div>
-            <label htmlFor="dateOfVisit" className={labelClass}>
-              3. Date of visit
-            </label>
-            <input id="dateOfVisit" type="date" className={inputBase} {...register("dateOfVisit")} />
-            {errors.dateOfVisit && (
-              <p className="mt-1 text-sm text-red-600" role="alert">
-                {errors.dateOfVisit.message}
+          {engagementKind === "RECENT_VISIT" ? (
+            <>
+              <div>
+                <label htmlFor="dateOfVisit" className={labelClass}>
+                  3. Date of visit
+                </label>
+                <input id="dateOfVisit" type="date" className={inputBase} {...register("dateOfVisit")} />
+                {errors.dateOfVisit && (
+                  <p className="mt-1 text-sm text-red-600" role="alert">
+                    {errors.dateOfVisit.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label htmlFor="durationOfStay" className={labelClass}>
+                  4. Duration of stay
+                </label>
+                <input
+                  id="durationOfStay"
+                  type="text"
+                  placeholder="e.g. 2 weeks, 10 days"
+                  className={inputBase}
+                  {...register("durationOfStay")}
+                />
+                {errors.durationOfStay && (
+                  <p className="mt-1 text-sm text-red-600" role="alert">
+                    {errors.durationOfStay.message}
+                  </p>
+                )}
+              </div>
+              <div className="sm:col-span-2">
+                <label htmlFor="eventsAttended" className={labelClass}>
+                  5. Events / programmes attended
+                </label>
+                <textarea
+                  id="eventsAttended"
+                  rows={3}
+                  placeholder="Summits, community visits, meetings, tours…"
+                  className={`${inputBase} min-h-[100px] resize-y`}
+                  {...register("eventsAttended")}
+                />
+                {errors.eventsAttended && (
+                  <p className="mt-1 text-sm text-red-600" role="alert">
+                    {errors.eventsAttended.message}
+                  </p>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="sm:col-span-2 rounded-xl border border-[var(--primary)]/20 bg-[var(--primary)]/[0.04] p-4 text-sm text-[var(--muted-foreground)]">
+              <p>
+                <strong className="text-[var(--foreground)]">No visit details required.</strong> Use the sections below
+                to rate how useful MBKRU&apos;s diaspora signposting and accountability links are from your location, and
+                what we should improve next.
               </p>
-            )}
-          </div>
-          <div>
-            <label htmlFor="durationOfStay" className={labelClass}>
-              4. Duration of stay
-            </label>
-            <input
-              id="durationOfStay"
-              type="text"
-              placeholder="e.g. 2 weeks, 10 days"
-              className={inputBase}
-              {...register("durationOfStay")}
-            />
-            {errors.durationOfStay && (
-              <p className="mt-1 text-sm text-red-600" role="alert">
-                {errors.durationOfStay.message}
-              </p>
-            )}
-          </div>
-          <div className="sm:col-span-2">
-            <label htmlFor="eventsAttended" className={labelClass}>
-              5. Events / programmes attended
-            </label>
-            <textarea
-              id="eventsAttended"
-              rows={3}
-              placeholder="Summits, community visits, meetings, tours…"
-              className={`${inputBase} min-h-[100px] resize-y`}
-              {...register("eventsAttended")}
-            />
-            {errors.eventsAttended && (
-              <p className="mt-1 text-sm text-red-600" role="alert">
-                {errors.eventsAttended.message}
-              </p>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </section>
 
       <section className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-sm)] sm:p-8">
         <h2 className={sectionTitle}>Your experience</h2>
         <fieldset className="mt-6">
-          <legend className={labelClass}>6. How would you rate your overall experience in Ghana?</legend>
+          <legend className={labelClass}>
+            {engagementKind === "RECENT_VISIT"
+              ? "6. How would you rate your overall experience in Ghana?"
+              : "6. How would you rate MBKRU’s diaspora hub and signposting (this website)?"}
+          </legend>
           <Controller
             name="overallRating"
             control={control}
@@ -270,7 +343,9 @@ export function DiasporaFeedbackForm() {
 
         <div className="mt-8">
           <label htmlFor="meaningfulAspects" className={labelClass}>
-            7. What aspects of your visit were most meaningful?
+            {engagementKind === "RECENT_VISIT"
+              ? "7. What aspects of your visit were most meaningful?"
+              : "7. What matters most to you about Ghana from abroad? (accountability, documentation, partnerships…)"}
           </label>
           <textarea
             id="meaningfulAspects"
@@ -388,6 +463,17 @@ export function DiasporaFeedbackForm() {
             <p className="mt-1 text-sm text-green-800/90">
               We appreciate you taking the time to share your experience; it helps us strengthen diaspora engagement and
               programme follow-up.
+            </p>
+            <p className="mt-3 text-xs leading-relaxed text-green-900/85">
+              <strong className="font-semibold">What happens next:</strong> we aim to acknowledge submissions within{" "}
+              <strong className="font-semibold">five business days</strong> (Ghana / GMT). Urgent consular or immigration
+              questions should still go to your official mission or .gov.gh channels — MBKRU triages this form for
+              programme planning, not same-day consular service.
+            </p>
+            <p className="mt-2 text-xs leading-relaxed text-green-900/85">
+              When the site operator has configured email (<strong className="font-semibold">Resend</strong>), you may
+              receive a short <strong className="font-semibold">confirmation message</strong> at the address you
+              provided — check spam folders.
             </p>
           </div>
         </div>

@@ -37,6 +37,11 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
         description: "Review aggregate report trends and SLA signals.",
       },
       {
+        href: "/admin/analytics/mp-performance-signals",
+        label: "MP performance signals",
+        description: "MP performance intakes by MP and verification tier.",
+      },
+      {
         href: "/admin/analytics/mbkru-voice",
         label: "MBKRU Voice analytics",
         description: "Track chatbot and accessibility event performance.",

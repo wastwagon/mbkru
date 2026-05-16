@@ -8,6 +8,7 @@ const PROMISE_STATUS_PARAMS = [
   "FULFILLED",
   "BROKEN",
   "DEFERRED",
+  "BLOCKED",
 ] as const;
 
 export type PromisesApiFilters = {

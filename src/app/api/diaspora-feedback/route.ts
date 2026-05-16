@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 
 import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { normalizeLeadEmail } from "@/lib/normalize-email";
 import { createDiasporaFeedbackSubmission } from "@/lib/server/diaspora-feedback-submission";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
+import { sendDiasporaFeedbackAcknowledgement } from "@/lib/server/send-diaspora-feedback-ack-email";
 import { requireTurnstileIfConfigured } from "@/lib/server/verify-turnstile";
 import { diasporaFeedbackBodySchema } from "@/lib/validation/public-forms";
 
@@ -32,6 +34,7 @@ export async function POST(request: Request) {
     if (turnstileBlock) return turnstileBlock;
 
     const {
+      engagementKind,
       fullName,
       email,
       dateOfVisit,
@@ -47,6 +50,7 @@ export async function POST(request: Request) {
 
     try {
       const { createdAt } = await createDiasporaFeedbackSubmission({
+        engagementKind,
         fullName,
         email,
         dateOfVisit,
@@ -59,7 +63,21 @@ export async function POST(request: Request) {
         signature,
         formSignedDate,
       });
-      return NextResponse.json({ success: true, receivedAt: createdAt.toISOString() });
+      const receivedAtIso = createdAt.toISOString();
+      try {
+        const ack = await sendDiasporaFeedbackAcknowledgement({
+          to: normalizeLeadEmail(email),
+          fullName,
+          receivedAtIso,
+          engagementKind,
+        });
+        if (ack.mode === "failed") {
+          console.warn("[diaspora-feedback] acknowledgement email failed:", ack.detail ?? "");
+        }
+      } catch (ackErr) {
+        console.error("[diaspora-feedback] acknowledgement email threw", ackErr);
+      }
+      return NextResponse.json({ success: true, receivedAt: receivedAtIso });
     } catch (e) {
       console.error("[diaspora-feedback] failed to persist submission", e);
       return NextResponse.json(

@@ -58,8 +58,8 @@ export function getParticipateNavLinks(phase: PlatformPhase): PublicNavLink[] {
 }
 
 /**
- * Accountability — three citizen-facing pillars (government lens, parliamentarians hub & MP routes, published PRC).
- * Full catalogue (`/promises/browse`) remains reachable from the parliamentarians hub and deep links; it is not a fourth top-nav label.
+ * Accountability — government lens, parliamentarians hub, **how MBKRU measures & cites** (methodology), and published report card when enabled.
+ * Full catalogue (`/promises/browse`) remains reachable from the parliamentarians hub and deep links; it is not a separate top-nav label.
  */
 export function getAccountabilityNavLinks(phase: PlatformPhase): PublicNavLink[] {
   const links: PublicNavLink[] = [];
@@ -82,6 +82,12 @@ export function getAccountabilityNavLinks(phase: PlatformPhase): PublicNavLink[]
           activeExcludePathStartsWith: "/promises/browse",
         }
       : { activeWhenPathStartsWith: "/parliament-tracker" }),
+  });
+
+  links.push({
+    href: "/methodology",
+    label: "Methodology",
+    activeWhenPathStartsWith: "/methodology",
   });
 
   if (platformFeatures.publicReportCard(phase)) {
@@ -161,6 +167,7 @@ export function getFooterPlatformFlowLinks(phase: PlatformPhase): PublicNavLink[
   }
 
   links.push({ href: "/parliament-tracker", label: "Parliamentarians tracker" });
+  links.push({ href: "/methodology", label: "Methodology" });
 
   if (platformFeatures.publicReportCard(phase)) {
     links.push({ href: "/report-card", label: "People's Report Card" });

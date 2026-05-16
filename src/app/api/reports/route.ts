@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 
@@ -11,6 +12,7 @@ import { prisma } from "@/lib/db/prisma";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { roundApproximateCoord } from "@/lib/geo/round-approximate-coord";
 import { getMemberSession } from "@/lib/member/session";
+import { parseMpPerformanceRubric } from "@/lib/mp-performance-rubric";
 import { createReportBodySchema } from "@/lib/validation/reports";
 
 export async function POST(request: Request) {
@@ -88,6 +90,17 @@ export async function POST(request: Request) {
     const lat = roundApproximateCoord(data.latitude);
     const lng = roundApproximateCoord(data.longitude);
 
+    let mpPerformanceRubric: Prisma.InputJsonValue | undefined;
+    if (data.kind === "MP_PERFORMANCE") {
+      const rubric = parseMpPerformanceRubric(data.mpPerformanceRubric);
+      if (!rubric.ok) {
+        return NextResponse.json({ error: "Invalid MP performance rubric" }, { status: 400 });
+      }
+      if (rubric.value != null) {
+        mpPerformanceRubric = rubric.value as Prisma.InputJsonValue;
+      }
+    }
+
     const trackingCode = await allocateTrackingCode(prisma);
 
     const report = await prisma.citizenReport.create({
@@ -96,6 +109,9 @@ export async function POST(request: Request) {
         kind: data.kind,
         memberId: member?.memberId ?? null,
         parliamentMemberId,
+        ...(data.kind === "MP_PERFORMANCE" && mpPerformanceRubric != null
+          ? { mpPerformanceRubric }
+          : {}),
         submitterEmail: data.submitterEmail?.trim().toLowerCase() ?? null,
         submitterPhone: data.submitterPhone?.trim() ?? null,
         title: data.title,

@@ -6,6 +6,8 @@
 
 import { z } from "zod";
 
+import { mpPerformanceRubricSchema } from "@/lib/mp-performance-rubric";
+
 const STORAGE_KEY = "mbkru_report_queue_v1";
 export const MAX_QUEUED_REPORTS = 5;
 
@@ -25,6 +27,7 @@ export const queuedReportPayloadSchema = z
     regionId: z.string().cuid(),
     constituencyId: z.string().cuid().optional(),
     parliamentMemberId: z.string().cuid().optional(),
+    mpPerformanceRubric: mpPerformanceRubricSchema.optional(),
     localArea: z.string().trim().min(3).max(512),
     latitude: z.number().gte(-90).lte(90),
     longitude: z.number().gte(-180).lte(180),
@@ -49,6 +52,13 @@ export const queuedReportPayloadSchema = z
         code: "custom",
         message: "Select the MP this report is about.",
         path: ["parliamentMemberId"],
+      });
+    }
+    if (data.kind !== "MP_PERFORMANCE" && data.mpPerformanceRubric != null) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Rubric applies only to MP performance drafts.",
+        path: ["mpPerformanceRubric"],
       });
     }
   });
