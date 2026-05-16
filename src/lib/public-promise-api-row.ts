@@ -8,6 +8,8 @@ export type PublicPromiseApiRow = {
   sourceDate: string | null;
   verificationNotes: string | null;
   status: string;
+  /** Shown when status is BLOCKED (editorial explanation). */
+  blockedReason: string | null;
   updatedAt: string;
   electionCycle: string | null;
   partySlug: string | null;

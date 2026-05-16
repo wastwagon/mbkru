@@ -166,6 +166,10 @@ function StatusDonutWithLegend({
               Broken <span className={numClass}>{broken}</span>
             </li>
             <li className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-amber-500" aria-hidden />
+              Blocked <span className={numClass}>{blocked}</span>
+            </li>
+            <li className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-slate-400" aria-hidden />
               Tracking / deferred <span className={numClass}>{tracking}</span>
             </li>
@@ -243,8 +247,9 @@ export function PromiseTrackerStatsStrip({ stats, subtitle, compact }: Props) {
   const met = byStatus.FULFILLED ?? 0;
   const inProgress = byStatus.IN_PROGRESS ?? 0;
   const broken = byStatus.BROKEN ?? 0;
+  const blocked = byStatus.BLOCKED ?? 0;
   const tracking = (byStatus.TRACKING ?? 0) + (byStatus.DEFERRED ?? 0);
-  const statusSum = met + inProgress + broken + tracking;
+  const statusSum = met + inProgress + broken + blocked + tracking;
   const statusIntegrityOk = totalPromises === 0 || statusSum === totalPromises;
   const fulfilledSlicePct = totalPromises > 0 ? Math.round((met / totalPromises) * 1000) / 10 : 0;
   const mpCoverPct =
@@ -364,6 +369,7 @@ export function PromiseTrackerStatsStrip({ stats, subtitle, compact }: Props) {
             met={met}
             inProgress={inProgress}
             broken={broken}
+            blocked={blocked}
             tracking={tracking}
             fulfilledPct={fulfilledSlicePct}
             variant="dark"
@@ -392,6 +398,7 @@ export function PromiseTrackerStatsStrip({ stats, subtitle, compact }: Props) {
             met={met}
             inProgress={inProgress}
             broken={broken}
+            blocked={blocked}
             tracking={tracking}
             fulfilledPct={fulfilledSlicePct}
             variant="light"
