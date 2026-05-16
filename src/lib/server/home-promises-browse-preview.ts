@@ -1,8 +1,7 @@
 import "server-only";
 
-import { Prisma } from "@prisma/client";
-
 import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { isRecoverablePrismaSchemaError } from "@/lib/db/prisma-schema-recoverable";
 import type { PromisesBrowseHomePreview } from "@/lib/home-promises-browse-preview-types";
 import { parsePromisesApiFilters } from "@/lib/promises-api-filters";
 import type { PublicPromiseApiRow } from "@/lib/public-promise-api-row";
@@ -14,10 +13,6 @@ import {
 } from "@/lib/server/accountability-cache";
 
 export type { PromisesBrowseHomePreview } from "@/lib/home-promises-browse-preview-types";
-
-function isRecoverableSchemaError(err: unknown): boolean {
-  return err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2021";
-}
 
 /** Same default filter scope as `/promises/browse` — full catalogue for the live table. */
 export async function getPromisesBrowseHomePreview(): Promise<PromisesBrowseHomePreview | null> {
@@ -32,7 +27,8 @@ export async function getPromisesBrowseHomePreview(): Promise<PromisesBrowseHome
     const initialRows = apiRows as PublicPromiseApiRow[];
     return { stats, initialRows, trackerConstituencies };
   } catch (e) {
-    if (isRecoverableSchemaError(e)) return null;
-    throw e;
+    if (isRecoverablePrismaSchemaError(e)) return null;
+    console.error("[home-promises-browse-preview]", e);
+    return null;
   }
 }

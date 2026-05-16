@@ -1,8 +1,7 @@
 import "server-only";
 
-import { Prisma } from "@prisma/client";
-
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
+import { isRecoverablePrismaSchemaError } from "@/lib/db/prisma-schema-recoverable";
 import type {
   HomeAtAGlanceData,
   HomeCommunityTeaser,
@@ -36,10 +35,6 @@ function empty(): HomeAtAGlanceData {
   };
 }
 
-function isRecoverableSchemaError(err: unknown): boolean {
-  return err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2021";
-}
-
 async function loadPetitions(): Promise<HomePetitionTeaser[] | null> {
   try {
     const rows = await prisma.petition.findMany({
@@ -60,7 +55,7 @@ async function loadPetitions(): Promise<HomePetitionTeaser[] | null> {
       targetSignatures: p.targetSignatures,
     }));
   } catch (e) {
-    if (isRecoverableSchemaError(e)) return null;
+    if (isRecoverablePrismaSchemaError(e)) return null;
     console.error("[home-at-a-glance] petitions", e);
     return null;
   }
@@ -95,7 +90,7 @@ async function loadPublicCauses(): Promise<HomePublicCauseTeaser[] | null> {
         regionName: r.region?.name ?? null,
       }));
   } catch (e) {
-    if (isRecoverableSchemaError(e)) return null;
+    if (isRecoverablePrismaSchemaError(e)) return null;
     console.error("[home-at-a-glance] public causes", e);
     return null;
   }
@@ -128,7 +123,7 @@ async function loadCommunities(): Promise<HomeCommunityTeaser[] | null> {
       .slice(0, 4);
     return mapped;
   } catch (e) {
-    if (isRecoverableSchemaError(e)) return null;
+    if (isRecoverablePrismaSchemaError(e)) return null;
     console.error("[home-at-a-glance] communities", e);
     return null;
   }
@@ -146,7 +141,7 @@ async function loadTownHalls(): Promise<HomeTownHallTeaser[] | null> {
       status: ev.status,
     }));
   } catch (e) {
-    if (isRecoverableSchemaError(e)) return null;
+    if (isRecoverablePrismaSchemaError(e)) return null;
     console.error("[home-at-a-glance] town halls", e);
     return null;
   }
@@ -163,7 +158,7 @@ async function loadReportCard(): Promise<HomeReportCardTeaser | null> {
       entryCount: latest._count.entries,
     };
   } catch (e) {
-    if (isRecoverableSchemaError(e)) return null;
+    if (isRecoverablePrismaSchemaError(e)) return null;
     console.error("[home-at-a-glance] report card", e);
     return null;
   }
@@ -174,7 +169,7 @@ async function loadVoiceTotals(): Promise<HomeVoiceTeaser | null> {
     const totalReports = await prisma.citizenReport.count();
     return { totalReports };
   } catch (e) {
-    if (isRecoverableSchemaError(e)) return null;
+    if (isRecoverablePrismaSchemaError(e)) return null;
     console.error("[home-at-a-glance] voice totals", e);
     return null;
   }
