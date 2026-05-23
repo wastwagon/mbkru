@@ -5,6 +5,7 @@ import type { CitizenReportKind } from "@prisma/client";
 
 import { ReportCardBrowseCard } from "@/components/accountability/ReportCardBrowseCard";
 import { VoiceSubmissionBrowseCard } from "@/components/accountability/VoiceSubmissionBrowseCard";
+import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
 import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
@@ -276,9 +277,10 @@ export default async function ReportCardIndexPage({
           {/* Voice submissions — primary grid */}
           {voiceOn ? (
             <>
+              <AccountabilityDisclaimerCallout variant="voiceSubmissions" className="mx-auto mt-10 max-w-5xl" />
               <div
                 id="browse-voice"
-                className="mx-auto mt-10 max-w-5xl rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6"
+                className="mx-auto mt-6 max-w-5xl rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6"
               >
                 <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
                   Reports submitted (MBKRU Voice)
@@ -406,9 +408,10 @@ export default async function ReportCardIndexPage({
           {/* Official programme scores */}
           {showScores && hasCycles ? (
             <>
+              <AccountabilityDisclaimerCallout variant="reportCardScores" className="mx-auto mt-14 max-w-5xl" />
               <div
                 id="browse-scores"
-                className="mx-auto mt-14 max-w-5xl rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6"
+                className="mx-auto mt-6 max-w-5xl rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6"
               >
                 <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
                   Official programme scores (People&apos;s Report Card)

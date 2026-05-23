@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { MetricsDisplay } from "@/components/accountability/MetricsDisplay";
 import { ReportCardTripleLedger } from "@/components/accountability/ReportCardTripleLedger";
+import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
@@ -119,7 +120,8 @@ export default async function ReportCardYearPage({
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="text-sm text-[var(--muted-foreground)]">
+          <AccountabilityDisclaimerCallout variant="reportCardCycle" className="mt-0" />
+          <p className="mt-6 text-sm text-[var(--muted-foreground)]">
             <Link href="/report-card" className={primaryNavLinkClass}>
               ← All cycles
             </Link>
