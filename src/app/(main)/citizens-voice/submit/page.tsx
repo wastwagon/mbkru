@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { VoiceReportForm } from "@/components/forms/VoiceReportForm";
+import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 
 export const dynamic = "force-dynamic";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -57,6 +58,7 @@ export default async function SubmitVoiceReportPage() {
               Track an existing report
             </Link>
           </p>
+          <AccountabilityDisclaimerCallout variant="voiceSubmit" className="mb-8" />
           <VoiceReportForm regions={regions} mpOptions={mpOptions} />
         </div>
       </section>

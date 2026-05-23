@@ -6,6 +6,7 @@ import type { CitizenReportKind } from "@prisma/client";
 import { ReportCardBrowseCard } from "@/components/accountability/ReportCardBrowseCard";
 import { VoiceSubmissionBrowseCard } from "@/components/accountability/VoiceSubmissionBrowseCard";
 import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
+import { voiceSharingMindfulNote } from "@/config/site-disclaimers";
 import { PageHeader } from "@/components/ui/PageHeader";
 import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
@@ -198,7 +199,7 @@ export default async function ReportCardIndexPage({
             <p className="font-display text-lg font-semibold text-[var(--foreground)]">Your observations matter</p>
             <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
               Report MP performance, government delivery, situational issues, or election observations. Staff triage every
-              submission; you receive a tracking code.
+              submission; you receive a tracking code. {voiceSharingMindfulNote}
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
               {voiceOn ? (

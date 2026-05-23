@@ -2,20 +2,31 @@
 
 export const siteDisclaimerBanner = {
   /** Bump when banner copy changes so returning visitors see the updated notice once. */
-  version: 1,
+  version: 2,
   storageKey: "mbkru-site-disclaimer-banner-dismissed-v",
   ariaLabel: "Site notice",
   body:
-    "MBKRU is an independent civic accountability programme — not a government agency, court, or the Electoral Commission. Scores and citizen reports are editorial or triage tools, not legal findings.",
+    "MBKRU is an independent civic accountability programme — not a government agency, court, or the Electoral Commission. Scores and citizen reports are editorial or triage tools, not legal findings. When you share a report, stick to facts you can stand behind and avoid threats or knowingly false claims.",
   methodologyLabel: "Methodology",
   termsLabel: "Terms",
 } as const;
+
+/** Reused wherever users submit or browse Voice reports. */
+export const voiceSharingMindfulNote =
+  "Be mindful of what you share: describe what you observed, avoid threats or knowingly false claims, and include others’ personal details only when necessary for accountability.";
 
 export const accountabilityDisclaimers = {
   voiceSubmissions: {
     title: "About listed Voice submissions",
     body:
       "Titles and public threads reflect staff moderation and programme rules. They are not court filings, regulator decisions, or official election challenges. Do not use this list for emergency response — contact local emergency services when safety is at risk.",
+    sharingNote: voiceSharingMindfulNote,
+  },
+  voiceSubmit: {
+    title: "Before you submit",
+    body:
+      "Your report may be reviewed by staff and, where policy allows, summarized in public listings or threads. Take a moment to check accuracy and tone before sending.",
+    sharingNote: voiceSharingMindfulNote,
   },
   reportCardScores: {
     title: "About People's Report Card scores",

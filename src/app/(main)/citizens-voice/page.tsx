@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
+import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
@@ -71,6 +72,7 @@ export default async function CitizensVoicePage() {
       {/* Hero section — full-width with hero image */}
       <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <AccountabilityDisclaimerCallout variant="voiceSubmit" className="mb-6" />
           <div className="mb-6 rounded-xl border border-[var(--border)] bg-white p-4 text-sm text-[var(--muted-foreground)]">
             MBKRU Voice includes reporting tools and an AI-assisted customer service chat experience. Do not use chat for
             legal strategy or emergency response. For urgent safety matters, contact local emergency services first. See{" "}
