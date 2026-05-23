@@ -3,10 +3,11 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/ui/PageHeader";
+import { activeCommunityVisibilityFilter, communitiesBrowseHref } from "@/lib/communities-browse-shared";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { searchCommunitiesAndPosts } from "@/lib/server/communities-search";
 import { isCommunitiesBrowseEnabled } from "@/lib/reports/accountability-pages";
-import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { focusRingSmClass, focusRingPillClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { normalizeCommunitySearchQuery } from "@/lib/validation/communities";
 
 export const dynamic = "force-dynamic";
@@ -17,23 +18,52 @@ export const metadata: Metadata = {
     "Community spaces with forums, threaded discussion, and moderated posts — traditional areas and Queen Mother networks; join policy varies.",
 };
 
-type Props = { searchParams?: Promise<{ q?: string }> };
+type Props = { searchParams?: Promise<{ q?: string; region?: string }> };
 
 export default async function CommunitiesIndexPage({ searchParams }: Props) {
   if (!isCommunitiesBrowseEnabled() || !isDatabaseConfigured()) notFound();
 
   const sp = (await searchParams) ?? {};
   const rawQ = typeof sp.q === "string" ? sp.q : "";
+  const regionParam = typeof sp.region === "string" ? sp.region.trim() : "";
   const normalized = normalizeCommunitySearchQuery(rawQ);
   const hasQParam = rawQ.trim().length > 0;
   const invalidShort = hasQParam && !normalized;
 
+  const regionFilter = regionParam
+    ? await prisma.region.findFirst({
+        where: { slug: regionParam },
+        select: { id: true, slug: true, name: true },
+      })
+    : null;
+
   const searchResult = normalized ? await searchCommunitiesAndPosts(normalized) : null;
+
+  const regionPills = normalized
+    ? null
+    : await prisma.region.findMany({
+        where: {
+          communities: { some: activeCommunityVisibilityFilter },
+        },
+        orderBy: { sortOrder: "asc" },
+        select: {
+          slug: true,
+          name: true,
+          _count: {
+            select: {
+              communities: { where: activeCommunityVisibilityFilter },
+            },
+          },
+        },
+      });
 
   const communities = normalized
     ? null
     : await prisma.community.findMany({
-        where: { status: "ACTIVE", visibility: { in: ["PUBLIC", "MEMBERS_ONLY"] } },
+        where: {
+          ...activeCommunityVisibilityFilter,
+          ...(regionFilter ? { regionId: regionFilter.id } : {}),
+        },
         orderBy: { name: "asc" },
         select: {
           slug: true,
@@ -42,7 +72,7 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
           traditionalAreaName: true,
           joinPolicy: true,
           visibility: true,
-          region: { select: { name: true } },
+          region: { select: { name: true, slug: true } },
         },
       });
 
@@ -53,8 +83,16 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
         description="Spaces for traditional areas, Queen Mother networks, and local accountability. Each community can host forums (discussion areas), threaded posts, and replies — sign in to join members-only spaces and participate."
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--muted-foreground)]">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <p className="rounded-xl border border-[var(--border)] bg-white/90 px-4 py-3 text-xs leading-relaxed text-[var(--muted-foreground)] sm:text-sm">
+            Independent civic spaces linked to named traditional areas — not official Traditional Council channels.
+            Queen Mothers can request verified status after joining. See{" "}
+            <Link href="/methodology" className={primaryNavLinkClass}>
+              methodology
+            </Link>
+            .
+          </p>
+          <p className="mt-6 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--muted-foreground)]">
             <Link href="/parliament-tracker" className={primaryNavLinkClass}>
               Accountability hub
             </Link>
@@ -100,6 +138,59 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
               Results for &quot;{normalized}&quot; ·{" "}
               <Link href="/communities" className={primaryNavLinkClass}>
                 Clear
+              </Link>
+            </p>
+          ) : null}
+
+          {!normalized && regionPills && regionPills.length > 0 ? (
+            <nav
+              className="mt-6 flex flex-wrap gap-2"
+              aria-label="Filter communities by region"
+            >
+              <Link
+                href={communitiesBrowseHref({})}
+                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                  !regionFilter
+                    ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
+                    : "border border-[var(--border)] bg-white text-[var(--foreground)] hover:border-[var(--primary)]/40"
+                } ${focusRingPillClass}`}
+              >
+                All regions
+              </Link>
+              {regionPills.map((r) => {
+                const active = regionFilter?.slug === r.slug;
+                return (
+                  <Link
+                    key={r.slug}
+                    href={communitiesBrowseHref({ region: r.slug })}
+                    className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                      active
+                        ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
+                        : "border border-[var(--border)] bg-white text-[var(--foreground)] hover:border-[var(--primary)]/40"
+                    } ${focusRingPillClass}`}
+                  >
+                    {r.name}
+                    <span className="ml-1 font-normal opacity-80">({r._count.communities})</span>
+                  </Link>
+                );
+              })}
+            </nav>
+          ) : null}
+
+          {regionParam && !regionFilter && !normalized ? (
+            <p className="mt-4 text-sm text-amber-800">
+              Unknown region filter.{" "}
+              <Link href="/communities" className={primaryNavLinkClass}>
+                Show all communities
+              </Link>
+            </p>
+          ) : null}
+
+          {regionFilter && !normalized ? (
+            <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+              Showing {regionFilter.name} ·{" "}
+              <Link href="/communities" className={primaryNavLinkClass}>
+                Clear region
               </Link>
             </p>
           ) : null}

@@ -1,3 +1,33 @@
-communities.seed.json — civic spaces tied to named traditional areas.
-Ajumako: Queen Mothers listing on https://efuajumakotcouncil.com/?page=queens
-Sunyani context: public reporting via University of Energy and Natural Resources — https://uenr.edu.gh/
+communities.seed.json — civic spaces tied to named traditional areas (Phase 1 expansion).
+MBKRU does not represent any Traditional Council; descriptions cite public sources for editorial signposting only.
+
+Existing pilots
+- Ajumako: Queen Mothers listing — https://efuajumakotcouncil.com/?page=queens
+- Sunyani: UENR public reporting — https://uenr.edu.gh/
+
+Phase 1 additions (verify URLs before major comms)
+- Dormaa: GBC — https://www.gbcghanaonline.com/news/dormaa-chiefs-unveil-osagyefo-oseadeeyo-agyemang-badus-20th-anniversary/2019/
+- Osudoku: GNA — https://gna.org.gh/2026/01/osudoku-queenmother-hails-increase-in-allowances-for-traditional-leaders/
+- Ngleshie Amanfro: GhanaWeb — https://www.ghanaweb.com/GhanaHomePage/regional/Ngleshie-Amanfro-Queen-Mother-recognised-for-leadership-community-service-2035105
+- Shai, La, Oguaa, Anomabo, Mankessim, Manya Krobo, New Juaben, Akyem Abuakwa, Techiman: Ministry of Chieftaincy regional council lists — https://mcra.gov.gh/regional-houses-of-chiefs/
+- Akwamu: Atinka — https://atinkaonline.com/ghanas-longest-serving-paramount-queen-mother-marks-80-years-on-the-throne-in-grand-style/
+- Okuapem: MCRA + public council reporting (e.g. MyJoyOnline / GhanaWeb regional)
+- Nkonya: GNA — https://gna.org.gh/2025/07/queen-mothers-demand-representation-on-national-regional-houses-of-chiefs/
+- Denkyira: Graphic Online — https://www.graphic.com.gh/news/general-news/ghana-news-establish-house-of-queens-to-champion-womens-devt-queenmothers.html
+- Juaben (Dwaben): MCRA Ashanti list + customary queen-mother history (desk)
+- North Tongu: GNA — https://gna.org.gh/2026/04/all-regional-queenmothers-association-calls-for-inclusivity-in-decision-making-at-gender-ministry/
+
+Phase 3 additions — all 16 regions now represented in seed
+- Wa, Lawra: Upper West
+- Damongo: Savannah
+- Nalerigu: North East
+- Ho, Keta: Volta
+- Elmina (Edina), Asebu: Central
+- Tarkwa: Western
+- Bechem: Ahafo
+- Kintampo: Bono East
+- Ada: Greater Accra
+- Offinso, Kumawu: Ashanti
+Sources: https://mcra.gov.gh/regional-houses-of-chiefs/ unless noted in row description.
+
+Seed command: run prisma seed with SEED_COMMUNITIES_DEMO not set to 0 (default seeds communities JSON).

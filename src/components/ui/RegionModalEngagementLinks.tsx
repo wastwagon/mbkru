@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { OnlinePresenceCard } from "@/components/member/OnlinePresenceCard";
+import { communitiesBrowseHref } from "@/lib/communities-browse-shared";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 
 type HubPayload = {
@@ -97,6 +98,12 @@ export function RegionModalEngagementLinks({ regionSlug }: { regionSlug: string 
             ) : (
               <span className="text-xs text-[var(--muted-foreground)]">Report Card filters appear when Voice or scores are live.</span>
             )}
+            <Link
+              href={communitiesBrowseHref({ region: regionSlug })}
+              className={`inline-flex min-h-11 items-center justify-center rounded-xl border border-[var(--border)] bg-white px-4 py-2.5 text-center text-sm font-semibold text-[var(--primary)] transition-colors hover:bg-[var(--section-light)] ${focusRingSmClass}`}
+            >
+              Queen Mother &amp; traditional spaces
+            </Link>
             <Link href="/login" className={`inline-flex min-h-11 items-center text-sm font-semibold ${primaryLinkClass}`}>
               Sign in for regional presence →
             </Link>

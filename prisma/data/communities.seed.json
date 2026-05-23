@@ -18,5 +18,465 @@
     "joinPolicy": "OPEN",
     "visibility": "PUBLIC",
     "status": "ACTIVE"
+  },
+  {
+    "slug": "dormaa-traditional-council",
+    "name": "Dormaa traditional governance space",
+    "description": "Civic space linked to the Dormaa Traditional Area (Bono Region). Public reporting describes the Dormaa Traditional Council led by the Dormaahene alongside the paramount queen mother (Dormaahemaa); see GBC coverage of council leadership at https://www.gbcghanaonline.com/news/dormaa-chiefs-unveil-osagyefo-oseadeeyo-agyemang-badus-20th-anniversary/2019/. MBKRU does not represent the Council.",
+    "region_slug": "bono",
+    "traditionalAreaName": "Dormaa Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "osudoku-traditional-council",
+    "name": "Osudoku traditional governance space",
+    "description": "Civic space for dialogue linked to the Osudoku Traditional Area (Greater Accra / Shai-Osudoku). Ghana News Agency reports on the Osudoku Paramount Queen Mother and the Queen Mothers' Platform of Ghana (https://gna.org.gh/2026/01/osudoku-queenmother-hails-increase-in-allowances-for-traditional-leaders/). MBKRU is independent and does not speak for the Traditional Council.",
+    "region_slug": "greater-accra",
+    "traditionalAreaName": "Osudoku Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "ngleshie-amanfro-traditional-council",
+    "name": "Ngleshie Amanfro traditional governance space",
+    "description": "Civic space related to Ngleshie Amanfro (Greater Accra). Public reporting covers the Queen Mother of Ngleshie Amanfro in community leadership roles (https://www.ghanaweb.com/GhanaHomePage/regional/Ngleshie-Amanfro-Queen-Mother-recognised-for-leadership-community-service-2035105). Listed among Greater Accra traditional councils by the Ministry of Chieftaincy (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU does not represent the Council.",
+    "region_slug": "greater-accra",
+    "traditionalAreaName": "Ngleshie Amanfro Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "shai-traditional-council",
+    "name": "Shai traditional governance space",
+    "description": "Civic space linked to the Shai Traditional Area (Greater Accra). The Shai Traditional Council is listed among Greater Accra regional houses of chiefs (https://mcra.gov.gh/regional-houses-of-chiefs/). Queen-mother networks operate alongside paramount chiefs in many Ga-adjacent areas—verify current office holders with the Council. MBKRU does not represent the Council.",
+    "region_slug": "greater-accra",
+    "traditionalAreaName": "Shai Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "la-traditional-council",
+    "name": "La traditional governance space",
+    "description": "Civic space for concerns linked to the La Traditional Area (Greater Accra). The La Traditional Council is listed by the Ministry of Chieftaincy among Greater Accra houses of chiefs (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU provides a civic channel only—not a substitute for palace or municipal channels.",
+    "region_slug": "greater-accra",
+    "traditionalAreaName": "La Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "akwamu-traditional-council",
+    "name": "Akwamu traditional governance space",
+    "description": "Civic space linked to the Akwamu Traditional Area (Eastern Region). Public reporting describes Nana Afrakoma II as Paramount Queen Mother of Akwamu and long-serving traditional leadership at Akwamufie (https://atinkaonline.com/ghanas-longest-serving-paramount-queen-mother-marks-80-years-on-the-throne-in-grand-style/). MBKRU does not represent the Akwamu Traditional Council.",
+    "region_slug": "eastern",
+    "traditionalAreaName": "Akwamu Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "okuapem-traditional-council",
+    "name": "Okuapem traditional governance space",
+    "description": "Civic space related to Okuapeman / the Akuapem Traditional Area (Eastern Region). The Akuapem Traditional Council is listed among Eastern Region houses of chiefs (https://mcra.gov.gh/regional-houses-of-chiefs/); public reporting regularly references the Okuapem queen-mother role in council affairs. MBKRU is independent and does not speak for the Council.",
+    "region_slug": "eastern",
+    "traditionalAreaName": "Akuapem Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "manya-krobo-traditional-council",
+    "name": "Manya Krobo traditional governance space",
+    "description": "Civic space linked to the Manya Krobo Traditional Area (Eastern Region). The Manya Krobo Traditional Council is listed by the Ministry of Chieftaincy (https://mcra.gov.gh/regional-houses-of-chiefs/); Krobo governance includes paramount and divisional queen-mother stools in customary practice. MBKRU does not represent the Council.",
+    "region_slug": "eastern",
+    "traditionalAreaName": "Manya Krobo Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "new-juaben-traditional-council",
+    "name": "New Juaben traditional governance space",
+    "description": "Civic space for dialogue linked to the New Juaben Traditional Area (Eastern Region). The New Juaben Traditional Council is listed among Eastern Region houses of chiefs (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU provides civic signposting only—not palace representation.",
+    "region_slug": "eastern",
+    "traditionalAreaName": "New Juaben Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "akyem-abuakwa-traditional-council",
+    "name": "Akyem Abuakwa traditional governance space",
+    "description": "Civic space related to the Akyem Abuakwa Traditional Area (Eastern Region). The ohemaa (queen mother) institution is central to Akyem Abuakwa customary governance; the council is listed by the Ministry of Chieftaincy (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU does not represent the Ofori Panin Stool or Traditional Council.",
+    "region_slug": "eastern",
+    "traditionalAreaName": "Akyem Abuakwa Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "nkonya-traditional-council",
+    "name": "Nkonya traditional governance space",
+    "description": "Civic space linked to the Nkonya Traditional Area (Oti Region). Ghana News Agency reports Nana Otubea II as Paramount Queenmother of the Nkonya Traditional Council and president of the All-Regions Queen Mothers Association (https://gna.org.gh/2025/07/queen-mothers-demand-representation-on-national-regional-houses-of-chiefs/). MBKRU is independent and does not speak for the Council.",
+    "region_slug": "oti",
+    "traditionalAreaName": "Nkonya Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "denkyira-traditional-council",
+    "name": "Denkyira traditional governance space",
+    "description": "Civic space related to the Denkyira Traditional Area (Central Region). Public reporting describes Nana Ama Saara III as Paramount Queenmother of Denkyira advocating for queen-mother institutions nationally (https://www.graphic.com.gh/news/general-news/ghana-news-establish-house-of-queens-to-champion-womens-devt-queenmothers.html). MBKRU does not represent the Denkyira Traditional Council.",
+    "region_slug": "central",
+    "traditionalAreaName": "Denkyira Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "anomabo-traditional-council",
+    "name": "Anomabo traditional governance space",
+    "description": "Civic space for concerns linked to the Anomabo Traditional Area (Central Region). The Anomabo Traditional Council is listed among Central Region houses of chiefs (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU provides a civic channel only—verify leadership facts with official council sources.",
+    "region_slug": "central",
+    "traditionalAreaName": "Anomabo Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "oguaa-traditional-council",
+    "name": "Oguaa traditional governance space",
+    "description": "Civic space linked to the Oguaa Traditional Area (Cape Coast, Central Region). The Oguaa Traditional Council is listed by the Ministry of Chieftaincy (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU does not represent the Oguaa Traditional Council or Omanhene.",
+    "region_slug": "central",
+    "traditionalAreaName": "Oguaa Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "mankessim-traditional-council",
+    "name": "Mankessim traditional governance space",
+    "description": "Civic space related to the Mankessim Traditional Area (Central Region). The Mankessim Traditional Council is listed among Central Region houses of chiefs (https://mcra.gov.gh/regional-houses-of-chiefs/); the omanhemaa (queen mother) role is documented in public accounts of the area's governance. MBKRU is independent and does not speak for the Council.",
+    "region_slug": "central",
+    "traditionalAreaName": "Mankessim Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "juaben-traditional-council",
+    "name": "Juaben (Dwaben) traditional governance space",
+    "description": "Civic space linked to the Juaben (Dwaben) Traditional Area (Ashanti Region). Dwabenhemaa queens have historically co-governed with the Juabenhene under Asanteman custom; Juaben is among Ashanti paramountcies. Ministry listing: https://mcra.gov.gh/regional-houses-of-chiefs/. MBKRU does not represent the Traditional Council.",
+    "region_slug": "ashanti",
+    "traditionalAreaName": "Juaben Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "north-tongu-traditional-council",
+    "name": "North Tongu traditional governance space",
+    "description": "Civic space for dialogue linked to North Tongu (Volta Region). Ghana News Agency reports a North Tongu Queenmothers Association engaging national ministries on community programmes (https://gna.org.gh/2026/04/all-regional-queenmothers-association-calls-for-inclusivity-in-decision-making-at-gender-ministry/). MBKRU does not represent any traditional council in the area.",
+    "region_slug": "volta",
+    "traditionalAreaName": "North Tongu Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "techiman-traditional-council",
+    "name": "Techiman traditional governance space",
+    "description": "Civic space related to the Techiman Traditional Area (Bono East Region). Techiman is a major Bono East traditional seat; regional houses of chiefs are catalogued by the Ministry of Chieftaincy (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU provides civic signposting only—not palace representation.",
+    "region_slug": "bono-east",
+    "traditionalAreaName": "Techiman Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "twifo-traditional-council",
+    "name": "Twifo traditional governance space",
+    "description": "Civic space linked to the Twifo Traditional Area (Central Region). The Twifo Traditional Council is listed among Central Region houses of chiefs (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU does not represent the Council.",
+    "region_slug": "central",
+    "traditionalAreaName": "Twifo Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "abura-traditional-council",
+    "name": "Abura traditional governance space",
+    "description": "Civic space related to the Abura Traditional Area (Central Region). The Abura Traditional Council is listed by the Ministry of Chieftaincy (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU is independent and does not speak for the Council.",
+    "region_slug": "central",
+    "traditionalAreaName": "Abura Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "yilo-krobo-traditional-council",
+    "name": "Yilo Krobo traditional governance space",
+    "description": "Civic space linked to the Yilo Krobo Traditional Area (Eastern Region). The Yilo Krobo Traditional Council is listed among Eastern Region houses of chiefs (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU does not represent the Council.",
+    "region_slug": "eastern",
+    "traditionalAreaName": "Yilo Krobo Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "tema-traditional-council",
+    "name": "Tema traditional governance space",
+    "description": "Civic space for dialogue linked to the Tema Traditional Area (Greater Accra). The Tema Traditional Council is listed by the Ministry of Chieftaincy (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU provides civic signposting only—not palace representation.",
+    "region_slug": "greater-accra",
+    "traditionalAreaName": "Tema Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "nungua-traditional-council",
+    "name": "Nungua traditional governance space",
+    "description": "Civic space related to the Nungua Traditional Area (Greater Accra). The Nungua Traditional Council is listed among Greater Accra houses of chiefs (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU does not represent the Council.",
+    "region_slug": "greater-accra",
+    "traditionalAreaName": "Nungua Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "agogo-traditional-council",
+    "name": "Agogo traditional governance space",
+    "description": "Civic space linked to the Agogo Traditional Area (Ashanti Region). Agogo is among Ashanti paramountcies with queen-mother stools in customary practice; council listed at https://mcra.gov.gh/regional-houses-of-chiefs/. MBKRU does not represent the Agogo Traditional Council.",
+    "region_slug": "ashanti",
+    "traditionalAreaName": "Agogo Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "bekwai-traditional-council",
+    "name": "Bekwai traditional governance space",
+    "description": "Civic space related to the Bekwai Traditional Area (Ashanti Region). The Bekwai Traditional Council is listed among Ashanti Region houses of chiefs (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU is independent and does not speak for the Council.",
+    "region_slug": "ashanti",
+    "traditionalAreaName": "Bekwai Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "mampong-traditional-council",
+    "name": "Mampong traditional governance space",
+    "description": "Civic space for concerns linked to the Mampong Traditional Area (Ashanti Region). Mampong is a historic Asante paramountcy; Ministry council listing: https://mcra.gov.gh/regional-houses-of-chiefs/. MBKRU does not represent the Traditional Council.",
+    "region_slug": "ashanti",
+    "traditionalAreaName": "Mampong Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "goaso-traditional-council",
+    "name": "Goaso traditional governance space",
+    "description": "Civic space linked to the Goaso Traditional Area (Ahafo Region). The Goaso Traditional Council is listed among Ahafo Region houses of chiefs (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU provides civic signposting only.",
+    "region_slug": "ahafo",
+    "traditionalAreaName": "Goaso Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "wenchi-traditional-council",
+    "name": "Wenchi traditional governance space",
+    "description": "Civic space related to the Wenchi Traditional Area (Bono East Region). The Wenchi Traditional Council is listed by the Ministry of Chieftaincy (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU does not represent the Council.",
+    "region_slug": "bono-east",
+    "traditionalAreaName": "Wenchi Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "sekondi-traditional-council",
+    "name": "Sekondi traditional governance space",
+    "description": "Civic space for dialogue linked to the Sekondi Traditional Area (Western Region). Sekondi is a major Western Region traditional seat; councils are catalogued at https://mcra.gov.gh/regional-houses-of-chiefs/. MBKRU is independent and does not speak for the Council.",
+    "region_slug": "western",
+    "traditionalAreaName": "Sekondi Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "tamale-traditional-council",
+    "name": "Tamale traditional governance space",
+    "description": "Civic space linked to the Tamale Traditional Area (Northern Region). The Tamale Traditional Council is listed among Northern Region houses of chiefs (https://mcra.gov.gh/regional-houses-of-chiefs/). Queen-mother roles vary by northern custom—verify with official sources. MBKRU does not represent the Council.",
+    "region_slug": "northern",
+    "traditionalAreaName": "Tamale Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "bolgatanga-traditional-council",
+    "name": "Bolgatanga traditional governance space",
+    "description": "Civic space related to the Bolgatanga Traditional Area (Upper East Region). The Bolgatanga Traditional Council is listed by the Ministry of Chieftaincy (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU provides civic signposting only—not palace representation.",
+    "region_slug": "upper-east",
+    "traditionalAreaName": "Bolgatanga Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "sefwi-wiawso-traditional-council",
+    "name": "Sefwi Wiawso traditional governance space",
+    "description": "Civic space for concerns linked to the Sefwi Wiawso Traditional Area (Western North Region). Traditional councils in Western North are catalogued by the Ministry of Chieftaincy (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU does not represent the Council.",
+    "region_slug": "western-north",
+    "traditionalAreaName": "Sefwi Wiawso Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "wa-traditional-council",
+    "name": "Wa traditional governance space",
+    "description": "Civic space linked to the Wa Traditional Area (Upper West Region). The Wa Traditional Council is listed among Upper West houses of chiefs (https://mcra.gov.gh/regional-houses-of-chiefs/). Queen-mother institutions are being strengthened in some northern areas—verify current office holders with the Council. MBKRU does not represent the Council.",
+    "region_slug": "upper-west",
+    "traditionalAreaName": "Wa Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "lawra-traditional-council",
+    "name": "Lawra traditional governance space",
+    "description": "Civic space related to the Lawra Traditional Area (Upper West Region). Traditional councils in Upper West are catalogued by the Ministry of Chieftaincy (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU provides civic signposting only—not palace representation.",
+    "region_slug": "upper-west",
+    "traditionalAreaName": "Lawra Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "damongo-traditional-council",
+    "name": "Damongo traditional governance space",
+    "description": "Civic space for dialogue linked to the Damongo Traditional Area (Savannah Region). The Savannah Region traditional councils are listed by the Ministry of Chieftaincy (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU is independent and does not speak for the Council.",
+    "region_slug": "savannah",
+    "traditionalAreaName": "Damongo Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "nalerigu-traditional-council",
+    "name": "Nalerigu traditional governance space",
+    "description": "Civic space linked to the Nalerigu Traditional Area (North East Region). The North East Region houses of chiefs are catalogued at https://mcra.gov.gh/regional-houses-of-chiefs/. MBKRU does not represent the Traditional Council.",
+    "region_slug": "north-east",
+    "traditionalAreaName": "Nalerigu Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "ho-traditional-council",
+    "name": "Ho traditional governance space",
+    "description": "Civic space related to the Ho Traditional Area (Volta Region). Ho is a major Volta Region traditional seat; councils are listed by the Ministry of Chieftaincy (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU provides civic signposting only.",
+    "region_slug": "volta",
+    "traditionalAreaName": "Ho Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "keta-traditional-council",
+    "name": "Keta traditional governance space",
+    "description": "Civic space for concerns linked to the Keta Traditional Area (Volta Region). The Keta area has long-standing traditional governance along the coast; verify leadership with official sources. Ministry council index: https://mcra.gov.gh/regional-houses-of-chiefs/. MBKRU does not represent the Council.",
+    "region_slug": "volta",
+    "traditionalAreaName": "Keta Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "elmina-traditional-council",
+    "name": "Elmina (Edina) traditional governance space",
+    "description": "Civic space linked to the Edina (Elmina) Traditional Area (Central Region). Elmina is a historic coastal traditional seat; Central Region councils are listed at https://mcra.gov.gh/regional-houses-of-chiefs/. MBKRU is independent and does not speak for the Council.",
+    "region_slug": "central",
+    "traditionalAreaName": "Edina (Elmina) Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "asebu-traditional-council",
+    "name": "Asebu traditional governance space",
+    "description": "Civic space related to the Asebu Traditional Area (Central Region). The Asebu Traditional Council is listed among Central Region houses of chiefs (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU does not represent the Council.",
+    "region_slug": "central",
+    "traditionalAreaName": "Asebu Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "tarkwa-traditional-council",
+    "name": "Tarkwa traditional governance space",
+    "description": "Civic space for dialogue linked to the Tarkwa area (Western Region mining district). Western Region traditional councils are catalogued by the Ministry of Chieftaincy (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU provides civic signposting only.",
+    "region_slug": "western",
+    "traditionalAreaName": "Tarkwa Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "bechem-traditional-council",
+    "name": "Bechem traditional governance space",
+    "description": "Civic space linked to the Bechem Traditional Area (Ahafo Region). The Bechem Traditional Council is listed among Ahafo Region houses of chiefs (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU does not represent the Council.",
+    "region_slug": "ahafo",
+    "traditionalAreaName": "Bechem Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "kintampo-traditional-council",
+    "name": "Kintampo traditional governance space",
+    "description": "Civic space related to the Kintampo Traditional Area (Bono East Region). Kintampo is listed among Bono East traditional councils (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU is independent and does not speak for the Council.",
+    "region_slug": "bono-east",
+    "traditionalAreaName": "Kintampo Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "ada-traditional-council",
+    "name": "Ada traditional governance space",
+    "description": "Civic space for concerns linked to the Ada Traditional Area (Greater Accra). The Ada Traditional Council is listed by the Ministry of Chieftaincy (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU does not represent the Council.",
+    "region_slug": "greater-accra",
+    "traditionalAreaName": "Ada Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "offinso-traditional-council",
+    "name": "Offinso traditional governance space",
+    "description": "Civic space linked to the Offinso Traditional Area (Ashanti Region). Offinso is among Ashanti paramountcies with queen-mother stools in customary practice; Ministry listing: https://mcra.gov.gh/regional-houses-of-chiefs/. MBKRU provides civic signposting only.",
+    "region_slug": "ashanti",
+    "traditionalAreaName": "Offinso Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "kumawu-traditional-council",
+    "name": "Kumawu traditional governance space",
+    "description": "Civic space related to the Kumawu Traditional Area (Ashanti Region). Kumawu is a historic Sekyere paramountcy; Ashanti councils are catalogued at https://mcra.gov.gh/regional-houses-of-chiefs/. MBKRU does not represent the Traditional Council.",
+    "region_slug": "ashanti",
+    "traditionalAreaName": "Kumawu Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
   }
 ]
