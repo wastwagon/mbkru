@@ -3,10 +3,12 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { CommunityMemberPanel } from "@/components/communities/CommunityMemberPanel";
+import { CommunityQueenMotherBadge } from "@/components/communities/CommunityQueenMotherBadge";
 import { CommunityThreadCard } from "@/components/communities/CommunityThreadCard";
 import { CommunityOnlinePresence } from "@/components/member/CommunityOnlinePresence";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
+import { communitiesBrowseHref } from "@/lib/communities-browse-shared";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { getMemberSession } from "@/lib/member/session";
 import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
@@ -16,6 +18,7 @@ import {
   canReadCommunityPosts,
   findMembership,
 } from "@/lib/server/communities-access";
+import { countVerifiedQueenMothersForCommunity } from "@/lib/server/communities-verified";
 import { listCommunityForums } from "@/lib/server/community-forums-public";
 import { listCommunityPostsVisibleToViewer } from "@/lib/server/community-posts-public";
 import { isCommunitySlug } from "@/lib/validation/communities";
@@ -45,12 +48,14 @@ export default async function CommunityDetailPage({ params }: Props) {
   const c = await prisma.community.findFirst({
     where: { slug, status: "ACTIVE" },
     include: {
-      region: { select: { name: true } },
+      region: { select: { name: true, slug: true } },
       _count: { select: { memberships: true } },
     },
   });
 
   if (!c) notFound();
+
+  const verifiedQueenMotherCount = await countVerifiedQueenMothersForCommunity(c.id);
 
   const session = await getMemberSession();
   const membership = session ? await findMembership(c.id, session.memberId) : null;
@@ -109,7 +114,26 @@ export default async function CommunityDetailPage({ params }: Props) {
               <dt className="inline font-medium text-[var(--foreground)]">Members: </dt>
               <dd className="inline tabular-nums">{c._count.memberships}</dd>
             </div>
+            {verifiedQueenMotherCount > 0 ? (
+              <div>
+                <dt className="inline font-medium text-[var(--foreground)]">Queen Mother: </dt>
+                <dd className="inline">
+                  <CommunityQueenMotherBadge count={verifiedQueenMotherCount} variant="inline" />
+                </dd>
+              </div>
+            ) : null}
           </dl>
+          {c.region ? (
+            <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+              More traditional spaces in {c.region.name}:{" "}
+              <Link
+                href={communitiesBrowseHref({ region: c.region.slug, join: "open" })}
+                className={primaryNavLinkClass}
+              >
+                Browse {c.region.name} communities →
+              </Link>
+            </p>
+          ) : null}
           <div className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
             <h2 className="text-sm font-semibold text-[var(--foreground)]">About</h2>
             {showFullAbout ? (

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { CommunityQueenMotherBadge } from "@/components/communities/CommunityQueenMotherBadge";
 import { focusRingSmClass, primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 
 export type CommunityBrowseCardProps = {
@@ -11,6 +12,7 @@ export type CommunityBrowseCardProps = {
   visibility: "PUBLIC" | "MEMBERS_ONLY";
   joinPolicy: "OPEN" | "APPROVAL_REQUIRED";
   memberCount?: number;
+  verifiedQueenMotherCount?: number;
 };
 
 export function CommunityBrowseCard({
@@ -22,6 +24,7 @@ export function CommunityBrowseCard({
   visibility,
   joinPolicy,
   memberCount,
+  verifiedQueenMotherCount = 0,
 }: CommunityBrowseCardProps) {
   const joinHref = `/communities/${encodeURIComponent(slug)}#join`;
   const joinLabel = joinPolicy === "OPEN" ? "Join now" : "Request to join";
@@ -35,6 +38,11 @@ export function CommunityBrowseCard({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <Link href={`/communities/${slug}`} className="block min-w-0 flex-1">
           <span className="font-semibold text-[var(--foreground)]">{name}</span>
+          {verifiedQueenMotherCount > 0 ? (
+            <span className="ml-2">
+              <CommunityQueenMotherBadge />
+            </span>
+          ) : null}
           {visibility === "MEMBERS_ONLY" ? (
             <span className="ml-2 rounded-full bg-[var(--section-light)] px-2 py-0.5 text-[10px] font-semibold uppercase text-[var(--foreground)]">
               Members only

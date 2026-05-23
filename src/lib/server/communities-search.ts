@@ -37,6 +37,7 @@ export type CommunitiesSearchResult = {
 export type CommunitySearchFilters = {
   regionId?: string;
   joinPolicy?: "OPEN" | "APPROVAL_REQUIRED";
+  verifiedOnly?: boolean;
 };
 
 export async function searchCommunitiesAndPosts(
@@ -49,6 +50,14 @@ export async function searchCommunitiesAndPosts(
     : Prisma.empty;
   const joinClause = filters?.joinPolicy
     ? Prisma.sql`AND c."joinPolicy" = ${filters.joinPolicy}`
+    : Prisma.empty;
+  const verifiedClause = filters?.verifiedOnly
+    ? Prisma.sql`AND EXISTS (
+        SELECT 1 FROM "CommunityMembership" m
+        WHERE m."communityId" = c.id
+          AND m.state = 'ACTIVE'
+          AND m.role = 'QUEEN_MOTHER_VERIFIED'
+      )`
     : Prisma.empty;
 
   const communityRows = await prisma.$queryRaw<
@@ -79,6 +88,7 @@ export async function searchCommunitiesAndPosts(
       ) @@ plainto_tsquery('simple', ${q})
       ${regionClause}
       ${joinClause}
+      ${verifiedClause}
     ORDER BY rank DESC, c.name ASC
     LIMIT ${LIMIT_COMMUNITIES}
   `);

@@ -8,6 +8,7 @@ import {
   parseCommunitiesJoinFilter,
   parseCommunitiesSort,
   sortLabel,
+  verifiedQueenMotherBrowseFilter,
 } from "@/lib/communities-browse-shared";
 
 describe("communitiesBrowseHref", () => {
@@ -20,6 +21,9 @@ describe("communitiesBrowseHref", () => {
     expect(communitiesBrowseHref({ region: "central", join: "open", sort: "traditional" })).toBe(
       "/communities?region=central&join=open&sort=traditional",
     );
+    expect(communitiesBrowseHref({ verified: true, region: "central" })).toBe(
+      "/communities?region=central&verified=1",
+    );
   });
 });
 
@@ -30,9 +34,18 @@ describe("parseCommunitiesBrowseParams", () => {
       region: undefined,
       join: "open",
       sort: "region",
+      verified: false,
     });
+    expect(parseCommunitiesBrowseParams({ verified: "1" }).verified).toBe(true);
     expect(parseCommunitiesJoinFilter("nope")).toBe("all");
     expect(parseCommunitiesSort("nope")).toBe("name");
+  });
+});
+
+describe("verifiedQueenMotherBrowseFilter", () => {
+  it("restricts to communities with verified queen mothers", () => {
+    expect(verifiedQueenMotherBrowseFilter(true).memberships).toBeDefined();
+    expect(verifiedQueenMotherBrowseFilter(false)).toEqual({});
   });
 });
 

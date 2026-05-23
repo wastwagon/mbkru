@@ -254,6 +254,15 @@ export const starterNewsArticles = [
     image: images.community,
     featured: false,
   },
+  {
+    slug: "queen-mother-communities-launch",
+    title: "53 Traditional-Area Civic Spaces Now Open on MBKRU",
+    excerpt:
+      "Find Queen Mother and traditional council spaces by region, join open communities after sign-in, and connect with verified leadership where available.",
+    date: "23 May 2026",
+    image: images.community,
+    featured: true,
+  },
 ] as const;
 
 /** FAQ entries for the public FAQ page */

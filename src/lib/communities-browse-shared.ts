@@ -15,6 +15,7 @@ export type CommunitiesBrowseParams = {
   region?: string;
   join?: CommunitiesJoinFilter;
   sort?: CommunitiesSort;
+  verified?: boolean;
 };
 
 export function parseCommunitiesJoinFilter(raw: string | undefined): CommunitiesJoinFilter {
@@ -32,14 +33,17 @@ export function parseCommunitiesBrowseParams(sp: {
   region?: string;
   join?: string;
   sort?: string;
+  verified?: string;
 }): CommunitiesBrowseParams {
   const rawQ = typeof sp.q === "string" ? sp.q : "";
   const region = typeof sp.region === "string" ? sp.region.trim() : "";
+  const verifiedRaw = typeof sp.verified === "string" ? sp.verified.trim().toLowerCase() : "";
   return {
     q: rawQ,
     region: region || undefined,
     join: parseCommunitiesJoinFilter(typeof sp.join === "string" ? sp.join : undefined),
     sort: parseCommunitiesSort(typeof sp.sort === "string" ? sp.sort : undefined),
+    verified: verifiedRaw === "1" || verifiedRaw === "true" || verifiedRaw === "yes",
   };
 }
 
@@ -49,6 +53,7 @@ export function communitiesBrowseHref(opts: CommunitiesBrowseParams) {
   if (opts.region?.trim()) sp.set("region", opts.region.trim());
   if (opts.join && opts.join !== "all") sp.set("join", opts.join);
   if (opts.sort && opts.sort !== "name") sp.set("sort", opts.sort);
+  if (opts.verified) sp.set("verified", "1");
   const qs = sp.toString();
   return qs ? `/communities?${qs}` : "/communities";
 }
@@ -57,6 +62,18 @@ export function joinPolicyBrowseFilter(join: CommunitiesJoinFilter): Prisma.Comm
   if (join === "open") return { joinPolicy: "OPEN" };
   if (join === "approval") return { joinPolicy: "APPROVAL_REQUIRED" };
   return {};
+}
+
+export function verifiedQueenMotherBrowseFilter(verified: boolean | undefined): Prisma.CommunityWhereInput {
+  if (!verified) return {};
+  return {
+    memberships: {
+      some: {
+        state: "ACTIVE",
+        role: "QUEEN_MOTHER_VERIFIED",
+      },
+    },
+  };
 }
 
 export function communityListOrderBy(sort: CommunitiesSort): Prisma.CommunityOrderByWithRelationInput[] {

@@ -35,8 +35,9 @@ export function CommunitiesBrowseFilters({
 }: Props) {
   const join = params.join ?? "all";
   const sort = params.sort ?? "name";
-  const hasExtraFilters = join !== "all" || sort !== "name" || Boolean(params.region);
-  const browseBase = { join, sort };
+  const verified = Boolean(params.verified);
+  const hasExtraFilters = join !== "all" || sort !== "name" || Boolean(params.region) || verified;
+  const browseBase = { join, sort, verified: verified || undefined };
 
   return (
     <>
@@ -138,6 +139,22 @@ export function CommunitiesBrowseFilters({
           </div>
         </div>
 
+        <label className="flex items-start gap-2 text-sm text-[var(--foreground)]">
+          <input
+            type="checkbox"
+            name="verified"
+            value="1"
+            defaultChecked={verified}
+            className="mt-1 h-4 w-4 rounded border-[var(--border)] text-[var(--primary)]"
+          />
+          <span>
+            <span className="font-medium">Verified Queen Mothers only</span>
+            <span className="mt-0.5 block text-xs text-[var(--muted-foreground)]">
+              Show spaces where at least one Queen Mother has completed MBKRU verification.
+            </span>
+          </span>
+        </label>
+
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="submit"
@@ -162,6 +179,7 @@ export function CommunitiesBrowseFilters({
           Results for &quot;{params.q.trim()}&quot;
           {regionName ? ` in ${regionName}` : null}
           {joinFilterLabel(join) ? ` · ${joinFilterLabel(join)}` : null}
+          {verified ? " · Verified Queen Mothers" : null}
           {" · "}
           <Link href={communitiesBrowseHref({ ...browseBase, region: params.region })} className={primaryNavLinkClass}>
             Clear search
@@ -169,24 +187,25 @@ export function CommunitiesBrowseFilters({
         </p>
       ) : null}
 
-      {!params.q?.trim() && (regionName || join !== "all" || sort !== "name") ? (
+      {!params.q?.trim() && (regionName || join !== "all" || sort !== "name" || verified) ? (
         <p className="mt-3 text-sm text-[var(--muted-foreground)]">
           {typeof resultCount === "number" ? (
             <>
               Showing {resultCount} {resultCount === 1 ? "space" : "spaces"}
               {regionName ? ` in ${regionName}` : null}
               {joinFilterLabel(join) ? ` · ${joinFilterLabel(join)}` : null}
+              {verified ? " · Verified Queen Mothers" : null}
               {sort !== "name" ? ` · ${sortLabel(sort)}` : null}
             </>
           ) : null}
           {regionName ? (
             <>
               {" · "}
-              <Link href={communitiesBrowseHref({ join, sort })} className={primaryNavLinkClass}>
+              <Link href={communitiesBrowseHref({ join, sort, verified: verified || undefined })} className={primaryNavLinkClass}>
                 Clear region
               </Link>
             </>
-          ) : join !== "all" || sort !== "name" ? (
+          ) : join !== "all" || sort !== "name" || verified ? (
             <>
               {" · "}
               <Link href="/communities" className={primaryNavLinkClass}>
@@ -207,14 +226,23 @@ export function CommunitiesBrowseFilters({
       ) : null}
 
       <nav className="mt-4 flex flex-wrap gap-2" aria-label="Quick filters">
-        <Link href={communitiesBrowseHref({ ...browseBase })} className={chipClass(!params.region && join === "all")}>
+        <Link
+          href={communitiesBrowseHref({ join, sort, verified: verified || undefined })}
+          className={chipClass(!params.region && join === "all" && !verified)}
+        >
           All regions
         </Link>
         <Link
           href={communitiesBrowseHref({ ...browseBase, region: params.region, join: "open" })}
-          className={chipClass(join === "open")}
+          className={chipClass(join === "open" && !verified)}
         >
           Open to join
+        </Link>
+        <Link
+          href={communitiesBrowseHref({ ...browseBase, region: params.region, verified: true })}
+          className={chipClass(verified)}
+        >
+          Verified Queen Mothers
         </Link>
         {regions.map((r) => {
           const active = params.region === r.slug;

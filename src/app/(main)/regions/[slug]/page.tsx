@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { RegionCommunitiesSpotlight } from "@/components/regions/RegionCommunitiesSpotlight";
 import { RegionDetailContent } from "@/components/regions/RegionDetailContent";
 import { RegionReportCardsSection } from "@/components/regions/RegionReportCardsSection";
 import { RegionModalEngagementLinks } from "@/components/ui/RegionModalEngagementLinks";
@@ -78,7 +79,10 @@ export default async function RegionHubPage({ params, searchParams }: Props) {
         </div>
       </section>
 
-      <div className="mx-auto max-w-3xl px-4 pb-12 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl space-y-8 px-4 pb-12 sm:px-6 lg:px-8">
+        {dbRegion ? (
+          <RegionCommunitiesSpotlight regionSlug={slug} regionName={staticRegion.name} />
+        ) : null}
         <RegionModalEngagementLinks regionSlug={slug} />
       </div>
 

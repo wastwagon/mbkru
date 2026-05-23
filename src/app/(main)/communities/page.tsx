@@ -10,9 +10,11 @@ import {
   communityListOrderBy,
   joinPolicyBrowseFilter,
   parseCommunitiesBrowseParams,
+  verifiedQueenMotherBrowseFilter,
 } from "@/lib/communities-browse-shared";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { searchCommunitiesAndPosts } from "@/lib/server/communities-search";
+import { countVerifiedQueenMothersByCommunityIds, countVerifiedQueenMothersByCommunitySlugs } from "@/lib/server/communities-verified";
 import { isCommunitiesBrowseEnabled } from "@/lib/reports/accountability-pages";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { normalizeCommunitySearchQuery } from "@/lib/validation/communities";
@@ -25,7 +27,9 @@ export const metadata: Metadata = {
     "Community spaces with forums, threaded discussion, and moderated posts — traditional areas and Queen Mother networks; join policy varies.",
 };
 
-type Props = { searchParams?: Promise<{ q?: string; region?: string; join?: string; sort?: string }> };
+type Props = {
+  searchParams?: Promise<{ q?: string; region?: string; join?: string; sort?: string; verified?: string }>;
+};
 
 export default async function CommunitiesIndexPage({ searchParams }: Props) {
   if (!isCommunitiesBrowseEnabled() || !isDatabaseConfigured()) notFound();
@@ -45,6 +49,7 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
 
   const joinFilter = params.join ?? "all";
   const sort = params.sort ?? "name";
+  const verifiedOnly = Boolean(params.verified);
   const joinPolicyForSearch =
     joinFilter === "open" ? ("OPEN" as const) : joinFilter === "approval" ? ("APPROVAL_REQUIRED" as const) : undefined;
 
@@ -73,6 +78,7 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
   const listWhere = {
     ...activeCommunityVisibilityFilter,
     ...joinPolicyBrowseFilter(joinFilter),
+    ...verifiedQueenMotherBrowseFilter(verifiedOnly),
     ...(regionFilter ? { regionId: regionFilter.id } : {}),
   };
 
@@ -81,6 +87,7 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
       ? await searchCommunitiesAndPosts(normalized, {
           regionId: regionFilter?.id,
           joinPolicy: joinPolicyForSearch,
+          verifiedOnly,
         })
       : null;
 
@@ -91,6 +98,7 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
           where: listWhere,
           orderBy: communityListOrderBy(sort),
           select: {
+            id: true,
             slug: true,
             name: true,
             description: true,
@@ -108,6 +116,16 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
       : searchResult
         ? searchResult.communities.length
         : null;
+
+  const verifiedCountsById =
+    communities && communities.length > 0
+      ? await countVerifiedQueenMothersByCommunityIds(communities.map((c) => c.id))
+      : new Map<string, number>();
+
+  const verifiedCountsBySlug =
+    searchResult && searchResult.communities.length > 0
+      ? await countVerifiedQueenMothersByCommunitySlugs(searchResult.communities.map((c) => c.slug))
+      : new Map<string, number>();
 
   return (
     <div>
@@ -139,7 +157,7 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
 
           <CommunitiesBrowseFilters
             regions={regionOptions}
-            params={{ ...params, join: joinFilter, sort }}
+            params={{ ...params, join: joinFilter, sort, verified: verifiedOnly }}
             invalidShort={invalidShort}
             resultCount={resultCount}
             regionName={regionFilter?.name ?? null}
@@ -167,6 +185,7 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
                           joinPolicy={c.joinPolicy}
                           description={c.description}
                           memberCount={c.memberCount}
+                          verifiedQueenMotherCount={verifiedCountsBySlug.get(c.slug) ?? 0}
                         />
                       </li>
                     ))}
@@ -221,6 +240,7 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
                       joinPolicy={c.joinPolicy}
                       description={c.description}
                       memberCount={c._count.memberships}
+                      verifiedQueenMotherCount={verifiedCountsById.get(c.id) ?? 0}
                     />
                   </li>
                 ))}

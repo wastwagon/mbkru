@@ -161,6 +161,33 @@ const POSTS_SEED = [
       "Dates and locations will be announced on **News** and via our newsletter. Sign up on the homepage to be notified when registration opens.",
     ].join("\n"),
   },
+  {
+    slug: "queen-mother-communities-launch",
+    title: "53 Traditional-Area Civic Spaces Now Open on MBKRU",
+    excerpt:
+      "Find Queen Mother and traditional council spaces by region, join open communities after sign-in, and connect with verified leadership where available.",
+    publishedAt: new Date("2026-05-23T10:00:00.000Z"),
+    body: [
+      "## Find your space by region",
+      "",
+      "MBKRU has opened **53 independent civic spaces** linked to named traditional areas across **all 16 regions** of Ghana. Each space can host forums, council announcements, and member discussion — with clear join policies and public citations to official Traditional Council sources where available.",
+      "",
+      "## How to join",
+      "",
+      "1. Open **[Communities](/communities)** and filter by your **region**, **town**, or **traditional area**.",
+      "2. Choose **Open to join** for instant membership after sign-in.",
+      "3. Use **Verified Queen Mothers** to see spaces where palace-verified leadership is already on the platform.",
+      "4. Queen Mothers can request **verification** after joining — MBKRU reviews documents before awarding the verified role.",
+      "",
+      "## Independent by design",
+      "",
+      "These are **not** official Traditional Council channels. MBKRU provides civic signposting and dialogue infrastructure only. Always confirm facts with palace, municipal, and statutory sources.",
+      "",
+      "## Regional hubs",
+      "",
+      "Every **[regional hub](/about#key-operational-pillars)** now links to filtered community browse for that region. Partners — including queen-mother associations — can contact us via **[Contact](/contact)** to onboard verified pilots.",
+    ].join("\n"),
+  },
 ];
 
 /**
@@ -1431,6 +1458,88 @@ async function seedCommunityPilotInteractions() {
   }
 
   console.log("Community pilot interactions: memberships + sourced posts ensured.");
+
+  const dormaa = await prisma.community.findUnique({ where: { slug: "dormaa-traditional-council" } });
+  const osudoku = await prisma.community.findUnique({ where: { slug: "osudoku-traditional-council" } });
+  if (!dormaa || !osudoku) return;
+
+  const forumDo = await prisma.communityForum.upsert({
+    where: { communityId_slug: { communityId: dormaa.id, slug: "general" } },
+    create: {
+      communityId: dormaa.id,
+      slug: "general",
+      name: "General discussion",
+      description: "Open conversations and local updates for this community.",
+    },
+    update: {},
+  });
+  const forumOs = await prisma.communityForum.upsert({
+    where: { communityId_slug: { communityId: osudoku.id, slug: "general" } },
+    create: {
+      communityId: osudoku.id,
+      slug: "general",
+      name: "General discussion",
+      description: "Open conversations and local updates for this community.",
+    },
+    update: {},
+  });
+
+  await prisma.communityMembership.upsert({
+    where: { communityId_memberId: { communityId: dormaa.id, memberId: m2.id } },
+    create: { communityId: dormaa.id, memberId: m2.id, role: "MODERATOR", state: "ACTIVE" },
+    update: { role: "MODERATOR", state: "ACTIVE" },
+  });
+  await prisma.communityMembership.upsert({
+    where: { communityId_memberId: { communityId: osudoku.id, memberId: m1.id } },
+    create: { communityId: osudoku.id, memberId: m1.id, role: "QUEEN_MOTHER_VERIFIED", state: "ACTIVE" },
+    update: { role: "QUEEN_MOTHER_VERIFIED", state: "ACTIVE" },
+  });
+
+  const dormaaBody =
+    "Pilot civic space for the Dormaa Traditional Area (Bono Region). Public reporting describes council leadership alongside the paramount queen mother.\n\n" +
+    "Reference: GBC coverage — https://www.gbcghanaonline.com/news/dormaa-chiefs-unveil-osagyefo-oseadeeyo-agyemang-badus-20th-anniversary/2019/\n\n" +
+    "MBKRU does not represent the Dormaa Traditional Council.";
+  const osudokuBody =
+    "Pilot space linked to the Osudoku Traditional Area (Greater Accra). Ghana News Agency reports on the Osudoku Paramount Queen Mother and queen-mother networks.\n\n" +
+    "Reference: https://gna.org.gh/2026/01/osudoku-queenmother-hails-increase-in-allowances-for-traditional-leaders/\n\n" +
+    "MBKRU is independent and does not speak for the Council.";
+
+  if (
+    !(await prisma.communityPost.findFirst({
+      where: { communityId: dormaa.id, authorMemberId: m2.id, kind: "GENERAL" },
+    }))
+  ) {
+    await prisma.communityPost.create({
+      data: {
+        communityId: dormaa.id,
+        communityForumId: forumDo.id,
+        authorMemberId: m2.id,
+        kind: "GENERAL",
+        body: dormaaBody,
+        moderationStatus: "PUBLISHED",
+      },
+    });
+  }
+
+  if (
+    !(await prisma.communityPost.findFirst({
+      where: { communityId: osudoku.id, authorMemberId: m1.id, kind: "ANNOUNCEMENT", pinned: true },
+    }))
+  ) {
+    await prisma.communityPost.create({
+      data: {
+        communityId: osudoku.id,
+        communityForumId: forumOs.id,
+        authorMemberId: m1.id,
+        kind: "ANNOUNCEMENT",
+        body: osudokuBody,
+        moderationStatus: "PUBLISHED",
+        pinned: true,
+      },
+    });
+  }
+
+  console.log("Community pilot interactions: Dormaa + Osudoku demo posts ensured.");
 }
 
 /**
