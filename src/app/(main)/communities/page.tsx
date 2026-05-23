@@ -2,12 +2,19 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+import { CommunitiesBrowseFilters } from "@/components/communities/CommunitiesBrowseFilters";
+import { CommunityBrowseCard } from "@/components/communities/CommunityBrowseCard";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { activeCommunityVisibilityFilter, communitiesBrowseHref } from "@/lib/communities-browse-shared";
+import {
+  activeCommunityVisibilityFilter,
+  communityListOrderBy,
+  joinPolicyBrowseFilter,
+  parseCommunitiesBrowseParams,
+} from "@/lib/communities-browse-shared";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { searchCommunitiesAndPosts } from "@/lib/server/communities-search";
 import { isCommunitiesBrowseEnabled } from "@/lib/reports/accountability-pages";
-import { focusRingSmClass, focusRingPillClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { normalizeCommunitySearchQuery } from "@/lib/validation/communities";
 
 export const dynamic = "force-dynamic";
@@ -18,63 +25,89 @@ export const metadata: Metadata = {
     "Community spaces with forums, threaded discussion, and moderated posts — traditional areas and Queen Mother networks; join policy varies.",
 };
 
-type Props = { searchParams?: Promise<{ q?: string; region?: string }> };
+type Props = { searchParams?: Promise<{ q?: string; region?: string; join?: string; sort?: string }> };
 
 export default async function CommunitiesIndexPage({ searchParams }: Props) {
   if (!isCommunitiesBrowseEnabled() || !isDatabaseConfigured()) notFound();
 
   const sp = (await searchParams) ?? {};
-  const rawQ = typeof sp.q === "string" ? sp.q : "";
-  const regionParam = typeof sp.region === "string" ? sp.region.trim() : "";
-  const normalized = normalizeCommunitySearchQuery(rawQ);
-  const hasQParam = rawQ.trim().length > 0;
+  const params = parseCommunitiesBrowseParams(sp);
+  const normalized = normalizeCommunitySearchQuery(params.q ?? "");
+  const hasQParam = (params.q ?? "").trim().length > 0;
   const invalidShort = hasQParam && !normalized;
 
-  const regionFilter = regionParam
+  const regionFilter = params.region
     ? await prisma.region.findFirst({
-        where: { slug: regionParam },
+        where: { slug: params.region },
         select: { id: true, slug: true, name: true },
       })
     : null;
 
-  const searchResult = normalized ? await searchCommunitiesAndPosts(normalized) : null;
+  const joinFilter = params.join ?? "all";
+  const sort = params.sort ?? "name";
+  const joinPolicyForSearch =
+    joinFilter === "open" ? ("OPEN" as const) : joinFilter === "approval" ? ("APPROVAL_REQUIRED" as const) : undefined;
 
-  const regionPills = normalized
-    ? null
-    : await prisma.region.findMany({
-        where: {
-          communities: { some: activeCommunityVisibilityFilter },
-        },
-        orderBy: { sortOrder: "asc" },
+  const regionPills = await prisma.region.findMany({
+    where: {
+      communities: { some: activeCommunityVisibilityFilter },
+    },
+    orderBy: { sortOrder: "asc" },
+    select: {
+      slug: true,
+      name: true,
+      _count: {
         select: {
-          slug: true,
-          name: true,
-          _count: {
-            select: {
-              communities: { where: activeCommunityVisibilityFilter },
-            },
+          communities: { where: activeCommunityVisibilityFilter },
+        },
+      },
+    },
+  });
+
+  const regionOptions = regionPills.map((r) => ({
+    slug: r.slug,
+    name: r.name,
+    count: r._count.communities,
+  }));
+
+  const listWhere = {
+    ...activeCommunityVisibilityFilter,
+    ...joinPolicyBrowseFilter(joinFilter),
+    ...(regionFilter ? { regionId: regionFilter.id } : {}),
+  };
+
+  const searchResult =
+    normalized && !invalidShort
+      ? await searchCommunitiesAndPosts(normalized, {
+          regionId: regionFilter?.id,
+          joinPolicy: joinPolicyForSearch,
+        })
+      : null;
+
+  const communities =
+    normalized && !invalidShort
+      ? null
+      : await prisma.community.findMany({
+          where: listWhere,
+          orderBy: communityListOrderBy(sort),
+          select: {
+            slug: true,
+            name: true,
+            description: true,
+            traditionalAreaName: true,
+            joinPolicy: true,
+            visibility: true,
+            region: { select: { name: true, slug: true } },
+            _count: { select: { memberships: true } },
           },
-        },
-      });
+        });
 
-  const communities = normalized
-    ? null
-    : await prisma.community.findMany({
-        where: {
-          ...activeCommunityVisibilityFilter,
-          ...(regionFilter ? { regionId: regionFilter.id } : {}),
-        },
-        orderBy: { name: "asc" },
-        select: {
-          slug: true,
-          name: true,
-          description: true,
-          traditionalAreaName: true,
-          joinPolicy: true,
-          visibility: true,
-          region: { select: { name: true, slug: true } },
-        },
-      });
+  const resultCount =
+    communities !== null
+      ? communities.length
+      : searchResult
+        ? searchResult.communities.length
+        : null;
 
   return (
     <div>
@@ -104,147 +137,37 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
             </Link>
           </p>
 
-          <form
-            action="/communities"
-            method="get"
-            className="mt-8 flex flex-col gap-2 sm:flex-row sm:items-center"
-            role="search"
-          >
-            <label htmlFor="community-search" className="sr-only">
-              Search communities and posts
-            </label>
-            <input
-              id="community-search"
-              name="q"
-              type="search"
-              defaultValue={rawQ}
-              placeholder="Search communities and public posts…"
-              minLength={2}
-              maxLength={120}
-              className={`w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-2.5 text-sm text-[var(--foreground)] shadow-sm transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`}
-            />
-            <button
-              type="submit"
-              className={`min-h-11 w-full shrink-0 touch-manipulation rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] active:scale-[0.99] motion-reduce:active:scale-100 sm:min-h-0 sm:w-auto ${focusRingSmClass}`}
-            >
-              Search
-            </button>
-          </form>
-          {invalidShort ? (
-            <p className="mt-2 text-sm text-amber-800">Enter at least 2 characters to search.</p>
-          ) : null}
-          {normalized ? (
-            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-              Results for &quot;{normalized}&quot; ·{" "}
-              <Link href="/communities" className={primaryNavLinkClass}>
-                Clear
-              </Link>
-            </p>
-          ) : null}
-
-          {!normalized && regionPills && regionPills.length > 0 ? (
-            <nav
-              className="mt-6 flex flex-wrap gap-2"
-              aria-label="Filter communities by region"
-            >
-              <Link
-                href={communitiesBrowseHref({})}
-                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                  !regionFilter
-                    ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
-                    : "border border-[var(--border)] bg-white text-[var(--foreground)] hover:border-[var(--primary)]/40"
-                } ${focusRingPillClass}`}
-              >
-                All regions
-              </Link>
-              {regionPills.map((r) => {
-                const active = regionFilter?.slug === r.slug;
-                return (
-                  <Link
-                    key={r.slug}
-                    href={communitiesBrowseHref({ region: r.slug })}
-                    className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                      active
-                        ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
-                        : "border border-[var(--border)] bg-white text-[var(--foreground)] hover:border-[var(--primary)]/40"
-                    } ${focusRingPillClass}`}
-                  >
-                    {r.name}
-                    <span className="ml-1 font-normal opacity-80">({r._count.communities})</span>
-                  </Link>
-                );
-              })}
-            </nav>
-          ) : null}
-
-          {regionParam && !regionFilter && !normalized ? (
-            <p className="mt-4 text-sm text-amber-800">
-              Unknown region filter.{" "}
-              <Link href="/communities" className={primaryNavLinkClass}>
-                Show all communities
-              </Link>
-            </p>
-          ) : null}
-
-          {regionFilter && !normalized ? (
-            <p className="mt-4 text-sm text-[var(--muted-foreground)]">
-              Showing {regionFilter.name} ·{" "}
-              <Link href="/communities" className={primaryNavLinkClass}>
-                Clear region
-              </Link>
-            </p>
-          ) : null}
+          <CommunitiesBrowseFilters
+            regions={regionOptions}
+            params={{ ...params, join: joinFilter, sort }}
+            invalidShort={invalidShort}
+            resultCount={resultCount}
+            regionName={regionFilter?.name ?? null}
+          />
 
           {searchResult ? (
             <div className="mt-8 space-y-8">
               {searchResult.communities.length === 0 && searchResult.posts.length === 0 ? (
-                <p className="text-center text-sm text-[var(--muted-foreground)]">No matches.</p>
+                <p className="text-center text-sm text-[var(--muted-foreground)]">No matches for your filters.</p>
               ) : null}
               {searchResult.communities.length > 0 ? (
                 <div>
-                  <h2 className="text-sm font-semibold text-[var(--foreground)]">Communities</h2>
+                  <h2 className="text-sm font-semibold text-[var(--foreground)]">
+                    Communities ({searchResult.communities.length})
+                  </h2>
                   <ul className="mt-3 space-y-4">
                     {searchResult.communities.map((c) => (
                       <li key={c.slug}>
-                        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition hover:border-[var(--primary)]/30">
-                          <Link href={`/communities/${c.slug}`} className="block">
-                            <span className="font-semibold text-[var(--foreground)]">{c.name}</span>
-                            {c.visibility === "MEMBERS_ONLY" ? (
-                              <span className="ml-2 rounded-full bg-[var(--section-light)] px-2 py-0.5 text-[10px] font-semibold uppercase text-[var(--foreground)]">
-                                Members only
-                              </span>
-                            ) : null}
-                            {c.traditionalAreaName ? (
-                              <p className="mt-1 text-sm text-[var(--muted-foreground)]">{c.traditionalAreaName}</p>
-                            ) : null}
-                            {c.region ? (
-                              <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">{c.region.name}</p>
-                            ) : null}
-                            {c.visibility === "MEMBERS_ONLY" ? (
-                              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-                                Members-only community — sign in on the community page to read details and posts.
-                              </p>
-                            ) : (
-                              <p className="mt-2 line-clamp-3 text-sm text-[var(--muted-foreground)]">
-                                {c.description}
-                              </p>
-                            )}
-                            <p className="mt-3 text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-                              Join: {c.joinPolicy === "OPEN" ? "Open" : "Approval required"}
-                            </p>
-                          </Link>
-                          <p className="mt-3 flex flex-wrap gap-x-3 gap-y-1 border-t border-[var(--border)] pt-3 text-xs font-medium">
-                            <Link href={`/communities/${c.slug}`} className={primaryNavLinkClass}>
-                              Overview
-                            </Link>
-                            <Link href={`/communities/${c.slug}/portal`} className={primaryNavLinkClass}>
-                              Council workspace
-                            </Link>
-                            <Link href={`/communities/${c.slug}/forums`} className={primaryNavLinkClass}>
-                              Forums &amp; threads
-                            </Link>
-                          </p>
-                        </div>
+                        <CommunityBrowseCard
+                          slug={c.slug}
+                          name={c.name}
+                          traditionalAreaName={c.traditionalAreaName}
+                          region={c.region}
+                          visibility={c.visibility}
+                          joinPolicy={c.joinPolicy}
+                          description={c.description}
+                          memberCount={c.memberCount}
+                        />
                       </li>
                     ))}
                   </ul>
@@ -277,53 +200,28 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
             </div>
           ) : communities && communities.length === 0 ? (
             <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
-              No active communities are listed yet. Check back soon.
+              No communities match these filters. Try another region or clear filters above.
             </p>
           ) : communities ? (
             <>
-              {invalidShort ? (
-                <h2 className="mt-10 text-sm font-semibold text-[var(--foreground)]">All communities</h2>
+              {!invalidShort && !regionFilter && joinFilter === "all" ? (
+                <h2 className="mt-8 text-sm font-semibold text-[var(--foreground)]">
+                  All communities ({communities.length})
+                </h2>
               ) : null}
-              <ul className={`space-y-4 ${invalidShort ? "mt-3" : "mt-10"}`}>
+              <ul className={`space-y-4 ${invalidShort || regionFilter || joinFilter !== "all" ? "mt-8" : "mt-3"}`}>
                 {communities.map((c) => (
                   <li key={c.slug}>
-                    <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition hover:border-[var(--primary)]/30">
-                      <Link href={`/communities/${c.slug}`} className="block">
-                        <span className="font-semibold text-[var(--foreground)]">{c.name}</span>
-                        {c.visibility === "MEMBERS_ONLY" ? (
-                          <span className="ml-2 rounded-full bg-[var(--section-light)] px-2 py-0.5 text-[10px] font-semibold uppercase text-[var(--foreground)]">
-                            Members only
-                          </span>
-                        ) : null}
-                        {c.traditionalAreaName ? (
-                          <p className="mt-1 text-sm text-[var(--muted-foreground)]">{c.traditionalAreaName}</p>
-                        ) : null}
-                        {c.region ? (
-                          <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">{c.region.name}</p>
-                        ) : null}
-                        {c.visibility === "MEMBERS_ONLY" ? (
-                          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-                            Members-only community — sign in on the community page to read details and posts.
-                          </p>
-                        ) : (
-                          <p className="mt-2 line-clamp-3 text-sm text-[var(--muted-foreground)]">{c.description}</p>
-                        )}
-                        <p className="mt-3 text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-                          Join: {c.joinPolicy === "OPEN" ? "Open" : "Approval required"}
-                        </p>
-                      </Link>
-                      <p className="mt-3 flex flex-wrap gap-x-3 gap-y-1 border-t border-[var(--border)] pt-3 text-xs font-medium">
-                        <Link href={`/communities/${c.slug}`} className={primaryNavLinkClass}>
-                          Overview
-                        </Link>
-                        <Link href={`/communities/${c.slug}/portal`} className={primaryNavLinkClass}>
-                          Council workspace
-                        </Link>
-                        <Link href={`/communities/${c.slug}/forums`} className={primaryNavLinkClass}>
-                          Forums &amp; threads
-                        </Link>
-                      </p>
-                    </div>
+                    <CommunityBrowseCard
+                      slug={c.slug}
+                      name={c.name}
+                      traditionalAreaName={c.traditionalAreaName}
+                      region={c.region}
+                      visibility={c.visibility}
+                      joinPolicy={c.joinPolicy}
+                      description={c.description}
+                      memberCount={c._count.memberships}
+                    />
                   </li>
                 ))}
               </ul>

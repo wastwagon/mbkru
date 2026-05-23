@@ -478,5 +478,55 @@
     "joinPolicy": "OPEN",
     "visibility": "PUBLIC",
     "status": "ACTIVE"
+  },
+  {
+    "slug": "obuasi-traditional-council",
+    "name": "Obuasi traditional governance space",
+    "description": "Civic space linked to the Obuasi Traditional Area (Ashanti Region). Obuasi is a major Ashanti paramountcy with active queen-mother leadership in public reporting; Ministry listing: https://mcra.gov.gh/regional-houses-of-chiefs/. MBKRU does not represent the Council.",
+    "region_slug": "ashanti",
+    "traditionalAreaName": "Obuasi Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "mampong-traditional-council",
+    "name": "Mampong traditional governance space",
+    "description": "Civic space related to the Mampong Traditional Area (Ashanti Region). Mampong is a Sekyere paramountcy listed among Ashanti regional houses of chiefs (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU provides civic signposting only.",
+    "region_slug": "ashanti",
+    "traditionalAreaName": "Mampong Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "bekwai-traditional-council",
+    "name": "Bekwai traditional governance space",
+    "description": "Civic space for dialogue linked to the Bekwai Traditional Area (Ashanti Region). Bekwai is an Adansi paramountcy with customary queen-mother stools; Ashanti councils at https://mcra.gov.gh/regional-houses-of-chiefs/. MBKRU is independent and does not speak for the Council.",
+    "region_slug": "ashanti",
+    "traditionalAreaName": "Bekwai Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "sekondi-traditional-council",
+    "name": "Sekondi traditional governance space",
+    "description": "Civic space linked to the Sekondi Traditional Area (Western Region). Sekondi is a coastal paramountcy listed among Western Region houses of chiefs (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU does not represent the Council.",
+    "region_slug": "western",
+    "traditionalAreaName": "Sekondi Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
+  },
+  {
+    "slug": "essikado-traditional-council",
+    "name": "Essikado traditional governance space",
+    "description": "Civic space related to the Essikado Traditional Area (Western Region). Essikado is listed among Western Region traditional councils by the Ministry of Chieftaincy (https://mcra.gov.gh/regional-houses-of-chiefs/). MBKRU provides civic signposting only.",
+    "region_slug": "western",
+    "traditionalAreaName": "Essikado Traditional Area",
+    "joinPolicy": "OPEN",
+    "visibility": "PUBLIC",
+    "status": "ACTIVE"
   }
 ]

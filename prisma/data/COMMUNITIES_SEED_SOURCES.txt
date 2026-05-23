@@ -30,4 +30,9 @@ Phase 3 additions — all 16 regions now represented in seed
 - Offinso, Kumawu: Ashanti
 Sources: https://mcra.gov.gh/regional-houses-of-chiefs/ unless noted in row description.
 
+Phase 4 additions — deeper Ashanti & Western coverage
+- Obuasi, Mampong, Bekwai: Ashanti
+- Sekondi, Essikado: Western
+Sources: https://mcra.gov.gh/regional-houses-of-chiefs/
+
 Seed command: run prisma seed with SEED_COMMUNITIES_DEMO not set to 0 (default seeds communities JSON).

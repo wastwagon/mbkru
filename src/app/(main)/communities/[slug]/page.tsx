@@ -177,15 +177,17 @@ export default async function CommunityDetailPage({ params }: Props) {
             </section>
           ) : null}
 
-          <CommunityMemberPanel
-            communitySlug={c.slug}
-            joinPolicy={c.joinPolicy}
-            visibility={c.visibility}
-            restrictedDetail={!showFullAbout}
-            memberAccountsEnabled={memberAccountsEnabled}
-            postForumSlug="general"
-            showThreadTitleField
-          />
+          <div id="join" className="scroll-mt-24">
+            <CommunityMemberPanel
+              communitySlug={c.slug}
+              joinPolicy={c.joinPolicy}
+              visibility={c.visibility}
+              restrictedDetail={!showFullAbout}
+              memberAccountsEnabled={memberAccountsEnabled}
+              postForumSlug="general"
+              showThreadTitleField
+            />
+          </div>
 
           <section className="mt-10">
             <h2 className="text-sm font-semibold text-[var(--foreground)]">Recent threads</h2>

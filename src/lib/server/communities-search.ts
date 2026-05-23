@@ -34,8 +34,22 @@ export type CommunitiesSearchResult = {
   posts: CommunityPostSearchHit[];
 };
 
-export async function searchCommunitiesAndPosts(normalizedQuery: string): Promise<CommunitiesSearchResult> {
+export type CommunitySearchFilters = {
+  regionId?: string;
+  joinPolicy?: "OPEN" | "APPROVAL_REQUIRED";
+};
+
+export async function searchCommunitiesAndPosts(
+  normalizedQuery: string,
+  filters?: CommunitySearchFilters,
+): Promise<CommunitiesSearchResult> {
   const q = normalizedQuery;
+  const regionClause = filters?.regionId
+    ? Prisma.sql`AND c."regionId" = ${filters.regionId}`
+    : Prisma.empty;
+  const joinClause = filters?.joinPolicy
+    ? Prisma.sql`AND c."joinPolicy" = ${filters.joinPolicy}`
+    : Prisma.empty;
 
   const communityRows = await prisma.$queryRaw<
     Array<{
@@ -63,6 +77,8 @@ export async function searchCommunitiesAndPosts(normalizedQuery: string): Promis
         'simple',
         coalesce(c.name, '') || ' ' || coalesce(c.description, '') || ' ' || coalesce(c."traditionalAreaName", '')
       ) @@ plainto_tsquery('simple', ${q})
+      ${regionClause}
+      ${joinClause}
     ORDER BY rank DESC, c.name ASC
     LIMIT ${LIMIT_COMMUNITIES}
   `);
