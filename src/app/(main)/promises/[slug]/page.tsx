@@ -9,9 +9,10 @@ import {
   accountabilityCatalogueNavMedium,
   accountabilityProse,
 } from "@/config/accountability-catalogue-destinations";
-import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
+import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { getCachedPromisesMemberPublic } from "@/lib/server/accountability-cache";
+import { loadMpPerformanceIntakes } from "@/lib/server/promises-member-sheet-load";
 import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
 
 export const dynamic = "force-dynamic";
@@ -39,22 +40,7 @@ export default async function PromisesByMemberPage({ params }: Props) {
 
   if (!member) notFound();
 
-  const mpPerformanceReports = await prisma.citizenReport.findMany({
-    where: {
-      parliamentMemberId: member.id,
-      kind: "MP_PERFORMANCE",
-      status: { not: "ARCHIVED" },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 12,
-    select: {
-      id: true,
-      title: true,
-      trackingCode: true,
-      createdAt: true,
-      discussionEnabled: true,
-    },
-  });
+  const mpPerformanceReports = await loadMpPerformanceIntakes(member.id);
 
   return (
     <div>

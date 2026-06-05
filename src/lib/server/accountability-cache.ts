@@ -107,22 +107,10 @@ export async function getCachedMpsPublicRoster() {
 export const getCachedPromisesMemberPublic = cache(async (slug: string) => {
   return unstable_cache(
     async () => {
-      const member = await prisma.parliamentMember.findFirst({
-        where: { slug, active: true },
-        include: {
-          constituency: true,
-          promises: {
-            orderBy: { updatedAt: "desc" },
-            include: {
-              manifestoDocument: { select: { title: true, sourceUrl: true } },
-            },
-          },
-        },
-      });
-      if (!member) return null;
-      return member;
+      const { loadPromisesMemberSheetPublic } = await import("@/lib/server/promises-member-sheet-load");
+      return loadPromisesMemberSheetPublic(slug);
     },
-    ["promises-member-v3", slug],
+    ["promises-member-v4", slug],
     { tags: [PROMISES_INDEX_TAG, promisesMemberTag(slug)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
 });
