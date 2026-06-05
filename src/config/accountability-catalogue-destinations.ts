@@ -98,7 +98,8 @@ export const accountabilityProse = {
     "People's Report Cards, public commitment catalogue, and Accountability Scorecards.",
   partnerApiPageIntro:
     "Read-only endpoints for MPs, the public commitment catalogue, the People's Report Card, and research exports. This page is a public summary of how we expect partners to use them — not a substitute for legal advice or a signed agreement.",
-  statsStripBrowseSubtitle: `Use ${accountabilityCatalogueNavMedium.browseAll} for live filters; the roster below lists every active MP in the catalogue (including members with no catalogue rows yet).`,
+  statsStripBrowseSubtitle:
+    "KPIs reflect your active filters on this dashboard — status mix, policy sectors, and programme tags update as you search.",
   /** Shown on live tracker snapshot — explains editorial DB scope vs. manifesto PDFs. */
   statsStripDatabaseScopeNote:
     "Headline totals are editorial rows in this database, not a rights-cleared full PDF dump. A larger NDC 2024 theme set can be loaded by operators when running the database seed; the live site can also add rows in admin at any time.",

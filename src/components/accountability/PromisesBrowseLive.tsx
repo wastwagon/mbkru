@@ -165,7 +165,7 @@ export function PromisesBrowseLive({
       catalogueFiltersFromParams,
       mode === "government" ? "government" : "browse",
     );
-    if (!narrow) return undefined;
+    if (!narrow) return accountabilityProse.statsStripBrowseSubtitle;
     const name = constituencySlug
       ? trackerConstituencies.find((c) => c.slug === constituencySlug)?.name
       : undefined;

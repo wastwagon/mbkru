@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { PromiseTrackerStatsStrip } from "@/components/accountability/PromiseTrackerStatsStrip";
 import { ParliamentaryRosterList } from "@/components/accountability/ParliamentaryRosterList";
 import { TrackerSignupForm } from "@/components/forms/TrackerSignupForm";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -19,9 +18,8 @@ import {
   isPromisesBrowseEnabled,
   isReportCardPublicEnabled,
 } from "@/lib/reports/accountability-pages";
-import { defaultPromisesApiFilters } from "@/lib/promises-api-filters";
 import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
-import { getCachedMpsPublicRoster, getCachedPromiseTrackerStats } from "@/lib/server/accountability-cache";
+import { getCachedMpsPublicRoster } from "@/lib/server/accountability-cache";
 
 export const metadata: Metadata = {
   title: accountabilityProse.parliamentPageDocumentTitle,
@@ -55,7 +53,6 @@ export default async function ParliamentTrackerPage() {
   const partnerDataPage = isPartnerApiTermsPageEnabled();
 
   const dbReady = isDatabaseConfigured();
-  let trackerStats: Awaited<ReturnType<typeof getCachedPromiseTrackerStats>> | null = null;
   let mpRoster: Awaited<ReturnType<typeof getCachedMpsPublicRoster>> = [];
   let recentMpVoice: {
     id: string;
@@ -68,13 +65,8 @@ export default async function ParliamentTrackerPage() {
 
   if (dbReady) {
     try {
-      [trackerStats, mpRoster] = await Promise.all([
-        getCachedPromiseTrackerStats(defaultPromisesApiFilters()),
-        getCachedMpsPublicRoster(),
-      ]);
+      mpRoster = await getCachedMpsPublicRoster();
     } catch {
-      /* Unreachable DB at runtime or flaky connection — render page without roster strip */
-      trackerStats = null;
       mpRoster = [];
     }
     try {
@@ -136,21 +128,31 @@ export default async function ParliamentTrackerPage() {
         </div>
       </div>
 
-      {dbReady && trackerStats ? (
+      {dbReady ? (
         <section className="section-spacing section-full bg-[var(--section-light)] pb-10">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <PromiseTrackerStatsStrip
-              stats={trackerStats}
-              subtitle={accountabilityProse.statsStripBrowseSubtitle}
-            />
-            <div className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6">
+            <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6">
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <h2 className="font-display text-lg font-bold text-[var(--foreground)]">Parliamentary roster</h2>
                   <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                     {mpRoster.length} active MP{mpRoster.length === 1 ? "" : "s"} in this catalogue. Each row shows
                     Citizen Voice MP intakes and commitment catalogue rows — click a name (when browse is on) to open that
-                    MP&apos;s sheet.{" "}
+                    MP&apos;s sheet. For commitment totals, status mix, and filters, use{" "}
+                    {showPromises ? (
+                      <>
+                        <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={primaryLinkClass}>
+                          {accountabilityCatalogueNavMedium.browseAll}
+                        </Link>
+                        {" or "}
+                        <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments} className={primaryLinkClass}>
+                          {accountabilityCatalogueNavMedium.government}
+                        </Link>
+                        .
+                      </>
+                    ) : (
+                      "the commitment catalogue when browse is enabled"
+                    )}{" "}
                     {partnerDataPage ? (
                       <>
                         For machine-readable exports of the same roster, see{" "}
