@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { PromiseTrackerStatsStrip } from "@/components/accountability/PromiseTrackerStatsStrip";
+import { ParliamentaryRosterList } from "@/components/accountability/ParliamentaryRosterList";
 import { TrackerSignupForm } from "@/components/forms/TrackerSignupForm";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
@@ -178,42 +179,7 @@ export default async function ParliamentTrackerPage() {
                   this site.
                 </p>
               ) : (
-                <ul className="mt-6 max-h-[min(28rem,55vh)] divide-y divide-[var(--border)] overflow-y-auto rounded-xl border border-[var(--border)]">
-                  {mpRoster.map((m) => (
-                    <li key={m.slug} className="flex flex-wrap items-baseline justify-between gap-2 px-3 py-2.5 text-sm hover:bg-[var(--section-light)]/50">
-                      <div className="min-w-0">
-                        {showPromises ? (
-                          <Link href={`/promises/${encodeURIComponent(m.slug)}`} className={primaryLinkClass}>
-                            {m.name}
-                          </Link>
-                        ) : (
-                          <span className="font-medium text-[var(--foreground)]">{m.name}</span>
-                        )}
-                        <span className="text-[var(--muted-foreground)]">
-                          {" "}
-                          · {m.role}
-                          {m.party ? ` · ${m.party}` : ""}
-                          {m.constituencyName ? ` · ${m.constituencyName}` : ""}
-                        </span>
-                      </div>
-                      <span className="shrink-0 text-right text-xs text-[var(--muted-foreground)]">
-                        <span className="tabular-nums">
-                          {m.mpVoiceReportCount}{" "}
-                          {m.mpVoiceReportCount === 1
-                            ? accountabilityProse.mpRosterVoiceReportsSingular
-                            : accountabilityProse.mpRosterVoiceReportsPlural}
-                        </span>
-                        <span className="text-[var(--muted-foreground)]"> · </span>
-                        <span className="tabular-nums">
-                          {m.promiseCount}{" "}
-                          {m.promiseCount === 1
-                            ? accountabilityProse.mpRosterListCountLabelSingular
-                            : accountabilityProse.mpRosterListCountLabelPlural}
-                        </span>
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+                <ParliamentaryRosterList rows={mpRoster} showPromises={showPromises} />
               )}
             </div>
           </div>

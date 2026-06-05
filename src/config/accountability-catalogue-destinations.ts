@@ -197,6 +197,9 @@ export const accountabilityProse = {
   /** Roster list — Citizen Voice MP performance intakes linked to that MP (non-archived). */
   mpRosterVoiceReportsSingular: "MP Voice report",
   mpRosterVoiceReportsPlural: "MP Voice reports",
+  mpRosterSearchLabel: "Search the roster",
+  mpRosterSearchPlaceholder: "Name, party, or constituency…",
+  mpRosterSearchEmpty: 'No MPs match "{query}". Try another spelling or search by party or constituency.',
 } as const;
 
 export type AccountabilityCatalogueCard = {
