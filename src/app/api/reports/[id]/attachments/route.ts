@@ -25,6 +25,19 @@ function extForMime(mime: string): string {
   return ".jpg";
 }
 
+function uploadFailureMessage(err: unknown): string {
+  if (err && typeof err === "object" && "code" in err) {
+    const code = String((err as NodeJS.ErrnoException).code);
+    if (code === "EACCES" || code === "EPERM") {
+      return "Evidence storage is not writable on the server. Contact support with your tracking code.";
+    }
+    if (code === "ENOSPC") {
+      return "Server storage is full. Contact support with your tracking code.";
+    }
+  }
+  return "Upload failed";
+}
+
 export async function POST(request: Request, { params }: Props) {
   if (!isCitizensVoiceEnabled()) return citizensVoiceDisabledResponse();
 
@@ -139,7 +152,7 @@ export async function POST(request: Request, { params }: Props) {
     }
   } catch (e) {
     console.error(e);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    return NextResponse.json({ error: uploadFailureMessage(e) }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true, attachments: created });

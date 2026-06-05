@@ -29,8 +29,11 @@ services:
       - SEED_ACCOUNTABILITY_DEMO=${SEED_ACCOUNTABILITY_DEMO:-1}
       - SEED_COMMUNITIES_DEMO=${SEED_COMMUNITIES_DEMO:-1}
       - SEED_TOWN_HALL_PROGRAMME=${SEED_TOWN_HALL_PROGRAMME:-1}
+      - PRIVATE_UPLOADS_DIR=${PRIVATE_UPLOADS_DIR:-/app/var/private-uploads}
+      - MALWARE_SCAN_MODE=${MALWARE_SCAN_MODE:-off}
     volumes:
       - mbkru_uploads:/app/public/uploads
+      - mbkru_private_uploads:/app/var/private-uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -74,6 +77,7 @@ volumes:
   postgres_data:
   redis_data:
   mbkru_uploads:
+  mbkru_private_uploads:
 
 networks:
   mbkru:

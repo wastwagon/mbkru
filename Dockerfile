@@ -40,12 +40,13 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN apk add --no-cache openssl libc6-compat
+RUN apk add --no-cache openssl libc6-compat su-exec
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
-RUN mkdir -p /app/public/uploads && chown nextjs:nodejs /app/public/uploads
+RUN mkdir -p /app/public/uploads /app/var/private-uploads \
+  && chown -R nextjs:nodejs /app/public/uploads /app/var/private-uploads
 
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
@@ -100,7 +101,7 @@ RUN mkdir -p /app/.next/cache \
   && chmod +x /app/docker-entrypoint.sh \
   && chown -R nextjs:nodejs /app/prisma /app/prisma.config.ts /app/node_modules /app/.next
 
-USER nextjs
+# Entrypoint runs as root so mounted upload volumes can be chowned for user `nextjs`.
 EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"

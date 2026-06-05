@@ -74,6 +74,9 @@ services:
       - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - TWILIO_FROM_NUMBER=${TWILIO_FROM_NUMBER}
+      - PRIVATE_UPLOADS_DIR=${PRIVATE_UPLOADS_DIR:-/app/var/private-uploads}
+      - MALWARE_SCAN_MODE=${MALWARE_SCAN_MODE:-off}
+      - MALWARE_SCAN_FAIL_OPEN=${MALWARE_SCAN_FAIL_OPEN:-}
       # Entrypoint always runs prisma migrate deploy when DATABASE_URL is set.
       # In production NODE_ENV=production, seed runs only when RUN_DB_SEED_ON_BOOT=1 (staging/demos).
       # For Compose local/production-like stack seed on boot without RUN_DB_*: omit NODE_ENV=production here or use RUN_DB_SEED_ON_BOOT=1.
@@ -91,6 +94,7 @@ services:
         condition: service_started
     volumes:
       - mbkru_uploads:/app/public/uploads
+      - mbkru_private_uploads:/app/var/private-uploads
     restart: unless-stopped
     networks:
       - mbkru
@@ -99,6 +103,7 @@ volumes:
   postgres_data:
   redis_data:
   mbkru_uploads:
+  mbkru_private_uploads:
 
 networks:
   mbkru:

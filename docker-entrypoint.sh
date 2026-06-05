@@ -7,7 +7,19 @@
 # Use `node …/prisma/build/index.js` instead of `npx prisma`: the production image
 # has no full npm/npx shim, so `npx` can fail with "prisma: not found".
 
-PRISMA_CLI="node /app/node_modules/prisma/build/index.js"
+ensure_upload_dirs() {
+  mkdir -p /app/public/uploads /app/var/private-uploads
+  chown -R nextjs:nodejs /app/public/uploads /app/var/private-uploads
+}
+
+if [ "$(id -u)" = "0" ]; then
+  ensure_upload_dirs
+  RUN_AS_NEXTJS="su-exec nextjs"
+else
+  RUN_AS_NEXTJS=""
+fi
+
+PRISMA_CLI="$RUN_AS_NEXTJS node /app/node_modules/prisma/build/index.js"
 
 if [ -n "$DATABASE_URL" ]; then
   echo "[mbkru entrypoint] DATABASE_URL is set — running migrations..."
@@ -43,4 +55,4 @@ else
   echo "[mbkru entrypoint] DATABASE_URL unset — skipping migrate/seed."
 fi
 
-exec node server.js
+exec $RUN_AS_NEXTJS node server.js
