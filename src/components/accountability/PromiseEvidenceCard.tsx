@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { formatMediumDate } from "@/lib/format-submission-datetime";
 import { parseManifestoCatalogueRowNotes } from "@/lib/promise-catalogue-display";
 import { policySectorLabel } from "@/lib/promise-policy-sectors";
 import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
@@ -43,7 +44,7 @@ type Props = {
   /** Public explanation when status is BLOCKED. */
   blockedReason?: string | null;
   sourceLabel: string;
-  sourceDate: Date | null;
+  sourceDate: Date | string | null;
   sourceUrl: string | null;
   verificationNotes: string | null;
   manifestoDocument: ManifestoRef;
@@ -232,7 +233,7 @@ export function PromiseEvidenceCard({
 
         <p className="text-xs text-[var(--muted-foreground)]">
           {sourceDate
-            ? `Cited: ${sourceDate.toLocaleDateString("en-GB", { dateStyle: "medium" })}`
+            ? `Cited: ${formatMediumDate(sourceDate)}`
             : "Citation date not set"}
         </p>
       </div>

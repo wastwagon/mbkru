@@ -105,14 +105,15 @@ export async function getCachedMpsPublicRoster() {
 
 /** React `cache` dedupes the same slug within one request (e.g. `generateMetadata` + page). */
 export const getCachedPromisesMemberPublic = cache(async (slug: string) => {
-  return unstable_cache(
-    async () => {
-      const { loadPromisesMemberSheetPublic } = await import("@/lib/server/promises-member-sheet-load");
-      return loadPromisesMemberSheetPublic(slug);
-    },
-    ["promises-member-v4", slug],
+  const { loadPromisesMemberSheetPublic, normalizePromisesMemberSheet } = await import(
+    "@/lib/server/promises-member-sheet-load"
+  );
+  const raw = await unstable_cache(
+    async () => loadPromisesMemberSheetPublic(slug),
+    ["promises-member-v5", slug],
     { tags: [PROMISES_INDEX_TAG, promisesMemberTag(slug)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
+  return normalizePromisesMemberSheet(raw);
 });
 
 export async function getCachedPublishedReportCardCycles() {

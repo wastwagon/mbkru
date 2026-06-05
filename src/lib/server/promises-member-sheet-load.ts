@@ -14,6 +14,22 @@ export type MpPerformanceIntakeRow = {
 
 export type PromisesMemberSheet = Awaited<ReturnType<typeof loadPromisesMemberSheetPublic>>;
 
+function revivePromisesMemberSheet(member: NonNullable<PromisesMemberSheet>): NonNullable<PromisesMemberSheet> {
+  return {
+    ...member,
+    promises: member.promises.map((p) => ({
+      ...p,
+      sourceDate: p.sourceDate != null ? new Date(p.sourceDate as Date | string) : null,
+      updatedAt: new Date(p.updatedAt as Date | string),
+    })),
+  };
+}
+
+export function normalizePromisesMemberSheet(member: PromisesMemberSheet): PromisesMemberSheet {
+  if (!member) return member;
+  return revivePromisesMemberSheet(member);
+}
+
 function isMissingColumnError(e: unknown): boolean {
   if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2022") return true;
   const msg = e instanceof Error ? e.message : String(e);

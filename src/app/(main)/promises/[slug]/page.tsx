@@ -10,6 +10,7 @@ import {
   accountabilityProse,
 } from "@/config/accountability-catalogue-destinations";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { formatMediumDate } from "@/lib/format-submission-datetime";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { getCachedPromisesMemberPublic } from "@/lib/server/accountability-cache";
 import { loadMpPerformanceIntakes } from "@/lib/server/promises-member-sheet-load";
@@ -93,7 +94,7 @@ export default async function PromisesByMemberPage({ params }: Props) {
                           {" · "}
                         </>
                       )}
-                      {r.createdAt.toLocaleDateString("en-GB", { dateStyle: "medium" })}
+                      {formatMediumDate(r.createdAt)}
                     </p>
                   </li>
                 ))}
@@ -134,7 +135,7 @@ export default async function PromisesByMemberPage({ params }: Props) {
                   }
                 />
                 <p className="px-1 text-[11px] text-[var(--muted-foreground)]">
-                  Updated {p.updatedAt.toLocaleDateString("en-GB", { dateStyle: "medium" })}
+                  Updated {formatMediumDate(p.updatedAt)}
                 </p>
               </li>
             ))}
