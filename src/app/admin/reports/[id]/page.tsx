@@ -314,6 +314,12 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
             <dd className="inline">{report.localArea}</dd>
           </div>
         ) : null}
+        {report.submitterWasAssisted != null ? (
+          <div>
+            <dt className="inline font-medium text-[var(--foreground)]">Submission assistance: </dt>
+            <dd className="inline">{report.submitterWasAssisted ? "Assisted" : "Self-submitted"}</dd>
+          </div>
+        ) : null}
         {report.latitude != null && report.longitude != null ? (
           <div>
             <dt className="inline font-medium text-[var(--foreground)]">Approximate coordinates (~1 km): </dt>

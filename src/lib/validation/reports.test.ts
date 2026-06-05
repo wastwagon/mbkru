@@ -10,6 +10,8 @@ const base = {
   localArea: "East Legon",
   latitude: 5.6037,
   longitude: -0.187,
+  acceptedDisclaimer: true as const,
+  submitterWasAssisted: false,
 };
 
 const mpBase = {

@@ -38,6 +38,7 @@ export const queuedReportPayloadSchema = z
       .max(18)
       .optional()
       .transform((s) => (s && s.length > 0 ? s : undefined)),
+    submitterWasAssisted: z.boolean().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.submitterPhone && !/^\+[1-9]\d{1,14}$/.test(data.submitterPhone)) {

@@ -32,6 +32,10 @@ export const createReportBodySchema = z
       .max(18)
       .optional()
       .transform((s) => (s && s.length > 0 ? s : undefined)),
+    /** Required attestation that the submitter read programme limitations before sending. */
+    acceptedDisclaimer: z.literal(true),
+    /** Whether someone else helped prepare or submit this report. */
+    submitterWasAssisted: z.boolean(),
   })
   .merge(turnstileField)
   .superRefine((data, ctx) => {

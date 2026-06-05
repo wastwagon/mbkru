@@ -55,13 +55,6 @@ export type VoiceReportFormStrings = {
   mpLabel: string;
   mpPlaceholder: string;
   mpRosterUnavailable: string;
-  mpRubricSectionTitle: string;
-  mpRubricHelp: string;
-  mpRubricAccessibility: string;
-  mpRubricResponsiveness: string;
-  mpRubricFollowThrough: string;
-  mpRubricScaleHint: string;
-  mpRubricOptional: string;
   govNoteTitle: string;
   govNoteBody: string;
   govNoteBody2Before: string;
@@ -69,7 +62,22 @@ export type VoiceReportFormStrings = {
   govNoteBody2After: string;
   shortTitle: string;
   shortTitlePlaceholder: string;
+  shortTitleHelp: string;
   bodyLabel: string;
+  bodyHelp: string;
+  assistedSectionTitle: string;
+  assistedSectionHelp: string;
+  assistedYes: string;
+  assistedNo: string;
+  disclaimerCheckboxBefore: string;
+  disclaimerCheckboxMethodology: string;
+  disclaimerCheckboxMiddle: string;
+  disclaimerCheckboxTerms: string;
+  disclaimerCheckboxAfter: string;
+  errorTitleRequired: string;
+  errorBodyRequired: string;
+  errorDisclaimerRequired: string;
+  errorAssistedRequired: string;
   placeholders: VoiceReportFormPlaceholders;
   locationTitle: string;
   locationHelp: string;
@@ -143,14 +151,6 @@ const BASE_EN: VoiceReportFormStrings = {
   mpPlaceholder: "Select an MP from the roster…",
   mpRosterUnavailable:
     "MP roster is unavailable (database or configuration). You cannot submit an MP performance report until the roster loads — refresh the page or try again later.",
-  mpRubricSectionTitle: "Optional experience check-in (1–5)",
-  mpRubricHelp:
-    "These quick ratings are optional. They help staff sort structured citizen experience signals — they are not a formal score and do not replace the written report above.",
-  mpRubricAccessibility: "Accessibility of your MP or their office",
-  mpRubricResponsiveness: "Responsiveness to issues you raised",
-  mpRubricFollowThrough: "Follow-through on commitments or casework",
-  mpRubricScaleHint: "1 = poor · 5 = strong",
-  mpRubricOptional: "Skip any row you prefer not to rate.",
   govNoteTitle: "Government performance",
   govNoteBody:
     "Use this for ministry, agency, or programme delivery you want documented — facts and observed outcomes, not speculation. MBKRU triages submissions; use official agency channels where you need a binding government response.",
@@ -159,7 +159,24 @@ const BASE_EN: VoiceReportFormStrings = {
   govNoteBody2After: " lens on the same promise catalogue (programme-tagged executive rows).",
   shortTitle: "Short title",
   shortTitlePlaceholder: "Summarise your report in one line",
+  shortTitleHelp: "Required — at least 5 characters.",
   bodyLabel: "What happened?",
+  bodyHelp: "Required — at least 20 characters. Describe observable facts; avoid threats or knowingly false claims.",
+  assistedSectionTitle: "Submission assistance",
+  assistedSectionHelp:
+    "Tell us if someone else helped you prepare or send this report (for example a community volunteer, translator, or programme staff). This helps staff understand context — it does not change how your report is reviewed.",
+  assistedYes: "Yes — someone helped me",
+  assistedNo: "No — I submitted this myself",
+  disclaimerCheckboxBefore:
+    "I have read and agree to MBKRU’s programme limitations: this is an independent civic accountability channel (not a government agency, court, or the Electoral Commission); my report may be moderated and summarized where policy allows; and I will describe facts I can stand behind without threats or knowingly false claims. See ",
+  disclaimerCheckboxMethodology: "Claims & limitations",
+  disclaimerCheckboxMiddle: " and ",
+  disclaimerCheckboxTerms: "Terms of Use",
+  disclaimerCheckboxAfter: ".",
+  errorTitleRequired: "Enter a short title (at least 5 characters).",
+  errorBodyRequired: "Describe what happened (at least 20 characters).",
+  errorDisclaimerRequired: "Confirm you have read and agree to the programme limitations before submitting.",
+  errorAssistedRequired: "Tell us whether someone assisted you in submitting this report.",
   placeholders: {
     voice: "Describe facts, location, time, and who was involved. Avoid hearsay where possible.",
     mpPerf:

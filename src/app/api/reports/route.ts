@@ -114,6 +114,7 @@ export async function POST(request: Request) {
           : {}),
         submitterEmail: data.submitterEmail?.trim().toLowerCase() ?? null,
         submitterPhone: data.submitterPhone?.trim() ?? null,
+        submitterWasAssisted: data.submitterWasAssisted,
         title: data.title,
         body: data.body,
         category: data.category?.trim() || null,

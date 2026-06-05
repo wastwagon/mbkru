@@ -354,6 +354,8 @@ model CitizenReport {
   mpPerformanceRubric   Json?
   submitterEmail        String?
   submitterPhone        String?
+  /// Whether someone else helped the member prepare or submit this intake (transparency for staff review).
+  submitterWasAssisted  Boolean?
   title                 String
   body                  String                  @db.Text
   category              String?

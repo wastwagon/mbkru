@@ -21,7 +21,6 @@ import {
   type ReportQueueItem,
   removeReportQueueItem,
 } from "@/lib/client/report-submit-queue";
-import type { MpPerformanceRubric } from "@/lib/mp-performance-rubric";
 import { redirectToMemberLogin } from "@/lib/client/member-login-redirect";
 import { useVoiceUiLanguageId } from "@/lib/client/use-voice-ui-language";
 import {
@@ -36,40 +35,13 @@ import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 /** Keep in sync with `@/lib/validation/reports` createReportBodySchema. */
 const LOCAL_AREA_MIN_LEN = 3;
 const LOCAL_AREA_MAX_LEN = 512;
+const TITLE_MIN_LEN = 5;
+const BODY_MIN_LEN = 20;
 
 /** Keep in sync with `report-attachment-limits` (client bundle cannot import server-only module). */
 const MAX_ATTACH_FILES = 3;
 const MAX_ATTACH_BYTES = 5 * 1024 * 1024;
 const ATTACH_ACCEPT = "image/jpeg,image/png,image/webp,application/pdf";
-
-function mpRubricFromSelectStates(
-  accessibility: string,
-  responsiveness: string,
-  followThrough: string,
-): MpPerformanceRubric | undefined {
-  const slot = (s: string): number | undefined => {
-    if (s === "") return undefined;
-    const n = Number.parseInt(s, 10);
-    return Number.isFinite(n) && n >= 1 && n <= 5 ? n : undefined;
-  };
-  const out: MpPerformanceRubric = {};
-  const a = slot(accessibility);
-  const b = slot(responsiveness);
-  const c = slot(followThrough);
-  if (a != null) out.accessibility = a;
-  if (b != null) out.responsiveness = b;
-  if (c != null) out.followThrough = c;
-  return Object.keys(out).length ? out : undefined;
-}
-
-function selectStatesFromMpRubric(r: MpPerformanceRubric | undefined): [string, string, string] {
-  if (!r) return ["", "", ""];
-  return [
-    r.accessibility != null ? String(r.accessibility) : "",
-    r.responsiveness != null ? String(r.responsiveness) : "",
-    r.followThrough != null ? String(r.followThrough) : "",
-  ];
-}
 
 export type RegionOption = { id: string; name: string; slug: string };
 
@@ -121,7 +93,6 @@ export function VoiceReportForm({
 }: VoiceReportFormProps) {
   const phase = getPublicPlatformPhase();
   const electionOn = platformFeatures.electionObservatory(phase);
-  const methodologyPublic = platformFeatures.accountabilityScorecards(phase);
   const langId = useVoiceUiLanguageId();
   const str = useMemo(() => getVoiceReportFormStrings(langId), [langId]);
   const kindOptions = ALL_KIND_VALUES.filter((v) => v !== "ELECTION_OBSERVATION" || electionOn);
@@ -149,9 +120,8 @@ export function VoiceReportForm({
   const [submittedAtIso, setSubmittedAtIso] = useState<string | null>(null);
   const [uploadNote, setUploadNote] = useState<string | null>(null);
   const [parliamentMemberId, setParliamentMemberId] = useState("");
-  const [rubricAccessibility, setRubricAccessibility] = useState("");
-  const [rubricResponsiveness, setRubricResponsiveness] = useState("");
-  const [rubricFollowThrough, setRubricFollowThrough] = useState("");
+  const [disclaimerAgreed, setDisclaimerAgreed] = useState(false);
+  const [submitterWasAssisted, setSubmitterWasAssisted] = useState<"" | "yes" | "no">("");
   const [submittedMpSlug, setSubmittedMpSlug] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [queueItems, setQueueItems] = useState<ReportQueueItem[]>([]);
@@ -197,9 +167,6 @@ export function VoiceReportForm({
   useEffect(() => {
     if (kind !== "MP_PERFORMANCE") {
       setParliamentMemberId("");
-      setRubricAccessibility("");
-      setRubricResponsiveness("");
-      setRubricFollowThrough("");
     }
   }, [kind]);
 
@@ -308,12 +275,9 @@ export function VoiceReportForm({
     setTitle(p.title);
     setBody(p.body);
     setParliamentMemberId(p.parliamentMemberId ?? "");
-    {
-      const [ra, rr, rf] = selectStatesFromMpRubric(p.mpPerformanceRubric);
-      setRubricAccessibility(ra);
-      setRubricResponsiveness(rr);
-      setRubricFollowThrough(rf);
-    }
+    setSubmitterWasAssisted(
+      p.submitterWasAssisted == null ? "" : p.submitterWasAssisted ? "yes" : "no",
+    );
     setRegionId(p.regionId ?? "");
     setLocalArea(p.localArea ?? "");
     if (p.latitude != null && p.longitude != null) {
@@ -348,9 +312,8 @@ export function VoiceReportForm({
     setTurnstileToken(null);
     turnstileRef.current?.reset();
     setParliamentMemberId("");
-    setRubricAccessibility("");
-    setRubricResponsiveness("");
-    setRubricFollowThrough("");
+    setDisclaimerAgreed(false);
+    setSubmitterWasAssisted("");
   }
 
   function trySaveDraftLocally(): LocalDraftResult {
@@ -367,10 +330,8 @@ export function VoiceReportForm({
         longitude: parsedRoundedCoords?.lng,
         parliamentMemberId:
           kind === "MP_PERFORMANCE" && parliamentMemberId.trim() ? parliamentMemberId.trim() : undefined,
-        mpPerformanceRubric:
-          kind === "MP_PERFORMANCE" && methodologyPublic
-            ? mpRubricFromSelectStates(rubricAccessibility, rubricResponsiveness, rubricFollowThrough)
-            : undefined,
+        submitterWasAssisted:
+          submitterWasAssisted === "yes" ? true : submitterWasAssisted === "no" ? false : undefined,
       };
       const parsed = queuedReportPayloadSchema.safeParse(raw);
       if (!parsed.success) {
@@ -440,6 +401,27 @@ export function VoiceReportForm({
       return;
     }
 
+    if (title.trim().length < TITLE_MIN_LEN) {
+      setError(str.errorTitleRequired);
+      setLoading(false);
+      return;
+    }
+    if (body.trim().length < BODY_MIN_LEN) {
+      setError(str.errorBodyRequired);
+      setLoading(false);
+      return;
+    }
+    if (!disclaimerAgreed) {
+      setError(str.errorDisclaimerRequired);
+      setLoading(false);
+      return;
+    }
+    if (submitterWasAssisted !== "yes" && submitterWasAssisted !== "no") {
+      setError(str.errorAssistedRequired);
+      setLoading(false);
+      return;
+    }
+
     if (!regionId) {
       setError("Select your region.");
       setLoading(false);
@@ -486,20 +468,10 @@ export function VoiceReportForm({
       latitude: parsedRoundedCoords.lat,
       longitude: parsedRoundedCoords.lng,
       turnstileToken: turnstileToken ?? undefined,
+      acceptedDisclaimer: true,
+      submitterWasAssisted: submitterWasAssisted === "yes",
       ...(kind === "MP_PERFORMANCE" && parliamentMemberId.trim()
-        ? {
-            parliamentMemberId: parliamentMemberId.trim(),
-            ...(methodologyPublic
-              ? (() => {
-                  const rub = mpRubricFromSelectStates(
-                    rubricAccessibility,
-                    rubricResponsiveness,
-                    rubricFollowThrough,
-                  );
-                  return rub ? { mpPerformanceRubric: rub } : {};
-                })()
-              : {}),
-          }
+        ? { parliamentMemberId: parliamentMemberId.trim() }
         : {}),
     };
 
@@ -596,9 +568,8 @@ export function VoiceReportForm({
       setApproxCaptured(false);
       setGeoStatus("idle");
       setParliamentMemberId("");
-      setRubricAccessibility("");
-      setRubricResponsiveness("");
-      setRubricFollowThrough("");
+      setDisclaimerAgreed(false);
+      setSubmitterWasAssisted("");
       if (fileInputRef.current) fileInputRef.current.value = "";
       setTurnstileToken(null);
       turnstileRef.current?.reset();
@@ -854,61 +825,6 @@ export function VoiceReportForm({
         </div>
       ) : null}
 
-      {kind === "MP_PERFORMANCE" && methodologyPublic ? (
-        <fieldset className="rounded-xl border border-[var(--border)] bg-white/80 px-4 py-3">
-          <legend className="px-1 text-sm font-semibold text-[var(--foreground)]">{str.mpRubricSectionTitle}</legend>
-          <p className="text-xs text-[var(--muted-foreground)]">{str.mpRubricHelp}</p>
-          <p className="mt-1 text-[11px] text-[var(--muted-foreground)]">{str.mpRubricOptional}</p>
-          <div className="mt-3 grid gap-3 sm:grid-cols-3">
-            <label className="block text-xs font-medium text-[var(--foreground)]">
-              {str.mpRubricAccessibility}
-              <select
-                value={rubricAccessibility}
-                onChange={(e) => setRubricAccessibility(e.target.value)}
-                className={`${inputClass} mt-1 cursor-pointer`}
-              >
-                <option value="">{str.mpRubricScaleHint}</option>
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <option key={n} value={String(n)}>
-                    {n}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="block text-xs font-medium text-[var(--foreground)]">
-              {str.mpRubricResponsiveness}
-              <select
-                value={rubricResponsiveness}
-                onChange={(e) => setRubricResponsiveness(e.target.value)}
-                className={`${inputClass} mt-1 cursor-pointer`}
-              >
-                <option value="">{str.mpRubricScaleHint}</option>
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <option key={n} value={String(n)}>
-                    {n}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="block text-xs font-medium text-[var(--foreground)]">
-              {str.mpRubricFollowThrough}
-              <select
-                value={rubricFollowThrough}
-                onChange={(e) => setRubricFollowThrough(e.target.value)}
-                className={`${inputClass} mt-1 cursor-pointer`}
-              >
-                <option value="">{str.mpRubricScaleHint}</option>
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <option key={n} value={String(n)}>
-                    {n}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-        </fieldset>
-      ) : null}
-
       {kind === "GOVERNMENT_PERFORMANCE" ? (
         <div
           className="rounded-xl border border-[var(--primary)]/25 bg-[var(--primary)]/5 px-4 py-3 text-sm text-[var(--foreground)]"
@@ -928,28 +844,29 @@ export function VoiceReportForm({
 
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-[var(--foreground)]">
-          {str.shortTitle}
+          {str.shortTitle} <span className="text-red-600">*</span>
         </label>
         <input
           id="title"
           required
-          minLength={5}
+          minLength={TITLE_MIN_LEN}
           maxLength={300}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className={inputClass}
           placeholder={str.shortTitlePlaceholder}
         />
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">{str.shortTitleHelp}</p>
       </div>
 
       <div>
         <label htmlFor="body" className="block text-sm font-medium text-[var(--foreground)]">
-          {str.bodyLabel}
+          {str.bodyLabel} <span className="text-red-600">*</span>
         </label>
         <textarea
           id="body"
           required
-          minLength={20}
+          minLength={BODY_MIN_LEN}
           maxLength={50000}
           rows={8}
           value={body}
@@ -957,6 +874,7 @@ export function VoiceReportForm({
           className={`${inputClass} resize-y min-h-[160px]`}
           placeholder={resolvedBodyPlaceholder}
         />
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">{str.bodyHelp}</p>
       </div>
 
       <div className="rounded-xl border border-[var(--border)] bg-[var(--section-light)]/40 px-4 py-4">
@@ -1058,6 +976,58 @@ export function VoiceReportForm({
         className="flex justify-start"
       />
 
+      <fieldset className="rounded-xl border border-[var(--border)] bg-white/80 px-4 py-4">
+        <legend className="px-1 text-sm font-semibold text-[var(--foreground)]">
+          {str.assistedSectionTitle} <span className="text-red-600">*</span>
+        </legend>
+        <p className="text-xs text-[var(--muted-foreground)]">{str.assistedSectionHelp}</p>
+        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:gap-6">
+          <label className="flex items-center gap-2 text-sm text-[var(--foreground)]">
+            <input
+              type="radio"
+              name="submitter-was-assisted"
+              value="yes"
+              checked={submitterWasAssisted === "yes"}
+              onChange={() => setSubmitterWasAssisted("yes")}
+              className="h-4 w-4 border-[var(--border)] text-[var(--primary)]"
+            />
+            {str.assistedYes}
+          </label>
+          <label className="flex items-center gap-2 text-sm text-[var(--foreground)]">
+            <input
+              type="radio"
+              name="submitter-was-assisted"
+              value="no"
+              checked={submitterWasAssisted === "no"}
+              onChange={() => setSubmitterWasAssisted("no")}
+              className="h-4 w-4 border-[var(--border)] text-[var(--primary)]"
+            />
+            {str.assistedNo}
+          </label>
+        </div>
+      </fieldset>
+
+      <label className="flex items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--section-light)]/40 px-4 py-4 text-sm text-[var(--foreground)]">
+        <input
+          type="checkbox"
+          checked={disclaimerAgreed}
+          onChange={(e) => setDisclaimerAgreed(e.target.checked)}
+          required
+          className="mt-0.5 h-4 w-4 shrink-0 rounded border-[var(--border)]"
+        />
+        <span>
+          {str.disclaimerCheckboxBefore}
+          <Link href="/methodology#claims-and-citations" className={primaryLinkClass}>
+            {str.disclaimerCheckboxMethodology}
+          </Link>
+          {str.disclaimerCheckboxMiddle}
+          <Link href="/terms" className={primaryLinkClass}>
+            {str.disclaimerCheckboxTerms}
+          </Link>
+          {str.disclaimerCheckboxAfter}
+        </span>
+      </label>
+
       {error ? (
         <p className="text-sm text-red-600" role="alert">
           {error}
@@ -1076,6 +1046,10 @@ export function VoiceReportForm({
           loading ||
           (isTurnstileWidgetEnabled && !turnstileToken) ||
           !locationGateOk ||
+          !disclaimerAgreed ||
+          (submitterWasAssisted !== "yes" && submitterWasAssisted !== "no") ||
+          title.trim().length < TITLE_MIN_LEN ||
+          body.trim().length < BODY_MIN_LEN ||
           (kind === "MP_PERFORMANCE" && !lockKind && (!parliamentMemberId.trim() || mpOptions.length === 0))
         }
         size="lg"
