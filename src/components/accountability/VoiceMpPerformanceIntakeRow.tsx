@@ -1,13 +1,11 @@
 import Link from "next/link";
 
-import { VoiceSubmissionEngagementMeta } from "@/components/accountability/VoiceSubmissionEngagementMeta";
 import { VoiceSubmissionPrimaryAction } from "@/components/accountability/VoiceSubmissionPrimaryAction";
-import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import { formatMediumDate } from "@/lib/format-submission-datetime";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { reportStatusLabel } from "@/lib/report-status-text";
 import type { MpPerformanceIntakeRow } from "@/lib/server/promises-member-sheet-load";
-import { formatDiscussionStatusSuffix, voiceTrackHref } from "@/lib/voice-submission-display";
+import { formatCompactEngagementSummary, formatDiscussionStatusSuffix, voiceTrackHref } from "@/lib/voice-submission-display";
 
 type Props = {
   report: MpPerformanceIntakeRow;
@@ -27,6 +25,11 @@ export function VoiceMpPerformanceIntakeRow({
   const titleId = `mp-intake-title-${report.id}`;
   const metaId = `mp-intake-meta-${report.id}`;
   const trackHref = voiceTrackHref(report.trackingCode);
+  const engagementSummary = formatCompactEngagementSummary(
+    report.publicSupportCount,
+    report.publicCommentCount,
+    report.discussionReactionTotals,
+  );
 
   return (
     <article aria-labelledby={titleId} className="py-3 first:pt-0 last:pb-0">
@@ -56,13 +59,9 @@ export function VoiceMpPerformanceIntakeRow({
           )}
         </p>
       ) : null}
-      <VoiceSubmissionEngagementMeta
-        engagement={{
-          publicSupportCount: report.publicSupportCount,
-          publicCommentCount: report.publicCommentCount,
-          discussionReactionTotals: report.discussionReactionTotals,
-        }}
-      />
+      {engagementSummary ? (
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">{engagementSummary}</p>
+      ) : null}
       {report.bodyPreview ? (
         <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[var(--muted-foreground)]">{report.bodyPreview}</p>
       ) : null}

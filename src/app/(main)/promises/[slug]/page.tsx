@@ -52,7 +52,7 @@ export default async function PromisesByMemberPage({ params }: Props) {
         breadcrumbCurrentLabel={member.name}
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <p className="text-sm text-[var(--muted-foreground)]">
             <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className={primaryNavLinkClass}>
               {accountabilityProse.mpRosterBackLink}

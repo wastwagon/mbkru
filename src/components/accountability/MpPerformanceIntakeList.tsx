@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { VoiceMpPerformanceIntakeRow } from "@/components/accountability/VoiceMpPerformanceIntakeRow";
+import { MpPerformanceIntakeCard } from "@/components/accountability/MpPerformanceIntakeCard";
 import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import type { MpPerformanceIntakeRow } from "@/lib/server/promises-member-sheet-load";
@@ -20,7 +20,7 @@ export function MpPerformanceIntakeList({ reports }: Props) {
   const sectionHeadingId = "mp-performance-intakes-heading";
 
   return (
-    <div className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
+    <section aria-labelledby={sectionHeadingId} className="mt-10">
       <h2 id={sectionHeadingId} className="font-display text-lg font-semibold text-[var(--foreground)]">
         {accountabilityProse.mpPerformanceIntakesSectionTitle}
         <span className="ml-2 text-base font-normal text-[var(--muted-foreground)]">
@@ -34,13 +34,15 @@ export function MpPerformanceIntakeList({ reports }: Props) {
         </Link>{" "}
         {accountabilityProse.mpPerformanceIntakesSectionIntroTail}
       </p>
-      <ul aria-labelledby={sectionHeadingId} className="mt-4 divide-y divide-[var(--border)]/80">
+      <ul
+        className={`mt-6 grid items-stretch gap-5${reports.length > 1 ? " sm:grid-cols-2" : ""}`}
+      >
         {reports.map((report) => (
-          <li key={report.id}>
-            <VoiceMpPerformanceIntakeRow report={report} />
+          <li key={report.id} className="flex min-h-0">
+            <MpPerformanceIntakeCard report={report} />
           </li>
         ))}
       </ul>
-    </div>
+    </section>
   );
 }

@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  formatBrowsePlaceLabel,
   formatCommunityEngagementLine,
+  formatCompactEngagementSummary,
   formatDiscussionReactionLine,
   formatDiscussionStatusSuffix,
   bodyPreviewLine,
@@ -23,6 +25,22 @@ describe("voice-submission-display", () => {
     expect(formatDiscussionReactionLine({ LIKE: 1, THANK: 0, INSIGHT: 0 })).toBe(
       "On the discussion thread: Like 1 · Thanks 0 · Important 0",
     );
+  });
+
+  it("formats compact engagement summary", () => {
+    expect(formatCompactEngagementSummary(0, 0, { LIKE: 0, THANK: 0, INSIGHT: 0 })).toBeNull();
+    expect(formatCompactEngagementSummary(1, 1, { LIKE: 1, THANK: 0, INSIGHT: 0 })).toBe(
+      "1 support · 1 comment · Like 1",
+    );
+  });
+
+  it("shortens browse place labels", () => {
+    expect(
+      formatBrowsePlaceLabel(
+        "Greater Accra",
+        "Ashongman, Dome, Ga East Municipal District, Greater Accra Region, Ghana",
+      ),
+    ).toBe("Greater Accra · Ashongman");
   });
 
   it("trims body preview", () => {

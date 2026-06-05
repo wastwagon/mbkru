@@ -48,6 +48,44 @@ export function formatCommunityEngagementLine(supportCount: number, commentCount
   return `Community engagement: ${supportCount} supporter${supportCount === 1 ? "" : "s"} · ${commentCount} comment${commentCount === 1 ? "" : "s"}`;
 }
 
+/** One-line engagement summary for dense browse cards. */
+export function formatCompactEngagementSummary(
+  supportCount: number,
+  commentCount: number,
+  totals: VoiceDiscussionReactionTotals,
+): string | null {
+  const parts: string[] = [];
+  if (supportCount > 0) parts.push(`${supportCount} support${supportCount === 1 ? "" : "s"}`);
+  if (commentCount > 0) parts.push(`${commentCount} comment${commentCount === 1 ? "" : "s"}`);
+  const reactionBits: string[] = [];
+  if (totals.LIKE > 0) reactionBits.push(`Like ${totals.LIKE}`);
+  if (totals.THANK > 0) reactionBits.push(`Thanks ${totals.THANK}`);
+  if (totals.INSIGHT > 0) reactionBits.push(`Important ${totals.INSIGHT}`);
+  if (reactionBits.length > 0) parts.push(reactionBits.join(", "));
+  return parts.length > 0 ? parts.join(" · ") : null;
+}
+
+/** Short place label for cards — region plus first locality segment, not full geocoder strings. */
+export function formatBrowsePlaceLabel(
+  regionName: string | null | undefined,
+  localArea: string | null | undefined,
+  maxLocal = 40,
+): string | null {
+  const region = regionName?.trim() || null;
+  const rawLocal = localArea?.trim() || null;
+  const localSegment = rawLocal?.split(",")[0]?.trim() || null;
+  const local =
+    localSegment && localSegment.length > maxLocal
+      ? `${localSegment.slice(0, maxLocal).trimEnd()}…`
+      : localSegment;
+
+  if (region && local) {
+    if (local.toLowerCase().includes(region.toLowerCase())) return region;
+    return `${region} · ${local}`;
+  }
+  return region ?? local;
+}
+
 export function formatDiscussionReactionLine(totals: VoiceDiscussionReactionTotals): string | null {
   const total = totals.LIKE + totals.THANK + totals.INSIGHT;
   if (total <= 0) return null;
