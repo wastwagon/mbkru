@@ -308,8 +308,9 @@ export default async function ReportCardIndexPage({
                   })}
                 />
                 <p className="mt-3 text-xs text-[var(--muted-foreground)]">
-                  Listed by most recent (excluding archived). Support and comments require a staff-opened public thread — see
-                  &quot;Open public thread&quot; on cards when live.
+                  Listed by most recent (excluding archived). Support, comments, and reactions appear on cards when
+                  members engage on a staff-opened discussion — check the meta line for &quot;Discussion open&quot; and
+                  the engagement counts below it.
                 </p>
               </div>
 

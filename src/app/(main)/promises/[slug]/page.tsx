@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { PromiseEvidenceCard } from "@/components/accountability/PromiseEvidenceCard";
+import { MpPerformanceIntakeList } from "@/components/accountability/MpPerformanceIntakeList";
 import { PageHeader } from "@/components/ui/PageHeader";
 import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
@@ -58,49 +59,7 @@ export default async function PromisesByMemberPage({ params }: Props) {
             </Link>
           </p>
 
-          {mpPerformanceReports.length > 0 ? (
-            <div className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
-              <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">
-                Citizen Voice — MP performance intakes
-              </h2>
-              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-                Recent MBKRU Voice submissions filed against this MP (staff triage; not verified allegations). Open{" "}
-                <Link href="/parliament-tracker" className={primaryNavLinkClass}>
-                  Parliament tracker
-                </Link>{" "}
-                for the roster and catalogue context.
-              </p>
-              <ul className="mt-4 space-y-3">
-                {mpPerformanceReports.map((r) => (
-                  <li key={r.id} className="border-b border-[var(--border)]/80 pb-3 last:border-0 last:pb-0">
-                    <p className="font-medium text-[var(--foreground)]">{r.title}</p>
-                    <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-                      {r.discussionEnabled ? (
-                        <>
-                          <Link
-                            href={`/citizens-voice/discussions/${encodeURIComponent(r.id)}`}
-                            className={primaryNavLinkClass}
-                          >
-                            Open discussion
-                          </Link>
-                          {" · "}
-                        </>
-                      ) : (
-                        <>
-                          Track{" "}
-                          <Link href={`/track-report?code=${encodeURIComponent(r.trackingCode)}`} className={primaryNavLinkClass}>
-                            {r.trackingCode}
-                          </Link>
-                          {" · "}
-                        </>
-                      )}
-                      {formatMediumDate(r.createdAt)}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
+          <MpPerformanceIntakeList reports={mpPerformanceReports} />
 
           {member.promises.length === 0 ? (
             <p className="mt-8 rounded-xl border border-[var(--border)] bg-white px-4 py-6 text-sm text-[var(--muted-foreground)]">

@@ -1,8 +1,15 @@
 import "server-only";
 
-import { Prisma } from "@prisma/client";
+import { Prisma, type CitizenReportStatus } from "@prisma/client";
 
 import { prisma } from "@/lib/db/prisma";
+import { loadVoiceSubmissionEngagementByReportIds } from "@/lib/server/voice-submission-engagement";
+import {
+  bodyPreviewLine,
+  emptyVoiceDiscussionReactionTotals,
+  type VoiceDiscussionReactionTotals,
+  type VoiceSubmissionEngagementCounts,
+} from "@/lib/voice-submission-display";
 
 export type MpPerformanceIntakeRow = {
   id: string;
@@ -10,7 +17,62 @@ export type MpPerformanceIntakeRow = {
   trackingCode: string;
   createdAt: Date;
   discussionEnabled: boolean;
+  status: CitizenReportStatus;
+  bodyPreview: string | null;
+  publicSupportCount: number;
+  publicCommentCount: number;
+  discussionReactionTotals: VoiceDiscussionReactionTotals;
 };
+
+function mapMpPerformanceIntakeRow(
+  row: {
+    id: string;
+    title: string;
+    trackingCode: string;
+    createdAt: Date;
+    body: string;
+    status: CitizenReportStatus;
+    discussionEnabled?: boolean;
+  },
+  engagement: VoiceSubmissionEngagementCounts,
+): MpPerformanceIntakeRow {
+  return {
+    id: row.id,
+    title: row.title,
+    trackingCode: row.trackingCode,
+    createdAt: row.createdAt,
+    discussionEnabled: row.discussionEnabled ?? false,
+    status: row.status,
+    bodyPreview: bodyPreviewLine(row.body),
+    publicSupportCount: engagement.publicSupportCount,
+    publicCommentCount: engagement.publicCommentCount,
+    discussionReactionTotals: engagement.discussionReactionTotals,
+  };
+}
+
+async function attachMpPerformanceEngagement(
+  rows: Array<{
+    id: string;
+    title: string;
+    trackingCode: string;
+    createdAt: Date;
+    body: string;
+    status: CitizenReportStatus;
+    discussionEnabled?: boolean;
+  }>,
+): Promise<MpPerformanceIntakeRow[]> {
+  const engagementMap = await loadVoiceSubmissionEngagementByReportIds(rows.map((r) => r.id));
+  return rows.map((row) =>
+    mapMpPerformanceIntakeRow(
+      row,
+      engagementMap.get(row.id) ?? {
+        publicSupportCount: 0,
+        publicCommentCount: 0,
+        discussionReactionTotals: emptyVoiceDiscussionReactionTotals(),
+      },
+    ),
+  );
+}
 
 export type PromisesMemberSheet = Awaited<ReturnType<typeof loadPromisesMemberSheetPublic>>;
 
@@ -120,16 +182,19 @@ export async function loadMpPerformanceIntakes(memberId: string): Promise<MpPerf
   };
 
   try {
-    return await prisma.citizenReport.findMany({
+    const rows = await prisma.citizenReport.findMany({
       ...baseArgs,
       select: {
         id: true,
         title: true,
         trackingCode: true,
         createdAt: true,
+        body: true,
+        status: true,
         discussionEnabled: true,
       },
     });
+    return attachMpPerformanceEngagement(rows);
   } catch (e) {
     if (isMissingColumnError(e)) {
       try {
@@ -140,15 +205,82 @@ export async function loadMpPerformanceIntakes(memberId: string): Promise<MpPerf
             title: true,
             trackingCode: true,
             createdAt: true,
+            body: true,
+            status: true,
           },
         });
-        return rows.map((r) => ({ ...r, discussionEnabled: false }));
+        return attachMpPerformanceEngagement(rows.map((r) => ({ ...r, discussionEnabled: false })));
       } catch (fallbackError) {
         console.error("[promises-member-sheet] MP performance intakes fallback failed:", fallbackError);
         return [];
       }
     }
     console.error("[promises-member-sheet] MP performance intakes query failed:", e);
+    return [];
+  }
+}
+
+export type RecentMpPerformanceIntakeRow = MpPerformanceIntakeRow & {
+  parliamentMember: { name: string; slug: string } | null;
+};
+
+/** Cross-MP feed for parliament tracker — same row shape as MP sheet intakes. */
+export async function loadRecentMpPerformanceIntakes(take = 12): Promise<RecentMpPerformanceIntakeRow[]> {
+  const baseArgs = {
+    where: {
+      kind: "MP_PERFORMANCE" as const,
+      parliamentMemberId: { not: null },
+      status: { not: "ARCHIVED" as const },
+    },
+    orderBy: { createdAt: "desc" as const },
+    take,
+  };
+
+  try {
+    const rows = await prisma.citizenReport.findMany({
+      ...baseArgs,
+      select: {
+        id: true,
+        title: true,
+        trackingCode: true,
+        createdAt: true,
+        body: true,
+        status: true,
+        discussionEnabled: true,
+        parliamentMember: { select: { name: true, slug: true } },
+      },
+    });
+    const intakes = await attachMpPerformanceEngagement(rows);
+    return intakes.map((report, index) => ({
+      ...report,
+      parliamentMember: rows[index]?.parliamentMember ?? null,
+    }));
+  } catch (e) {
+    if (isMissingColumnError(e)) {
+      try {
+        const rows = await prisma.citizenReport.findMany({
+          ...baseArgs,
+          select: {
+            id: true,
+            title: true,
+            trackingCode: true,
+            createdAt: true,
+            body: true,
+            status: true,
+            parliamentMember: { select: { name: true, slug: true } },
+          },
+        });
+        const intakes = await attachMpPerformanceEngagement(rows.map((r) => ({ ...r, discussionEnabled: false })));
+        return intakes.map((report, index) => ({
+          ...report,
+          parliamentMember: rows[index]?.parliamentMember ?? null,
+        }));
+      } catch (fallbackError) {
+        console.error("[promises-member-sheet] recent MP performance intakes fallback failed:", fallbackError);
+        return [];
+      }
+    }
+    console.error("[promises-member-sheet] recent MP performance intakes query failed:", e);
     return [];
   }
 }

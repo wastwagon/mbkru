@@ -198,6 +198,14 @@ export const accountabilityProse = {
   /** Roster list — Citizen Voice MP performance intakes linked to that MP (non-archived). */
   mpRosterVoiceReportsSingular: "MP Voice report",
   mpRosterVoiceReportsPlural: "MP Voice reports",
+  /** MP commitment sheet — Voice intakes block heading (count appended in UI). */
+  mpPerformanceIntakesSectionTitle: "Citizen Voice — MP performance intakes",
+  mpPerformanceIntakesSectionIntro:
+    "Recent MBKRU Voice submissions filed against this MP (staff triage; not verified allegations). Each row is a separate report — use the tracking code to tell them apart.",
+  mpPerformanceIntakesSectionIntroTail: "for the roster and catalogue context.",
+  mpPerformanceIntakesCountSingular: "1 intake",
+  mpPerformanceIntakesCountPlural: "{count} intakes",
+  mpPerformanceIntakesDiscussionOff: "Public discussion off",
   mpRosterSearchLabel: "Search the roster",
   mpRosterSearchPlaceholder: "Name, party, or constituency…",
   mpRosterSearchEmpty: 'No MPs match "{query}". Try another spelling or search by party or constituency.',

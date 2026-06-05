@@ -19,6 +19,8 @@ import {
   reportCardYearTag,
 } from "@/lib/accountability-tags";
 import { prisma } from "@/lib/db/prisma";
+import { bodyPreviewLine, emptyVoiceDiscussionReactionTotals } from "@/lib/voice-submission-display";
+import { loadVoiceSubmissionEngagementByReportIds } from "@/lib/server/voice-submission-engagement";
 import { getPromiseCatalogueApiFields } from "@/lib/promise-catalogue-display";
 import { publicReportCardCycleTitle } from "@/lib/report-card-public-label";
 import { REPORT_CARD_HEADLINE_WEIGHTS } from "@/lib/report-card-headline";
@@ -427,51 +429,12 @@ export type VoiceSubmissionBrowseRow = {
   discussionReactionTotals: { LIKE: number; THANK: number; INSIGHT: number };
 };
 
-async function voiceDiscussionReactionTotalsByReportIds(
-  reportIds: string[],
-): Promise<Map<string, { LIKE: number; THANK: number; INSIGHT: number }>> {
-  const empty = (): { LIKE: number; THANK: number; INSIGHT: number } => ({
-    LIKE: 0,
-    THANK: 0,
-    INSIGHT: 0,
-  });
-  const map = new Map<string, ReturnType<typeof empty>>();
-  for (const id of reportIds) map.set(id, empty());
-  if (reportIds.length === 0) return map;
-
-  const rows = await prisma.citizenReportPublicComment.findMany({
-    where: { reportId: { in: reportIds } },
-    select: {
-      reportId: true,
-      reactions: { select: { kind: true } },
-    },
-  });
-
-  for (const row of rows) {
-    const t = map.get(row.reportId);
-    if (!t) continue;
-    for (const r of row.reactions) {
-      if (r.kind === "LIKE") t.LIKE += 1;
-      else if (r.kind === "THANK") t.THANK += 1;
-      else if (r.kind === "INSIGHT") t.INSIGHT += 1;
-    }
-  }
-  return map;
-}
-
 function memberSubmitterLabel(m: { displayName: string | null; email: string } | null): string | null {
   if (!m) return null;
   const dn = m.displayName?.trim();
   if (dn) return dn;
   const local = m.email.split("@")[0]?.trim();
   return local || null;
-}
-
-function bodyPreviewLine(body: string | null, max = 220): string | null {
-  if (!body?.trim()) return null;
-  const t = body.trim().replace(/\s+/g, " ");
-  if (t.length <= max) return t;
-  return `${t.slice(0, max).trimEnd()}…`;
 }
 
 export async function getVoiceSubmissionsBrowseEntries(opts: {
@@ -516,39 +479,40 @@ export async function getVoiceSubmissionsBrowseEntries(opts: {
         publicCauseSlug: true,
         publicCauseTitle: true,
         publicCauseSummary: true,
-        _count: {
-          select: {
-            publicCauseSupports: true,
-            publicCauseComments: true,
-          },
-        },
       },
     }),
     prisma.citizenReport.count({ where }),
   ]);
 
-  const reactionMap = await voiceDiscussionReactionTotalsByReportIds(raw.map((r) => r.id));
+  const engagementMap = await loadVoiceSubmissionEngagementByReportIds(raw.map((r) => r.id));
 
-  const rows: VoiceSubmissionBrowseRow[] = raw.map((r) => ({
-    id: r.id,
-    trackingCode: r.trackingCode,
-    title: r.title,
-    kind: r.kind,
-    status: r.status,
-    createdAt: r.createdAt,
-    discussionEnabled: r.discussionEnabled,
-    localArea: r.localArea,
-    region: r.region,
-    parliamentMember: r.parliamentMember,
-    submitterLabel: memberSubmitterLabel(r.member),
-    bodyPreview: bodyPreviewLine(r.body),
-    publicCauseSlug: r.publicCauseSlug,
-    publicCauseTitle: r.publicCauseTitle,
-    publicCauseSummary: r.publicCauseSummary,
-    publicSupportCount: r._count.publicCauseSupports,
-    publicCommentCount: r._count.publicCauseComments,
-    discussionReactionTotals: reactionMap.get(r.id) ?? { LIKE: 0, THANK: 0, INSIGHT: 0 },
-  }));
+  const rows: VoiceSubmissionBrowseRow[] = raw.map((r) => {
+    const engagement = engagementMap.get(r.id) ?? {
+      publicSupportCount: 0,
+      publicCommentCount: 0,
+      discussionReactionTotals: emptyVoiceDiscussionReactionTotals(),
+    };
+    return {
+      id: r.id,
+      trackingCode: r.trackingCode,
+      title: r.title,
+      kind: r.kind,
+      status: r.status,
+      createdAt: r.createdAt,
+      discussionEnabled: r.discussionEnabled,
+      localArea: r.localArea,
+      region: r.region,
+      parliamentMember: r.parliamentMember,
+      submitterLabel: memberSubmitterLabel(r.member),
+      bodyPreview: bodyPreviewLine(r.body),
+      publicCauseSlug: r.publicCauseSlug,
+      publicCauseTitle: r.publicCauseTitle,
+      publicCauseSummary: r.publicCauseSummary,
+      publicSupportCount: engagement.publicSupportCount,
+      publicCommentCount: engagement.publicCommentCount,
+      discussionReactionTotals: engagement.discussionReactionTotals,
+    };
+  });
 
   return { rows, totalFiltered, page: safePage };
 }

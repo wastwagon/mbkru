@@ -1,8 +1,13 @@
 import Link from "next/link";
 
+import { VoiceSubmissionEngagementMeta } from "@/components/accountability/VoiceSubmissionEngagementMeta";
+import { VoiceSubmissionPrimaryAction } from "@/components/accountability/VoiceSubmissionPrimaryAction";
+import { formatMediumDate } from "@/lib/format-submission-datetime";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
+import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
 import { reportKindLabel, reportStatusLabel } from "@/lib/report-status-text";
 import type { VoiceSubmissionBrowseRow } from "@/lib/server/accountability-cache";
+import { formatDiscussionStatusSuffix, voiceTrackHref } from "@/lib/voice-submission-display";
 import type { CitizenReportKind } from "@prisma/client";
 
 function excerptFromSummary(raw: string | null, max = 220): string | null {
@@ -40,11 +45,8 @@ type Props = {
 };
 
 export function VoiceSubmissionBrowseCard({ row }: Props) {
-  const dateLabel = row.createdAt.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
+  const titleId = `voice-browse-title-${row.id}`;
+  const metaId = `voice-browse-meta-${row.id}`;
   const placeParts = [row.region?.name, row.localArea?.trim()].filter(Boolean);
   const place = placeParts.length > 0 ? placeParts.join(" · ") : null;
   const summaryExcerpt = excerptFromSummary(row.publicCauseSummary);
@@ -52,11 +54,7 @@ export function VoiceSubmissionBrowseCard({ row }: Props) {
   const hasLegacyCause = Boolean(row.publicCauseSlug);
   const discussionOpen = row.discussionEnabled;
   const displayTitle = stripSeedMarkers(row.title);
-  const rt = row.discussionReactionTotals;
-  const reactionLine =
-    rt.LIKE + rt.THANK + rt.INSIGHT > 0
-      ? `On the discussion thread: Like ${rt.LIKE} · Thanks ${rt.THANK} · Important ${rt.INSIGHT}`
-      : null;
+  const showMpSheetLink = isPromisesBrowseEnabled();
 
   const narrative =
     summaryExcerpt ??
@@ -66,108 +64,91 @@ export function VoiceSubmissionBrowseCard({ row }: Props) {
         ? row.bodyPreview
         : null);
 
-  const discussionHref = `/citizens-voice/discussions/${encodeURIComponent(row.id)}`;
+  const narrativeFallback = discussionOpen
+    ? "Open the report to read the full narrative. Sign in on the discussion page to comment, react, and show support."
+    : "Public discussion is turned off for this submission.";
+
+  const trackHref = voiceTrackHref(row.trackingCode);
 
   return (
-    <article className="flex h-full min-h-0 w-full flex-col rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <p className="mb-2">
-            <span
-              className={`inline-flex max-w-full rounded-full border px-2.5 py-1 text-xs font-semibold leading-tight ${kindBadgeClass(row.kind)}`}
-            >
-              Report type: {reportKindLabel(row.kind)}
-            </span>
-          </p>
-          <h2 className="font-display text-lg font-semibold leading-snug text-[var(--foreground)]">{displayTitle}</h2>
-          {row.submitterLabel ? (
-            <p className="mt-2 text-xs font-medium text-[var(--foreground)]">Submitted by {row.submitterLabel}</p>
-          ) : null}
-          <p className="mt-2 text-xs text-[var(--muted-foreground)]">
-            {reportStatusLabel(row.status)}
-            {" · "}
-            {dateLabel}
-          </p>
-          {place ? <p className="mt-2 text-xs text-[var(--muted-foreground)]">{place}</p> : null}
-          {row.parliamentMember ? (
-            <p className="mt-2 text-xs font-medium text-[var(--foreground)]">
-              MP in focus: {row.parliamentMember.name}
-              {row.parliamentMember.role ? ` (${row.parliamentMember.role})` : ""}
-            </p>
-          ) : row.kind === "MP_PERFORMANCE" ? (
-            <p className="mt-2 text-xs text-amber-800 dark:text-amber-200">
-              No MP selected on this intake — when you file MP performance, pick the sitting MP so it appears on their
-              tracker sheet.
-            </p>
-          ) : null}
-        </div>
-        {discussionOpen ? (
-          <span className="shrink-0 rounded-full bg-[var(--primary)]/12 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--primary)]">
-            Discussion open
+    <article
+      aria-labelledby={titleId}
+      className="flex h-full min-h-0 w-full flex-col rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+    >
+      <div className="min-w-0 flex-1">
+        <p className="mb-2">
+          <span
+            className={`inline-flex max-w-full rounded-full border px-2.5 py-1 text-xs font-semibold leading-tight ${kindBadgeClass(row.kind)}`}
+          >
+            Report type: {reportKindLabel(row.kind)}
           </span>
-        ) : (
-          <span className="shrink-0 rounded-full bg-[var(--muted)]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
-            Discussion off
-          </span>
-        )}
-      </div>
-      {row.publicSupportCount > 0 || row.publicCommentCount > 0 ? (
-        <p className="mt-3 text-xs text-[var(--muted-foreground)]">
-          Community engagement: {row.publicSupportCount} supporter{row.publicSupportCount === 1 ? "" : "s"}
-          {" · "}
-          {row.publicCommentCount} comment{row.publicCommentCount === 1 ? "" : "s"}
         </p>
-      ) : null}
+        <h2 id={titleId} className="font-display text-lg font-semibold leading-snug text-[var(--foreground)]">
+          {displayTitle}
+        </h2>
+        {row.submitterLabel ? (
+          <p className="mt-2 text-xs font-medium text-[var(--foreground)]">Submitted by {row.submitterLabel}</p>
+        ) : null}
+        <p id={metaId} className="mt-2 text-xs text-[var(--muted-foreground)]">
+          {reportStatusLabel(row.status)}
+          {" · "}
+          {formatMediumDate(row.createdAt)}
+          {" · "}
+          <Link href={trackHref} className={`tabular-nums ${primaryLinkClass}`}>
+            {row.trackingCode}
+          </Link>
+          {formatDiscussionStatusSuffix(discussionOpen)}
+        </p>
+        {place ? <p className="mt-2 text-xs text-[var(--muted-foreground)]">{place}</p> : null}
+        {row.parliamentMember ? (
+          <p className="mt-2 text-xs font-medium text-[var(--foreground)]">
+            MP in focus:{" "}
+            {showMpSheetLink ? (
+              <Link href={`/promises/${encodeURIComponent(row.parliamentMember.slug)}`} className={primaryLinkClass}>
+                {row.parliamentMember.name}
+              </Link>
+            ) : (
+              row.parliamentMember.name
+            )}
+            {row.parliamentMember.role ? ` (${row.parliamentMember.role})` : ""}
+          </p>
+        ) : row.kind === "MP_PERFORMANCE" ? (
+          <p className="mt-2 text-xs text-amber-800 dark:text-amber-200">
+            No MP selected on this intake — when you file MP performance, pick the sitting MP so it appears on their
+            tracker sheet.
+          </p>
+        ) : null}
+      </div>
+      <VoiceSubmissionEngagementMeta
+        engagement={{
+          publicSupportCount: row.publicSupportCount,
+          publicCommentCount: row.publicCommentCount,
+          discussionReactionTotals: row.discussionReactionTotals,
+        }}
+        className="mt-3 text-xs text-[var(--muted-foreground)]"
+      />
       {publicTitle ? (
         <p className="mt-3 line-clamp-2 text-xs font-medium text-[var(--foreground)]">Published title: {publicTitle}</p>
       ) : null}
       <div className="mt-3 flex min-h-0 flex-1 flex-col">
         {narrative ? (
-          discussionOpen ? (
-            <Link
-              href={discussionHref}
-              prefetch={false}
-              className="group -mx-1 block min-h-0 flex-1 rounded-lg px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/35"
-            >
-              <p className="line-clamp-4 text-sm leading-relaxed text-[var(--muted-foreground)] group-hover:text-[var(--foreground)]">
-                {narrative}
-              </p>
-              <span className="sr-only"> — open full report and discussion</span>
-            </Link>
-          ) : (
-            <p className="line-clamp-4 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{narrative}</p>
-          )
+          <p className="line-clamp-4 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{narrative}</p>
         ) : hasLegacyCause ? (
           <p className="line-clamp-4 flex-1 text-sm italic text-[var(--muted-foreground)]">
             Staff-approved summary will appear here when published.
           </p>
-        ) : discussionOpen ? (
-          <Link
-            href={discussionHref}
-            prefetch={false}
-            className="group -mx-1 block min-h-0 flex-1 rounded-lg px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/35"
-          >
-            <p className="line-clamp-4 text-sm leading-relaxed text-[var(--muted-foreground)] group-hover:text-[var(--foreground)]">
-              Open the report to read the full narrative. Sign in on the discussion page to comment, react, and show
-              support.
-            </p>
-            <span className="sr-only"> — open full report and discussion</span>
-          </Link>
         ) : (
-          <p className="line-clamp-4 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">
-            Public discussion is turned off for this submission.
-          </p>
+          <p className="line-clamp-4 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{narrativeFallback}</p>
         )}
       </div>
-      {discussionOpen && reactionLine ? (
-        <p className="mt-2 text-xs text-[var(--muted-foreground)]">{reactionLine}</p>
-      ) : null}
       <div className="mt-auto mt-5 flex flex-wrap gap-x-4 gap-y-2 border-t border-[var(--border)]/80 pt-4 text-sm">
-        {discussionOpen ? (
-          <Link href={discussionHref} className={`${primaryLinkClass} font-semibold`} prefetch={false}>
-            Full report &amp; discussion →
-          </Link>
-        ) : null}
+        <VoiceSubmissionPrimaryAction
+          reportId={row.id}
+          trackingCode={row.trackingCode}
+          title={displayTitle}
+          discussionEnabled={discussionOpen}
+          describedBy={`${titleId} ${metaId}`}
+        />
         {row.publicCauseSlug ? (
           <Link
             href={`/citizens-voice/causes/${encodeURIComponent(row.publicCauseSlug)}`}
