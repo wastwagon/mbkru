@@ -6,7 +6,7 @@ import {
   sortLabel,
   type CommunitiesBrowseParams,
 } from "@/lib/communities-browse-shared";
-import { focusRingPillClass, focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 
 type RegionOption = { slug: string; name: string; count: number };
 
@@ -17,14 +17,6 @@ type Props = {
   resultCount?: number | null;
   regionName?: string | null;
 };
-
-function chipClass(active: boolean) {
-  return `rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-    active
-      ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
-      : "border border-[var(--border)] bg-white text-[var(--foreground)] hover:border-[var(--primary)]/40"
-  } ${focusRingPillClass}`;
-}
 
 export function CommunitiesBrowseFilters({
   regions,
@@ -224,40 +216,6 @@ export function CommunitiesBrowseFilters({
           </Link>
         </p>
       ) : null}
-
-      <nav className="mt-4 flex flex-wrap gap-2" aria-label="Quick filters">
-        <Link
-          href={communitiesBrowseHref({ join, sort, verified: verified || undefined })}
-          className={chipClass(!params.region && join === "all" && !verified)}
-        >
-          All regions
-        </Link>
-        <Link
-          href={communitiesBrowseHref({ ...browseBase, region: params.region, join: "open" })}
-          className={chipClass(join === "open" && !verified)}
-        >
-          Open to join
-        </Link>
-        <Link
-          href={communitiesBrowseHref({ ...browseBase, region: params.region, verified: true })}
-          className={chipClass(verified)}
-        >
-          Verified Queen Mothers
-        </Link>
-        {regions.map((r) => {
-          const active = params.region === r.slug;
-          return (
-            <Link
-              key={r.slug}
-              href={communitiesBrowseHref({ ...browseBase, region: r.slug })}
-              className={chipClass(active)}
-            >
-              {r.name}
-              <span className="ml-1 font-normal opacity-80">({r.count})</span>
-            </Link>
-          );
-        })}
-      </nav>
     </>
   );
 }
