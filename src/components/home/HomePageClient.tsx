@@ -55,7 +55,7 @@ function HomeProgrammePathwaysSection({
         >
           <Link
             href={item.href}
-            className={`group flex h-full flex-col rounded-xl border border-[var(--border)] bg-white p-5 text-left shadow-[var(--shadow-card)] transition-[box-shadow,transform,border-color] duration-300 ease-out hover:border-[var(--primary)]/25 hover:shadow-[var(--shadow-card-hover)] sm:p-6 ${focusRingSmClass}`}
+            className={`group flex h-full flex-col rounded-2xl border border-[var(--border)] bg-white p-5 text-left shadow-sm transition hover:border-[var(--primary)]/35 sm:p-6 ${focusRingSmClass}`}
           >
             <span className="inline-block w-fit rounded-lg bg-[var(--primary)]/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[var(--primary)]">
               {item.tag}
@@ -63,7 +63,7 @@ function HomeProgrammePathwaysSection({
             <h3 className="mt-3 font-display text-lg font-semibold text-[var(--foreground)] group-hover:text-[var(--primary)]">
               {item.title}
             </h3>
-            <p className="mt-2 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{item.description}</p>
+            <p className="mt-2 flex-1 text-sm leading-relaxed text-[var(--foreground-secondary)]">{item.description}</p>
             <span className="mt-4 text-sm font-semibold text-[var(--primary)]">
               Open
               <span aria-hidden className="ml-1 inline-block transition-transform group-hover:translate-x-0.5">
@@ -119,10 +119,10 @@ export function HomePageClient({
             <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
               {mbkruStrategicContent.homepageWhoWeAreHeading}
             </h2>
-            <p className="mt-4 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+            <p className="mt-4 text-sm leading-relaxed text-[var(--foreground-secondary)] sm:text-base">
               {mbkruStrategicContent.homepageWhoWeAreLead}
             </p>
-            <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+            <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
               Executive summary, vision, mission, and pillars are on{" "}
               <Link href="/about#executive-summary" className={`${primaryLinkClass} font-semibold`}>
                 About
@@ -163,11 +163,11 @@ export function HomePageClient({
             <h2 className="mt-5 font-display text-2xl font-bold tracking-tight text-[var(--foreground)] sm:mt-6 sm:text-3xl lg:text-4xl">
               Programme pathways
             </h2>
-            <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+            <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-relaxed text-[var(--foreground-secondary)] sm:text-base">
               Jump straight into Voice, accountability tools, provenance, methodology, and partnerships. These cards are
               navigation — not a delivery calendar.
             </p>
-            <p className="mx-auto mt-4 max-w-3xl text-center text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-[15px]">
+            <p className="mx-auto mt-4 max-w-3xl text-center text-sm leading-relaxed text-[var(--foreground-secondary)] sm:text-[15px]">
               Key operational pillars and the regional map are above. For the full programme story and long-range
               planning narrative, read{" "}
               <Link href="/about" className={primaryLinkClass}>
@@ -181,7 +181,7 @@ export function HomePageClient({
               Data sources.
             </p>
           </motion.div>
-          <p className="mx-auto mt-4 max-w-2xl text-center text-sm leading-relaxed text-[var(--muted-foreground)]">
+          <p className="mx-auto mt-4 max-w-2xl text-center text-sm leading-relaxed text-[var(--foreground-secondary)]">
             Need a conversation?{" "}
             <Link href="/contact" className={primaryLinkClass}>
               Contact
@@ -191,13 +191,13 @@ export function HomePageClient({
           {phase >= 3 ? (
             <p className="mx-auto mt-4 max-w-2xl rounded-xl border border-[var(--primary)]/20 bg-[var(--primary)]/[0.06] px-4 py-3 text-center text-sm leading-relaxed text-[var(--foreground)]">
               <span className="font-semibold">This site is running Phase 3 of our public roll-out</span>{" "}
-              <span className="text-[var(--muted-foreground)]">
+              <span className="text-[var(--foreground-secondary)]">
                 — so election observation, communities, petitions, and full accountability browsing can appear here when
                 enabled. That is independent of any printed programme calendar your team keeps for board reporting.
               </span>
             </p>
           ) : phase === 2 ? (
-            <p className="mx-auto mt-4 max-w-2xl rounded-xl border border-[var(--border)] bg-white/80 px-4 py-3 text-center text-sm leading-relaxed text-[var(--muted-foreground)]">
+            <p className="mx-auto mt-4 max-w-2xl rounded-xl border border-[var(--border)] bg-white/80 px-4 py-3 text-center text-sm leading-relaxed text-[var(--foreground-secondary)]">
               <span className="font-semibold text-[var(--foreground)]">Phase 2 build</span> — Voice, accounts, and
               accountability data can be live on this site while programme communications still use their own planning
               calendar.
@@ -234,14 +234,14 @@ export function HomePageClient({
             <h2 className="mt-2 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
               News
             </h2>
-            <p className="mt-2 text-[var(--muted-foreground)]">
+            <p className="mt-2 text-[var(--foreground-secondary)]">
               Press releases and advocacy updates from MBKRU.
             </p>
           </motion.div>
           {cmsPosts.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--section-light)]/60 px-6 py-16 text-center">
-              <p className="text-[var(--muted-foreground)]">No published news posts yet.</p>
-              <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+              <p className="text-[var(--foreground-secondary)]">No published news posts yet.</p>
+              <p className="mt-3 text-sm text-[var(--foreground-secondary)]">
                 The{" "}
                 <Link href="/news" className={primaryLinkClass}>
                   News
@@ -310,12 +310,12 @@ export function HomePageClient({
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <span className="text-sm font-medium text-[var(--muted-foreground)]">{article.dateLabel}</span>
+                        <span className="text-sm font-medium text-[var(--foreground-secondary)]">{article.dateLabel}</span>
                         <h3 className="mt-1 font-display text-lg font-semibold text-[var(--foreground)] group-hover:text-[var(--primary)]">
                           {article.title}
                         </h3>
                         {article.excerpt ? (
-                          <p className="mt-2 line-clamp-2 text-sm text-[var(--muted-foreground)]">{article.excerpt}</p>
+                          <p className="mt-2 line-clamp-2 text-sm text-[var(--foreground-secondary)]">{article.excerpt}</p>
                         ) : null}
                         <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)]">
                           Learn more
@@ -333,7 +333,7 @@ export function HomePageClient({
                   </motion.div>
                 ))}
                 {cmsPosts.length < 2 ? (
-                  <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-[var(--border)] bg-[var(--section-light)]/50 p-8 text-center text-sm text-[var(--muted-foreground)]">
+                  <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-[var(--border)] bg-[var(--section-light)]/50 p-8 text-center text-sm text-[var(--foreground-secondary)]">
                     More posts will appear here once published.
                   </div>
                 ) : null}

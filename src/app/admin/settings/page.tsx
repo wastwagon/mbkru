@@ -14,7 +14,7 @@ export default async function AdminSettingsPage() {
         description="Run database maintenance when deploy-time migrate or seed did not complete successfully."
       />
 
-      <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+      <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
         Multi-admin access: <a className="underline text-[var(--primary)]" href="/admin/operators">Operators</a>
         {" · "}
         Region reference data: <a className="underline text-[var(--primary)]" href="/admin/regions">Regions</a>
@@ -24,7 +24,7 @@ export default async function AdminSettingsPage() {
 
       <PetitionPendingCleanupPanel />
 
-      <p className="mt-8 text-center text-xs text-[var(--muted-foreground)]">
+      <p className="mt-8 text-center text-xs text-[var(--foreground-secondary)]">
         Only signed-in admins can run these commands. Keep production{" "}
         <code className="rounded bg-[var(--muted)] px-1">ADMIN_EMAIL</code>,{" "}
         <code className="rounded bg-[var(--muted)] px-1">ADMIN_PASSWORD</code>, and{" "}

@@ -92,7 +92,7 @@ export default async function PublicCauseDetailPage({ params }: Props) {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="text-sm text-[var(--muted-foreground)]">
+          <p className="text-sm text-[var(--foreground-secondary)]">
             <Link href="/citizens-voice/causes" className={primaryNavLinkClass}>
               ← All causes
             </Link>
@@ -117,11 +117,11 @@ export default async function PublicCauseDetailPage({ params }: Props) {
           ) : null}
 
           <div className="mt-6 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
               Public summary
             </h2>
             <p className="mt-3 whitespace-pre-wrap text-sm text-[var(--foreground)]">{report.publicCauseSummary}</p>
-            <p className="mt-4 text-xs text-[var(--muted-foreground)]">
+            <p className="mt-4 text-xs text-[var(--foreground-secondary)]">
               Opened {report.publicCauseOpenedAt?.toLocaleDateString("en-GB")}. Full original submission is not shown
               here.
             </p>

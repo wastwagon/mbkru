@@ -24,7 +24,7 @@ export function DiasporaProgrammePhaseNotice() {
           <strong className="font-semibold">accountability catalogue</strong> (documented government commitments and,
           where enabled, MP-linked promises). Diaspora supporters can use the same evidence base as citizens at home.
         </p>
-        <ul className="mt-3 list-inside list-disc space-y-1 text-sm text-[var(--muted-foreground)]">
+        <ul className="mt-3 list-inside list-disc space-y-1 text-sm text-[var(--foreground-secondary)]">
           <li>
             <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments} className={primaryLinkClass}>
               Government commitments
@@ -55,8 +55,8 @@ export function DiasporaProgrammePhaseNotice() {
       className="rounded-2xl border border-[var(--border)] bg-[var(--section-light)]/80 p-5 sm:p-6"
       aria-label="Programme phase"
     >
-      <p className="text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Phase 1 — foundation</p>
-      <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
+      <p className="text-xs font-bold uppercase tracking-wider text-[var(--foreground-secondary)]">Phase 1 — foundation</p>
+      <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
         You can use this hub for <strong className="text-[var(--foreground)]">signposting</strong>,{" "}
         <strong className="text-[var(--foreground)]">policy context</strong>, and{" "}
         <strong className="text-[var(--foreground)]">structured feedback</strong>. The full public commitment catalogue,

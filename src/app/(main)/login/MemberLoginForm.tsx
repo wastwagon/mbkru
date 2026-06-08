@@ -87,7 +87,7 @@ export function MemberLoginForm() {
       <Button type="submit" disabled={loading} className="w-full justify-center sm:w-auto">
         {loading ? "Signing in…" : "Sign in"}
       </Button>
-      <p className="text-sm text-[var(--muted-foreground)]">
+      <p className="text-sm text-[var(--foreground-secondary)]">
         No account?{" "}
         <Link href={registerHref} className={`${primaryLinkClass} font-semibold`}>
           Create one

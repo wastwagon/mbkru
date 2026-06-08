@@ -36,10 +36,10 @@ export default function PartnersPage() {
               <h2 className="font-display text-2xl font-bold text-[var(--foreground)]">
                 Building Partnerships for Impact
               </h2>
-              <p className="mt-4 text-[var(--muted-foreground)] leading-relaxed">
+              <p className="mt-4 text-[var(--foreground-secondary)] leading-relaxed">
                 MBKRU respectfully seeks partnership with the Government of Ghana, civil society organizations, development partners, and international foundations to advance our mission: a direct voice between citizens and the Presidency, accountability at every level, and tangible progress toward poverty eradication.
               </p>
-              <p className="mt-4 text-[var(--muted-foreground)] leading-relaxed">
+              <p className="mt-4 text-[var(--foreground-secondary)] leading-relaxed">
                 Our proposed funding model includes grants from development partners focused on governance and citizen engagement, corporate social responsibility contributions for accountability programs, and support from international foundations backing democratic accountability.
               </p>
               <div className="mt-6">
@@ -57,10 +57,10 @@ export default function PartnersPage() {
             <h2 className="font-display text-xl font-bold text-[var(--foreground)]">
               Our Partners & Supporters
             </h2>
-            <p className="mt-2 text-[var(--muted-foreground)]">
+            <p className="mt-2 text-[var(--foreground-secondary)]">
               Confirmed partners and logos will be listed here. We do not display stand-in or unconfirmed organisation names.
             </p>
-            <div className="mt-6 rounded-2xl border border-dashed border-[var(--border)] bg-white px-6 py-14 text-center text-sm text-[var(--muted-foreground)]">
+            <div className="mt-6 rounded-2xl border border-dashed border-[var(--border)] bg-white px-6 py-14 text-center text-sm text-[var(--foreground-secondary)]">
               No partner listings published yet.
             </div>
           </div>
@@ -69,7 +69,7 @@ export default function PartnersPage() {
             <h2 className="font-display text-2xl font-bold text-[var(--foreground)]">
               Partner With Us
             </h2>
-            <p className="mt-3 text-[var(--muted-foreground)] leading-relaxed">
+            <p className="mt-3 text-[var(--foreground-secondary)] leading-relaxed">
               If your organization shares our commitment to citizen voice, accountability, and poverty eradication in Ghana, we would welcome a conversation. Use our contact form to reach out for partnership enquiries.
             </p>
             <Link href="/contact" className={`${primaryNavLinkClass} mt-4 gap-2 text-sm font-semibold`}>

@@ -34,7 +34,7 @@ export function PetitionPendingCleanupPanel() {
       <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">
         Petitions — expired guest confirmations
       </h2>
-      <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+      <p className="mt-2 text-sm text-[var(--foreground-secondary)]">
         When email verification is enabled, guests leave rows in{" "}
         <code className="rounded bg-[var(--muted)] px-1 py-0.5 text-xs">PetitionSignaturePending</code>{" "}
         until they confirm or the link expires. Expired rows are ignored by the app but can accumulate;

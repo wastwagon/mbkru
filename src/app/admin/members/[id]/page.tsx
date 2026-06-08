@@ -62,7 +62,7 @@ export default async function AdminMemberDetailPage({ params }: Props) {
         <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--section-light)]/50 p-6">
           <h2 className="text-sm font-semibold text-[var(--foreground)]">Member review request</h2>
           {member.identityReviewRequestedAt ? (
-            <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+            <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
               Requested {member.identityReviewRequestedAt.toLocaleString("en-GB")}
             </p>
           ) : null}
@@ -71,14 +71,14 @@ export default async function AdminMemberDetailPage({ params }: Props) {
               {member.identityReviewRequestMessage}
             </pre>
           ) : (
-            <p className="mt-2 text-xs text-[var(--muted-foreground)]">No message left with the request.</p>
+            <p className="mt-2 text-xs text-[var(--foreground-secondary)]">No message left with the request.</p>
           )}
         </section>
       ) : null}
 
       <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Verification status</h2>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Staff-only notes below are not shown on the member&apos;s account page.
         </p>
         <form action={updateMemberIdentityVerificationAction} className="mt-4 space-y-4">
@@ -103,7 +103,7 @@ export default async function AdminMemberDetailPage({ params }: Props) {
           </div>
           <div>
             <label htmlFor="identityVerificationNote" className="block text-xs font-medium">
-              Internal note <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              Internal note <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
             </label>
             <textarea
               id="identityVerificationNote"
@@ -124,7 +124,7 @@ export default async function AdminMemberDetailPage({ params }: Props) {
       </section>
 
       {member.identityVerifiedAt && member.identityVerificationStatus === "VERIFIED" ? (
-        <p className="mt-4 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-4 text-xs text-[var(--foreground-secondary)]">
           Verified timestamp: {member.identityVerifiedAt.toLocaleString("en-GB")}
         </p>
       ) : null}

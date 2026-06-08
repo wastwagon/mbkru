@@ -44,7 +44,7 @@ export function ShareTopicButton({ url, title, summary, className }: Props) {
       >
         Share
       </button>
-      {msg ? <span className="ml-2 text-xs text-[var(--muted-foreground)]">{msg}</span> : null}
+      {msg ? <span className="ml-2 text-xs text-[var(--foreground-secondary)]">{msg}</span> : null}
     </div>
   );
 }

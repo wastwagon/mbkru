@@ -102,7 +102,7 @@ export function ObjectivesCarousel({ objectives }: ObjectivesCarouselProps) {
                   <h3 className="font-display text-xs font-semibold text-[var(--foreground)] group-hover:text-[var(--accent-warm)] sm:text-sm">
                     {obj.title}
                   </h3>
-                  <p className="mt-0.5 text-[10px] leading-relaxed text-[var(--muted-foreground)] sm:mt-1 sm:text-sm">
+                  <p className="mt-0.5 text-[10px] leading-relaxed text-[var(--foreground-secondary)] sm:mt-1 sm:text-sm">
                     {obj.description}
                   </p>
                 </div>

@@ -67,7 +67,7 @@ export function PostEditor({ post, media }: { post: PostWithOptional; media: Med
               </option>
             ))}
           </select>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
             <Link href="/admin/media" className={primaryLinkClass}>
               Upload images
             </Link>{" "}

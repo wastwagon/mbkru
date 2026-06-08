@@ -40,13 +40,13 @@ export default async function AdminPetitionPendingAnalyticsPage() {
         <Link href="/api/admin/analytics/petition-pending" className={primaryLinkClass}>
           JSON API
         </Link>{" "}
-        <span className="text-[var(--muted-foreground)]">(same session cookie)</span>
+        <span className="text-[var(--foreground-secondary)]">(same session cookie)</span>
         {" · "}
         <Link href="/admin/settings" className={primaryLinkClass}>
           Run expired-row cleanup
         </Link>
       </p>
-      <p className="mt-2 max-w-2xl text-xs text-[var(--muted-foreground)]">
+      <p className="mt-2 max-w-2xl text-xs text-[var(--foreground-secondary)]">
         JSON requests are rate-limited per admin (<code className="text-[11px]">RATE_LIMIT_*</code>). A{" "}
         <code className="text-[11px]">429</code> means wait briefly before refreshing or scripting this endpoint.
       </p>
@@ -88,15 +88,15 @@ export default async function AdminPetitionPendingAnalyticsPage() {
         </h2>
         <dl className="mt-4 grid gap-3 sm:grid-cols-3">
           <div>
-            <dt className="text-xs uppercase tracking-wide text-[var(--muted-foreground)]">Last 24h</dt>
+            <dt className="text-xs uppercase tracking-wide text-[var(--foreground-secondary)]">Last 24h</dt>
             <dd className="mt-1 font-display text-2xl font-bold tabular-nums">{data.createdCounts.last24h}</dd>
           </div>
           <div>
-            <dt className="text-xs uppercase tracking-wide text-[var(--muted-foreground)]">Last 7d</dt>
+            <dt className="text-xs uppercase tracking-wide text-[var(--foreground-secondary)]">Last 7d</dt>
             <dd className="mt-1 font-display text-2xl font-bold tabular-nums">{data.createdCounts.last7d}</dd>
           </div>
           <div>
-            <dt className="text-xs uppercase tracking-wide text-[var(--muted-foreground)]">Last 30d</dt>
+            <dt className="text-xs uppercase tracking-wide text-[var(--foreground-secondary)]">Last 30d</dt>
             <dd className="mt-1 font-display text-2xl font-bold tabular-nums">{data.createdCounts.last30d}</dd>
           </div>
         </dl>
@@ -106,12 +106,12 @@ export default async function AdminPetitionPendingAnalyticsPage() {
         <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">
           By petition
         </h2>
-        <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
           Petitions that currently have at least one pending row (active or expired).
         </p>
         <div className="mt-4 overflow-x-auto rounded-2xl border border-[var(--border)] bg-white shadow-sm">
           <table className="min-w-full text-left text-sm">
-            <thead className="border-b border-[var(--border)] bg-[var(--muted)]/40 text-xs uppercase tracking-wide text-[var(--muted-foreground)]">
+            <thead className="border-b border-[var(--border)] bg-[var(--muted)]/40 text-xs uppercase tracking-wide text-[var(--foreground-secondary)]">
               <tr>
                 <th className="px-4 py-3 font-medium">Petition</th>
                 <th className="px-4 py-3 font-medium">Status</th>
@@ -122,7 +122,7 @@ export default async function AdminPetitionPendingAnalyticsPage() {
             <tbody>
               {data.byPetition.length === 0 ? (
                 <tr>
-                  <td className="px-4 py-6 text-[var(--muted-foreground)]" colSpan={4}>
+                  <td className="px-4 py-6 text-[var(--foreground-secondary)]" colSpan={4}>
                     No pending signature rows.
                   </td>
                 </tr>
@@ -133,9 +133,9 @@ export default async function AdminPetitionPendingAnalyticsPage() {
                       <Link href={`/petitions/${row.slug}`} className={primaryLinkClass}>
                         {row.title}
                       </Link>
-                      <p className="mt-0.5 font-mono text-xs text-[var(--muted-foreground)]">{row.slug}</p>
+                      <p className="mt-0.5 font-mono text-xs text-[var(--foreground-secondary)]">{row.slug}</p>
                     </td>
-                    <td className="px-4 py-3 text-[var(--muted-foreground)]">{row.petitionStatus}</td>
+                    <td className="px-4 py-3 text-[var(--foreground-secondary)]">{row.petitionStatus}</td>
                     <td className="px-4 py-3 text-right tabular-nums">{row.activePending}</td>
                     <td className="px-4 py-3 text-right tabular-nums">{row.expiredPending}</td>
                   </tr>

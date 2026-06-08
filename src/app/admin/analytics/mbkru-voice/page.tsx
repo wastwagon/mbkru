@@ -41,19 +41,19 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
         <Link href={`/api/admin/analytics/mbkru-voice?days=${days}`} className={primaryLinkClass}>
           JSON API
         </Link>{" "}
-        <span className="text-[var(--muted-foreground)]">(session required)</span>
+        <span className="text-[var(--foreground-secondary)]">(session required)</span>
         {" · "}
         <Link href={`/api/admin/analytics/mbkru-voice/export?days=${days}`} className={primaryLinkClass}>
           Download CSV snapshot
         </Link>{" "}
-        <span className="text-[var(--muted-foreground)]">(session required, UTF-8)</span>
+        <span className="text-[var(--foreground-secondary)]">(session required, UTF-8)</span>
         {" · "}
         <Link href="/admin/analytics/mbkru-voice/events" className={primaryLinkClass}>
           Raw events (recent rows)
         </Link>
       </p>
       <p className="mt-2 text-sm">
-        <span className="text-[var(--muted-foreground)]">Window:</span>{" "}
+        <span className="text-[var(--foreground-secondary)]">Window:</span>{" "}
         {[7, 30, 90].map((option, index) => (
           <span key={option}>
             {index > 0 ? " · " : null}
@@ -89,9 +89,9 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
           }
         />
         <AdminSectionCard className="rounded-2xl shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Internal DB analytics</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">Internal DB analytics</p>
           <p className="mt-2 text-sm text-[var(--foreground)]">{dbEnabled ? "Configured" : "Not configured"}</p>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
             {dbEnabled
               ? "Ingestion API stores MBKRU Voice events in Postgres for in-platform reporting."
               : "Set DATABASE_URL to enable internal MBKRU Voice analytics storage."}
@@ -134,7 +134,7 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
 
       <AdminTablePanel className="mt-8 shadow-sm">
         <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-[var(--border)] bg-[var(--muted)]/40 text-xs uppercase tracking-wide text-[var(--muted-foreground)]">
+          <thead className="border-b border-[var(--border)] bg-[var(--muted)]/40 text-xs uppercase tracking-wide text-[var(--foreground-secondary)]">
             <tr>
               <th className="px-4 py-3 font-medium">Event name</th>
               <th className="px-4 py-3 font-medium">Meaning</th>
@@ -148,7 +148,7 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
                   <code className="text-xs text-[var(--foreground)]">{event.name}</code>
                 </td>
                 <td className="px-4 py-3 align-top text-[var(--foreground)]">{event.meaning}</td>
-                <td className="px-4 py-3 align-top text-[var(--muted-foreground)]">{event.signal}</td>
+                <td className="px-4 py-3 align-top text-[var(--foreground-secondary)]">{event.signal}</td>
               </tr>
             ))}
           </tbody>
@@ -169,7 +169,7 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
               ) : (
                 summary.windowRows.map((row) => (
                   <li key={`w-${row.eventName}`} className="flex justify-between gap-2">
-                    <code className="text-xs text-[var(--muted-foreground)]">{row.eventName}</code>
+                    <code className="text-xs text-[var(--foreground-secondary)]">{row.eventName}</code>
                     <span className="tabular-nums font-medium text-[var(--foreground)]">{row.count}</span>
                   </li>
                 ))
@@ -188,7 +188,7 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
               ) : (
                 summary.bySourceWindow.map((row) => (
                   <li key={`s-${row.source}`} className="flex justify-between gap-2">
-                    <code className="text-xs text-[var(--muted-foreground)]">{row.source}</code>
+                    <code className="text-xs text-[var(--foreground-secondary)]">{row.source}</code>
                     <span className="tabular-nums font-medium text-[var(--foreground)]">{row.count}</span>
                   </li>
                 ))
@@ -198,7 +198,7 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
         </div>
       ) : null}
 
-      <p className="mt-4 text-xs text-[var(--muted-foreground)]">
+      <p className="mt-4 text-xs text-[var(--foreground-secondary)]">
         Tip: <code className="text-xs">mbkru_voice_reply_received</code> payloads include <code>source</code>,{" "}
         <code>safety_reason</code> (when applicable), <code>site_context</code> (comma‑separated in‑app paths from curated
         site knowledge), and <code>web_search_used</code> (when live search augmented the turn).

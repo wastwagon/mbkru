@@ -51,12 +51,12 @@ export default async function AdminMbkruVoiceAnalyticsEventsPage({ searchParams 
       </p>
 
       {!dbEnabled ? (
-        <p className="mt-8 text-sm text-[var(--muted-foreground)]">Database not configured.</p>
+        <p className="mt-8 text-sm text-[var(--foreground-secondary)]">Database not configured.</p>
       ) : (
         <>
           <form className="mt-6 flex flex-wrap items-end gap-3 rounded-xl border border-[var(--border)] bg-white p-4">
             <div>
-              <label htmlFor="q" className="block text-xs font-medium text-[var(--muted-foreground)]">
+              <label htmlFor="q" className="block text-xs font-medium text-[var(--foreground-secondary)]">
                 Filter name contains
               </label>
               <input
@@ -73,7 +73,7 @@ export default async function AdminMbkruVoiceAnalyticsEventsPage({ searchParams 
             </button>
           </form>
 
-          <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-[var(--muted-foreground)]">
+          <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-[var(--foreground-secondary)]">
             <span>
               Page {result?.page ?? 1} of {result?.pageCount ?? 1} · {result?.total ?? 0} total
             </span>
@@ -94,7 +94,7 @@ export default async function AdminMbkruVoiceAnalyticsEventsPage({ searchParams 
           ) : (
             <div className="mt-6 overflow-x-auto rounded-xl border border-[var(--border)] bg-white shadow-sm">
               <table className="min-w-full text-left text-sm">
-                <thead className="border-b border-[var(--border)] bg-[var(--muted)]/40 text-xs uppercase tracking-wide text-[var(--muted-foreground)]">
+                <thead className="border-b border-[var(--border)] bg-[var(--muted)]/40 text-xs uppercase tracking-wide text-[var(--foreground-secondary)]">
                   <tr>
                     <th className="whitespace-nowrap px-3 py-2 font-medium">Time (UTC)</th>
                     <th className="px-3 py-2 font-medium">Event</th>
@@ -106,7 +106,7 @@ export default async function AdminMbkruVoiceAnalyticsEventsPage({ searchParams 
                 <tbody>
                   {result.rows.map((row) => (
                     <tr key={String(row.id)} className="border-b border-[var(--border)] align-top text-xs">
-                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[var(--muted-foreground)]">
+                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[var(--foreground-secondary)]">
                         {row.createdAt.toISOString().replace("T", " ").slice(0, 19)}
                       </td>
                       <td className="px-3 py-2">
@@ -115,7 +115,7 @@ export default async function AdminMbkruVoiceAnalyticsEventsPage({ searchParams 
                       <td className="px-3 py-2">{row.source}</td>
                       <td className="px-3 py-2">{row.language ?? "—"}</td>
                       <td className="max-w-xl px-3 py-2">
-                        <pre className="whitespace-pre-wrap break-all font-mono text-[var(--muted-foreground)]">
+                        <pre className="whitespace-pre-wrap break-all font-mono text-[var(--foreground-secondary)]">
                           {row.payload === null ? "—" : JSON.stringify(row.payload).slice(0, 1200)}
                         </pre>
                       </td>

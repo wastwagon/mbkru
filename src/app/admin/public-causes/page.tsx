@@ -144,7 +144,7 @@ export default async function AdminPublicCausesPage({ searchParams }: Props) {
                   ? { text: "Closed", className: "bg-amber-100 text-amber-950" }
                   : opened
                     ? { text: "Live", className: "bg-emerald-100 text-emerald-950" }
-                    : { text: "—", className: "bg-[var(--section-light)] text-[var(--muted-foreground)]" };
+                    : { text: "—", className: "bg-[var(--section-light)] text-[var(--foreground-secondary)]" };
 
             return (
               <li key={r.id} className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -153,13 +153,13 @@ export default async function AdminPublicCausesPage({ searchParams }: Props) {
                     <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${badge.className}`}>
                       {badge.text}
                     </span>
-                    <span className="text-xs text-[var(--muted-foreground)]">{reportKindLabel(r.kind)}</span>
+                    <span className="text-xs text-[var(--foreground-secondary)]">{reportKindLabel(r.kind)}</span>
                   </div>
                   <p className="mt-1 font-semibold text-[var(--foreground)] line-clamp-2">
                     {r.publicCauseTitle?.trim() || r.title}
                   </p>
-                  <p className="mt-1 font-mono text-xs text-[var(--muted-foreground)]">{r.trackingCode}</p>
-                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                  <p className="mt-1 font-mono text-xs text-[var(--foreground-secondary)]">{r.trackingCode}</p>
+                  <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                     {r.region?.name ? `${r.region.name} · ` : null}
                     {r._count.publicCauseSupports} support · {r._count.publicCauseComments} comments
                   </p>
@@ -175,7 +175,7 @@ export default async function AdminPublicCausesPage({ searchParams }: Props) {
                       </Link>
                     </p>
                   ) : slug && !opened ? (
-                    <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                    <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                       Slug <code className="rounded bg-[var(--section-light)] px-1">{slug}</code> — check &quot;Publish&quot;
                       on the report to go live.
                     </p>

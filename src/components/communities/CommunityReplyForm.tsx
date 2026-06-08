@@ -73,7 +73,7 @@ export function CommunityReplyForm({ communitySlug, rootPostId }: Props) {
         Post reply
       </Button>
       {message ? <p className="mt-2 text-sm text-red-600">{message}</p> : null}
-      <p className="mt-2 text-xs text-[var(--muted-foreground)]">Replies follow the same moderation rules as new threads.</p>
+      <p className="mt-2 text-xs text-[var(--foreground-secondary)]">Replies follow the same moderation rules as new threads.</p>
     </form>
   );
 }

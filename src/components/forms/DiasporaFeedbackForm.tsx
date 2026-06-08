@@ -13,7 +13,7 @@ import {
 } from "@/lib/validation/public-forms";
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
-const inputBase = `mt-1.5 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition-shadow placeholder:text-[var(--muted-foreground)]/70 hover:border-[var(--primary)]/25 focus-visible:border-[var(--primary)]/35 ${focusRingSmClass} disabled:opacity-60`;
+const inputBase = `mt-1.5 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition-shadow placeholder:text-[var(--foreground-secondary)]/70 hover:border-[var(--primary)]/25 focus-visible:border-[var(--primary)]/35 ${focusRingSmClass} disabled:opacity-60`;
 
 const labelClass = "block text-sm font-medium text-[var(--foreground)]";
 const sectionTitle = "font-display text-lg font-semibold text-[var(--foreground)]";
@@ -156,7 +156,7 @@ export function DiasporaFeedbackForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-10" noValidate>
       <section className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-sm)] sm:p-8">
         <h2 className={sectionTitle}>How are you engaging?</h2>
-        <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-2 text-sm text-[var(--foreground-secondary)]">
           Pick one path so we ask the right questions. You can switch before you submit.
         </p>
         <Controller
@@ -174,7 +174,7 @@ export function DiasporaFeedbackForm() {
                 />
                 <span>
                   <span className="block font-semibold text-[var(--foreground)]">Recent visit to Ghana</span>
-                  <span className="mt-1 block text-xs font-normal text-[var(--muted-foreground)]">
+                  <span className="mt-1 block text-xs font-normal text-[var(--foreground-secondary)]">
                     Summits, homecoming, family trips — tell us dates, stay length, and programmes.
                   </span>
                 </span>
@@ -189,7 +189,7 @@ export function DiasporaFeedbackForm() {
                 />
                 <span>
                   <span className="block font-semibold text-[var(--foreground)]">Engaging from abroad</span>
-                  <span className="mt-1 block text-xs font-normal text-[var(--muted-foreground)]">
+                  <span className="mt-1 block text-xs font-normal text-[var(--foreground-secondary)]">
                     You support accountability, remittances, or networks without a recent trip — skip visit-only fields.
                   </span>
                 </span>
@@ -230,7 +230,7 @@ export function DiasporaFeedbackForm() {
               className={inputBase}
               {...register("email")}
             />
-            <p className="mt-1.5 text-xs text-[var(--muted-foreground)]">
+            <p className="mt-1.5 text-xs text-[var(--foreground-secondary)]">
               Required so the team can follow up on your feedback. This is not the same as creating a member account.
             </p>
             {errors.email && (
@@ -288,7 +288,7 @@ export function DiasporaFeedbackForm() {
               </div>
             </>
           ) : (
-            <div className="sm:col-span-2 rounded-xl border border-[var(--primary)]/20 bg-[var(--primary)]/[0.04] p-4 text-sm text-[var(--muted-foreground)]">
+            <div className="sm:col-span-2 rounded-xl border border-[var(--primary)]/20 bg-[var(--primary)]/[0.04] p-4 text-sm text-[var(--foreground-secondary)]">
               <p>
                 <strong className="text-[var(--foreground)]">No visit details required.</strong> Use the sections below
                 to rate how useful MBKRU&apos;s diaspora signposting and accountability links are from your location, and
@@ -437,7 +437,7 @@ export function DiasporaFeedbackForm() {
                 {errors.formSignedDate.message}
               </p>
             )}
-            <p className="mt-1.5 text-xs text-[var(--muted-foreground)]">You may use today&apos;s date if this form is completed now.</p>
+            <p className="mt-1.5 text-xs text-[var(--foreground-secondary)]">You may use today&apos;s date if this form is completed now.</p>
           </div>
         </div>
       </section>
@@ -511,7 +511,7 @@ export function DiasporaFeedbackForm() {
             "Submit feedback"
           )}
         </Button>
-        <p className="max-w-md text-xs text-[var(--muted-foreground)]">
+        <p className="max-w-md text-xs text-[var(--foreground-secondary)]">
           Submissions are stored securely for programme records, including your email for follow-up. MBKRU does not use
           this form for party-political campaigning.
         </p>

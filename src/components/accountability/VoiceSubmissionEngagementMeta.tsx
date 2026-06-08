@@ -13,7 +13,7 @@ type Props = {
 /** Shared supporter / comment / reaction lines for Voice browse and MP intake rows. */
 export function VoiceSubmissionEngagementMeta({
   engagement,
-  className = "mt-2 text-xs text-[var(--muted-foreground)]",
+  className = "mt-2 text-xs text-[var(--foreground-secondary)]",
   reactionClassName,
 }: Props) {
   const engagementLine = formatCommunityEngagementLine(

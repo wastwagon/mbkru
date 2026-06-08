@@ -5,7 +5,7 @@ import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
 import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
-import { primaryLinkClass } from "@/lib/primary-link-styles";
+import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 import {
   isCivicPetitionsAndPublicCausesEnabled,
   isPublicVoiceStatisticsEnabled,
@@ -73,7 +73,7 @@ export default async function CitizensVoicePage() {
       <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <AccountabilityDisclaimerCallout variant="voiceSubmit" className="mb-6" />
-          <div className="mb-6 rounded-xl border border-[var(--border)] bg-white p-4 text-sm text-[var(--muted-foreground)]">
+          <div className="mb-6 rounded-xl border border-[var(--border)] bg-white p-4 text-sm leading-relaxed text-[var(--foreground-secondary)]">
             MBKRU Voice includes reporting tools and an AI-assisted customer service chat experience. Do not use chat for
             legal strategy or emergency response. For urgent safety matters, contact local emergency services first. See{" "}
             <Link href="/privacy" className={primaryLinkClass}>
@@ -104,7 +104,7 @@ export default async function CitizensVoicePage() {
               <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
                 Digital Platform — &quot;MBKRU Voice&quot;
               </h2>
-              <ul className="mt-6 space-y-3 text-[var(--muted-foreground)]">
+              <ul className="mt-6 space-y-3 text-[var(--foreground-secondary)]">
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
                   <span>Secure national membership portal (mbkru.org.gh)</span>
@@ -151,7 +151,7 @@ export default async function CitizensVoicePage() {
             <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
               Key Benefits
             </h2>
-            <p className="mx-auto mt-2 max-w-2xl text-[var(--muted-foreground)]">
+            <p className="mx-auto mt-2 max-w-2xl text-[var(--foreground-secondary)]">
               Secure, transparent, and accountable — built for every Ghanaian citizen.
             </p>
           </div>
@@ -182,23 +182,23 @@ export default async function CitizensVoicePage() {
                 </>
               ) : null}
             </p>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
+            <div className="mt-6 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
               <Link
                 href="/citizens-voice/submit"
-                className="inline-flex rounded-xl bg-[var(--accent-gold)] px-6 py-3 text-sm font-semibold text-[var(--section-dark)] shadow-md hover:bg-[var(--accent-warm)]"
+                className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[var(--accent-gold)] px-6 py-2.5 text-sm font-semibold text-[var(--section-dark)] shadow-md transition-colors hover:bg-[var(--accent-warm)] sm:w-auto ${focusRingSmClass}`}
               >
                 Submit a report
               </Link>
               <Link
                 href="/track-report"
-                className="inline-flex rounded-xl border-2 border-white/40 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
+                className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl border-2 border-white/40 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 sm:w-auto ${focusRingSmClass}`}
               >
                 Track a report
               </Link>
               {showStats ? (
                 <Link
                   href="/transparency"
-                  className="inline-flex rounded-xl border-2 border-white/40 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
+                  className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl border-2 border-white/40 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 sm:w-auto ${focusRingSmClass}`}
                 >
                   Public statistics
                 </Link>
@@ -207,13 +207,13 @@ export default async function CitizensVoicePage() {
                 <>
                   <Link
                     href="/petitions"
-                    className="inline-flex rounded-xl border-2 border-white/40 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
+                    className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl border-2 border-white/40 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 sm:w-auto ${focusRingSmClass}`}
                   >
                     Petitions
                   </Link>
                   <Link
                     href="/citizens-voice/causes"
-                    className="inline-flex rounded-xl border-2 border-white/40 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
+                    className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl border-2 border-white/40 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 sm:w-auto ${focusRingSmClass}`}
                   >
                     Public causes
                   </Link>
@@ -235,7 +235,7 @@ export default async function CitizensVoicePage() {
               <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
                 Get Early Access
               </h2>
-              <p className="mt-2 text-[var(--muted-foreground)]">
+              <p className="mt-2 text-[var(--foreground-secondary)]">
                 Be among the first to join MBKRU Voice. Register your email for early access.
               </p>
               <EarlyAccessForm />

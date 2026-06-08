@@ -577,7 +577,7 @@ export function AccessibilityVoiceTools() {
           aria-label="Accessibility onboarding"
         >
           <p className="text-sm font-semibold text-[var(--foreground)]">{a11y.onboardingTitle}</p>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">{a11y.onboardingBody}</p>
+          <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{a11y.onboardingBody}</p>
           <button
             type="button"
             onClick={() => {
@@ -603,7 +603,7 @@ export function AccessibilityVoiceTools() {
         >
           <div className="relative pr-10">
             <p className="text-sm font-semibold text-[var(--foreground)]">{a11y.panelTitle}</p>
-            <p className="mt-1 text-xs text-[var(--muted-foreground)]">{a11y.panelSubtitle}</p>
+            <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{a11y.panelSubtitle}</p>
             <button
               type="button"
               onClick={closeAccessibilityPanel}
@@ -632,6 +632,7 @@ export function AccessibilityVoiceTools() {
                 </option>
               ))}
             </select>
+            <p className="text-[11px] leading-snug text-[var(--foreground-secondary)]">{a11y.languageScopeNote}</p>
           </div>
 
           <div className="mt-3 grid gap-2">
@@ -651,7 +652,7 @@ export function AccessibilityVoiceTools() {
           </div>
 
           {audioCaps && (audioCaps.whisper || audioCaps.tts) ? (
-            <div className="mt-3 flex flex-col gap-1.5 rounded-xl border border-[var(--border)]/80 bg-[var(--section-light)]/60 px-2.5 py-2 text-[11px] leading-snug text-[var(--muted-foreground)]">
+            <div className="mt-3 flex flex-col gap-1.5 rounded-xl border border-[var(--border)]/80 bg-[var(--section-light)]/60 px-2.5 py-2 text-[11px] leading-snug text-[var(--foreground-secondary)]">
               <span className="font-semibold text-[var(--foreground)]/90">{a11y.cloudAudioHeading}</span>
               {audioCaps.whisper ? (
                 <label className="flex cursor-pointer items-start gap-2">
@@ -746,7 +747,7 @@ export function AccessibilityVoiceTools() {
           </div>
 
           <div className="mt-3 rounded-xl bg-[var(--muted)] p-3">
-            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--muted-foreground)]">
+            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--foreground-secondary)]">
               {a11y.transcriptLabel}
             </p>
             <p className="mt-1 min-h-8 text-sm text-[var(--foreground)]">
@@ -770,7 +771,7 @@ export function AccessibilityVoiceTools() {
           >
             {a11y.sendToVoice}
           </button>
-          <p className="mt-2 text-xs text-[var(--muted-foreground)]" aria-live="polite">
+          <p className="mt-2 text-xs text-[var(--foreground-secondary)]" aria-live="polite">
             {lastError ?? a11y.footerHint}
           </p>
         </section>

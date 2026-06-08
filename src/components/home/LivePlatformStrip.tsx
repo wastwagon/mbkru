@@ -31,7 +31,7 @@ export function LivePlatformStrip() {
         transition={sectionRevealTransition(reducedMotion)}
         className="border-y border-[var(--border)] bg-[var(--section-light)]/90 py-5 sm:py-6"
       >
-        <div className="mx-auto max-w-3xl px-4 text-center text-sm leading-relaxed text-[var(--muted-foreground)] sm:px-6 lg:max-w-4xl lg:px-8">
+        <div className="mx-auto max-w-3xl px-4 text-center text-sm leading-relaxed text-[var(--foreground-secondary)] sm:px-6 lg:max-w-4xl lg:px-8">
           <span className="font-semibold text-[var(--foreground)]">Public information mode.</span> News, contact, and waitlists
           are live. {accountabilityProse.livePlatformStripPhase1}
         </div>
@@ -54,11 +54,11 @@ export function LivePlatformStrip() {
         >
           Live tools
         </p>
-        <p className="mx-auto mt-2 max-w-2xl text-center text-xs leading-relaxed text-[var(--muted-foreground)] sm:text-[13px]">
+        <p className="mx-auto mt-2 max-w-2xl text-center text-xs leading-relaxed text-[var(--foreground-secondary)] sm:text-[13px]">
           Shortcuts below reflect what is available on this site right now, including accountability browsing when it is
           enabled for visitors.
         </p>
-        <p className="mb-2 mt-4 text-center text-[10px] font-medium uppercase tracking-wide text-[var(--muted-foreground)] sm:hidden">
+        <p className="mb-2 mt-4 text-center text-[10px] font-medium uppercase tracking-wide text-[var(--foreground-secondary)] sm:hidden">
           Swipe for more tools →
         </p>
         <div className="relative max-sm:[-webkit-mask-image:linear-gradient(90deg,transparent,#000_12px,#000_calc(100%-12px),transparent)] max-sm:[mask-image:linear-gradient(90deg,transparent,#000_12px,#000_calc(100%-12px),transparent)]">

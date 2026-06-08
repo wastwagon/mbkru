@@ -132,25 +132,25 @@ export default async function CommunityCouncilPortalPage({ params }: Props) {
           <Link href="#post-and-membership" className={`${primaryNavLinkClass} font-medium`}>
             Post &amp; membership
           </Link>
-          <span className="text-[var(--muted-foreground)]/40" aria-hidden>
+          <span className="text-[var(--foreground-secondary)]/40" aria-hidden>
             ·
           </span>
           <Link href="#concerns" className={`${primaryNavLinkClass} font-medium`}>
             Concerns
           </Link>
-          <span className="text-[var(--muted-foreground)]/40" aria-hidden>
+          <span className="text-[var(--foreground-secondary)]/40" aria-hidden>
             ·
           </span>
           <Link href="#announcements" className={`${primaryNavLinkClass} font-medium`}>
             Announcements
           </Link>
-          <span className="text-[var(--muted-foreground)]/40" aria-hidden>
+          <span className="text-[var(--foreground-secondary)]/40" aria-hidden>
             ·
           </span>
           <Link href="#discussion" className={`${primaryNavLinkClass} font-medium`}>
             Discussion
           </Link>
-          <span className="ml-auto text-xs text-[var(--muted-foreground)]">
+          <span className="ml-auto text-xs text-[var(--foreground-secondary)]">
             <Link href={`/communities/${encodeURIComponent(c.slug)}`} className={primaryNavLinkClass}>
               Community overview →
             </Link>
@@ -160,7 +160,7 @@ export default async function CommunityCouncilPortalPage({ params }: Props) {
 
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="text-sm text-[var(--muted-foreground)]">
+          <p className="text-sm text-[var(--foreground-secondary)]">
             <Link href="/communities" className={primaryNavLinkClass}>
               ← All communities
             </Link>
@@ -168,7 +168,7 @@ export default async function CommunityCouncilPortalPage({ params }: Props) {
 
           <div className="mt-6 rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
             <h2 className="font-display text-base font-semibold text-[var(--foreground)]">How this workspace fits together</h2>
-            <ul className="mt-3 list-inside list-disc space-y-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
+            <ul className="mt-3 list-inside list-disc space-y-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
               <li>
                 <strong className="text-[var(--foreground)]">Concerns</strong> — structured threads for issues Queen Mothers and
                 members want leadership to see.
@@ -183,7 +183,7 @@ export default async function CommunityCouncilPortalPage({ params }: Props) {
               </li>
             </ul>
             {c.region ? (
-              <p className="mt-3 text-xs text-[var(--muted-foreground)]">
+              <p className="mt-3 text-xs text-[var(--foreground-secondary)]">
                 Region: <span className="font-medium text-[var(--foreground)]">{c.region.name}</span> ·{" "}
                 <span className="tabular-nums">{c._count.memberships}</span> member
                 {c._count.memberships === 1 ? "" : "s"}
@@ -233,7 +233,7 @@ export default async function CommunityCouncilPortalPage({ params }: Props) {
             viewerMemberId={viewerId}
           />
 
-          <p className="mt-12 text-center text-sm text-[var(--muted-foreground)]">
+          <p className="mt-12 text-center text-sm text-[var(--foreground-secondary)]">
             For urgent wrongdoing, see{" "}
             <Link href="/whistleblowing" className={primaryLinkClass}>
               whistleblowing guidance
@@ -270,13 +270,13 @@ function PortalFeedSection({
   return (
     <section id={id} className="mt-14 scroll-mt-24">
       <h2 className="text-lg font-semibold text-[var(--foreground)]">{meta.title}</h2>
-      <p className="mt-1 text-sm text-[var(--muted-foreground)]">{meta.description}</p>
+      <p className="mt-1 text-sm text-[var(--foreground-secondary)]">{meta.description}</p>
       {!showPosts ? (
-        <p className="mt-4 rounded-xl border border-[var(--border)] bg-white px-4 py-6 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-4 rounded-xl border border-[var(--border)] bg-white px-4 py-6 text-sm text-[var(--foreground-secondary)]">
           Sign in and join this community to view and participate in these threads.
         </p>
       ) : posts.length === 0 ? (
-        <p className="mt-4 rounded-xl border border-dashed border-[var(--border)] bg-white/80 px-4 py-8 text-center text-sm text-[var(--muted-foreground)]">
+        <p className="mt-4 rounded-xl border border-dashed border-[var(--border)] bg-white/80 px-4 py-8 text-center text-sm text-[var(--foreground-secondary)]">
           No threads in this section yet — use <strong className="text-[var(--foreground)]">Post &amp; membership</strong>{" "}
           above to start one ({kind.toLowerCase()}).
         </p>

@@ -115,7 +115,7 @@ export default async function AccountPage() {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">Your account</h1>
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-2 text-sm text-[var(--foreground-secondary)]">
             Signed in as <strong className="text-[var(--foreground)]">{member?.email ?? session.email}</strong>
             {member?.displayName ? (
               <>
@@ -125,7 +125,7 @@ export default async function AccountPage() {
             ) : null}
           </p>
           {member?.createdAt ? (
-            <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
               Member since{" "}
               {new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric" }).format(
                 member.createdAt,
@@ -150,29 +150,29 @@ export default async function AccountPage() {
           className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--section-light)]/50 p-4 sm:p-5"
           aria-labelledby="identity-heading"
         >
-          <h2 id="identity-heading" className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+          <h2 id="identity-heading" className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
             Membership verification
           </h2>
           <p className="mt-2 text-sm font-semibold text-[var(--foreground)]">
             {memberIdentityStatusLabel(member.identityVerificationStatus)}
           </p>
-          <p className="mt-1 text-xs leading-relaxed text-[var(--muted-foreground)]">
+          <p className="mt-1 text-xs leading-relaxed text-[var(--foreground-secondary)]">
             {memberIdentityStatusDescription(member.identityVerificationStatus)}
           </p>
           {member.identityVerificationStatus === "VERIFIED" && member.identityVerifiedAt ? (
-            <p className="mt-2 text-[11px] text-[var(--muted-foreground)]">
+            <p className="mt-2 text-[11px] text-[var(--foreground-secondary)]">
               Confirmed {member.identityVerifiedAt.toLocaleDateString("en-GB", { dateStyle: "medium" })}
             </p>
           ) : null}
           {member.identityVerificationStatus === "PENDING_REVIEW" && member.identityReviewRequestedAt ? (
-            <p className="mt-2 text-[11px] text-[var(--muted-foreground)]">
+            <p className="mt-2 text-[11px] text-[var(--foreground-secondary)]">
               Review requested{" "}
               {member.identityReviewRequestedAt.toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
             </p>
           ) : null}
           {member.identityVerificationStatus === "UNVERIFIED" || member.identityVerificationStatus === "REJECTED" ? (
             <form action={requestIdentityReviewAction} className="mt-4 space-y-3 border-t border-[var(--border)] pt-4">
-              <p className="text-xs text-[var(--muted-foreground)]">
+              <p className="text-xs text-[var(--foreground-secondary)]">
                 Ask our team to review your membership for programme eligibility (optional message).
               </p>
               <label htmlFor="identity-review-message" className="sr-only">
@@ -216,7 +216,7 @@ export default async function AccountPage() {
         <h2 id="voice-actions-heading" className="font-display text-lg font-semibold text-[var(--foreground)]">
           {voiceOn ? "MBKRU Voice" : "Reporting tools"}
         </h2>
-        <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
           {voiceOn
             ? "Submit, review, and track reports tied to your account."
             : "MBKRU Voice reporting and your dashboard appear here when Voice is enabled for visitors on this site."}
@@ -232,7 +232,7 @@ export default async function AccountPage() {
               <span className="mt-4 font-display text-base font-semibold text-[var(--foreground)]">
                 Submit a report
               </span>
-              <span className="mt-1 flex-1 text-xs leading-relaxed text-[var(--muted-foreground)]">
+              <span className="mt-1 flex-1 text-xs leading-relaxed text-[var(--foreground-secondary)]">
                 File a new Voice report with location and attachments.
               </span>
               <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)]">
@@ -247,7 +247,7 @@ export default async function AccountPage() {
                 </svg>
               </span>
               <span className="mt-4 font-display text-base font-semibold text-[var(--foreground)]">My reports</span>
-              <span className="mt-1 flex-1 text-xs leading-relaxed text-[var(--muted-foreground)]">
+              <span className="mt-1 flex-1 text-xs leading-relaxed text-[var(--foreground-secondary)]">
                 See status, titles, and tracking codes in one list.
               </span>
               <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)]">
@@ -263,7 +263,7 @@ export default async function AccountPage() {
                 </svg>
               </span>
               <span className="mt-4 font-display text-base font-semibold text-[var(--foreground)]">Track by code</span>
-              <span className="mt-1 flex-1 text-xs leading-relaxed text-[var(--muted-foreground)]">
+              <span className="mt-1 flex-1 text-xs leading-relaxed text-[var(--foreground-secondary)]">
                 Look up any report if you have its tracking code.
               </span>
               <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)]">
@@ -279,7 +279,7 @@ export default async function AccountPage() {
         <h2 id="inbox-heading" className="font-display text-lg font-semibold text-[var(--foreground)]">
           Inbox
         </h2>
-        <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
           Verification changes, community approvals, post status, and moderator alerts.
         </p>
         <Link href="/account/notifications" className={`${tileClass} mt-5 max-w-md`}>
@@ -296,7 +296,7 @@ export default async function AccountPage() {
               </span>
             ) : null}
           </span>
-          <span className="mt-1 flex-1 text-xs leading-relaxed text-[var(--muted-foreground)]">
+          <span className="mt-1 flex-1 text-xs leading-relaxed text-[var(--foreground-secondary)]">
             Mark items read when you&apos;ve seen them. Same list is available via the API for apps.
           </span>
           <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)]">
@@ -311,11 +311,11 @@ export default async function AccountPage() {
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--section-light)]/50 p-5 sm:p-6">
             <h2
               id="accountability-heading"
-              className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--muted-foreground)]"
+              className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--foreground-secondary)]"
             >
               Public accountability
             </h2>
-            <p className="mt-2 max-w-2xl text-sm text-[var(--muted-foreground)]">
+            <p className="mt-2 max-w-2xl text-sm text-[var(--foreground-secondary)]">
               Scores, methodology, and one commitment catalogue dashboard (with optional government-programme preset), plus
               the MP roster when parliament data is enabled.
             </p>
@@ -323,18 +323,18 @@ export default async function AccountPage() {
               <div className="mt-6" aria-labelledby="promise-tracker-subheading">
                 <h3
                   id="promise-tracker-subheading"
-                  className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]"
+                  className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]"
                 >
                   Promise tracker
                 </h3>
-                <p className="mt-1 max-w-2xl text-xs leading-relaxed text-[var(--muted-foreground)]">
+                <p className="mt-1 max-w-2xl text-xs leading-relaxed text-[var(--foreground-secondary)]">
                   Same dataset as the homepage live blocks — one catalogue URL with presets, plus the MP roster.
                 </p>
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   {getAccountabilityCatalogueCards().map((card) => (
                     <Link key={card.href} href={card.href} className={tileClass}>
                       <span className="font-display text-base font-semibold text-[var(--foreground)]">{card.title}</span>
-                      <span className="mt-2 flex-1 text-xs leading-relaxed text-[var(--muted-foreground)]">
+                      <span className="mt-2 flex-1 text-xs leading-relaxed text-[var(--foreground-secondary)]">
                         {card.description}
                       </span>
                       <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)]">

@@ -45,7 +45,7 @@ export default async function TownHallsPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl space-y-8 px-4 sm:px-6 lg:px-8">
-          <p className="text-sm leading-relaxed text-[var(--muted-foreground)]">
+          <p className="text-sm leading-relaxed text-[var(--foreground-secondary)]">
             We maintain a <strong className="text-[var(--foreground)]">programme directory</strong> tied to our{" "}
             <Link href="/" className={primaryNavLinkClass}>
               published programme pathway
@@ -63,7 +63,7 @@ export default async function TownHallsPage() {
           </p>
 
           {events.length === 0 ? (
-            <p className="rounded-2xl border border-[var(--border)] bg-white p-6 text-sm text-[var(--muted-foreground)] shadow-sm">
+            <p className="rounded-2xl border border-[var(--border)] bg-white p-6 text-sm text-[var(--foreground-secondary)] shadow-sm">
               No programme rows in the database yet. Run <code className="rounded bg-[var(--section-light)] px-1">npx prisma migrate deploy</code>{" "}
               and <code className="rounded bg-[var(--section-light)] px-1">npx prisma db seed</code> (unless{" "}
               <code className="rounded bg-[var(--section-light)] px-1">SEED_TOWN_HALL_PROGRAMME=0</code>), or check{" "}
@@ -79,7 +79,7 @@ export default async function TownHallsPage() {
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <p className="font-display text-lg font-semibold text-[var(--foreground)]">{ev.title}</p>
-                      <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                      <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                         {programmeEventKindLabel(ev.kind)}
                         {ev.constituency?.name ? ` · ${ev.constituency.name}` : ""}
                         {ev.programmeQuarter ? ` · ${ev.programmeQuarter}` : ""}
@@ -90,9 +90,9 @@ export default async function TownHallsPage() {
                       </p>
                     </div>
                   </div>
-                  {ev.summary ? <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">{ev.summary}</p> : null}
+                  {ev.summary ? <p className="mt-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">{ev.summary}</p> : null}
                   {ev.startsAt ? (
-                    <p className="mt-3 text-xs text-[var(--muted-foreground)]">
+                    <p className="mt-3 text-xs text-[var(--foreground-secondary)]">
                       Window: {new Date(ev.startsAt).toLocaleString("en-GB")}
                       {ev.endsAt ? ` – ${new Date(ev.endsAt).toLocaleString("en-GB")}` : null}
                     </p>
@@ -111,7 +111,7 @@ export default async function TownHallsPage() {
                     </p>
                   ) : null}
                   {ev.sourceCitation ? (
-                    <p className="mt-4 border-t border-[var(--border)] pt-3 text-[11px] leading-relaxed text-[var(--muted-foreground)]">
+                    <p className="mt-4 border-t border-[var(--border)] pt-3 text-[11px] leading-relaxed text-[var(--foreground-secondary)]">
                       <span className="font-semibold text-[var(--foreground)]">Reference: </span>
                       {ev.sourceCitation}
                     </p>
@@ -121,7 +121,7 @@ export default async function TownHallsPage() {
             </ul>
           )}
 
-          <p className="text-sm text-[var(--muted-foreground)]">
+          <p className="text-sm text-[var(--foreground-secondary)]">
             <Link href="/news" className={primaryNavLinkClass}>
               News &amp; Updates
             </Link>{" "}

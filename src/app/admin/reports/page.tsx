@@ -70,7 +70,7 @@ export default async function AdminReportsPage({ searchParams }: Props) {
               <Link href="/admin/analytics/citizen-reports" className={primaryLinkClass}>
                 Aggregate analytics
               </Link>
-              <span className="text-[var(--muted-foreground)]">
+              <span className="text-[var(--foreground-secondary)]">
                 {" "}
                 — counts by kind, status, region, playbook; no personal data.
               </span>
@@ -104,7 +104,7 @@ export default async function AdminReportsPage({ searchParams }: Props) {
 
       <AdminListPanel className="mt-6">
         {reports.length === 0 ? (
-          <li className="p-6 text-sm text-[var(--muted-foreground)]">No reports yet.</li>
+          <li className="p-6 text-sm text-[var(--foreground-secondary)]">No reports yet.</li>
         ) : (
           reports.map((r) => {
             const slaOverdue = isCitizenReportSlaOverdue(r.slaDueAt, r.status);
@@ -112,7 +112,7 @@ export default async function AdminReportsPage({ searchParams }: Props) {
             <li key={r.id} className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <p className="font-semibold text-[var(--foreground)] line-clamp-1">{r.title}</p>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p className="text-xs text-[var(--foreground-secondary)]">
                   <span className="font-mono">{r.trackingCode}</span> · {r.kind.replace(/_/g, " ")} ·{" "}
                   <span className="text-[var(--primary)]">{r.status.replace(/_/g, " ")}</span>
                   {r.region ? ` · ${r.region.name}` : ""}
@@ -120,11 +120,11 @@ export default async function AdminReportsPage({ searchParams }: Props) {
                     <span className="ml-1 font-semibold text-amber-800">· SLA overdue</span>
                   ) : null}
                 </p>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p className="text-xs text-[var(--foreground-secondary)]">
                   {r.createdAt.toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
                 </p>
                 {r._count.adminReplies > 0 ? (
-                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                  <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                     <span className="font-medium text-[var(--foreground)]">{r._count.adminReplies}</span> staff note
                     {r._count.adminReplies === 1 ? "" : "s"}
                     {r.adminReplies[0]?.createdAt ? (

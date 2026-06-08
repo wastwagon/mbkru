@@ -24,7 +24,7 @@ export function AdminMetricCard({ label, value, valueSize = "lg", subline, surfa
     <div className={wrapClass}>
       <p className={adminKickerClass}>{label}</p>
       <p className={valueClass}>{value}</p>
-      {subline != null ? <p className="mt-1 text-xs text-[var(--muted-foreground)]">{subline}</p> : null}
+      {subline != null ? <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{subline}</p> : null}
     </div>
   );
 }

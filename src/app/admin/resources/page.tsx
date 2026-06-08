@@ -117,7 +117,7 @@ export default async function AdminResourcesPage() {
               type="file"
               required
               accept=".pdf,.doc,.docx,.odt,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.oasis.opendocument.text,text/plain"
-              className="mt-1 block w-full text-sm text-[var(--muted-foreground)] file:mr-4 file:rounded-lg file:border-0 file:bg-[var(--primary)] file:px-4 file:py-2 file:font-semibold file:text-white"
+              className="mt-1 block w-full text-sm text-[var(--foreground-secondary)] file:mr-4 file:rounded-lg file:border-0 file:bg-[var(--primary)] file:px-4 file:py-2 file:font-semibold file:text-white"
             />
           </div>
           <label className="flex items-center gap-2 text-sm text-[var(--foreground)]">
@@ -147,7 +147,7 @@ export default async function AdminResourcesPage() {
             >
               <div className="min-w-0">
                 <p className="font-medium text-[var(--foreground)]">{d.title}</p>
-                <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                   {resourceCategoryLabel(d.category)} · slug:{" "}
                   <span className="font-mono">{d.slug}</span>
                   {d.publishedAt ? (
@@ -156,7 +156,7 @@ export default async function AdminResourcesPage() {
                     <span> · draft</span>
                   )}
                 </p>
-                <p className="mt-1 truncate text-xs text-[var(--muted-foreground)]">{d.originalFilename}</p>
+                <p className="mt-1 truncate text-xs text-[var(--foreground-secondary)]">{d.originalFilename}</p>
               </div>
               <div className="flex flex-wrap gap-2">
                 {d.publishedAt ? (

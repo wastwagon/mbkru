@@ -49,16 +49,16 @@ export function ParliamentReconcileResults({
       {summary ? (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <li className="rounded-xl border border-[var(--border)] bg-[var(--section-light)]/50 px-4 py-3">
-            <p className="text-xs font-medium text-[var(--muted-foreground)]">CSV rows</p>
+            <p className="text-xs font-medium text-[var(--foreground-secondary)]">CSV rows</p>
             <p className="mt-1 text-lg font-semibold text-[var(--foreground)]">{summary.csvRowsTotal}</p>
-            <p className="text-xs text-[var(--muted-foreground)]">{summary.csvRowsValid} valid for comparison</p>
+            <p className="text-xs text-[var(--foreground-secondary)]">{summary.csvRowsValid} valid for comparison</p>
           </li>
           <li className="rounded-xl border border-[var(--border)] bg-[var(--section-light)]/50 px-4 py-3">
-            <p className="text-xs font-medium text-[var(--muted-foreground)]">Would create / update</p>
+            <p className="text-xs font-medium text-[var(--foreground-secondary)]">Would create / update</p>
             <p className="mt-1 text-lg font-semibold text-[var(--foreground)]">
               {summary.wouldCreate} / {summary.wouldUpdate}
             </p>
-            <p className="text-xs text-[var(--muted-foreground)]">{summary.unchanged} unchanged</p>
+            <p className="text-xs text-[var(--foreground-secondary)]">{summary.unchanged} unchanged</p>
           </li>
           <li className="rounded-xl border border-[var(--border)] bg-amber-50 px-4 py-3 sm:col-span-2 lg:col-span-1">
             <p className="text-xs font-medium text-amber-900/80">In database, not in CSV</p>
@@ -87,7 +87,7 @@ export function ParliamentReconcileResults({
           </h3>
           <div className="mt-2 overflow-x-auto rounded-xl border border-[var(--border)]">
             <table className="w-full min-w-[32rem] text-left text-xs">
-              <thead className="bg-[var(--section-light)] text-[var(--muted-foreground)]">
+              <thead className="bg-[var(--section-light)] text-[var(--foreground-secondary)]">
                 <tr>
                   <th className="px-3 py-2 font-medium">Slug</th>
                   <th className="px-3 py-2 font-medium">Name</th>
@@ -100,8 +100,8 @@ export function ParliamentReconcileResults({
                   <tr key={r.slug}>
                     <td className="whitespace-nowrap px-3 py-2 font-mono text-[11px]">{r.slug}</td>
                     <td className="px-3 py-2">{r.name}</td>
-                    <td className="px-3 py-2 text-[var(--muted-foreground)]">{r.party ?? "—"}</td>
-                    <td className="px-3 py-2 text-[var(--muted-foreground)]">{r.constituencySlug ?? "—"}</td>
+                    <td className="px-3 py-2 text-[var(--foreground-secondary)]">{r.party ?? "—"}</td>
+                    <td className="px-3 py-2 text-[var(--foreground-secondary)]">{r.constituencySlug ?? "—"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -120,12 +120,12 @@ export function ParliamentReconcileResults({
             {wouldUpdate.slice(0, PREVIEW_LIMIT).map((u) => (
               <li key={u.slug} className="rounded-xl border border-[var(--border)] bg-white px-4 py-3">
                 <p className="font-mono text-[11px] font-semibold text-[var(--primary)]">{u.slug}</p>
-                <ul className="mt-2 space-y-1 text-xs text-[var(--muted-foreground)]">
+                <ul className="mt-2 space-y-1 text-xs text-[var(--foreground-secondary)]">
                   {u.changes.map((c, i) => (
                     <li key={i}>
                       <span className="font-medium text-[var(--foreground)]">{fieldLabel(c.field)}:</span>{" "}
                       <span className="line-through opacity-70">{c.from}</span>
-                      <span className="mx-1 text-[var(--muted-foreground)]">→</span>
+                      <span className="mx-1 text-[var(--foreground-secondary)]">→</span>
                       <span>{c.to}</span>
                     </li>
                   ))}
@@ -143,7 +143,7 @@ export function ParliamentReconcileResults({
           >
             Unchanged in CSV ({unchangedSlugs.length} slugs)
           </summary>
-          <p className="mt-2 max-h-40 overflow-y-auto font-mono text-[11px] leading-relaxed text-[var(--muted-foreground)]">
+          <p className="mt-2 max-h-40 overflow-y-auto font-mono text-[11px] leading-relaxed text-[var(--foreground-secondary)]">
             {unchangedSlugs.slice(0, 200).join(", ")}
             {unchangedSlugs.length > 200 ? " …" : ""}
           </p>
@@ -158,7 +158,7 @@ export function ParliamentReconcileResults({
           </h3>
           <div className="mt-2 overflow-x-auto rounded-xl border border-[var(--border)]">
             <table className="w-full min-w-[28rem] text-left text-xs">
-              <thead className="bg-[var(--section-light)] text-[var(--muted-foreground)]">
+              <thead className="bg-[var(--section-light)] text-[var(--foreground-secondary)]">
                 <tr>
                   <th className="px-3 py-2 font-medium">Slug</th>
                   <th className="px-3 py-2 font-medium">Name</th>
@@ -170,7 +170,7 @@ export function ParliamentReconcileResults({
                   <tr key={r.slug}>
                     <td className="whitespace-nowrap px-3 py-2 font-mono text-[11px]">{r.slug}</td>
                     <td className="px-3 py-2">{r.name}</td>
-                    <td className="px-3 py-2 text-[var(--muted-foreground)]">{r.party ?? "—"}</td>
+                    <td className="px-3 py-2 text-[var(--foreground-secondary)]">{r.party ?? "—"}</td>
                   </tr>
                 ))}
               </tbody>

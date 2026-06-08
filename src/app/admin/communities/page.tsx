@@ -100,7 +100,7 @@ export default async function AdminCommunitiesPage() {
           </div>
           <div>
             <label htmlFor="traditionalAreaName" className="block text-xs font-medium text-[var(--foreground)]">
-              Traditional area label <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              Traditional area label <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
             </label>
             <input
               id="traditionalAreaName"
@@ -111,7 +111,7 @@ export default async function AdminCommunitiesPage() {
           </div>
           <div>
             <label htmlFor="regionId" className="block text-xs font-medium text-[var(--foreground)]">
-              Region <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              Region <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
             </label>
             <select
               id="regionId"
@@ -157,7 +157,7 @@ export default async function AdminCommunitiesPage() {
               </select>
             </div>
           </div>
-          <p className="text-xs text-[var(--muted-foreground)]">
+          <p className="text-xs text-[var(--foreground-secondary)]">
             New communities start as <strong>DRAFT</strong>. Open the row below and click <strong>Activate</strong> when
             ready for the public directory.
           </p>
@@ -173,7 +173,7 @@ export default async function AdminCommunitiesPage() {
       <section className="mt-10">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">All communities ({communities.length})</h2>
         {communities.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">None yet.</p>
+          <p className="mt-2 text-sm text-[var(--foreground-secondary)]">None yet.</p>
         ) : (
           <ul className="mt-4 space-y-3">
             {communities.map((c) => (
@@ -185,8 +185,8 @@ export default async function AdminCommunitiesPage() {
                   <Link href={`/admin/communities/${c.id}`} className={primaryLinkClass}>
                     {c.name}
                   </Link>
-                  <p className="mt-1 font-mono text-xs text-[var(--muted-foreground)]">{c.slug}</p>
-                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                  <p className="mt-1 font-mono text-xs text-[var(--foreground-secondary)]">{c.slug}</p>
+                  <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                     {c.status} · {c.visibility} · {c.joinPolicy} · {c._count.memberships} members · {c._count.posts}{" "}
                     posts
                   </p>

@@ -56,15 +56,15 @@ export default async function AdminParliamentPage() {
                 <p className="font-semibold text-[var(--foreground)]">
                   {m.name}
                   {!m.active ? (
-                    <span className="ml-2 text-xs font-normal text-[var(--muted-foreground)]">(inactive)</span>
+                    <span className="ml-2 text-xs font-normal text-[var(--foreground-secondary)]">(inactive)</span>
                   ) : null}
                 </p>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p className="text-xs text-[var(--foreground-secondary)]">
                   <span className="font-mono">{m.slug}</span> · {m.role}
                   {m.party ? ` · ${m.party}` : ""}
                   {m.constituency ? ` · ${m.constituency.name}` : ""}
                 </p>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p className="text-xs text-[var(--foreground-secondary)]">
                   {m._count.promises} catalogue row{m._count.promises === 1 ? "" : "s"}
                 </p>
               </div>

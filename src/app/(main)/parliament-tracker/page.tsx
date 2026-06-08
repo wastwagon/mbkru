@@ -105,7 +105,7 @@ export default async function ParliamentTrackerPage() {
 
       <div className="section-spacing border-b border-[var(--border)] bg-white pb-8">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
-          <p className="text-sm leading-relaxed text-[var(--muted-foreground)]">
+          <p className="text-sm leading-relaxed text-[var(--foreground-secondary)]">
             {accountabilityProse.parliamentTrackerHubOrientation}
           </p>
         </div>
@@ -118,7 +118,7 @@ export default async function ParliamentTrackerPage() {
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <h2 className="font-display text-lg font-bold text-[var(--foreground)]">Parliamentary roster</h2>
-                  <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+                  <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
                     {mpRoster.length} active MP{mpRoster.length === 1 ? "" : "s"} in this catalogue. Each row shows
                     Citizen Voice MP intakes and commitment catalogue rows — click a name (when browse is on) to open that
                     MP&apos;s sheet. For commitment totals, status mix, and filters, use{" "}
@@ -159,7 +159,7 @@ export default async function ParliamentTrackerPage() {
                 ) : null}
               </div>
               {mpRoster.length === 0 ? (
-                <p className="mt-6 text-sm text-[var(--muted-foreground)]">
+                <p className="mt-6 text-sm text-[var(--foreground-secondary)]">
                   No parliamentarians are listed yet. They will appear here once the programme publishes a roster for
                   this site.
                 </p>
@@ -177,15 +177,14 @@ export default async function ParliamentTrackerPage() {
             <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6">
               <h2 className="font-display text-lg font-bold text-[var(--foreground)]">
                 Recent MP performance reports (Citizen Voice)
-                <span className="ml-2 text-base font-normal text-[var(--muted-foreground)]">
+                <span className="ml-2 text-base font-normal text-[var(--foreground-secondary)]">
                   ({recentMpVoice.length} {recentMpVoice.length === 1 ? "intake" : "intakes"})
                 </span>
               </h2>
-              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-                Intakes filed with a roster MP selected — staff moderation applies; each row is a separate report. Use
-                the tracking code to tell them apart. Follow each MP&apos;s commitment sheet for catalogue evidence.
+              <p className="mt-1 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+                Separate reports filed against roster MPs — use the tracking code to tell them apart.
               </p>
-              <ul className="mt-4 divide-y divide-[var(--border)] rounded-xl border border-[var(--border)] px-3">
+              <ul className="mt-4 space-y-3">
                 {recentMpVoice.map((r) => (
                   <li key={r.id}>
                     <VoiceMpPerformanceIntakeRow
@@ -224,7 +223,7 @@ export default async function ParliamentTrackerPage() {
               <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
                 Accountability & Electoral Watch
               </h2>
-              <ul className="mt-6 space-y-3 text-[var(--muted-foreground)]">
+              <ul className="mt-6 space-y-3 text-[var(--foreground-secondary)]">
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
                   <span>
@@ -265,7 +264,7 @@ export default async function ParliamentTrackerPage() {
             <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
               Accountability Tools
             </h2>
-            <p className="mx-auto mt-2 max-w-2xl text-[var(--muted-foreground)]">
+            <p className="mx-auto mt-2 max-w-2xl text-[var(--foreground-secondary)]">
               {accountabilityProse.parliamentTrackerToolsSubline}
             </p>
           </div>
@@ -295,20 +294,20 @@ export default async function ParliamentTrackerPage() {
               <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
                 Get Tracker Notifications
               </h2>
-              <p className="mt-2 text-[var(--muted-foreground)]">{accountabilityProse.trackerSignupUpdates}</p>
+              <p className="mt-2 text-[var(--foreground-secondary)]">{accountabilityProse.trackerSignupUpdates}</p>
               <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-2 text-sm sm:gap-x-4">
                 <Link href="/methodology" className={primaryNavLinkClass}>
                   Methodology
                 </Link>
                 {showPromises ? (
                   <>
-                    <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+                    <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
                       ·
                     </span>
                     <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className={primaryNavLinkClass}>
                       {accountabilityCatalogueNavMedium.byMp}
                     </Link>
-                    <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+                    <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
                       ·
                     </span>
                     <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={primaryNavLinkClass}>
@@ -318,7 +317,7 @@ export default async function ParliamentTrackerPage() {
                 ) : null}
                 {showReportCard ? (
                   <>
-                    <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+                    <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
                       ·
                     </span>
                     <Link href="/report-card" className={primaryNavLinkClass}>

@@ -199,7 +199,7 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
           {admins.map((a) => (
             <li key={a.id} className="rounded-2xl border border-[var(--border)] bg-white p-5">
               <p className="font-medium text-[var(--foreground)]">{a.email}</p>
-              <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+              <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                 Added {a.createdAt.toLocaleString("en-GB")}
                 {a.id === session.adminId ? " · you" : ""}
                 {!a.active ? " · disabled" : ""}
@@ -207,7 +207,7 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
 
               <form action={setAdminOperatorActiveAction} className="mt-4 flex flex-wrap items-center gap-2">
                 <input type="hidden" name="adminId" value={a.id} />
-                <label htmlFor={`active-${a.id}`} className="text-xs font-medium text-[var(--muted-foreground)]">
+                <label htmlFor={`active-${a.id}`} className="text-xs font-medium text-[var(--foreground-secondary)]">
                   Access
                 </label>
                 <select id={`active-${a.id}`} name="active" defaultValue={a.active ? "1" : "0"} className="rounded-lg border border-[var(--border)] px-2 py-1.5 text-sm">

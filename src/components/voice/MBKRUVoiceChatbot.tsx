@@ -800,7 +800,7 @@ export function MBKRUVoiceChatbot() {
                 ) : null}
                 {message.role === "assistant" && message.meta ? (
                   <div
-                    className={`mt-2 text-[10px] leading-relaxed text-[var(--muted-foreground)] ${
+                    className={`mt-2 text-[10px] leading-relaxed text-[var(--foreground-secondary)] ${
                       message.meta.sitePagePaths?.length || message.meta.webSearchUsed
                         ? "border-t border-[var(--border)]/80 pt-2"
                         : "pt-0.5"
@@ -835,26 +835,26 @@ export function MBKRUVoiceChatbot() {
                   </div>
                 ) : null}
                 {message.role === "assistant" ? (
-                  <p className="mt-2 inline-flex rounded-md bg-[var(--muted)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.05em] text-[var(--muted-foreground)]">
+                  <p className="mt-2 inline-flex rounded-md bg-[var(--muted)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.05em] text-[var(--foreground-secondary)]">
                     {getVoiceChromeStrings(message.languageId ?? "en-gh").languageBadge}
                   </p>
                 ) : null}
               </article>
             ))}
             {isLoading ? (
-              <p className="text-xs font-medium text-[var(--muted-foreground)]" role="status">
+              <p className="text-xs font-medium text-[var(--foreground-secondary)]" role="status">
                 {ui.thinking}
               </p>
             ) : null}
             {isTranscribingWhisper ? (
-              <p className="text-xs font-medium text-[var(--muted-foreground)]" role="status">
+              <p className="text-xs font-medium text-[var(--foreground-secondary)]" role="status">
                 {ui.transcribingStatus}
               </p>
             ) : null}
           </div>
 
           <form onSubmit={onSubmit} className="border-t border-[var(--border)] bg-white p-2.5 sm:p-3">
-            <p className="mb-2 text-[10px] leading-snug text-[var(--muted-foreground)]">
+            <p className="mb-2 text-[10px] leading-snug text-[var(--foreground-secondary)]">
               {ui.aiDisclaimerBeforePrivacy}{" "}
               <Link href="/privacy" className={focusRingSmClass}>
                 {ui.privacyLink}
@@ -905,7 +905,7 @@ export function MBKRUVoiceChatbot() {
             {pdfAttachment ? (
               <div className="mb-2 flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--muted)]/40 p-2 text-xs text-[var(--foreground)]">
                 <span className="min-w-0 flex-1 font-medium">{pdfAttachment.name}</span>
-                <span className="shrink-0 text-[var(--muted-foreground)]">PDF</span>
+                <span className="shrink-0 text-[var(--foreground-secondary)]">PDF</span>
                 <button
                   type="button"
                   onClick={clearAttachments}
@@ -928,7 +928,7 @@ export function MBKRUVoiceChatbot() {
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
                 placeholder={ui.placeholder}
-                className={`h-11 min-w-0 flex-1 rounded-xl border border-[var(--border)] px-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] ${focusRingSmClass}`}
+                className={`h-11 min-w-0 flex-1 rounded-xl border border-[var(--border)] px-3 text-sm text-[var(--foreground)] placeholder:text-[var(--foreground-secondary)] ${focusRingSmClass}`}
                 maxLength={2000}
               />
               <button
@@ -1002,7 +1002,7 @@ export function MBKRUVoiceChatbot() {
               </button>
             </div>
             <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
-              <label className="flex cursor-pointer select-none items-center gap-1.5 text-xs text-[var(--muted-foreground)]">
+              <label className="flex cursor-pointer select-none items-center gap-1.5 text-xs text-[var(--foreground-secondary)]">
                 <input
                   type="checkbox"
                   className="h-4 w-4 rounded border-[var(--border)] text-[var(--primary)]"
@@ -1012,7 +1012,7 @@ export function MBKRUVoiceChatbot() {
                 <span>{ui.webSearchCheckbox}</span>
               </label>
               {audioCaps && (audioCaps.whisper || audioCaps.tts) ? (
-                <div className="flex min-w-0 flex-col gap-1.5 rounded-lg border border-[var(--border)]/80 bg-[var(--section-light)]/60 px-2.5 py-2 text-[11px] leading-snug text-[var(--muted-foreground)] sm:max-w-[min(24rem,100%)]">
+                <div className="flex min-w-0 flex-col gap-1.5 rounded-lg border border-[var(--border)]/80 bg-[var(--section-light)]/60 px-2.5 py-2 text-[11px] leading-snug text-[var(--foreground-secondary)] sm:max-w-[min(24rem,100%)]">
                   <span className="font-semibold text-[var(--foreground)]/90">{ui.cloudAudioHeading}</span>
                   {audioCaps.whisper ? (
                     <label className="flex cursor-pointer items-start gap-2">
@@ -1049,9 +1049,9 @@ export function MBKRUVoiceChatbot() {
                 </div>
               ) : null}
             </div>
-            <p className="mt-1 text-xs text-[var(--muted-foreground)]">{ui.helperFooter}</p>
+            <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{ui.helperFooter}</p>
             {listeningError ? (
-              <p className="mt-1 text-xs text-[var(--muted-foreground)]" role="status">
+              <p className="mt-1 text-xs text-[var(--foreground-secondary)]" role="status">
                 {listeningError}
               </p>
             ) : null}

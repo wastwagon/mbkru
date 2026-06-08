@@ -47,7 +47,7 @@ export default async function ConstituencyDebatesPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl space-y-8 px-4 sm:px-6 lg:px-8">
-          <p className="text-sm leading-relaxed text-[var(--muted-foreground)]">
+          <p className="text-sm leading-relaxed text-[var(--foreground-secondary)]">
             This index lists only <strong className="text-[var(--foreground)]">constituency debate</strong> programme types. Regional town halls
             and broadcast forums are on{" "}
             <Link href="/town-halls" className={primaryNavLinkClass}>
@@ -62,7 +62,7 @@ export default async function ConstituencyDebatesPage() {
           </p>
 
           {events.length === 0 ? (
-            <p className="rounded-2xl border border-[var(--border)] bg-white p-6 text-sm text-[var(--muted-foreground)] shadow-sm">
+            <p className="rounded-2xl border border-[var(--border)] bg-white p-6 text-sm text-[var(--foreground-secondary)] shadow-sm">
               No constituency debate rows yet. Run migrations and seed (after constituencies load), or add rows in{" "}
               <strong className="text-[var(--foreground)]">Admin → Town halls &amp; forums</strong> with programme type{" "}
               <em>Constituency debate</em>.
@@ -75,7 +75,7 @@ export default async function ConstituencyDebatesPage() {
                   className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-card)] sm:p-6"
                 >
                   <p className="font-display text-lg font-semibold text-[var(--foreground)]">{ev.title}</p>
-                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                  <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                     {programmeEventKindLabel(ev.kind)}
                     {ev.constituency?.name ? ` · ${ev.constituency.name}` : ""}
                     {ev.programmeQuarter ? ` · ${ev.programmeQuarter}` : ""}
@@ -84,9 +84,9 @@ export default async function ConstituencyDebatesPage() {
                     {" · "}
                     <span className="font-medium text-[var(--foreground)]">{statusLabel(ev.status)}</span>
                   </p>
-                  {ev.summary ? <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">{ev.summary}</p> : null}
+                  {ev.summary ? <p className="mt-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">{ev.summary}</p> : null}
                   {ev.sourceCitation ? (
-                    <p className="mt-4 border-t border-[var(--border)] pt-3 text-[11px] leading-relaxed text-[var(--muted-foreground)]">
+                    <p className="mt-4 border-t border-[var(--border)] pt-3 text-[11px] leading-relaxed text-[var(--foreground-secondary)]">
                       <span className="font-semibold text-[var(--foreground)]">Reference: </span>
                       {ev.sourceCitation}
                     </p>
@@ -96,7 +96,7 @@ export default async function ConstituencyDebatesPage() {
             </ul>
           )}
 
-          <p className="text-sm text-[var(--muted-foreground)]">
+          <p className="text-sm text-[var(--foreground-secondary)]">
             <Link href="/news" className={primaryNavLinkClass}>
               News
             </Link>{" "}

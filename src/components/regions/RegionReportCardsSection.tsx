@@ -12,7 +12,7 @@ import {
 } from "@/config/accountability-catalogue-destinations";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
-import { primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { publicReportCardCycleTitle } from "@/lib/report-card-public-label";
 import { regionalReportCardIndexHref } from "@/lib/regional-report-card-hrefs";
 import {
@@ -154,18 +154,18 @@ export async function RegionReportCardsSection({
           <p className="font-display text-lg font-semibold text-[var(--foreground)]">
             People&apos;s Report Card — {regionName}
           </p>
-          <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
+          <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
             Voice submissions and published programme scores below are filtered to this region only. Open the{" "}
             <Link href="/report-card" className={primaryNavLinkClass}>
               full Report Card index
             </Link>{" "}
             to browse every region.
           </p>
-          <p className="mt-3 flex flex-wrap gap-x-2 gap-y-2 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-3 flex flex-wrap gap-x-2 gap-y-2 text-sm text-[var(--foreground-secondary)]">
             <Link href="/methodology" className={primaryNavLinkClass}>
               Methodology
             </Link>
-            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+            <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
               ·
             </span>
             <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className={primaryNavLinkClass}>
@@ -175,7 +175,7 @@ export async function RegionReportCardsSection({
         </div>
 
         <p
-          className="mx-auto mt-4 max-w-2xl text-center text-sm leading-relaxed text-[var(--muted-foreground)]"
+          className="mx-auto mt-4 max-w-2xl text-center text-sm leading-relaxed text-[var(--foreground-secondary)]"
           id="prc-disambiguation-regional"
         >
           {accountabilityProse.reportCardIndexDisambiguation}{" "}
@@ -186,7 +186,7 @@ export async function RegionReportCardsSection({
         </p>
 
         {scorecardsMode ? (
-          <p className="mx-auto mt-6 max-w-3xl text-center text-sm leading-relaxed text-[var(--muted-foreground)]">
+          <p className="mx-auto mt-6 max-w-3xl text-center text-sm leading-relaxed text-[var(--foreground-secondary)]">
             Pre-election programme framing is described in{" "}
             <Link href="/methodology" className={primaryNavLinkClass}>
               methodology
@@ -210,8 +210,8 @@ export async function RegionReportCardsSection({
               id="browse-voice"
               className="mx-auto mt-10 max-w-5xl rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6"
             >
-              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
-                Reports submitted (MBKRU Voice) — {regionName}
+              <p className="text-sm font-semibold text-[var(--foreground)]">
+                Voice reports — {regionName}
               </p>
               <ReportCardVoiceFiltersForm
                 regions={regions}
@@ -231,14 +231,14 @@ export async function RegionReportCardsSection({
                 browseBasePath={browseBase}
                 lockedVoiceRegion={{ id: regionId, name: regionName }}
               />
-              <p className="mt-3 text-xs text-[var(--muted-foreground)]">
+              <p className="mt-3 text-xs text-[var(--foreground-secondary)]">
                 Listed by most recent (excluding archived). Same filters as the main Report Card page, scoped to this region.
               </p>
             </div>
 
             <div className="mx-auto mt-8 max-w-6xl">
               <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-                <p className="text-sm text-[var(--muted-foreground)]">
+                <p className="text-sm text-[var(--foreground-secondary)]">
                   <span className="font-semibold text-[var(--foreground)]">{voiceBrowse.totalFiltered}</span> submission
                   {voiceBrowse.totalFiltered === 1 ? "" : "s"}
                   {voiceBrowse.totalFiltered > 0 ? (
@@ -256,11 +256,11 @@ export async function RegionReportCardsSection({
               </div>
 
               {voiceBrowse.rows.length === 0 ? (
-                <p className="rounded-2xl border border-[var(--border)] bg-white px-6 py-12 text-center text-sm text-[var(--muted-foreground)]">
+                <p className="rounded-2xl border border-[var(--border)] bg-white px-6 py-12 text-center text-sm text-[var(--foreground-secondary)]">
                   No submissions from this region match these filters yet.
                 </p>
               ) : (
-                <ul className="grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                <ul className="grid items-stretch gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
                   {voiceBrowse.rows.map((row) => (
                     <li key={row.id} className="flex min-h-0">
                       <VoiceSubmissionBrowseCard row={row} />
@@ -274,7 +274,7 @@ export async function RegionReportCardsSection({
                   className="mt-10 flex flex-col gap-3 border-t border-[var(--border)] pt-8 sm:flex-row sm:items-center sm:justify-between"
                   aria-label="Voice submissions pagination"
                 >
-                  <p className="text-xs text-[var(--muted-foreground)]">
+                  <p className="text-xs text-[var(--foreground-secondary)]">
                     Page {safeVPage} of {vTotalPages}
                   </p>
                   <div className="flex flex-wrap gap-4">
@@ -298,7 +298,7 @@ export async function RegionReportCardsSection({
                         ← Previous
                       </Link>
                     ) : (
-                      <span className="text-[var(--muted-foreground)]">← Previous</span>
+                      <span className="text-[var(--foreground-secondary)]">← Previous</span>
                     )}
                     {safeVPage < vTotalPages ? (
                       <Link
@@ -320,7 +320,7 @@ export async function RegionReportCardsSection({
                         Next →
                       </Link>
                     ) : (
-                      <span className="text-[var(--muted-foreground)]">Next →</span>
+                      <span className="text-[var(--foreground-secondary)]">Next →</span>
                     )}
                   </div>
                 </nav>
@@ -335,8 +335,8 @@ export async function RegionReportCardsSection({
               id="browse-scores"
               className="mx-auto mt-14 max-w-5xl rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6"
             >
-              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
-                Official programme scores (People&apos;s Report Card) — {regionName}
+              <p className="text-sm font-semibold text-[var(--foreground)]">
+                Programme scores — {regionName}
               </p>
               <form
                 method="get"
@@ -350,11 +350,13 @@ export async function RegionReportCardsSection({
                 <input type="hidden" name="vkind" value={voiceKindFilter ?? ""} />
                 <input type="hidden" name="region" value={selectedRegionId} />
                 <label className="lg:col-span-4">
-                  <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Cycle (year)</span>
+                  <span className="mb-1.5 block text-xs font-semibold text-[var(--foreground-secondary)] sm:text-sm">
+                    Cycle (year)
+                  </span>
                   <select
                     name="year"
                     defaultValue={selectedYear}
-                    className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)]"
+                    className={`w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`}
                   >
                     {cycles.map((c) => (
                       <option key={c.id} value={c.year}>
@@ -364,7 +366,7 @@ export async function RegionReportCardsSection({
                   </select>
                 </label>
                 <label className="lg:col-span-5">
-                  <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">
+                  <span className="mb-1.5 block text-xs font-semibold text-[var(--foreground-secondary)] sm:text-sm">
                     Search office-holder name
                   </span>
                   <input
@@ -372,16 +374,16 @@ export async function RegionReportCardsSection({
                     name="q"
                     defaultValue={qRaw}
                     placeholder="e.g. surname or first name"
-                    className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)]/70"
+                    className={`w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] placeholder:text-[var(--foreground-secondary)]/60 ${focusRingSmClass}`}
                     autoComplete="off"
                   />
                 </label>
-                <div className="flex flex-wrap gap-2 lg:col-span-3">
+                <div className="flex flex-col gap-2 sm:flex-row lg:col-span-3">
                   <button
                     type="submit"
-                    className="min-h-[44px] flex-1 rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-[var(--primary-foreground)] shadow-sm hover:bg-[var(--primary-dark)]"
+                    className={`min-h-11 w-full rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[var(--primary-dark)] sm:flex-1 ${focusRingSmClass}`}
                   >
-                    Apply
+                    Show scores
                   </button>
                   <Link
                     href={
@@ -393,13 +395,13 @@ export async function RegionReportCardsSection({
                         vkind: voiceKindFilter ?? undefined,
                       }) + "#browse-scores"
                     }
-                    className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-[var(--border)] px-3 py-2 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--section-light)]"
+                    className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[var(--border)] px-3 py-2.5 text-sm font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--section-light)] sm:flex-1 ${focusRingSmClass}`}
                   >
                     Reset
                   </Link>
                 </div>
               </form>
-              <p className="mt-3 text-xs text-[var(--muted-foreground)]">
+              <p className="mt-3 text-xs text-[var(--foreground-secondary)]">
                 Showing scores for <span className="font-medium text-[var(--foreground)]">{selectedYear}</span>
                 {cycleMeta ? (
                   <>
@@ -414,7 +416,7 @@ export async function RegionReportCardsSection({
 
             <div className="mx-auto mt-8 max-w-6xl">
               <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-                <p className="text-sm text-[var(--muted-foreground)]">
+                <p className="text-sm text-[var(--foreground-secondary)]">
                   <span className="font-semibold text-[var(--foreground)]">{browse.totalFiltered}</span> match
                   {browse.totalFiltered === 1 ? "" : "es"}
                   {browse.totalFiltered > 0 ? (
@@ -430,11 +432,11 @@ export async function RegionReportCardsSection({
               </div>
 
               {browse.rows.length === 0 ? (
-                <p className="rounded-2xl border border-[var(--border)] bg-white px-6 py-12 text-center text-sm text-[var(--muted-foreground)]">
+                <p className="rounded-2xl border border-[var(--border)] bg-white px-6 py-12 text-center text-sm text-[var(--foreground-secondary)]">
                   No programme entries for this region in this cycle. Try another year or clear search.
                 </p>
               ) : (
-                <ul className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                <ul className="grid gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
                   {browse.rows.map((row) => (
                     <li key={row.id}>
                       <ReportCardBrowseCard year={selectedYear} row={row} />
@@ -448,7 +450,7 @@ export async function RegionReportCardsSection({
                   className="mt-10 flex flex-col gap-3 border-t border-[var(--border)] pt-8 sm:flex-row sm:items-center sm:justify-between"
                   aria-label="Programme scores pagination"
                 >
-                  <p className="text-xs text-[var(--muted-foreground)]">
+                  <p className="text-xs text-[var(--foreground-secondary)]">
                     Page {safePage} of {totalPages}
                   </p>
                   <div className="flex flex-wrap gap-4">
@@ -472,7 +474,7 @@ export async function RegionReportCardsSection({
                         ← Previous
                       </Link>
                     ) : (
-                      <span className="text-[var(--muted-foreground)]">← Previous</span>
+                      <span className="text-[var(--foreground-secondary)]">← Previous</span>
                     )}
                     {safePage < totalPages ? (
                       <Link
@@ -494,7 +496,7 @@ export async function RegionReportCardsSection({
                         Next →
                       </Link>
                     ) : (
-                      <span className="text-[var(--muted-foreground)]">Next →</span>
+                      <span className="text-[var(--foreground-secondary)]">Next →</span>
                     )}
                   </div>
                 </nav>
@@ -502,7 +504,7 @@ export async function RegionReportCardsSection({
             </div>
           </>
         ) : showScores && !hasCycles ? (
-          <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-[var(--border)] bg-white px-6 py-10 text-center text-sm text-[var(--muted-foreground)]">
+          <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-[var(--border)] bg-white px-6 py-10 text-center text-sm text-[var(--foreground-secondary)]">
             No published programme cycles yet for scorecards.
           </div>
         ) : null}

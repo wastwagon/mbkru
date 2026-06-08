@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { TrackReportLookup } from "./TrackReportLookup";
-import { primaryLinkClass, primaryNavLinkTouchClass } from "@/lib/primary-link-styles";
+import { focusRingSmClass, primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 
 export default async function TrackReportPage() {
@@ -16,8 +16,15 @@ export default async function TrackReportPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16 sm:pb-20">
         <div className="mx-auto max-w-md px-4 sm:px-6 lg:px-8">
+          <p className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+            Your tracking code is your citizen receipt — save it when you submit. Status updates here are for reference
+            only, not a formal regulator filing.{" "}
+            <Link href="/methodology" className={primaryNavLinkClass}>
+              Methodology
+            </Link>
+          </p>
           <div
-            className="mb-6 rounded-xl border border-[var(--border)] bg-white/90 px-4 py-3.5 text-xs leading-relaxed text-[var(--muted-foreground)] sm:px-5 sm:py-4"
+            className="mt-4 rounded-xl border border-[var(--border)] bg-white px-4 py-3.5 text-xs leading-relaxed text-[var(--foreground-secondary)] sm:px-5 sm:py-4"
             role="note"
           >
             <p>
@@ -36,9 +43,14 @@ export default async function TrackReportPage() {
               .
             </p>
           </div>
-          <TrackReportLookup />
-          <p className="mt-8 text-center text-sm text-[var(--muted-foreground)]">
-            <Link href="/citizens-voice/submit" className={`${primaryNavLinkTouchClass} justify-center`}>
+          <div className="mt-6 rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm sm:p-6">
+            <TrackReportLookup />
+          </div>
+          <p className="mt-8 text-center text-sm text-[var(--foreground-secondary)]">
+            <Link
+              href="/citizens-voice/submit"
+              className={`inline-flex min-h-11 items-center justify-center rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] ${focusRingSmClass}`}
+            >
               Submit a new report
             </Link>
           </p>

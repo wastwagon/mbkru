@@ -76,18 +76,18 @@ export default async function CommunityForumDetailPage({ params }: Props) {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="text-sm text-[var(--muted-foreground)]">
+          <p className="text-sm text-[var(--foreground-secondary)]">
             <Link href={`/communities/${encodeURIComponent(c.slug)}/forums`} className={primaryNavLinkClass}>
               ← All forums
             </Link>
-            <span className="mx-2 text-[var(--muted-foreground)]/50">·</span>
+            <span className="mx-2 text-[var(--foreground-secondary)]/50">·</span>
             <Link href={`/communities/${encodeURIComponent(c.slug)}`} className={primaryNavLinkClass}>
               Community home
             </Link>
           </p>
 
           {forum.description ? (
-            <p className="mt-6 whitespace-pre-wrap text-sm leading-relaxed text-[var(--muted-foreground)]">
+            <p className="mt-6 whitespace-pre-wrap text-sm leading-relaxed text-[var(--foreground-secondary)]">
               {forum.description}
             </p>
           ) : null}
@@ -104,13 +104,13 @@ export default async function CommunityForumDetailPage({ params }: Props) {
 
           <section className="mt-10">
             <h2 className="text-sm font-semibold text-[var(--foreground)]">Threads</h2>
-            <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
               Pinned first, then most recently active (new replies bump a thread).
             </p>
             {!showPosts ? (
-              <p className="mt-2 text-sm text-[var(--muted-foreground)]">Members only.</p>
+              <p className="mt-2 text-sm text-[var(--foreground-secondary)]">Members only.</p>
             ) : posts.length === 0 ? (
-              <p className="mt-2 text-sm text-[var(--muted-foreground)]">No threads in this forum yet.</p>
+              <p className="mt-2 text-sm text-[var(--foreground-secondary)]">No threads in this forum yet.</p>
             ) : (
               <ul className="mt-4 space-y-4">
                 {posts.map((p) => (

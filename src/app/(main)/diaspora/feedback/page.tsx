@@ -26,7 +26,7 @@ export default function DiasporaFeedbackPage() {
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <DiasporaProgrammePhaseNotice />
 
-          <p className="mt-8 text-center text-sm text-[var(--muted-foreground)]">
+          <p className="mt-8 text-center text-sm text-[var(--foreground-secondary)]">
             Prefer context first?{" "}
             <Link href="/diaspora" className={primaryLinkClass}>
               Back to diaspora support hub

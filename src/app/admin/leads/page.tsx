@@ -67,7 +67,7 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
         }
       />
 
-      <ul className="flex flex-wrap gap-3 text-sm text-[var(--muted-foreground)]">
+      <ul className="flex flex-wrap gap-3 text-sm text-[var(--foreground-secondary)]">
         <li>
           Tracker:{" "}
           <span className="font-mono text-[var(--foreground)]">
@@ -95,7 +95,7 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
         >
           Download CSV
         </a>
-        <span className="text-[var(--muted-foreground)]"> — UTF-8, Excel-friendly; respects the filter above.</span>
+        <span className="text-[var(--foreground-secondary)]"> — UTF-8, Excel-friendly; respects the filter above.</span>
       </p>
 
       <div className="mt-6 flex flex-wrap gap-2" role="tablist" aria-label="Filter by signup source">
@@ -123,7 +123,7 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
 
       <AdminTablePanel className="mt-6">
         <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-[var(--border)] bg-[var(--section-light)]/80 text-[var(--muted-foreground)]">
+          <thead className="border-b border-[var(--border)] bg-[var(--section-light)]/80 text-[var(--foreground-secondary)]">
             <tr>
               <th className="px-4 py-3 font-medium">Email</th>
               <th className="px-4 py-3 font-medium">Source</th>
@@ -133,7 +133,7 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
           <tbody className="divide-y divide-[var(--border)]">
             {leads.length === 0 ? (
               <tr>
-                <td colSpan={3} className="px-4 py-8 text-center text-[var(--muted-foreground)]">
+                <td colSpan={3} className="px-4 py-8 text-center text-[var(--foreground-secondary)]">
                   <AdminEmptyState message="No rows for this filter." className="text-center" />
                 </td>
               </tr>
@@ -141,10 +141,10 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
               leads.map((row) => (
                 <tr key={row.id} className="hover:bg-[var(--section-light)]/40">
                   <td className="px-4 py-3 font-mono text-xs sm:text-sm">{row.email}</td>
-                  <td className="px-4 py-3 text-[var(--muted-foreground)]">
+                  <td className="px-4 py-3 text-[var(--foreground-secondary)]">
                     {row.source.replace(/_/g, " ")}
                   </td>
-                  <td className="px-4 py-3 text-[var(--muted-foreground)]">
+                  <td className="px-4 py-3 text-[var(--foreground-secondary)]">
                     {row.createdAt.toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
                   </td>
                 </tr>

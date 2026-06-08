@@ -53,52 +53,85 @@ export default async function PromisesByMemberPage({ params }: Props) {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <p className="text-sm text-[var(--muted-foreground)]">
+          <p className="text-sm text-[var(--foreground-secondary)]">
             <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className={primaryNavLinkClass}>
               {accountabilityProse.mpRosterBackLink}
             </Link>
           </p>
 
-          <MpPerformanceIntakeList reports={mpPerformanceReports} />
+          <p className="mt-4 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+            MP commitment sheet — verified catalogue rows below, plus Citizen Voice intakes filed by residents. Not a legal
+            finding.{" "}
+            <Link href="/methodology" className={primaryNavLinkClass}>
+              Methodology
+            </Link>
+          </p>
+
+          <p className="mt-4 hidden flex-wrap items-center gap-x-2 gap-y-1 text-sm text-[var(--foreground-secondary)] sm:flex">
+            <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={primaryNavLinkClass}>
+              {accountabilityCatalogueNavMedium.browseAll}
+            </Link>
+            <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
+              ·
+            </span>
+            <Link href="/report-card" className={primaryNavLinkClass}>
+              Report card
+            </Link>
+            <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
+              ·
+            </span>
+            <Link href="/parliament-tracker" className={primaryNavLinkClass}>
+              Parliament tracker
+            </Link>
+          </p>
+
+          <div className="mt-8">
+            <MpPerformanceIntakeList reports={mpPerformanceReports} />
+          </div>
 
           {member.promises.length === 0 ? (
-            <p className="mt-8 rounded-xl border border-[var(--border)] bg-white px-4 py-6 text-sm text-[var(--muted-foreground)]">
+            <p className="mt-8 rounded-2xl border border-[var(--border)] bg-white px-4 py-6 text-sm text-[var(--foreground-secondary)]">
               No catalogue commitments are published for this MP yet. Voice intakes above are filed by residents;
               catalogue rows appear when editors publish verified commitments.
             </p>
-          ) : null}
-
-          <ul className="mt-8 space-y-6">
-            {member.promises.map((p) => (
-              <li key={p.id} className="space-y-2">
-                <PromiseEvidenceCard
-                  title={p.title}
-                  description={p.description}
-                  status={p.status}
-                  blockedReason={p.blockedReason}
-                  sourceLabel={p.sourceLabel}
-                  sourceDate={p.sourceDate}
-                  sourceUrl={p.sourceUrl}
-                  verificationNotes={p.verificationNotes}
-                  manifestoPageRef={p.manifestoPageRef}
-                  electionCycle={p.electionCycle}
-                  partySlug={p.partySlug}
-                  policySector={p.policySector}
-                  manifestoDocument={
-                    p.manifestoDocument
-                      ? {
-                          title: p.manifestoDocument.title,
-                          sourceUrl: p.manifestoDocument.sourceUrl,
-                        }
-                      : null
-                  }
-                />
-                <p className="px-1 text-[11px] text-[var(--muted-foreground)]">
-                  Updated {formatMediumDate(p.updatedAt)}
-                </p>
-              </li>
-            ))}
-          </ul>
+          ) : (
+            <>
+              <h2 className="mt-10 text-sm font-semibold text-[var(--foreground)]">
+                Catalogue commitments ({member.promises.length})
+              </h2>
+              <ul className="mt-4 space-y-4">
+                {member.promises.map((p) => (
+                  <li key={p.id} className="space-y-1.5">
+                    <PromiseEvidenceCard
+                      title={p.title}
+                      description={p.description}
+                      status={p.status}
+                      blockedReason={p.blockedReason}
+                      sourceLabel={p.sourceLabel}
+                      sourceDate={p.sourceDate}
+                      sourceUrl={p.sourceUrl}
+                      verificationNotes={p.verificationNotes}
+                      manifestoPageRef={p.manifestoPageRef}
+                      electionCycle={p.electionCycle}
+                      partySlug={p.partySlug}
+                      policySector={p.policySector}
+                      manifestoDocument={
+                        p.manifestoDocument
+                          ? {
+                              title: p.manifestoDocument.title,
+                              sourceUrl: p.manifestoDocument.sourceUrl,
+                            }
+                          : null
+                      }
+                    />
+                    <p className="px-1 text-[11px] text-[var(--foreground-secondary)]">
+                      Updated {formatMediumDate(p.updatedAt)}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
       </section>
     </div>

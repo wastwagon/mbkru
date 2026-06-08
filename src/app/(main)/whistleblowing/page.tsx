@@ -27,7 +27,7 @@ export default function WhistleblowingPage() {
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-[var(--foreground)]">MBKRU Voice</h2>
-            <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
+            <p className="mt-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
               Use{" "}
               <Link href="/citizens-voice" className={primaryLinkClass}>
                 MBKRU Voice
@@ -37,13 +37,13 @@ export default function WhistleblowingPage() {
               firm or a government hotline.
             </p>
             <h2 className="mt-8 text-lg font-semibold text-[var(--foreground)]">Formal whistleblower protections</h2>
-            <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
+            <p className="mt-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
               Statutory whistleblower regimes, employer policies, and regulator channels may offer protections or escalation
               paths MBKRU cannot provide. Consider documenting facts, dates, and evidence carefully, and seek independent legal
               advice where serious personal or career risks apply.
             </p>
             <h2 className="mt-8 text-lg font-semibold text-[var(--foreground)]">Communities</h2>
-            <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
+            <p className="mt-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
               Local and traditional-area{" "}
               <Link href="/communities" className={primaryLinkClass}>
                 communities
@@ -51,7 +51,7 @@ export default function WhistleblowingPage() {
               on MBKRU can surface concerns collectively; they complement but do not replace confidential reporting channels
               where those exist.
             </p>
-            <p className="mt-8 text-sm text-[var(--muted-foreground)]">
+            <p className="mt-8 text-sm text-[var(--foreground-secondary)]">
               For how we describe evidence, promises, and score-style outputs on the public site, see{" "}
               <Link href="/methodology#claims-and-citations" className={primaryLinkClass}>
                 Accountability methodology — claims &amp; citations

@@ -21,7 +21,7 @@ export default async function AdminRegionsPage() {
 
       <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Add region</h2>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">Use sparingly — Ghana normally ships sixteen seeded rows.</p>
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">Use sparingly — Ghana normally ships sixteen seeded rows.</p>
         <form action={createRegionAction} className="mt-4 grid gap-3 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <label htmlFor="new-name" className="block text-xs font-medium">
@@ -51,7 +51,7 @@ export default async function AdminRegionsPage() {
           </div>
           <div>
             <label htmlFor="new-order" className="block text-xs font-medium">
-              Sort order <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              Sort order <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
             </label>
             <input
               id="new-order"
@@ -76,7 +76,7 @@ export default async function AdminRegionsPage() {
       <section className="mt-10">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">All regions</h2>
         {regions.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">No regions — run migrations and seed.</p>
+          <p className="mt-2 text-sm text-[var(--foreground-secondary)]">No regions — run migrations and seed.</p>
         ) : (
           <ul className="mt-4 space-y-6">
             {regions.map((r) => (
@@ -134,7 +134,7 @@ export default async function AdminRegionsPage() {
                     </button>
                   </div>
                 </form>
-                <p className="mt-2 font-mono text-xs text-[var(--muted-foreground)]">id: {r.id}</p>
+                <p className="mt-2 font-mono text-xs text-[var(--foreground-secondary)]">id: {r.id}</p>
               </li>
             ))}
           </ul>

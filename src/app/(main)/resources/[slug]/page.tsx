@@ -64,23 +64,23 @@ export default async function ResourceDocumentDetailPage({ params }: Props) {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-[var(--muted-foreground)]">
+          <p className="text-center text-sm text-[var(--foreground-secondary)]">
             <Link href="/resources" className={primaryNavLinkClass}>
               ← All resources
             </Link>
           </p>
           <dl className="mt-8 space-y-4 rounded-2xl border border-[var(--border)] bg-white p-6 text-sm">
             <div>
-              <dt className="font-medium text-[var(--muted-foreground)]">Category</dt>
+              <dt className="font-medium text-[var(--foreground-secondary)]">Category</dt>
               <dd className="mt-1 text-[var(--foreground)]">{resourceCategoryLabel(doc.category)}</dd>
             </div>
             <div>
-              <dt className="font-medium text-[var(--muted-foreground)]">File</dt>
+              <dt className="font-medium text-[var(--foreground-secondary)]">File</dt>
               <dd className="mt-1 text-[var(--foreground)]">{doc.originalFilename}</dd>
             </div>
             {sizeLabel ? (
               <div>
-                <dt className="font-medium text-[var(--muted-foreground)]">Size</dt>
+                <dt className="font-medium text-[var(--foreground-secondary)]">Size</dt>
                 <dd className="mt-1 text-[var(--foreground)]">{sizeLabel}</dd>
               </div>
             ) : null}

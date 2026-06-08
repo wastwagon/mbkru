@@ -68,7 +68,9 @@ const DEBOUNCE_MS = 380;
 
 const MANIFESTO_CYCLE = "2024";
 
-const filterControlClass = `mt-1 w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
+const filterLabelClass = "mb-1.5 block text-xs font-semibold text-[var(--foreground-secondary)] sm:text-sm";
+
+const filterControlClass = `mt-0 w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
 
 const filterSelectClass = `${filterControlClass} cursor-pointer`;
 
@@ -328,7 +330,7 @@ export function PromisesBrowseLive({
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--primary)]">
               Catalogue highlights
             </p>
-            <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
               {accountabilityHomePreviewCopy.browseHomeOmitDuplicateKpisLead}{" "}
               <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={`${primaryLinkClass} font-semibold`}>
                 Browse all commitments
@@ -336,7 +338,7 @@ export function PromisesBrowseLive({
               .
             </p>
             {showPrcShortcut ? (
-              <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
                 For MP scorecard cycles (not pledge counts), open{" "}
                 <Link href="/report-card" className={`${primaryLinkClass} font-semibold`}>
                   Report card
@@ -357,7 +359,7 @@ export function PromisesBrowseLive({
           role="group"
           aria-label="Quick filter presets for the catalogue"
         >
-          <p className="text-xs font-medium text-[var(--muted-foreground)]">Quick filters (same as Catalogue &amp; manifesto above)</p>
+          <p className="text-xs font-semibold text-[var(--foreground-secondary)]">Quick filters (same as Catalogue &amp; manifesto above)</p>
           <div className="flex flex-wrap gap-2">
             {govLocked ? (
               <>
@@ -399,9 +401,10 @@ export function PromisesBrowseLive({
         aria-label="Filter the commitment catalogue by search, source slice, and category"
         className={`flex flex-col gap-4 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-end ${filterToolbarHeader ? "mt-4" : "mt-3"}`}
       >
+        <p className="w-full text-sm font-semibold text-[var(--foreground)]">Filter commitments</p>
         <div className="min-w-0 flex-1 sm:max-w-xs">
-          <label htmlFor="live-q" className="block text-xs font-medium text-[var(--foreground)]">
-            Search <span className="font-normal text-[var(--muted-foreground)]">(live)</span>
+          <label htmlFor="live-q" className={filterLabelClass}>
+            Search <span className="font-normal">(live)</span>
           </label>
           <input
             id="live-q"
@@ -415,8 +418,8 @@ export function PromisesBrowseLive({
         </div>
 
         <div className="w-full min-w-[min(100%,14rem)] sm:w-56 lg:w-64">
-          <label htmlFor="live-catalogue" className="block text-xs font-medium text-[var(--foreground)]">
-            Catalogue & manifesto
+          <label htmlFor="live-catalogue" className={filterLabelClass}>
+            Catalogue &amp; manifesto
           </label>
           <select
             id="live-catalogue"
@@ -439,7 +442,7 @@ export function PromisesBrowseLive({
               </>
             )}
           </select>
-          <p className="mt-1 text-[11px] leading-snug text-[var(--muted-foreground)]">
+          <p className="mt-1 text-[11px] leading-snug text-[var(--foreground-secondary)]">
             {govLocked
               ? "Executive / programme-tagged rows. Items can also appear on an MP’s page when a member is linked — one record, two surfaces."
               : "Combine with category and status below. NDC/NPP options match 2024 cycle rows in the database. Gov-tagged rows with an MP still appear here when you browse all."}
@@ -447,8 +450,8 @@ export function PromisesBrowseLive({
         </div>
 
         <div className="basis-full w-full min-w-0 sm:max-w-xl">
-          <label htmlFor="live-constituency" className="block text-xs font-medium text-[var(--foreground)]">
-            Constituency <span className="font-normal text-[var(--muted-foreground)]">(MP from roster)</span>
+          <label htmlFor="live-constituency" className={filterLabelClass}>
+            Constituency <span className="font-normal">(MP from roster)</span>
           </label>
           <select
             id="live-constituency"
@@ -468,13 +471,13 @@ export function PromisesBrowseLive({
               </optgroup>
             ))}
           </select>
-          <p className="mt-1 text-[11px] leading-snug text-[var(--muted-foreground)]">
+          <p className="mt-1 text-[11px] leading-snug text-[var(--foreground-secondary)]">
             {accountabilityProse.browseConstituencyFilterHelp}
           </p>
         </div>
 
         <div className="sm:w-48">
-          <label htmlFor="live-sector" className="block text-xs font-medium text-[var(--foreground)]">
+          <label htmlFor="live-sector" className={filterLabelClass}>
             Category (policy)
           </label>
           <select
@@ -492,7 +495,7 @@ export function PromisesBrowseLive({
           </select>
         </div>
         <div className="sm:w-44">
-          <label htmlFor="live-status" className="block text-xs font-medium text-[var(--foreground)]">
+          <label htmlFor="live-status" className={filterLabelClass}>
             Status
           </label>
           <select
@@ -512,9 +515,9 @@ export function PromisesBrowseLive({
 
         <div className="flex flex-wrap items-center gap-2 pb-1">
           {loading ? (
-            <span className="text-xs text-[var(--muted-foreground)]">Updating…</span>
+            <span className="text-xs text-[var(--foreground-secondary)]">Updating…</span>
           ) : (
-            <span className="text-xs text-[var(--muted-foreground)]">Results update as you type</span>
+            <span className="text-xs text-[var(--foreground-secondary)]">Results update as you type</span>
           )}
         </div>
       </div>
@@ -528,7 +531,7 @@ export function PromisesBrowseLive({
       ) : null}
 
       {rows.length === 0 && !loading ? (
-        <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
+        <p className="mt-10 text-center text-sm text-[var(--foreground-secondary)]">
           {mode === "government"
             ? accountabilityProse.browseFiltersEmptyGovernmentMode
             : accountabilityProse.browseFiltersEmptyResult}
@@ -539,21 +542,21 @@ export function PromisesBrowseLive({
         <>
           {homeTeaser ? (
             <div className="mt-6 flex flex-col items-center gap-4 sm:items-stretch">
-              <p className="text-center text-xs text-[var(--muted-foreground)] sm:text-left">
+              <p className="text-center text-xs text-[var(--foreground-secondary)] sm:text-left">
                 {accountabilityProse.browseHomeTeaserCaption(displayRows.length, rows.length)}
                 Use the full dashboard for search, all filters, and export.
               </p>
               <div className="flex justify-center sm:justify-start">
                 <Link
                   href={homeTeaserDestination}
-                  className={`inline-flex min-h-10 items-center justify-center rounded-full bg-[var(--primary)] px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--primary-dark)] ${focusRingSmClass}`}
+                  className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[var(--primary-dark)] sm:w-auto ${focusRingSmClass}`}
                 >
                   {homeTeaserButtonLabel} →
                 </Link>
               </div>
             </div>
           ) : (
-            <p className="mt-6 text-xs text-[var(--muted-foreground)]">
+            <p className="mt-6 text-xs text-[var(--foreground-secondary)]">
               Showing {rows.length} result{rows.length === 1 ? "" : "s"}
               {rows.length >= 75 ? " (max 75 per request — refine search)" : ""}. Full export:{" "}
               <Link href={csvHref} className={primaryLinkClass}>
@@ -562,7 +565,7 @@ export function PromisesBrowseLive({
               .
             </p>
           )}
-          <ul className="mt-4 space-y-6">
+          <ul className="mt-4 space-y-4">
             {displayRows.map((p) => (
               <li key={p.id}>
                 <PromiseEvidenceCard
@@ -601,10 +604,10 @@ export function PromisesBrowseLive({
                           </span>
                         ) : null}
                         {p.electionCycle ? (
-                          <span className="text-[var(--muted-foreground)]"> · Cycle {p.electionCycle}</span>
+                          <span className="text-[var(--foreground-secondary)]"> · Cycle {p.electionCycle}</span>
                         ) : null}
                         {mode === "government" && p.isGovernmentProgramme ? (
-                          <span className="mt-1 block text-xs text-[var(--muted-foreground)]">
+                          <span className="mt-1 block text-xs text-[var(--foreground-secondary)]">
                             Also on{" "}
                             <Link href={`/promises/${encodeURIComponent(p.member.slug)}`} className={primaryLinkClass}>
                               this MP’s pledge sheet
@@ -614,7 +617,7 @@ export function PromisesBrowseLive({
                         ) : null}
                       </>
                     ) : mode === "government" && p.isGovernmentProgramme ? (
-                      <span className="text-sm text-[var(--muted-foreground)]">
+                      <span className="text-sm text-[var(--foreground-secondary)]">
                         Programme / executive record — no MP profile linked yet.
                       </span>
                     ) : null

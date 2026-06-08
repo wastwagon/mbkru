@@ -8,7 +8,7 @@ function labelizeKey(key: string): string {
 }
 
 function renderLeaf(v: unknown): ReactNode {
-  if (v == null || v === "") return <span className="text-[var(--muted-foreground)]">—</span>;
+  if (v == null || v === "") return <span className="text-[var(--foreground-secondary)]">—</span>;
   if (typeof v === "boolean") return v ? "Yes" : "No";
   if (typeof v === "number")
     return Number.isFinite(v) && !Number.isInteger(v)
@@ -38,7 +38,7 @@ export function MetricsDisplay({
   if (value == null) return null;
   if (maxDepth <= 0) {
     return (
-      <p className={`text-xs text-[var(--muted-foreground)] ${className}`.trim()} title="Nested metrics truncated">
+      <p className={`text-xs text-[var(--foreground-secondary)] ${className}`.trim()} title="Nested metrics truncated">
         …
       </p>
     );
@@ -67,7 +67,7 @@ export function MetricsDisplay({
       <ul className={`space-y-3 ${className}`.trim()}>
         {value.map((item, i) => (
           <li key={i} className="rounded-lg border border-[var(--border)] bg-[var(--section-light)]/40 p-3">
-            <p className="text-xs font-medium text-[var(--muted-foreground)]">Item {i + 1}</p>
+            <p className="text-xs font-medium text-[var(--foreground-secondary)]">Item {i + 1}</p>
             <div className="mt-2">
               <MetricsDisplay value={item} maxDepth={maxDepth - 1} />
             </div>
@@ -86,7 +86,7 @@ export function MetricsDisplay({
           const innerLeaf = renderLeaf(v);
           return (
             <div key={k} className="contents">
-              <dt className="text-[var(--muted-foreground)]">{labelizeKey(k)}</dt>
+              <dt className="text-[var(--foreground-secondary)]">{labelizeKey(k)}</dt>
               <dd className="text-[var(--foreground)]">
                 {innerLeaf != null ? (
                   innerLeaf
@@ -103,5 +103,5 @@ export function MetricsDisplay({
     );
   }
 
-  return <p className={`text-sm text-[var(--muted-foreground)] ${className}`.trim()}>{String(value)}</p>;
+  return <p className={`text-sm text-[var(--foreground-secondary)] ${className}`.trim()}>{String(value)}</p>;
 }

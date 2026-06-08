@@ -76,7 +76,7 @@ export default async function SituationalAlertsPage() {
               <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
                 Physical Engagement Network
               </h2>
-              <ul className="mt-6 space-y-3 text-[var(--muted-foreground)]">
+              <ul className="mt-6 space-y-3 text-[var(--foreground-secondary)]">
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
                   <span>Quarterly Community Town Hall Meetings in every district</span>
@@ -105,7 +105,7 @@ export default async function SituationalAlertsPage() {
             <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
               How It Works
             </h2>
-            <p className="mx-auto mt-2 max-w-2xl text-[var(--muted-foreground)]">
+            <p className="mx-auto mt-2 max-w-2xl text-[var(--foreground-secondary)]">
               From district Town Halls to the National People&apos;s Assembly — citizens meet decision-makers directly.
             </p>
           </div>
@@ -159,7 +159,7 @@ export default async function SituationalAlertsPage() {
               <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
                 Get Early Access
               </h2>
-              <p className="mt-2 text-[var(--muted-foreground)]">
+              <p className="mt-2 text-[var(--foreground-secondary)]">
                 Be among the first to join the Physical Engagement Network. Register your email for early access.
               </p>
               <EarlyAccessForm />

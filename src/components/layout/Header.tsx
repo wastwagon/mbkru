@@ -257,7 +257,7 @@ function MemberAuthNav({
 
   return (
     <div className="space-y-0 border-t border-[var(--border)] pt-2">
-      <p className="px-4 pb-1 pt-1 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+      <p className="px-4 pb-1 pt-1 text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
         Account
       </p>
       <Link
@@ -663,7 +663,7 @@ export function Header() {
                 >
                   Contact
                 </Link>
-                <p className="mt-2 text-center text-[11px] text-[var(--muted-foreground)]">
+                <p className="mt-2 text-center text-[11px] text-[var(--foreground-secondary)]">
                   Or use <strong>Get in touch</strong> in the gold top bar
                 </p>
               </div>

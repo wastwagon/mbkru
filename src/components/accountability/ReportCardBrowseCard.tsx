@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { primaryLinkClass } from "@/lib/primary-link-styles";
+import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import type { ReportCardBrowseRow } from "@/lib/server/accountability-cache";
 
 function excerptFromNarrative(raw: string | null, max = 200): string | null {
@@ -22,43 +22,48 @@ export function ReportCardBrowseCard({ year, row }: Props) {
       ? `${m.constituency.name} · ${m.constituency.region.name}`
       : "Constituency not linked";
   const excerpt = excerptFromNarrative(row.narrative);
+  const reportHref = `/report-card/${year}?mp=${encodeURIComponent(m.slug)}`;
 
   return (
-    <article className="flex flex-col rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+    <article className="flex h-full flex-col rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h2 className="font-display text-lg font-semibold leading-snug text-[var(--foreground)]">{m.name}</h2>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-base font-semibold leading-snug text-[var(--foreground)] sm:text-lg">
+            <Link href={reportHref} className="hover:text-[var(--primary)]" prefetch={false}>
+              {m.name}
+            </Link>
+          </h2>
+          <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
             {m.role}
             {m.party ? ` · ${m.party}` : ""}
           </p>
-          <p className="mt-2 text-xs text-[var(--muted-foreground)]">{place}</p>
+          <p className="mt-2 text-xs text-[var(--foreground-secondary)]">{place}</p>
         </div>
         {row.overallScore != null ? (
-          <span className="shrink-0 rounded-full bg-[var(--primary)]/12 px-3 py-1 text-sm font-semibold tabular-nums text-[var(--primary)]">
+          <span className="shrink-0 rounded-full border border-[var(--accent-gold)]/35 bg-[var(--accent-gold-light)] px-3 py-1 text-sm font-semibold tabular-nums text-[var(--accent-gold)]">
             {row.overallScore}
           </span>
         ) : (
-          <span className="shrink-0 rounded-full bg-[var(--muted)]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+          <span className="shrink-0 rounded-full bg-[var(--section-light-alt)] px-3 py-1 text-[11px] font-semibold text-[var(--foreground-secondary)]">
             Pending
           </span>
         )}
       </div>
       {excerpt ? (
-        <p className="mt-4 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{excerpt}</p>
+        <p className="mt-4 flex-1 text-sm leading-relaxed text-[var(--foreground-secondary)]">{excerpt}</p>
       ) : (
-        <p className="mt-4 flex-1 text-sm italic text-[var(--muted-foreground)]">No narrative published yet.</p>
+        <p className="mt-4 flex-1 text-sm italic text-[var(--foreground-secondary)]">No narrative published yet.</p>
       )}
-      <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 border-t border-[var(--border)]/80 pt-4 text-sm">
+      <div className="mt-4 flex flex-col gap-3 sm:mt-5 sm:flex-row sm:items-center sm:justify-between">
+        <Link href={`/promises/${encodeURIComponent(m.slug)}`} className={`text-sm ${primaryNavLinkClass}`} prefetch={false}>
+          Commitments
+        </Link>
         <Link
-          href={`/report-card/${year}?mp=${encodeURIComponent(m.slug)}`}
-          className={`${primaryLinkClass} font-semibold`}
+          href={reportHref}
+          className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] sm:w-auto ${focusRingSmClass}`}
           prefetch={false}
         >
-          Full report card →
-        </Link>
-        <Link href={`/promises/${encodeURIComponent(m.slug)}`} className={primaryLinkClass} prefetch={false}>
-          Commitments →
+          Full report card
         </Link>
       </div>
     </article>

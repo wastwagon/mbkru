@@ -58,7 +58,7 @@ export function CommunityForumCreateForm({ communitySlug }: Props) {
       className="mt-8 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--section-light)]/40 p-5"
     >
       <h3 className="text-sm font-semibold text-[var(--foreground)]">Create a forum</h3>
-      <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+      <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
         Moderators and verified traditional leaders can add a new discussion space (slug is optional — we generate one
         from the name if empty).
       </p>

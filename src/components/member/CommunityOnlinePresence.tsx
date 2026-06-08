@@ -40,11 +40,11 @@ export function CommunityOnlinePresence({ communitySlug }: { communitySlug: stri
 
   return (
     <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--section-light)]/40 p-5">
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
+      <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)]">
         Community presence
       </h3>
       {err ? <p className="mt-2 text-sm text-red-600">{err}</p> : null}
-      {!data && !err ? <p className="mt-2 text-sm text-[var(--muted-foreground)]">Loading…</p> : null}
+      {!data && !err ? <p className="mt-2 text-sm text-[var(--foreground-secondary)]">Loading…</p> : null}
       {data ? (
         <div className="mt-3">
           <OnlinePresenceCard
@@ -59,7 +59,7 @@ export function CommunityOnlinePresence({ communitySlug }: { communitySlug: stri
             aggregateGuestNote="to see who else is online here (aggregate count may be public)."
             emptyPeersLine="No other members visible right now — open a thread below to start the conversation."
           />
-          <p className="mt-3 text-xs text-[var(--muted-foreground)]">
+          <p className="mt-3 text-xs text-[var(--foreground-secondary)]">
             <Link href="/login" className={`font-semibold ${primaryLinkClass}`}>
               Sign in
             </Link>{" "}

@@ -43,9 +43,9 @@ export function AdminPageHeader({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 flex-1">
           {backSlot ? (
-            <div className="text-sm text-[var(--muted-foreground)]">{backSlot}</div>
+            <div className="text-sm text-[var(--foreground-secondary)]">{backSlot}</div>
           ) : showDashboardBack ? (
-            <p className="text-sm text-[var(--muted-foreground)]">
+            <p className="text-sm text-[var(--foreground-secondary)]">
               <AdminBackLink />
             </p>
           ) : null}
@@ -53,7 +53,7 @@ export function AdminPageHeader({
             {title}
           </TitleTag>
           {description ? (
-            <div className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">{description}</div>
+            <div className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">{description}</div>
           ) : null}
         </div>
         {actions ? <div className="shrink-0 sm:pt-1">{actions}</div> : null}

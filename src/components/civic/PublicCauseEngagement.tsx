@@ -119,21 +119,21 @@ export function PublicCauseEngagement({
 
   return (
     <div className="space-y-8">
-      <p className="text-sm leading-relaxed text-[var(--muted-foreground)]">
+      <p className="text-sm leading-relaxed text-[var(--foreground-secondary)]">
         This issue was filed through MBKRU Voice and published here so other members can respond. Support and comments are
         for civic dialogue only — not a court filing or official complaint record.
       </p>
       <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
         <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">Show support</h2>
-        <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
           Members can signal shared concern. This is not a legal filing or vote.
         </p>
         <p className="mt-4 font-display text-3xl font-bold tabular-nums text-[var(--primary)]">{supportCount}</p>
-        <p className="text-xs text-[var(--muted-foreground)]">members voiced support</p>
+        <p className="text-xs text-[var(--foreground-secondary)]">members voiced support</p>
         {closed ? (
           <p className="mt-4 text-sm text-amber-800">This cause thread is closed for new support and comments.</p>
         ) : !signedIn ? (
-          <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
             <a href={`/login?next=${encodeURIComponent(causePath)}`} className={primaryLinkClass}>
               Sign in
             </a>{" "}
@@ -153,11 +153,11 @@ export function PublicCauseEngagement({
 
       <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
         <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">Discussion</h2>
-        <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
           Stay factual and respectful. Moderators may hide posts that breach community standards.
         </p>
         {!signedIn && !closed ? (
-          <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
             <a href={`/login?next=${encodeURIComponent(causePath)}`} className={primaryLinkClass}>
               Sign in
             </a>{" "}
@@ -169,11 +169,11 @@ export function PublicCauseEngagement({
         ) : null}
         <ul className="mt-6 space-y-4">
           {comments.length === 0 ? (
-            <li className="text-sm text-[var(--muted-foreground)]">No comments yet.</li>
+            <li className="text-sm text-[var(--foreground-secondary)]">No comments yet.</li>
           ) : (
             comments.map((c) => (
               <li key={c.id} className="border-b border-[var(--border)] pb-4 last:border-0">
-                <p className="text-xs font-medium text-[var(--muted-foreground)]">
+                <p className="text-xs font-medium text-[var(--foreground-secondary)]">
                   {c.authorLabel} · {new Date(c.createdAt).toLocaleString()}
                 </p>
                 <p className="mt-1 whitespace-pre-wrap text-sm text-[var(--foreground)]">{c.body}</p>

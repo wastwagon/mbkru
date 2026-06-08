@@ -85,7 +85,7 @@ export default async function AboutPage() {
 
       <section className="section-spacing section-full bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] p-4 text-sm text-[var(--muted-foreground)]">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] p-4 text-sm text-[var(--foreground-secondary)]">
             MBKRU Voice includes structured reporting and an AI-assisted customer service chat experience. It is not a
             substitute for emergency services, regulators, or legal counsel. For how we process AI prompts and telemetry,
             see{" "}
@@ -111,7 +111,7 @@ export default async function AboutPage() {
                 Executive Summary
               </h2>
               {mbkruStrategicContent.executiveSummaryParagraphs.map((para, i) => (
-                <p key={i} className={`text-base leading-relaxed text-[var(--muted-foreground)] ${i > 0 ? "mt-4" : "mt-3"}`}>
+                <p key={i} className={`text-base leading-relaxed text-[var(--foreground-secondary)] ${i > 0 ? "mt-4" : "mt-3"}`}>
                   {para}
                 </p>
               ))}
@@ -138,7 +138,7 @@ export default async function AboutPage() {
               <h2 className="mt-1.5 font-display text-lg font-bold text-[var(--foreground)] sm:text-xl lg:text-2xl">
                 The Ghana we work toward
               </h2>
-              <p className="mt-3 text-base leading-relaxed text-[var(--muted-foreground)]">{mbkruStrategicContent.vision}</p>
+              <p className="mt-3 text-base leading-relaxed text-[var(--foreground-secondary)]">{mbkruStrategicContent.vision}</p>
             </div>
             <div>
               <Badge variant="warm">Mission</Badge>
@@ -148,7 +148,7 @@ export default async function AboutPage() {
               <p className="mt-3 text-base font-medium leading-relaxed text-[var(--foreground)]">
                 {mbkruStrategicContent.mission}
               </p>
-              <p className="mt-4 text-base leading-relaxed text-[var(--muted-foreground)]">
+              <p className="mt-4 text-base leading-relaxed text-[var(--foreground-secondary)]">
                 {mbkruStrategicContent.missionRestorativeContext}
               </p>
               <div className="mt-6 grid grid-cols-2 gap-2.5 sm:gap-3">
@@ -166,7 +166,7 @@ export default async function AboutPage() {
                           {value}
                           <span className="text-[var(--primary)]">{suffix}</span>
                         </p>
-                        <p className="mt-0.5 text-xs font-medium text-[var(--muted-foreground)]">{label}</p>
+                        <p className="mt-0.5 text-xs font-medium text-[var(--foreground-secondary)]">{label}</p>
                       </div>
                     </div>
                   </div>
@@ -218,7 +218,7 @@ export default async function AboutPage() {
               <h2 className="mt-2 font-display text-lg font-bold text-[var(--foreground)] sm:text-xl lg:text-2xl">
                 What we are building toward
               </h2>
-              <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+              <p className="mt-3 text-sm text-[var(--foreground-secondary)]">
                 Five concrete objectives that anchor the programme document and this site.
               </p>
               <ol className="mt-6 space-y-4 border-l-2 border-[var(--primary)]/25 pl-5">
@@ -234,7 +234,7 @@ export default async function AboutPage() {
               <h2 className="font-display text-lg font-bold text-[var(--foreground)] sm:text-xl lg:text-2xl">
                 Accountability in practice
               </h2>
-              <p className="mt-4 text-sm leading-relaxed text-[var(--muted-foreground)]">
+              <p className="mt-4 text-sm leading-relaxed text-[var(--foreground-secondary)]">
                 {mbkruStrategicContent.homepageAccountabilityTeaser}
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
@@ -272,7 +272,7 @@ export default async function AboutPage() {
               <h2 className="font-display text-base font-bold text-[var(--foreground)] sm:text-lg lg:text-xl lg:leading-tight">
                 Our Platform Provides Citizen-Centric Advice to All Ghanaians
               </h2>
-              <p className="mt-4 text-[var(--muted-foreground)] leading-relaxed">
+              <p className="mt-4 text-[var(--foreground-secondary)] leading-relaxed">
                 MBKRU connects citizens to national leadership through transparent channels for voice, tracking, and
                 accountability. Coordinators, partners, and programme detail continue on this page and across pillar
                 pages.
@@ -286,7 +286,7 @@ export default async function AboutPage() {
             </div>
             <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
               <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Explore further</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
                 Start here for the busiest public routes; membership and registration follow the pillars section.
               </p>
               <ul className="mt-5 space-y-3 text-sm font-medium text-[var(--foreground)]">
@@ -344,7 +344,7 @@ export default async function AboutPage() {
               <h2 className="font-display text-lg font-bold text-[var(--foreground)] sm:text-xl">
                 Membership &amp; Governance
               </h2>
-              <ul className="mt-3 space-y-1.5 text-[var(--muted-foreground)]">
+              <ul className="mt-3 space-y-1.5 text-[var(--foreground-secondary)]">
                 <li>• Open to all Ghanaian citizens of good character</li>
                 <li>• No political party affiliation required or allowed at leadership level (strict non-partisanship)</li>
                 <li>• National Executive Board elected by members every three years</li>
@@ -356,7 +356,7 @@ export default async function AboutPage() {
               <h2 className="font-display text-lg font-bold text-[var(--foreground)] sm:text-xl">
                 Funding Model (Proposed)
               </h2>
-              <ul className="mt-3 space-y-1.5 text-[var(--muted-foreground)]">
+              <ul className="mt-3 space-y-1.5 text-[var(--foreground-secondary)]">
                 <li>• Membership dues (symbolic GH₵10–20 per year)</li>
                 <li>• Grants from development partners focused on governance and citizen engagement</li>
                 <li>• Corporate social responsibility contributions (accountability & anti-poverty programs)</li>
@@ -369,7 +369,7 @@ export default async function AboutPage() {
             <h2 className="font-display text-lg font-bold text-[var(--foreground)] sm:text-xl">
               Registration Status
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
               Formal registration details are being finalised. The registration number will be listed here when issued,
               under the applicable Ghanaian regulator (for example Registrar General or Department of Social Welfare).
               Effective date to be confirmed.
@@ -385,12 +385,12 @@ export default async function AboutPage() {
             <h2 className="mt-3 font-display text-xl font-bold text-[var(--foreground)] sm:text-2xl lg:text-3xl">
               Leadership
             </h2>
-            <p className="mx-auto mt-2 max-w-2xl text-[var(--muted-foreground)]">
+            <p className="mx-auto mt-2 max-w-2xl text-[var(--foreground-secondary)]">
               Public names, roles, and bios will be published when the roster is confirmed. We do not display stand-in
               profiles.
             </p>
           </div>
-          <div className="mt-8 rounded-2xl border border-dashed border-[var(--border)] bg-white/80 px-6 py-12 text-center text-sm text-[var(--muted-foreground)]">
+          <div className="mt-8 rounded-2xl border border-dashed border-[var(--border)] bg-white/80 px-6 py-12 text-center text-sm text-[var(--foreground-secondary)]">
             No leadership listings published yet.
           </div>
         </div>
@@ -402,7 +402,7 @@ export default async function AboutPage() {
             <h2 className="font-display text-xl font-bold text-[var(--foreground)] sm:text-2xl">
               Advisory & Endorsements
             </h2>
-            <p className="mx-auto mt-4 text-left text-[var(--muted-foreground)] leading-relaxed">
+            <p className="mx-auto mt-4 text-left text-[var(--foreground-secondary)] leading-relaxed">
               Formal endorsements and advisory quotes will appear here only when relationships are confirmed. We do not
               show sample quotations or unverified attributions.
             </p>
@@ -416,16 +416,16 @@ export default async function AboutPage() {
           <h2 className="font-display text-xl font-bold text-[var(--foreground)] sm:text-2xl">
             Conclusion
           </h2>
-          <p className="mt-4 text-[var(--muted-foreground)] leading-relaxed">
+          <p className="mt-4 text-[var(--foreground-secondary)] leading-relaxed">
             Ghana&apos;s greatest untapped resource is the collective voice and energy of its people. For too long that voice has been fragmented, ignored, or drowned out. My Brother&apos;s Keeper Restoration United stands ready to organize that voice, amplify it, protect it, and channel it directly to the Presidency and every elected official.
           </p>
-          <p className="mt-4 text-[var(--muted-foreground)] leading-relaxed">
+          <p className="mt-4 text-[var(--foreground-secondary)] leading-relaxed">
             We believe that when the people and their leaders are in constant, structured, and accountable conversation, poverty cannot survive.
           </p>
           <p className="mt-4 font-semibold text-[var(--foreground)]">
             MBKRU is not another non-governmental organization (NGO). It is the People&apos;s Permanent Platform at the table of power.
           </p>
-          <p className="mt-4 text-[var(--muted-foreground)]">
+          <p className="mt-4 text-[var(--foreground-secondary)]">
             We respectfully submit this concept for consideration and partnership with the Government of Ghana, civil society, development partners, and—most importantly—the citizens of our beloved country.
           </p>
 
@@ -433,7 +433,7 @@ export default async function AboutPage() {
             <h3 className="font-display text-sm font-bold uppercase tracking-wide text-[var(--foreground)]">
               Expected Impact
             </h3>
-            <ul className="mt-3 grid gap-2 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-2 text-sm text-[var(--muted-foreground)]">
+            <ul className="mt-3 grid gap-2 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-2 text-sm text-[var(--foreground-secondary)]">
               <li className="flex gap-2">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent-warm)]" />
                 Drastic reduction in unresolved citizen complaints against government agencies
@@ -477,7 +477,7 @@ export default async function AboutPage() {
             <h2 className="mt-3 font-display text-xl font-bold text-[var(--foreground)] sm:text-2xl">
               Acronyms Used
             </h2>
-            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+            <p className="mt-2 text-sm text-[var(--foreground-secondary)]">
               All acronyms have been fully spelled out on first use throughout the document.
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -491,7 +491,7 @@ export default async function AboutPage() {
                   </span>
                   <div className="min-w-0 flex-1">
                     <span className="block font-semibold text-[var(--primary)]">{abbr}</span>
-                    <span className="mt-0.5 block text-sm leading-snug text-[var(--muted-foreground)]">{full}</span>
+                    <span className="mt-0.5 block text-sm leading-snug text-[var(--foreground-secondary)]">{full}</span>
                   </div>
                 </div>
               ))}

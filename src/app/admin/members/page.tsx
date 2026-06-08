@@ -41,13 +41,13 @@ export default async function AdminMembersPage() {
 
       <AdminListPanel>
         {members.length === 0 ? (
-          <li className="p-6 text-sm text-[var(--muted-foreground)]">No members yet.</li>
+          <li className="p-6 text-sm text-[var(--foreground-secondary)]">No members yet.</li>
         ) : (
           members.map((m) => (
             <li key={m.id} className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="font-medium text-[var(--foreground)]">{m.email}</p>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p className="text-xs text-[var(--foreground-secondary)]">
                   {m.displayName ? `${m.displayName} · ` : null}
                   {m.region?.name ? `${m.region.name} · ` : null}
                   Joined {m.createdAt.toLocaleDateString("en-GB", { dateStyle: "medium" })}
@@ -57,7 +57,7 @@ export default async function AdminMembersPage() {
                     {m.identityVerificationStatus}
                   </span>
                   {m.identityVerifiedAt ? (
-                    <span className="ml-2 text-[var(--muted-foreground)]">
+                    <span className="ml-2 text-[var(--foreground-secondary)]">
                       Verified {m.identityVerifiedAt.toLocaleDateString("en-GB")}
                     </span>
                   ) : null}

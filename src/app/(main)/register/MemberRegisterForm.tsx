@@ -131,7 +131,7 @@ export function MemberRegisterForm() {
     <form onSubmit={onSubmit} className="space-y-5">
       <div>
         <label htmlFor="reg-name" className="block text-sm font-medium text-[var(--foreground)]">
-          Display name <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+          Display name <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
         </label>
         <input
           id="reg-name"
@@ -161,14 +161,14 @@ export function MemberRegisterForm() {
             </option>
           ))}
         </select>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Used for regional chat, &quot;who&apos;s online&quot;, and local Report Card filters. You can change this later in
           your account.
         </p>
       </div>
       <div>
         <label htmlFor="reg-constituency" className="block text-sm font-medium text-[var(--foreground)]">
-          Constituency <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+          Constituency <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
         </label>
         <select
           id="reg-constituency"
@@ -220,7 +220,7 @@ export function MemberRegisterForm() {
           onChange={(e) => setPassword(e.target.value)}
           className={inputClass}
         />
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">At least 8 characters.</p>
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">At least 8 characters.</p>
       </div>
       <div>
         <label htmlFor="reg-confirm" className="block text-sm font-medium text-[var(--foreground)]">
@@ -244,7 +244,7 @@ export function MemberRegisterForm() {
       <Button type="submit" disabled={loading || loadingRegions} className="w-full justify-center sm:w-auto">
         {loading ? "Creating account…" : "Create account"}
       </Button>
-      <p className="text-sm text-[var(--muted-foreground)]">
+      <p className="text-sm text-[var(--foreground-secondary)]">
         Already registered?{" "}
         <Link href={loginHref} className={`${primaryLinkClass} font-semibold`}>
           Sign in

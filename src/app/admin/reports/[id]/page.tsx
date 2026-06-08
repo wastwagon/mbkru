@@ -230,7 +230,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
           role="note"
         >
           <p className="font-semibold">Moderation — MP performance</p>
-          <p className="mt-1 text-[var(--muted-foreground)]">
+          <p className="mt-1 text-[var(--foreground-secondary)]">
             Submitted directly by a member as constituency accountability documentation. Verify factual claims where
             possible before escalation or external citation.
           </p>
@@ -242,14 +242,14 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
           role="note"
         >
           <p className="font-semibold">Moderation — government performance</p>
-          <p className="mt-1 text-[var(--muted-foreground)]">
+          <p className="mt-1 text-[var(--foreground-secondary)]">
             Submitted directly by a member on programme or agency delivery. Check identifiable facts and programme
             context before relay outside MBKRU.
           </p>
         </div>
       ) : null}
 
-      <dl className="mt-4 grid gap-2 text-sm text-[var(--muted-foreground)]">
+      <dl className="mt-4 grid gap-2 text-sm text-[var(--foreground-secondary)]">
         <div>
           <dt className="inline font-medium text-[var(--foreground)]">Tracking code: </dt>
           <dd className="inline font-mono">{report.trackingCode}</dd>
@@ -273,7 +273,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
               <Link href={`/admin/parliament/${report.parliamentMember.id}`} className={primaryLinkClass}>
                 {report.parliamentMember.name}
               </Link>{" "}
-              <span className="font-mono text-xs text-[var(--muted-foreground)]">
+              <span className="font-mono text-xs text-[var(--foreground-secondary)]">
                 ({report.parliamentMember.slug})
               </span>
             </dd>
@@ -361,7 +361,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
       {report.kind === "MP_PERFORMANCE" ? (
         <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
           <h2 className="text-sm font-semibold text-[var(--foreground)]">MP methodology signals</h2>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
             Tier is staff-set (evidence ladder). Optional submitter rubric is stored as structured JSON from Citizens Voice.
           </p>
           <form action={updateCitizenReportExperienceVerificationTierAction} className="mt-4 flex flex-wrap items-end gap-3">
@@ -392,7 +392,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
           typeof report.mpPerformanceRubric === "object" &&
           !Array.isArray(report.mpPerformanceRubric) ? (
             <div className="mt-5 border-t border-[var(--border)] pt-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
                 Submitter rubric (JSON)
               </p>
               <pre className="mt-2 max-h-48 overflow-auto rounded-lg bg-[var(--section-light)] p-3 font-mono text-xs text-[var(--foreground)]">
@@ -400,21 +400,21 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
               </pre>
             </div>
           ) : (
-            <p className="mt-4 text-sm text-[var(--muted-foreground)]">No optional rubric fields on this intake.</p>
+            <p className="mt-4 text-sm text-[var(--foreground-secondary)]">No optional rubric fields on this intake.</p>
           )}
         </div>
       ) : null}
 
       <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Narrative</h2>
-        <pre className="mt-3 whitespace-pre-wrap font-sans text-sm text-[var(--muted-foreground)]">
+        <pre className="mt-3 whitespace-pre-wrap font-sans text-sm text-[var(--foreground-secondary)]">
           {report.body}
         </pre>
       </div>
 
       <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Submitter-visible notes</h2>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Shown to the reporter on <strong className="text-[var(--foreground)]">My reports</strong> (signed-in) and on{" "}
           <strong className="text-[var(--foreground)]">Track a report</strong> when they enter this tracking code. You
           can edit wording, or hide a note from the submitter without deleting it. This is not the same as internal
@@ -431,7 +431,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
                     r.visibleToSubmitter ? "border-[var(--border)]" : "border-amber-300 bg-amber-50/40"
                   }`}
                 >
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--muted-foreground)]">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--foreground-secondary)]">
                     <span>{r.createdAt.toISOString().slice(0, 16)} UTC</span>
                     {edited ? (
                       <span className="rounded bg-[var(--muted)]/30 px-1.5 py-0.5">edited</span>
@@ -448,7 +448,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
                     )}
                   </div>
                   {r.editedBy?.email ? (
-                    <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                    <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                       Last edited by <span className="font-mono text-[var(--foreground)]">{r.editedBy.email}</span>
                     </p>
                   ) : null}
@@ -514,7 +514,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
                           </label>
                         ) : null}
                         {report.memberId ? (
-                          <p className="text-xs text-[var(--muted-foreground)]">
+                          <p className="text-xs text-[var(--foreground-secondary)]">
                             Signed-in members also get an in-app notification when you show the note again.
                           </p>
                         ) : null}
@@ -532,7 +532,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
             })}
           </ul>
         ) : (
-          <p className="mt-4 text-sm text-[var(--muted-foreground)]">No notes yet.</p>
+          <p className="mt-4 text-sm text-[var(--foreground-secondary)]">No notes yet.</p>
         )}
         <form action={addCitizenReportAdminReplyAction} className="mt-6 border-t border-[var(--border)] pt-5">
           <input type="hidden" name="reportId" value={report.id} />
@@ -564,12 +564,12 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
               </span>
             </label>
           ) : (
-            <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+            <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
               SMS alert requires a valid E.164 number on the member profile or submitter phone field.
             </p>
           )}
           {report.memberId ? (
-            <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+            <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
               Signed-in members also receive an in-app notification automatically.
             </p>
           ) : null}
@@ -584,11 +584,11 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
 
       <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Team note audit trail</h2>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Append-only log of posts, edits, and visibility changes (no full message bodies stored here).
         </p>
         {replyAuditLogs.length === 0 ? (
-          <p className="mt-4 text-sm text-[var(--muted-foreground)]">No audit entries yet.</p>
+          <p className="mt-4 text-sm text-[var(--foreground-secondary)]">No audit entries yet.</p>
         ) : (
           <ul className="mt-4 max-h-80 space-y-2 overflow-y-auto text-xs">
             {replyAuditLogs.map((log) => {
@@ -603,7 +603,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
               return (
                 <li
                   key={log.id}
-                  className="rounded-lg border border-[var(--border)] bg-[var(--section-light)]/30 px-3 py-2 font-mono text-[11px] text-[var(--muted-foreground)]"
+                  className="rounded-lg border border-[var(--border)] bg-[var(--section-light)]/30 px-3 py-2 font-mono text-[11px] text-[var(--foreground-secondary)]"
                 >
                   <span className="text-[var(--foreground)]">{label}</span>
                   {" · "}
@@ -658,7 +658,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
                         ? "View full size"
                         : "Open file"}
                   </a>
-                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">{a.mimeType}</p>
+                  <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{a.mimeType}</p>
                 </li>
               );
             })}
@@ -672,7 +672,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
       >
         <input type="hidden" name="id" value={report.id} />
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Voice public discussion</h2>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Controls the page at{" "}
           <code className="text-xs">/citizens-voice/discussions/[report id]</code> — full narrative, member comments,
           reactions, and support. Use <strong className="text-[var(--foreground)]">Closed</strong> to take the page offline
@@ -714,7 +714,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
       >
         <input type="hidden" name="id" value={report.id} />
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Public cause thread</h2>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Publishes a <strong className="text-[var(--foreground)]">sanitized summary only</strong> at{" "}
           <code className="text-xs">/citizens-voice/causes/[slug]</code>. Never copy-paste the full private narrative
           here. Use a short headline and a vetted public summary. Members can support and comment on the public page.
@@ -793,7 +793,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
       {report.publicCauseComments.length > 0 ? (
         <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
           <h2 className="text-sm font-semibold text-[var(--foreground)]">Member comments</h2>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
             Same thread is used for the public cause page (when published) and for{" "}
             <code className="text-xs">/citizens-voice/discussions/[report id]</code>. Hiding removes the comment from
             both; restoring brings it back everywhere it applies.
@@ -801,7 +801,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
           <ul className="mt-4 space-y-4">
             {report.publicCauseComments.map((c) => (
               <li key={c.id} className="border-b border-[var(--border)] pb-4 text-sm last:border-0">
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p className="text-xs text-[var(--foreground-secondary)]">
                   {c.member.displayName ?? c.member.email} · {c.status} · {c.createdAt.toISOString().slice(0, 16)}
                 </p>
                 <p className="mt-2 whitespace-pre-wrap text-[var(--foreground)]">{c.body}</p>
@@ -840,7 +840,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
       >
         <input type="hidden" name="id" value={report.id} />
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Operations &amp; SLA</h2>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Internal use only — not emailed to submitters. For situational and election reports, record playbook
           references and response targets. SLA time uses{" "}
           <strong className="text-[var(--foreground)]">UTC</strong> (matches the picker below).
@@ -858,7 +858,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
               defaultValue={report.slaDueAt ? formatUtcForDatetimeLocalInput(report.slaDueAt) : ""}
               className="mt-1 w-full max-w-md rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm"
             />
-            <p className="mt-1 text-xs text-[var(--muted-foreground)]">Leave blank to clear.</p>
+            <p className="mt-1 text-xs text-[var(--foreground-secondary)]">Leave blank to clear.</p>
           </div>
           <div>
             <label htmlFor="operationsPlaybookKey" className="block text-sm font-medium text-[var(--foreground)]">
@@ -902,7 +902,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
         <label htmlFor="status" className="block text-sm font-medium text-[var(--foreground)]">
           Update status
         </label>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           If Resend is configured, the submitter receives an email when the status changes. If{" "}
           <code className="text-xs">SMS_PROVIDER</code> is set and a valid E.164 number is on file (submitter or
           member profile), an SMS is sent in parallel (Twilio when configured).

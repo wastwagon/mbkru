@@ -23,11 +23,11 @@ export function MpPerformanceIntakeList({ reports }: Props) {
     <section aria-labelledby={sectionHeadingId} className="mt-10">
       <h2 id={sectionHeadingId} className="font-display text-lg font-semibold text-[var(--foreground)]">
         {accountabilityProse.mpPerformanceIntakesSectionTitle}
-        <span className="ml-2 text-base font-normal text-[var(--muted-foreground)]">
+        <span className="ml-2 text-base font-normal text-[var(--foreground-secondary)]">
           ({intakeCountLabel(reports.length)})
         </span>
       </h2>
-      <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+      <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
         {accountabilityProse.mpPerformanceIntakesSectionIntro} Open{" "}
         <Link href="/parliament-tracker" className={primaryNavLinkClass}>
           Parliament tracker
@@ -35,7 +35,7 @@ export function MpPerformanceIntakeList({ reports }: Props) {
         {accountabilityProse.mpPerformanceIntakesSectionIntroTail}
       </p>
       <ul
-        className={`mt-6 grid items-stretch gap-5${reports.length > 1 ? " sm:grid-cols-2" : ""}`}
+        className={`mt-6 grid items-stretch gap-4${reports.length > 1 ? " sm:grid-cols-2 sm:gap-5" : ""}`}
       >
         {reports.map((report) => (
           <li key={report.id} className="flex min-h-0">

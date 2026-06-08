@@ -51,7 +51,7 @@ export function EarlyAccessForm() {
           placeholder="Your email address"
           required
           disabled={status === "loading"}
-          className={`min-h-[48px] w-full flex-1 touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3.5 text-[var(--foreground)] transition-shadow duration-200 placeholder:text-[var(--muted-foreground)] focus-visible:border-[var(--primary)]/35 sm:min-w-0 ${focusRingSmClass}`}
+          className={`min-h-[48px] w-full flex-1 touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3.5 text-[var(--foreground)] transition-shadow duration-200 placeholder:text-[var(--foreground-secondary)] focus-visible:border-[var(--primary)]/35 sm:min-w-0 ${focusRingSmClass}`}
           aria-label="Email for early access"
         />
         <Button

@@ -60,7 +60,7 @@ export function ReportCommunityPostButton({
       <Button type="button" variant="ghost" size="sm" disabled={busy} onClick={() => void submit()}>
         Report post
       </Button>
-      {msg ? <p className="mt-1 text-xs text-[var(--muted-foreground)]">{msg}</p> : null}
+      {msg ? <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{msg}</p> : null}
     </div>
   );
 }

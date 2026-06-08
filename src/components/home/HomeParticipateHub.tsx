@@ -260,7 +260,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
           <h2 className="mt-3 font-display text-2xl font-bold tracking-tight text-[var(--foreground)] sm:mt-4 sm:text-3xl">
             {phase1 ? "Explore MBKRU" : "How to use MBKRU"}
           </h2>
-          <p className="mt-4 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+          <p className="mt-4 text-sm leading-relaxed text-[var(--foreground-secondary)] sm:text-base">
             {phase1 ? (
               <>
                 Use the cards to explore the programme, contact the team, and read published materials. As civic tools and
@@ -289,10 +289,10 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
             >
               <Link
                 href={a.href}
-                className="flex h-full flex-col rounded-2xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow-sm)] transition-[border-color,box-shadow,transform] duration-300 ease-out hover:border-[var(--primary)]/30 hover:shadow-[var(--shadow-card)] sm:p-5"
+                className="flex h-full flex-col rounded-2xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow-sm)] transition-[border-color,box-shadow,transform] duration-300 ease-out hover:border-[var(--primary)]/35 sm:p-5"
               >
                 <span className="font-display text-sm font-semibold text-[var(--foreground)]">{a.title}</span>
-                <span className="mt-2.5 text-xs leading-relaxed text-[var(--muted-foreground)] sm:text-[13px]">{a.body}</span>
+                <span className="mt-2.5 text-xs leading-relaxed text-[var(--foreground-secondary)] sm:text-[13px]">{a.body}</span>
                 <span className="mt-auto pt-3 text-xs font-semibold text-[var(--primary)]">Open →</span>
               </Link>
             </motion.div>
@@ -314,7 +314,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
               <span className="ml-2 font-medium">reports received through MBKRU Voice (all time, this deployment).</span>
             </p>
             {voiceStats ? (
-              <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+              <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
                 <Link href="/transparency" className={`${primaryLinkClass} font-semibold`}>
                   View aggregate Voice statistics
                 </Link>
@@ -324,7 +324,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
         ) : null}
 
         {phase1 ? (
-          <p className="mt-10 text-center text-sm leading-relaxed text-[var(--muted-foreground)] sm:mt-12">
+          <p className="mt-10 text-center text-sm leading-relaxed text-[var(--foreground-secondary)] sm:mt-12">
             Scroll the roadmap section below for programme milestones. For full narrative and restorative justice context,{" "}
             <Link href="/about" className={`${primaryLinkClass} font-semibold`}>
               open About
@@ -332,12 +332,12 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
             .
           </p>
         ) : !showLiveHighlights ? (
-          <p className="mt-10 text-center text-sm leading-relaxed text-[var(--muted-foreground)] sm:mt-12">
+          <p className="mt-10 text-center text-sm leading-relaxed text-[var(--foreground-secondary)] sm:mt-12">
             Use the action cards above for the main routes. Open petitions, public causes, communities, and programme rows
             are also listed on their dedicated index pages.
           </p>
         ) : !live ? (
-          <p className="mt-10 text-center text-sm leading-relaxed text-[var(--muted-foreground)] sm:mt-12">
+          <p className="mt-10 text-center text-sm leading-relaxed text-[var(--foreground-secondary)] sm:mt-12">
             Live highlights (petitions, causes, communities, forums) appear here once editors publish content — action
             cards above are always aligned with your platform phase.
           </p>
@@ -357,9 +357,9 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
                     All →
                   </Link>
                 </div>
-                <p className="mt-1 text-xs text-[var(--muted-foreground)]">Open campaigns ranked by confirmed signatures.</p>
+                <p className="mt-1 text-xs text-[var(--foreground-secondary)]">Open campaigns ranked by confirmed signatures.</p>
                 {data.petitions.length === 0 ? (
-                  <p className="mt-4 text-sm text-[var(--muted-foreground)]">No open petitions yet.</p>
+                  <p className="mt-4 text-sm text-[var(--foreground-secondary)]">No open petitions yet.</p>
                 ) : (
                   <ul className="mt-4 space-y-3">
                     {data.petitions.map((p) => (
@@ -367,7 +367,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
                         <Link href={`/petitions/${encodeURIComponent(p.slug)}`} className={resourceTitleLinkClass}>
                           {p.title}
                         </Link>
-                        <p className="text-xs text-[var(--muted-foreground)]">
+                        <p className="text-xs text-[var(--foreground-secondary)]">
                           {p.signatureCount} signature{p.signatureCount === 1 ? "" : "s"}
                           {p.targetSignatures != null ? ` · goal ${p.targetSignatures}` : ""}
                         </p>
@@ -395,9 +395,9 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
                     All →
                   </Link>
                 </div>
-                <p className="mt-1 text-xs text-[var(--muted-foreground)]">Summaries only — not full Voice intake text.</p>
+                <p className="mt-1 text-xs text-[var(--foreground-secondary)]">Summaries only — not full Voice intake text.</p>
                 {data.publicCauses.length === 0 ? (
-                  <p className="mt-4 text-sm text-[var(--muted-foreground)]">No open causes yet.</p>
+                  <p className="mt-4 text-sm text-[var(--foreground-secondary)]">No open causes yet.</p>
                 ) : (
                   <ul className="mt-4 space-y-3">
                     {data.publicCauses.map((c) => (
@@ -405,7 +405,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
                         <Link href={`/citizens-voice/causes/${encodeURIComponent(c.slug)}`} className={resourceTitleLinkClass}>
                           {c.title}
                         </Link>
-                        <p className="text-xs text-[var(--muted-foreground)]">
+                        <p className="text-xs text-[var(--foreground-secondary)]">
                           {c.supportCount} support · {c.commentCount} comments
                           {c.regionName ? ` · ${c.regionName}` : ""}
                         </p>
@@ -430,9 +430,9 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
                     Browse →
                   </Link>
                 </div>
-                <p className="mt-1 text-xs text-[var(--muted-foreground)]">Active spaces with the most members first.</p>
+                <p className="mt-1 text-xs text-[var(--foreground-secondary)]">Active spaces with the most members first.</p>
                 {data.communities.length === 0 ? (
-                  <p className="mt-4 text-sm text-[var(--muted-foreground)]">No listed communities yet.</p>
+                  <p className="mt-4 text-sm text-[var(--foreground-secondary)]">No listed communities yet.</p>
                 ) : (
                   <ul className="mt-4 space-y-3">
                     {data.communities.map((c) => (
@@ -440,7 +440,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
                         <Link href={`/communities/${encodeURIComponent(c.slug)}`} className={resourceTitleLinkClass}>
                           {c.name}
                         </Link>
-                        <p className="text-xs text-[var(--muted-foreground)]">
+                        <p className="text-xs text-[var(--foreground-secondary)]">
                           {c.memberCount} member{c.memberCount === 1 ? "" : "s"}
                           {c.regionName ? ` · ${c.regionName}` : ""}
                         </p>
@@ -470,16 +470,16 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
                     </Link>
                   </div>
                 </div>
-                <p className="mt-1 text-xs text-[var(--muted-foreground)]">Same ordered programme feed as the directory pages.</p>
+                <p className="mt-1 text-xs text-[var(--foreground-secondary)]">Same ordered programme feed as the directory pages.</p>
                 {data.townHalls.length === 0 ? (
-                  <p className="mt-4 text-sm text-[var(--muted-foreground)]">No programme rows in the database yet.</p>
+                  <p className="mt-4 text-sm text-[var(--foreground-secondary)]">No programme rows in the database yet.</p>
                 ) : (
                   <ul className="mt-4 space-y-3">
                     {data.townHalls.map((ev) => (
                       <li key={ev.slug} className="text-sm">
                         <span className="font-medium text-[var(--foreground)]">{ev.title}</span>
-                        <span className="text-[var(--muted-foreground)]"> · {ev.kindLabel}</span>
-                        <p className="text-xs text-[var(--muted-foreground)]">
+                        <span className="text-[var(--foreground-secondary)]"> · {ev.kindLabel}</span>
+                        <p className="text-xs text-[var(--foreground-secondary)]">
                           {formatEventDate(ev.startsAt)} · {townHallStatusLabel(ev.status)}
                           {ev.regionName ? ` · ${ev.regionName}` : ""}
                         </p>
@@ -504,7 +504,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
             <p className="mt-2 font-display text-xl font-bold text-[var(--foreground)]">
               {publicReportCardCycleTitle(data.reportCard.year, data.reportCard.label)}
             </p>
-            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+            <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
               {data.reportCard.entryCount} published scorecard row{data.reportCard.entryCount === 1 ? "" : "s"} in this release —
               stacked with other cycles across the Parliament for cumulative accountability.
             </p>

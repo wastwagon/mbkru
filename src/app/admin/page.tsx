@@ -55,7 +55,7 @@ export default async function AdminHomePage() {
           value={reportsTotal}
           footer={
             <span className="text-[var(--primary)]">
-              {reportsQueue} in queue <span className="text-[var(--muted-foreground)]">→ triage</span>
+              {reportsQueue} in queue <span className="text-[var(--foreground-secondary)]">→ triage</span>
             </span>
           }
         />
@@ -63,29 +63,29 @@ export default async function AdminHomePage() {
           href="/admin/petitions"
           label="Open petitions"
           value={petitionsOpen}
-          footer={<span className="text-[var(--muted-foreground)]">Close, archive, or reopen</span>}
+          footer={<span className="text-[var(--foreground-secondary)]">Close, archive, or reopen</span>}
         />
         <AdminStatTileLink
           href="/admin/contact-submissions"
           label="Contact (7 days)"
           value={contactsWeek}
-          footer={<span className="text-[var(--muted-foreground)]">Form messages saved to Postgres</span>}
+          footer={<span className="text-[var(--foreground-secondary)]">Form messages saved to Postgres</span>}
         />
         <AdminStatTileLink
           href="/admin/diaspora-feedback"
           label="Diaspora feedback (7 days)"
           value={diasporaFeedbackWeek}
-          footer={<span className="text-[var(--muted-foreground)]">Visit experience form</span>}
+          footer={<span className="text-[var(--foreground-secondary)]">Visit experience form</span>}
         />
         <AdminStatTileLink
           href="/admin/leads"
           label="Lead captures"
           value={leadsTotal}
-          footer={<span className="text-[var(--muted-foreground)]">Newsletter · early access · tracker</span>}
+          footer={<span className="text-[var(--foreground-secondary)]">Newsletter · early access · tracker</span>}
         />
         <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--section-light)]/50 p-5">
           <p className={adminKickerClass}>Public site</p>
-          <p className="mt-2 text-sm leading-snug text-[var(--muted-foreground)]">
+          <p className="mt-2 text-sm leading-snug text-[var(--foreground-secondary)]">
             Preview live pages from the{" "}
             <Link href="/" className={primaryLinkClass}>
               homepage
@@ -101,17 +101,17 @@ export default async function AdminHomePage() {
           <li key={tool.href}>
             <Link href={tool.href} className={adminToolLinkCardClass}>
               <span className="font-semibold text-[var(--foreground)]">{tool.label}</span>
-              <p className="mt-1 text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+              <p className="mt-1 text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">
                 {tool.groupTitle}
               </p>
-              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
                 {tool.description ?? `Open ${tool.label}.`}
               </p>
             </Link>
           </li>
         ))}
       </ul>
-      <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
+      <p className="mt-10 text-center text-sm text-[var(--foreground-secondary)]">
         <Link href="/" className={primaryLinkClass}>
           ← Public site
         </Link>

@@ -65,9 +65,9 @@ function KpiCard({
       className={`rounded-2xl bg-white p-4 shadow-md ${ring} sm:p-5`}
       style={{ boxShadow: "0 4px 24px rgba(15, 23, 42, 0.06)" }}
     >
-      <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">{label}</p>
-      <div className="mt-2 text-slate-900">{children}</div>
-      {foot ? <p className="mt-1.5 text-[10px] font-medium leading-snug text-slate-500">{foot}</p> : null}
+      <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--foreground-secondary)]">{label}</p>
+      <div className="mt-2 text-[var(--foreground)]">{children}</div>
+      {foot ? <p className="mt-1.5 text-[10px] font-medium leading-snug text-[var(--foreground-secondary)]">{foot}</p> : null}
     </div>
   );
 }

@@ -27,13 +27,13 @@ export default async function AdminPostsPage() {
       />
       <AdminListPanel>
         {posts.length === 0 ? (
-          <li className="p-6 text-sm text-[var(--muted-foreground)]">No posts yet.</li>
+          <li className="p-6 text-sm text-[var(--foreground-secondary)]">No posts yet.</li>
         ) : (
           posts.map((p) => (
             <li key={p.id} className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="font-semibold text-[var(--foreground)]">{p.title}</p>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p className="text-xs text-[var(--foreground-secondary)]">
                   /{p.slug} · {p.publishedAt ? "Published" : "Draft"}
                 </p>
               </div>

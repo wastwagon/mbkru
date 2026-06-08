@@ -89,7 +89,7 @@ export default async function AdminManifestosPage() {
           </div>
           <div>
             <label htmlFor="publishedAt" className="block text-xs font-medium text-[var(--foreground)]">
-              Published date <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              Published date <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
             </label>
             <input
               id="publishedAt"
@@ -100,7 +100,7 @@ export default async function AdminManifestosPage() {
           </div>
           <div>
             <label htmlFor="notes" className="block text-xs font-medium text-[var(--foreground)]">
-              Notes <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              Notes <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
             </label>
             <textarea
               id="notes"
@@ -122,13 +122,13 @@ export default async function AdminManifestosPage() {
       <section className="mt-10">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Registered ({manifestos.length})</h2>
         {manifestos.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">None yet.</p>
+          <p className="mt-2 text-sm text-[var(--foreground-secondary)]">None yet.</p>
         ) : (
           <ul className="mt-4 space-y-3">
             {manifestos.map((m) => (
               <li key={m.id} className="rounded-xl border border-[var(--border)] bg-white p-4 text-sm">
                 <p className="font-medium text-[var(--foreground)]">{m.title}</p>
-                <p className="mt-1 text-[var(--muted-foreground)]">
+                <p className="mt-1 text-[var(--foreground-secondary)]">
                   <span className="font-mono">{m.partySlug}</span> · {m.electionCycle}
                 </p>
                 <a

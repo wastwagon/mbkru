@@ -112,7 +112,7 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
         }
         description={<p className="font-mono text-sm">{community.slug}</p>}
       />
-      <dl className="mt-3 grid gap-1 text-sm text-[var(--muted-foreground)]">
+      <dl className="mt-3 grid gap-1 text-sm text-[var(--foreground-secondary)]">
         <div>
           <dt className="inline font-medium text-[var(--foreground)]">Status: </dt>
           <dd className="inline">{community.status}</dd>
@@ -143,11 +143,11 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
 
       <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Forums</h2>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Changing a forum slug breaks existing URLs. Empty forums only can be deleted.
         </p>
 
-        <h3 className="mt-6 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">Create forum</h3>
+        <h3 className="mt-6 text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">Create forum</h3>
         <form action={createCommunityForumAdminAction} className="mt-3 grid gap-3 sm:grid-cols-2">
           <input type="hidden" name="communityId" value={community.id} />
           <div className="sm:col-span-2">
@@ -164,7 +164,7 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
           </div>
           <div>
             <label htmlFor="forum-slug-new" className="block text-xs font-medium">
-              Slug <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              Slug <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
             </label>
             <input
               id="forum-slug-new"
@@ -196,13 +196,13 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
         </form>
 
         {forums.length === 0 ? (
-          <p className="mt-6 text-sm text-[var(--muted-foreground)]">No forums yet.</p>
+          <p className="mt-6 text-sm text-[var(--foreground-secondary)]">No forums yet.</p>
         ) : (
           <ul className="mt-8 space-y-8">
             {forums.map((f) => (
               <li key={f.id} className="rounded-xl border border-[var(--border)] bg-[var(--section-light)]/40 p-4">
-                <p className="text-xs font-mono text-[var(--muted-foreground)]">{f.slug}</p>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p className="text-xs font-mono text-[var(--foreground-secondary)]">{f.slug}</p>
+                <p className="text-xs text-[var(--foreground-secondary)]">
                   {f.publishedThreadCount} thread{f.publishedThreadCount === 1 ? "" : "s"} ·{" "}
                   {community.status === "ACTIVE" ? (
                     <Link href={`/communities/${community.slug}/forums/${f.slug}`} className={primaryLinkClass}>
@@ -297,20 +297,20 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
       <section className="mt-10">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Open post reports</h2>
         {openPostReports.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">None.</p>
+          <p className="mt-2 text-sm text-[var(--foreground-secondary)]">None.</p>
         ) : (
           <ul className="mt-4 space-y-5">
             {openPostReports.map((r) => (
               <li id={`mod-report-${r.id}`} key={r.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+                <p className="text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">
                   Reporter: {r.reporter.displayName ?? r.reporter.email}
-                  <span className="ml-2 font-normal normal-case text-[var(--muted-foreground)]">{r.reporter.email}</span>
+                  <span className="ml-2 font-normal normal-case text-[var(--foreground-secondary)]">{r.reporter.email}</span>
                 </p>
                 <p className="mt-2 text-sm font-medium text-[var(--foreground)]">Reason: {r.reason}</p>
                 {r.details ? (
-                  <p className="mt-1 whitespace-pre-wrap text-sm text-[var(--muted-foreground)]">{r.details}</p>
+                  <p className="mt-1 whitespace-pre-wrap text-sm text-[var(--foreground-secondary)]">{r.details}</p>
                 ) : null}
-                <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+                <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
                   Post ({r.post.kind}) · {r.createdAt.toLocaleString()}
                 </p>
                 <p className="mt-2 line-clamp-4 whitespace-pre-wrap text-sm text-[var(--foreground)]">{r.post.body}</p>
@@ -346,11 +346,11 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
 
       <section className="mt-10">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Recent closed post reports</h2>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Last 25 marked reviewed or dismissed (new reports can be filed after closure).
         </p>
         {closedPostReports.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">None yet.</p>
+          <p className="mt-2 text-sm text-[var(--foreground-secondary)]">None yet.</p>
         ) : (
           <ul className="mt-4 space-y-3">
             {closedPostReports.map((r) => (
@@ -358,7 +358,7 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
                 key={r.id}
                 className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--section-light)]/40 p-3 text-sm"
               >
-                <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                <p className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
                   {r.status}
                   {r.reviewedAt
                     ? ` · closed ${r.reviewedAt.toLocaleString()}`
@@ -366,10 +366,10 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
                 </p>
                 <p className="mt-1 text-[var(--foreground)]">
                   {r.reporter.displayName ?? r.reporter.email}{" "}
-                  <span className="text-xs text-[var(--muted-foreground)]">{r.reporter.email}</span>
+                  <span className="text-xs text-[var(--foreground-secondary)]">{r.reporter.email}</span>
                 </p>
-                <p className="mt-1 text-xs text-[var(--muted-foreground)]">Reason: {r.reason}</p>
-                <p className="mt-1 line-clamp-2 text-xs text-[var(--muted-foreground)]">
+                <p className="mt-1 text-xs text-[var(--foreground-secondary)]">Reason: {r.reason}</p>
+                <p className="mt-1 line-clamp-2 text-xs text-[var(--foreground-secondary)]">
                   Post ({r.post.kind}): {r.post.body}
                 </p>
               </li>
@@ -381,16 +381,16 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
       <section className="mt-10">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Active members &amp; roles</h2>
         {activeMembers.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">None.</p>
+          <p className="mt-2 text-sm text-[var(--foreground-secondary)]">None.</p>
         ) : (
           <ul className="mt-4 space-y-4">
             {activeMembers.map((m) => (
               <li key={m.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
                 <p className="text-sm text-[var(--foreground)]">
                   {m.member.displayName ?? m.member.email}
-                  <span className="ml-2 text-xs text-[var(--muted-foreground)]">{m.member.email}</span>
+                  <span className="ml-2 text-xs text-[var(--foreground-secondary)]">{m.member.email}</span>
                 </p>
-                <p className="mt-1 text-xs text-[var(--muted-foreground)]">Current role: {m.role}</p>
+                <p className="mt-1 text-xs text-[var(--foreground-secondary)]">Current role: {m.role}</p>
                 <form action={setCommunityMembershipRoleAction} className="mt-3 flex flex-wrap items-end gap-2">
                   <input type="hidden" name="membershipId" value={m.id} />
                   <input type="hidden" name="communityId" value={community.id} />
@@ -440,16 +440,16 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
       <section className="mt-10">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Banned members</h2>
         {bannedMembers.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">None.</p>
+          <p className="mt-2 text-sm text-[var(--foreground-secondary)]">None.</p>
         ) : (
           <ul className="mt-4 space-y-4">
             {bannedMembers.map((m) => (
               <li key={m.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
                 <p className="text-sm text-[var(--foreground)]">
                   {m.member.displayName ?? m.member.email}
-                  <span className="ml-2 text-xs text-[var(--muted-foreground)]">{m.member.email}</span>
+                  <span className="ml-2 text-xs text-[var(--foreground-secondary)]">{m.member.email}</span>
                 </p>
-                <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                   Banned {m.bannedAt ? m.bannedAt.toLocaleString() : m.updatedAt.toLocaleString()}
                 </p>
                 {m.banReason ? (
@@ -477,16 +477,16 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
       <section className="mt-10">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Pending join requests</h2>
         {community.memberships.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">None.</p>
+          <p className="mt-2 text-sm text-[var(--foreground-secondary)]">None.</p>
         ) : (
           <ul className="mt-4 space-y-3">
             {community.memberships.map((m) => (
               <li key={m.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
                 <p className="text-sm text-[var(--foreground)]">
                   {m.member.displayName ?? m.member.email}
-                  <span className="ml-2 text-xs text-[var(--muted-foreground)]">{m.member.email}</span>
+                  <span className="ml-2 text-xs text-[var(--foreground-secondary)]">{m.member.email}</span>
                 </p>
-                <p className="mt-1 text-xs text-[var(--muted-foreground)]">Since {m.createdAt.toLocaleString()}</p>
+                <p className="mt-1 text-xs text-[var(--foreground-secondary)]">Since {m.createdAt.toLocaleString()}</p>
                 <form action={approveCommunityMembershipAction} className="mt-3">
                   <input type="hidden" name="membershipId" value={m.id} />
                   <input type="hidden" name="communityId" value={community.id} />
@@ -506,12 +506,12 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
       <section className="mt-10">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Posts awaiting moderation</h2>
         {pendingPosts.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">None.</p>
+          <p className="mt-2 text-sm text-[var(--foreground-secondary)]">None.</p>
         ) : (
           <ul className="mt-4 space-y-6">
             {pendingPosts.map((p) => (
               <li id={`mod-post-${p.id}`} key={p.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+                <p className="text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">
                   {p.kind} · {p.author.displayName ?? p.author.email}
                 </p>
                 <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--foreground)]">{p.body}</p>

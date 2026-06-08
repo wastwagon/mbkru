@@ -24,7 +24,7 @@ export default async function AdminMediaPage() {
       <h2 className="mt-12 font-semibold text-[var(--foreground)]">All images</h2>
       <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.length === 0 ? (
-          <li className="text-sm text-[var(--muted-foreground)]">No uploads yet.</li>
+          <li className="text-sm text-[var(--foreground-secondary)]">No uploads yet.</li>
         ) : (
           items.map((m) => (
             <li
@@ -36,7 +36,7 @@ export default async function AdminMediaPage() {
               </div>
               <div className="p-3">
                 <p className="truncate text-xs font-medium text-[var(--foreground)]">{m.filename}</p>
-                <p className="mt-1 break-all font-mono text-[10px] text-[var(--muted-foreground)]">{m.id}</p>
+                <p className="mt-1 break-all font-mono text-[10px] text-[var(--foreground-secondary)]">{m.id}</p>
               </div>
             </li>
           ))

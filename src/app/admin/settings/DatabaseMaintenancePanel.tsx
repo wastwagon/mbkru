@@ -59,7 +59,7 @@ export function DatabaseMaintenancePanel() {
       <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">
         Database — migrations &amp; seed
       </h2>
-      <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+      <p className="mt-2 text-sm text-[var(--foreground-secondary)]">
         On each deploy, the container runs{" "}
         <code className="rounded bg-[var(--muted)] px-1 py-0.5 text-xs">prisma migrate deploy</code>{" "}
         then{" "}
@@ -121,7 +121,7 @@ export function DatabaseMaintenancePanel() {
                 {trimOutput(combined)}
               </pre>
             ) : (
-              <p className="mt-3 text-xs text-[var(--muted-foreground)]">
+              <p className="mt-3 text-xs text-[var(--foreground-secondary)]">
                 No output captured from the CLI (Prisma may log only in container stdout). Check Coolify → Logs
                 for the app container. If public pages stay empty after a successful seed, confirm environment
                 variables <code className="rounded bg-black/5 px-1">SEED_ACCOUNTABILITY_DEMO</code> and{" "}

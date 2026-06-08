@@ -70,7 +70,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
       />
 
       <p className="mt-4 text-sm">
-        <span className="text-[var(--muted-foreground)]">Change window:</span>{" "}
+        <span className="text-[var(--foreground-secondary)]">Change window:</span>{" "}
         {[6, 12, 24].map((m, i) => (
           <span key={m}>
             {i > 0 ? " · " : null}
@@ -94,7 +94,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
           >
             JSON API
           </Link>{" "}
-          <span className="text-[var(--muted-foreground)]">(same session cookie)</span>
+          <span className="text-[var(--foreground-secondary)]">(same session cookie)</span>
         </span>
         <span>
           <Link
@@ -103,7 +103,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
           >
             Download CSV
           </Link>{" "}
-          <span className="text-[var(--muted-foreground)]">(UTF-8, Excel-friendly)</span>
+          <span className="text-[var(--foreground-secondary)]">(UTF-8, Excel-friendly)</span>
         </span>
         <span>
           <Link href="/admin/reports" className={primaryLinkClass}>
@@ -111,7 +111,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
           </Link>
         </span>
       </p>
-      <p className="mt-2 max-w-2xl text-xs text-[var(--muted-foreground)]">
+      <p className="mt-2 max-w-2xl text-xs text-[var(--foreground-secondary)]">
         JSON and CSV requests are rate-limited per admin (same <code className="text-[11px]">RATE_LIMIT_*</code> window as
         public forms). If you see <code className="text-[11px]">429</code>, wait a minute or reduce how often you refresh
         automated scripts.
@@ -136,7 +136,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
 
       <AdminSectionCard className="mt-8">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Public causes (counts only)</h2>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Reports with a staff-approved public thread slug — not a substitute for moderation metrics on{" "}
           <Link href="/admin/public-causes" className={primaryLinkClass}>
             Public causes
@@ -145,19 +145,19 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
         </p>
         <dl className="mt-4 grid gap-4 sm:grid-cols-3">
           <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">With thread</dt>
+            <dt className="text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">With thread</dt>
             <dd className="mt-1 font-display text-2xl font-bold tabular-nums text-[var(--foreground)]">
               {data.publicCauses.withThread}
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Live thread</dt>
+            <dt className="text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">Live thread</dt>
             <dd className="mt-1 font-display text-2xl font-bold tabular-nums text-[var(--foreground)]">
               {data.publicCauses.threadLive}
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Closed thread</dt>
+            <dt className="text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">Closed thread</dt>
             <dd className="mt-1 font-display text-2xl font-bold tabular-nums text-[var(--foreground)]">
               {data.publicCauses.threadClosed}
             </dd>
@@ -176,7 +176,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
             ) : (
               Object.entries(data.totals.byKindInWindow).map(([k, n]) => (
                 <li key={k} className="flex justify-between gap-2">
-                  <span className="text-[var(--muted-foreground)]">{kindLabels[k] ?? k}</span>
+                  <span className="text-[var(--foreground-secondary)]">{kindLabels[k] ?? k}</span>
                   <span className="tabular-nums font-medium text-[var(--foreground)]">{n}</span>
                 </li>
               ))
@@ -193,7 +193,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
             ) : (
               Object.entries(data.totals.byStatusInWindow).map(([s, n]) => (
                 <li key={s} className="flex justify-between gap-2">
-                  <span className="text-[var(--muted-foreground)]">{statusLabels[s] ?? s}</span>
+                  <span className="text-[var(--foreground-secondary)]">{statusLabels[s] ?? s}</span>
                   <span className="tabular-nums font-medium text-[var(--foreground)]">{n}</span>
                 </li>
               ))
@@ -213,7 +213,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
             ) : (
               Object.entries(data.totals.byKind).map(([k, n]) => (
                 <li key={k} className="flex justify-between gap-2">
-                  <span className="text-[var(--muted-foreground)]">{kindLabels[k] ?? k}</span>
+                  <span className="text-[var(--foreground-secondary)]">{kindLabels[k] ?? k}</span>
                   <span className="tabular-nums font-medium text-[var(--foreground)]">{n}</span>
                 </li>
               ))
@@ -230,7 +230,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
             ) : (
               Object.entries(data.totals.byStatus).map(([s, n]) => (
                 <li key={s} className="flex justify-between gap-2">
-                  <span className="text-[var(--muted-foreground)]">{statusLabels[s] ?? s}</span>
+                  <span className="text-[var(--foreground-secondary)]">{statusLabels[s] ?? s}</span>
                   <span className="tabular-nums font-medium text-[var(--foreground)]">{n}</span>
                 </li>
               ))
@@ -242,7 +242,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
         <AdminSectionCard>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">Ops playbook tag (all-time)</h2>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
             From <code className="rounded bg-[var(--section-light)] px-1 py-0.5 text-[11px]">operationsPlaybookKey</code>{" "}
             on each report.
           </p>
@@ -254,7 +254,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
             ) : (
               data.byPlaybookAll.map((row) => (
                 <li key={row.key || "__unset__"} className="flex justify-between gap-2">
-                  <span className="font-mono text-xs text-[var(--muted-foreground)]">
+                  <span className="font-mono text-xs text-[var(--foreground-secondary)]">
                     {row.key || "(unassigned)"}
                   </span>
                   <span className="tabular-nums font-medium text-[var(--foreground)]">{row.count}</span>
@@ -273,7 +273,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
             ) : (
               data.byPlaybookInWindow.map((row) => (
                 <li key={`${row.key}-w`} className="flex justify-between gap-2">
-                  <span className="font-mono text-xs text-[var(--muted-foreground)]">
+                  <span className="font-mono text-xs text-[var(--foreground-secondary)]">
                     {row.key || "(unassigned)"}
                   </span>
                   <span className="tabular-nums font-medium text-[var(--foreground)]">{row.count}</span>
@@ -293,7 +293,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
             {data.byRegion.map((r) => (
               <li key={r.regionId} className="flex justify-between gap-2 px-4 py-2 text-sm">
                 <span className="text-[var(--foreground)]">{r.regionName}</span>
-                <span className="tabular-nums text-[var(--muted-foreground)]">{r.count}</span>
+                <span className="tabular-nums text-[var(--foreground-secondary)]">{r.count}</span>
               </li>
             ))}
           </AdminListPanel>
@@ -309,7 +309,7 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
             {data.byMonth.map((row) => (
               <li key={row.yearMonth} className="flex justify-between gap-2 px-4 py-2 text-sm">
                 <span className="font-mono text-[var(--foreground)]">{row.yearMonth}</span>
-                <span className="tabular-nums text-[var(--muted-foreground)]">{row.count}</span>
+                <span className="tabular-nums text-[var(--foreground-secondary)]">{row.count}</span>
               </li>
             ))}
           </AdminListPanel>

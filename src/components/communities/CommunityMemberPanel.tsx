@@ -237,7 +237,7 @@ export function CommunityMemberPanel({
 
   if (!memberAccountsEnabled) {
     return (
-      <p className="mt-8 text-sm text-[var(--muted-foreground)]">
+      <p className="mt-8 text-sm text-[var(--foreground-secondary)]">
         Member sign-in is not enabled on this deployment.
       </p>
     );
@@ -245,7 +245,7 @@ export function CommunityMemberPanel({
 
   if (misconfigured) {
     return (
-      <p className="mt-8 text-sm text-[var(--muted-foreground)]">
+      <p className="mt-8 text-sm text-[var(--foreground-secondary)]">
         Member accounts are not fully configured (server secret). Ask the operator to set{" "}
         <span className="font-mono">MEMBER_SESSION_SECRET</span>.
       </p>
@@ -253,7 +253,7 @@ export function CommunityMemberPanel({
   }
 
   if (membership === undefined) {
-    return <p className="mt-8 text-sm text-[var(--muted-foreground)]">Loading…</p>;
+    return <p className="mt-8 text-sm text-[var(--foreground-secondary)]">Loading…</p>;
   }
 
   const next = encodeURIComponent(signInReturnPath ?? `/communities/${communitySlug}`);
@@ -263,13 +263,13 @@ export function CommunityMemberPanel({
       <h2 className="text-sm font-semibold text-[var(--foreground)]">Membership</h2>
 
       {restrictedDetail && visibility === "MEMBERS_ONLY" ? (
-        <p className="mt-3 rounded-xl bg-[var(--section-light)] p-3 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-3 rounded-xl bg-[var(--section-light)] p-3 text-sm text-[var(--foreground-secondary)]">
           This is a <strong>members-only</strong> community. Sign in and join to read the full description and posts.
         </p>
       ) : null}
 
       {authRequired ? (
-        <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-3 text-sm text-[var(--foreground-secondary)]">
           <Link href={`/login?next=${next}`} className={primaryLinkClass}>
             Sign in
           </Link>{" "}
@@ -279,7 +279,7 @@ export function CommunityMemberPanel({
 
       {!authRequired && membership === null ? (
         <div className="mt-4">
-          <p className="text-sm text-[var(--muted-foreground)]">
+          <p className="text-sm text-[var(--foreground-secondary)]">
             {joinPolicy === "OPEN"
               ? "Join this community to post updates and concerns."
               : "Request to join — an administrator will approve your membership."}
@@ -291,7 +291,7 @@ export function CommunityMemberPanel({
       ) : null}
 
       {!authRequired && membership?.state === "PENDING_JOIN" ? (
-        <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-3 text-sm text-[var(--foreground-secondary)]">
           Your join request is pending admin approval.
           <Button
             type="button"
@@ -308,7 +308,7 @@ export function CommunityMemberPanel({
 
       {!authRequired && membership?.state === "ACTIVE" ? (
         <div className="mt-4 space-y-4">
-          <p className="text-sm text-[var(--muted-foreground)]">
+          <p className="text-sm text-[var(--foreground-secondary)]">
             You are a member
             {membership.role !== "MEMBER"
               ? ` (${communityMembershipRoleLabel(membership.role as CommunityMembershipRole)})`
@@ -322,12 +322,12 @@ export function CommunityMemberPanel({
           <form onSubmit={(e) => void onPost(e)} className="mt-6 border-t border-[var(--border)] pt-6">
             <h3 className="text-sm font-semibold text-[var(--foreground)]">New thread</h3>
             {postForumSlug ? (
-              <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+              <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                 Posting in forum <span className="font-mono font-medium text-[var(--foreground)]">{postForumSlug}</span>
                 .
               </p>
             ) : (
-              <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+              <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                 Threads go to the <strong>general</strong> forum unless you open another forum from the community page.
               </p>
             )}
@@ -374,20 +374,20 @@ export function CommunityMemberPanel({
             <Button type="submit" variant="primary" size="sm" className="mt-3" disabled={busy}>
               Submit
             </Button>
-            <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+            <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
               Posts may be held for moderation depending on site settings.
             </p>
           </form>
 
           <div className="mt-6 border-t border-[var(--border)] pt-6">
             <h3 className="text-sm font-semibold text-[var(--foreground)]">Verification</h3>
-            <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+            <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
               Queen Mothers and traditional authorities can request verified status. Upload supporting documents
               (photos or PDF, up to 10 files, 8 MB each). You can optionally include existing media library IDs if an
               operator uploaded files for you.
             </p>
             {verification ? (
-              <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+              <p className="mt-3 text-sm text-[var(--foreground-secondary)]">
                 Latest request:{" "}
                 <strong className="text-[var(--foreground)]">{verification.status.toLowerCase()}</strong> · submitted{" "}
                 {new Date(verification.createdAt).toLocaleDateString("en-GB", { dateStyle: "medium" })}
@@ -414,7 +414,7 @@ export function CommunityMemberPanel({
                     type="file"
                     multiple
                     accept="image/jpeg,image/png,image/webp,image/gif,application/pdf"
-                    className="mt-1 block w-full text-sm text-[var(--muted-foreground)] file:mr-3 file:rounded-lg file:border-0 file:bg-[var(--section-light)] file:px-3 file:py-2 file:text-sm file:font-medium file:text-[var(--foreground)]"
+                    className="mt-1 block w-full text-sm text-[var(--foreground-secondary)] file:mr-3 file:rounded-lg file:border-0 file:bg-[var(--section-light)] file:px-3 file:py-2 file:text-sm file:font-medium file:text-[var(--foreground)]"
                   />
                 </div>
                 <div>
@@ -448,7 +448,7 @@ export function CommunityMemberPanel({
                 </Button>
               </form>
             ) : null}
-            {verificationMessage ? <p className="mt-3 text-sm text-[var(--muted-foreground)]">{verificationMessage}</p> : null}
+            {verificationMessage ? <p className="mt-3 text-sm text-[var(--foreground-secondary)]">{verificationMessage}</p> : null}
           </div>
         </div>
       ) : null}

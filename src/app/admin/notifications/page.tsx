@@ -95,7 +95,7 @@ export default async function AdminNotificationsPage({ searchParams }: Props) {
           defaultValue={20}
           className="w-24 rounded-lg border border-[var(--border)] px-2 py-1 text-sm"
         />
-        <span className="text-sm text-[var(--muted-foreground)]">jobs now</span>
+        <span className="text-sm text-[var(--foreground-secondary)]">jobs now</span>
         <button
           type="submit"
           className="rounded-lg bg-[var(--primary)] px-3 py-1.5 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
@@ -108,17 +108,17 @@ export default async function AdminNotificationsPage({ searchParams }: Props) {
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Pending / processing</h2>
         <ul className="mt-3 space-y-2">
           {pending.length === 0 ? (
-            <li className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--muted-foreground)]">
+            <li className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--foreground-secondary)]">
               No pending jobs.
             </li>
           ) : (
             pending.map((job) => (
               <li key={job.id} className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm">
-                <p className="font-mono text-[11px] text-[var(--muted-foreground)]">{job.id}</p>
+                <p className="font-mono text-[11px] text-[var(--foreground-secondary)]">{job.id}</p>
                 <p className="text-[var(--foreground)]">
                   {job.channel} · {job.kind} · {job.status}
                 </p>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p className="text-xs text-[var(--foreground-secondary)]">
                   attempts {job.attempts}/{job.maxAttempts} · available {job.availableAt.toISOString()}
                 </p>
               </li>
@@ -131,7 +131,7 @@ export default async function AdminNotificationsPage({ searchParams }: Props) {
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Recent failed</h2>
         <ul className="mt-3 space-y-2">
           {failed.length === 0 ? (
-            <li className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--muted-foreground)]">
+            <li className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--foreground-secondary)]">
               No failed jobs.
             </li>
           ) : (

@@ -111,7 +111,7 @@ export default function DiasporaPage() {
           <h2 className="mt-10 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
             Choose your path
           </h2>
-          <p className="mt-2 max-w-3xl text-[15px] text-[var(--muted-foreground)] sm:text-base">
+          <p className="mt-2 max-w-3xl text-[15px] text-[var(--foreground-secondary)] sm:text-base">
             Three ways diaspora supporters typically use MBKRU — pick what matches you today. All paths are non-partisan
             and evidence-led; we never replace embassies, NIA, or courts.
           </p>
@@ -136,7 +136,7 @@ export default function DiasporaPage() {
               description="Structured feedback after a visit, or engagement from abroad only — we triage submissions to improve this hub and programmes."
             />
           </div>
-          <p className="mt-8 max-w-3xl text-sm leading-relaxed text-[var(--muted-foreground)]">
+          <p className="mt-8 max-w-3xl text-sm leading-relaxed text-[var(--foreground-secondary)]">
             <strong className="text-[var(--foreground)]">Response times:</strong> we aim to acknowledge diaspora
             feedback within <strong className="text-[var(--foreground)]">five business days</strong> (Ghana / GMT).
             Urgent consular or immigration matters must go to your{" "}
@@ -154,7 +154,7 @@ export default function DiasporaPage() {
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-4 py-5 sm:flex-row sm:items-center sm:px-6 lg:px-8">
           <div>
             <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">Feedback — visits or abroad-only</p>
-            <p className="mt-1 max-w-2xl text-sm text-[var(--muted-foreground)]">
+            <p className="mt-1 max-w-2xl text-sm text-[var(--foreground-secondary)]">
               Use the form after a trip, or choose “engaging from abroad” if you have not travelled recently — both help
               us prioritise signposting and partnerships.
             </p>
@@ -174,14 +174,14 @@ export default function DiasporaPage() {
       <section className="section-spacing section-full border-b border-[var(--border)] bg-[var(--section-light-tertiary)]">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <h2 className="font-display text-lg font-bold text-[var(--foreground)]">Important</h2>
-          <p className="mt-2 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+          <p className="mt-2 text-[15px] leading-relaxed text-[var(--foreground-secondary)] sm:text-base">
             MBKRU <strong className="text-[var(--foreground)]">signposts and educates</strong>. We are not a government
             office, law firm, or consulate. <strong className="text-[var(--foreground)]">Fees, rules, and processing times</strong>{" "}
             are set by official institutions and can change. Always{" "}
             <strong className="text-[var(--foreground)]">verify on .gov.gh and mission websites</strong> before you pay or
             travel.
           </p>
-          <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
             For policy background on the “17th Region” and the Diaspora Summit, read the{" "}
             <Link href="/news/diaspora-17th-region-2025" className={primaryLinkClass}>
               newsroom briefing
@@ -220,14 +220,14 @@ export default function DiasporaPage() {
             </div>
             <div className="flex flex-col justify-center lg:col-span-6">
               <h2 className="font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">Ask MBKRU Voice on this site</h2>
-              <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+              <p className="mt-4 text-[15px] leading-relaxed text-[var(--foreground-secondary)] sm:text-base">
                 Use the{" "}
                 <strong className="text-[var(--foreground)]">MBKRU Voice</strong> control (bottom of the screen) to ask
                 in plain language about this platform, accountability, and public signposting. You can attach a short text
                 or PDF. When your host enables it, answers may use live web search—always double-check time-sensitive
                 government rules on official sites.
               </p>
-              <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+              <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
                 More input options:{" "}
                 <Link href="/accessibility" className={primaryLinkClass}>
                   Accessibility &amp; voice options
@@ -249,7 +249,7 @@ export default function DiasporaPage() {
           <h2 className="font-display text-2xl font-bold text-balance text-[var(--foreground)] sm:text-3xl">
             Common documentation journeys
           </h2>
-          <p className="mt-3 max-w-3xl text-[15px] text-[var(--muted-foreground)] sm:text-base">
+          <p className="mt-3 max-w-3xl text-[15px] text-[var(--foreground-secondary)] sm:text-base">
             These are starting points, not checklists for every case. Follow the official source for your situation.
           </p>
           <div className="mt-10 space-y-10">
@@ -259,8 +259,8 @@ export default function DiasporaPage() {
                 className="rounded-2xl border border-[var(--border)] bg-[var(--section-light)]/50 p-6 sm:p-8"
               >
                 <h3 className="font-display text-xl font-bold text-[var(--foreground)]">{j.title}</h3>
-                <p className="mt-2 text-[15px] leading-relaxed text-[var(--muted-foreground)]">{j.summary}</p>
-                <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-[var(--muted-foreground)] sm:text-[15px]">
+                <p className="mt-2 text-[15px] leading-relaxed text-[var(--foreground-secondary)]">{j.summary}</p>
+                <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-[var(--foreground-secondary)] sm:text-[15px]">
                   {j.steps.map((s) => (
                     <li key={s} className="leading-relaxed">
                       {s}
@@ -290,7 +290,7 @@ export default function DiasporaPage() {
               </article>
             ))}
           </div>
-          <p className="mt-8 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-8 text-sm text-[var(--foreground-secondary)]">
             Other official hubs (verify currency):{" "}
             <a href={official.ghanaGov.href} target="_blank" rel="noopener noreferrer" className={primaryLinkClass}>
               {official.ghanaGov.label}
@@ -313,7 +313,7 @@ export default function DiasporaPage() {
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">Collaborate on accountability</h2>
-          <p className="mt-3 max-w-3xl text-[15px] text-[var(--muted-foreground)] sm:text-base">
+          <p className="mt-3 max-w-3xl text-[15px] text-[var(--foreground-secondary)] sm:text-base">
             Diaspora skills, remittances, and networks can strengthen scrutiny of how government serves citizens—when
             channelled through non-partisan, evidence-based engagement.
           </p>
@@ -328,12 +328,12 @@ export default function DiasporaPage() {
                 <Card key={c.href} href={c.href} title={c.label} description={c.body} className="h-full" />
               ))}
             {accountabilityOn ? null : (
-              <p className="col-span-full text-sm text-[var(--muted-foreground)]">
+              <p className="col-span-full text-sm text-[var(--foreground-secondary)]">
                 Government commitments and promise browsing appear when the accountability catalogue is enabled here.
               </p>
             )}
             {!petitionsOn ? (
-              <p className="col-span-full text-sm text-[var(--muted-foreground)]">Petitions appear when the programme enables them on this site.</p>
+              <p className="col-span-full text-sm text-[var(--foreground-secondary)]">Petitions appear when the programme enables them on this site.</p>
             ) : null}
           </div>
           <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">

@@ -119,18 +119,18 @@ export default async function ReportCardYearPage({
         breadcrumbCurrentLabel={String(meta.year)}
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <AccountabilityDisclaimerCallout variant="reportCardCycle" className="mt-0" />
-          <p className="mt-6 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-6 text-sm text-[var(--foreground-secondary)]">
             <Link href="/report-card" className={primaryNavLinkClass}>
               ← All cycles
             </Link>
           </p>
-          <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--muted-foreground)]">
+          <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--foreground-secondary)]">
             <Link href="/methodology" className={primaryNavLinkClass}>
               Methodology
             </Link>
-            <span aria-hidden className="text-[var(--muted-foreground)]/50">
+            <span aria-hidden className="text-[var(--foreground-secondary)]/50">
               ·
             </span>
             <Link
@@ -139,7 +139,7 @@ export default async function ReportCardYearPage({
             >
               Cycle JSON
             </Link>
-            <span aria-hidden className="text-[var(--muted-foreground)]/50">
+            <span aria-hidden className="text-[var(--foreground-secondary)]/50">
               ·
             </span>
             <span>
@@ -148,7 +148,7 @@ export default async function ReportCardYearPage({
             </span>
           </p>
           {!methodologyDepth ? (
-            <p className="mt-4 text-xs text-[var(--muted-foreground)]">
+            <p className="mt-4 text-xs text-[var(--foreground-secondary)]">
               This cycle page shows the <strong className="text-[var(--foreground)]">headline</strong> score and
               narrative for each MP. The <strong className="text-[var(--foreground)]">triple-index</strong> breakdown
               (legislative, constituency, citizen experience) and public dispute-window banners appear when the
@@ -186,7 +186,7 @@ export default async function ReportCardYearPage({
             </div>
           ) : null}
           {meta.methodology?.trim() ? (
-            <div className="mt-6 rounded-xl border border-[var(--border)] bg-white p-4 text-sm text-[var(--muted-foreground)]">
+            <div className="mt-6 rounded-xl border border-[var(--border)] bg-white p-4 text-sm text-[var(--foreground-secondary)]">
               <p className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground)]">
                 Cycle methodology
               </p>
@@ -195,10 +195,10 @@ export default async function ReportCardYearPage({
           ) : null}
 
           <div className="mt-6 rounded-xl border border-[var(--border)] bg-white p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
               Cycle at a glance
             </p>
-            <div className="mt-2 grid gap-2 text-sm text-[var(--muted-foreground)] sm:grid-cols-3">
+            <div className="mt-2 grid gap-2 text-sm text-[var(--foreground-secondary)] sm:grid-cols-3">
               <p>
                 Entries:{" "}
                 <span className="font-semibold text-[var(--foreground)]">{stats.totalEntries}</span>
@@ -213,7 +213,7 @@ export default async function ReportCardYearPage({
               </p>
             </div>
             {topScored.length > 0 ? (
-              <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+              <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
                 Quick picks:{" "}
                 {topScored.map((e, i) => (
                   <span key={e.id}>
@@ -235,7 +235,7 @@ export default async function ReportCardYearPage({
             <form method="get" className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
               <input type="hidden" name="page" value="1" />
               <label className="text-sm">
-                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
                   Filter by MP
                 </span>
                 <select
@@ -265,21 +265,21 @@ export default async function ReportCardYearPage({
                 <span />
               )}
             </form>
-            <p className="mt-3 text-xs text-[var(--muted-foreground)]">
+            <p className="mt-3 text-xs text-[var(--foreground-secondary)]">
               Showing {filteredEntries.length} entr
               {filteredEntries.length === 1 ? "y" : "ies"} on this page (page {safePage} of {totalPages},{" "}
               {totalFiltered} total
               {selectedMp ? " matching filter" : ""}). Sorted by score (pending entries last).
             </p>
             {selectedExists ? (
-              <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+              <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                 Selected MP: {members.find((m) => m.slug === selectedMp)?.name}
               </p>
             ) : null}
           </div>
 
           {filteredEntries.length === 0 ? (
-            <p className="mt-8 text-sm text-[var(--muted-foreground)]">No entries on this page.</p>
+            <p className="mt-8 text-sm text-[var(--foreground-secondary)]">No entries on this page.</p>
           ) : (
             <ul className="mt-8 space-y-6">
               {filteredEntries.map((e) => (
@@ -292,7 +292,7 @@ export default async function ReportCardYearPage({
                       <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">
                         {e.member.name}
                       </h2>
-                      <p className="text-xs text-[var(--muted-foreground)]">
+                      <p className="text-xs text-[var(--foreground-secondary)]">
                         {e.member.role}
                         {e.member.party ? ` · ${e.member.party}` : ""}
                       </p>
@@ -303,7 +303,7 @@ export default async function ReportCardYearPage({
                           {e.overallScore}
                         </span>
                       ) : (
-                        <span className="rounded-full bg-[var(--muted)]/25 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                        <span className="rounded-full bg-[var(--muted)]/25 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
                           Score pending
                         </span>
                       )
@@ -321,13 +321,13 @@ export default async function ReportCardYearPage({
                     </div>
                   ) : null}
                   {e.narrative ? (
-                    <p className="mt-3 whitespace-pre-wrap text-sm text-[var(--muted-foreground)]">
+                    <p className="mt-3 whitespace-pre-wrap text-sm text-[var(--foreground-secondary)]">
                       {e.narrative}
                     </p>
                   ) : null}
                   {e.metrics != null ? (
                     <div className="mt-3 rounded-lg border border-[var(--border)] bg-[var(--section-light)]/60 p-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
                         Metrics
                       </p>
                       <div className="mt-2">
@@ -356,7 +356,7 @@ export default async function ReportCardYearPage({
               className="mt-10 flex flex-col gap-3 border-t border-[var(--border)] pt-6 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between"
               aria-label="Report card pages"
             >
-              <p className="text-xs text-[var(--muted-foreground)]">
+              <p className="text-xs text-[var(--foreground-secondary)]">
                 Page {safePage} of {totalPages} · {REPORT_CARD_PUBLIC_PAGE_SIZE} rows per page ·{" "}
                 <Link href={`/api/report-card/${meta.year}?page=${safePage}`} className={primaryNavLinkClass}>
                   JSON (this page)
@@ -375,7 +375,7 @@ export default async function ReportCardYearPage({
                     ← Previous page
                   </Link>
                 ) : (
-                  <span className="text-[var(--muted-foreground)]">← Previous page</span>
+                  <span className="text-[var(--foreground-secondary)]">← Previous page</span>
                 )}
                 {safePage < totalPages ? (
                   <Link
@@ -389,7 +389,7 @@ export default async function ReportCardYearPage({
                     Next page →
                   </Link>
                 ) : (
-                  <span className="text-[var(--muted-foreground)]">Next page →</span>
+                  <span className="text-[var(--foreground-secondary)]">Next page →</span>
                 )}
               </div>
             </nav>

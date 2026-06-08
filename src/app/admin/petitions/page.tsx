@@ -105,7 +105,7 @@ export default async function AdminPetitionsPage({ searchParams }: Props) {
 
       <AdminListPanel className="mt-6">
         {petitions.length === 0 ? (
-          <li className="p-6 text-sm text-[var(--muted-foreground)]">No petitions in this view.</li>
+          <li className="p-6 text-sm text-[var(--foreground-secondary)]">No petitions in this view.</li>
         ) : (
           petitions.map((p) => (
             <li key={p.id} className="flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:justify-between">
@@ -115,14 +115,14 @@ export default async function AdminPetitionsPage({ searchParams }: Props) {
                     {p.title}
                   </Link>
                 </p>
-                <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                   <span
                     className={
                       p.status === "OPEN"
                         ? "font-medium text-emerald-700"
                         : p.status === "CLOSED"
                           ? "font-medium text-amber-800"
-                          : "font-medium text-[var(--muted-foreground)]"
+                          : "font-medium text-[var(--foreground-secondary)]"
                     }
                   >
                     {p.status.replace(/_/g, " ")}
@@ -131,7 +131,7 @@ export default async function AdminPetitionsPage({ searchParams }: Props) {
                   {p._count.signatures} signature{p._count.signatures === 1 ? "" : "s"}
                   {p.region?.name ? ` · ${p.region.name}` : ""}
                 </p>
-                <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                   By {p.author.displayName ?? p.author.email} ·{" "}
                   <Link
                     href={`/petitions/${encodeURIComponent(p.slug)}`}

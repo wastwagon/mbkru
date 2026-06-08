@@ -36,20 +36,24 @@ export default async function MethodologyPage() {
 
       <section className="section-spacing section-full bg-white">
         <div className="mx-auto max-w-3xl px-4 text-[var(--foreground)] sm:px-6 lg:px-8">
+          <p className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+            How MBKRU documents pledges, scores, and citizen voice — independent civic monitoring, not a government
+            channel or legal finding.
+          </p>
           {showPromises || showReportCard ? (
-            <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-[var(--muted-foreground)]">
+            <p className="mt-6 flex flex-wrap gap-x-4 gap-y-1 text-sm text-[var(--foreground-secondary)]">
               {showPromises ? (
                 <>
                   <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className={primaryNavLinkClass}>
                     {accountabilityCatalogueNavMedium.byMp}
                   </Link>
-                  <span aria-hidden className="text-[var(--muted-foreground)]/50">
+                  <span aria-hidden className="text-[var(--foreground-secondary)]/50">
                     ·
                   </span>
                   <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={primaryNavLinkClass}>
                     {accountabilityCatalogueNavMedium.browseAll}
                   </Link>
-                  <span aria-hidden className="text-[var(--muted-foreground)]/50">
+                  <span aria-hidden className="text-[var(--foreground-secondary)]/50">
                     ·
                   </span>
                   <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments} className={primaryNavLinkClass}>
@@ -58,7 +62,7 @@ export default async function MethodologyPage() {
                 </>
               ) : null}
               {showPromises && showReportCard ? (
-                <span aria-hidden className="text-[var(--muted-foreground)]/50">
+                <span aria-hidden className="text-[var(--foreground-secondary)]/50">
                   ·
                 </span>
               ) : null}
@@ -70,7 +74,7 @@ export default async function MethodologyPage() {
             </p>
           ) : null}
           <h2 className="mt-8 font-display text-xl font-bold">Principles</h2>
-          <ul className="mt-4 list-inside list-disc space-y-2 text-[var(--muted-foreground)]">
+          <ul className="mt-4 list-inside list-disc space-y-2 text-[var(--foreground-secondary)]">
             <li>
               <strong className="text-[var(--foreground)]">Evidence-led:</strong> claims about promises or performance
               cite sources (manifestos, Hansard-style records, budgets, or on-the-record statements).
@@ -88,7 +92,7 @@ export default async function MethodologyPage() {
           <h2 id="key-terms" className="mt-12 font-display text-xl font-bold">
             {accountabilityProse.methodologyKeyTermsSectionHeading}
           </h2>
-          <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-3 text-sm text-[var(--foreground-secondary)]">
             {accountabilityProse.methodologyKeyTermsSectionIntro}
           </p>
           <dl
@@ -98,7 +102,7 @@ export default async function MethodologyPage() {
             {methodologyKeyTerms.map((row) => (
               <div key={row.term}>
                 <dt className="font-semibold text-[var(--foreground)]">{row.term}</dt>
-                <dd className="mt-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{row.body}</dd>
+                <dd className="mt-1 text-sm leading-relaxed text-[var(--foreground-secondary)]">{row.body}</dd>
               </div>
             ))}
           </dl>
@@ -106,10 +110,10 @@ export default async function MethodologyPage() {
           <h2 className="mt-12 font-display text-xl font-bold">
             {accountabilityProse.methodologyCatalogueSectionHeading}
           </h2>
-          <p className="mt-4 text-[var(--muted-foreground)]">{accountabilityProse.methodologyPromiseTrackingBody}</p>
+          <p className="mt-4 text-[var(--foreground-secondary)]">{accountabilityProse.methodologyPromiseTrackingBody}</p>
 
           <h2 className="mt-12 font-display text-xl font-bold">Score-style views (People&apos;s Report Card)</h2>
-          <p className="mt-4 text-[var(--muted-foreground)]">
+          <p className="mt-4 text-[var(--foreground-secondary)]">
             Report cards summarise multiple dimensions using a <strong className="text-[var(--foreground)]">published</strong>{" "}
             methodology. Scores are explanatory, not legal findings — they complement CHRAJ, the Auditor-General, and
             the Electoral Commission; they never substitute for them.
@@ -117,7 +121,7 @@ export default async function MethodologyPage() {
 
           {showReportCard && !methodologyLive ? (
             <p
-              className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--section-light)]/50 px-4 py-3 text-sm text-[var(--muted-foreground)]"
+              className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--section-light)]/50 px-4 py-3 text-sm text-[var(--foreground-secondary)]"
               role="note"
             >
               <strong className="text-[var(--foreground)]">Deployment note:</strong> when the People&apos;s Report Card is
@@ -134,7 +138,7 @@ export default async function MethodologyPage() {
           <h2 id="claims-and-citations" className="mt-10 font-display text-xl font-bold">
             Claims, citations &amp; limitations
           </h2>
-          <ul className="mt-4 list-inside list-disc space-y-2 text-[var(--muted-foreground)]">
+          <ul className="mt-4 list-inside list-disc space-y-2 text-[var(--foreground-secondary)]">
             <li>
               <strong className="text-[var(--foreground)]">{accountabilityProse.methodologyClaimsBulletStrong}</strong>{" "}
               are tracked as editorial catalogue rows with sources (manifesto, speech, official URL) where our QA requires
@@ -155,7 +159,7 @@ export default async function MethodologyPage() {
             </li>
           </ul>
 
-          <p className="mt-12 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-12 text-sm text-[var(--foreground-secondary)]">
             {showPromises || showReportCard ? (
               <>
                 When enabled for this deployment, partners can pull the same MP roster, public commitment catalogue, and

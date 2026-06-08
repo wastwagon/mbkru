@@ -55,7 +55,7 @@ export default function ContactPage() {
               <h2 className="font-display text-2xl font-bold text-[var(--foreground)]">
                 Send a Message
               </h2>
-              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+              <p className="mt-2 text-sm text-[var(--foreground-secondary)]">
                 We aim to respond within two business days. For urgent safety matters, contact the police or emergency services first.
               </p>
               <ContactForm />
@@ -73,7 +73,7 @@ export default function ContactPage() {
                     <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">
                       {block.heading}
                     </h3>
-                    <p className="mt-2 text-[var(--muted-foreground)]">
+                    <p className="mt-2 text-[var(--foreground-secondary)]">
                       {block.content}
                     </p>
                   </div>

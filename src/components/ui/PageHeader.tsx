@@ -186,14 +186,14 @@ export function PageHeader({ title, description, subtitle, breadcrumbs, breadcru
               {crumbs.map((item, i) => (
                 <li key={i} className="flex shrink-0 items-center gap-x-1.5 sm:gap-x-2">
                   {i > 0 && (
-                    <span className="shrink-0 text-[var(--muted-foreground)]/50" aria-hidden>
+                    <span className="shrink-0 text-[var(--foreground-secondary)]/50" aria-hidden>
                       /
                     </span>
                   )}
                   {item.href ? (
                     <Link
                       href={item.href}
-                      className={`rounded-md px-1 py-1 font-medium text-[var(--muted-foreground)] underline-offset-4 transition-colors hover:text-[var(--primary)] sm:px-0 sm:py-0.5 ${focusRingSmClass}`}
+                      className={`rounded-md px-1 py-1 font-medium text-[var(--foreground-secondary)] underline-offset-4 transition-colors hover:text-[var(--primary)] sm:px-0 sm:py-0.5 ${focusRingSmClass}`}
                     >
                       {item.label}
                     </Link>
@@ -216,7 +216,7 @@ export function PageHeader({ title, description, subtitle, breadcrumbs, breadcru
             {title}
           </h1>
           {blurb && (
-            <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+            <p className="mt-4 text-[15px] leading-relaxed text-[var(--foreground-secondary)] sm:text-base">
               {blurb}
             </p>
           )}

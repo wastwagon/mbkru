@@ -20,10 +20,10 @@ export function PromiseCatalogueSurfacesCallout({ catalogueLens }: Props) {
   const showPeopleReportCard = isReportCardPublicEnabled();
   return (
     <aside
-      className="mx-auto mt-6 max-w-3xl rounded-2xl border border-[var(--border)] bg-white/90 px-4 py-4 text-sm leading-relaxed text-[var(--muted-foreground)] shadow-sm sm:px-5"
+      className="mx-auto mt-6 max-w-3xl rounded-2xl border border-[var(--primary)]/20 bg-gradient-to-br from-[var(--primary)]/6 to-white px-4 py-4 text-sm leading-relaxed text-[var(--foreground-secondary)] shadow-sm sm:px-5"
       aria-label="How this page relates to the public accountability catalogue"
     >
-      <p className="font-medium text-[var(--foreground)]">One pledge database</p>
+      <p className="font-semibold text-[var(--foreground)]">One pledge database</p>
       {catalogueLens === "government" ? (
         <p className="mt-2">
           This preset shows only editorial <strong className="text-[var(--foreground)]">government-programme</strong>{" "}
@@ -47,11 +47,11 @@ export function PromiseCatalogueSurfacesCallout({ catalogueLens }: Props) {
           preset for programme- and executive-tagged rows only — same catalogue, narrower lens.
         </p>
       )}
-      <details className="mt-2 rounded-lg border border-dashed border-[var(--border)] bg-[var(--section-light)]/50 px-3 py-2 text-[13px] text-[var(--muted-foreground)]">
-        <summary className="cursor-pointer font-medium text-[var(--foreground)]">Partners &amp; developers</summary>
+      <details className="mt-3 rounded-xl border border-dashed border-[var(--border)] bg-white/80 px-3 py-2 text-[13px] text-[var(--foreground-secondary)]">
+        <summary className="cursor-pointer font-semibold text-[var(--foreground)]">Partners &amp; developers</summary>
         <p className="mt-2">
           Filtered data is available as JSON via{" "}
-          <code className="rounded bg-white px-1.5 py-0.5 text-[12px] text-[var(--foreground)]">GET /api/promises</code>{" "}
+          <code className="rounded bg-[var(--section-light)] px-1.5 py-0.5 text-[12px] text-[var(--foreground)]">GET /api/promises</code>{" "}
           (see{" "}
           {showPartnerPage ? (
             <Link href="/partner-api" className={`${primaryLinkClass} font-medium`}>

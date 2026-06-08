@@ -80,17 +80,17 @@ export default async function AdminPetitionDetailPage({ params, searchParams }: 
         }
         description={
           <div className="space-y-1 text-sm">
-            <p className="text-[var(--muted-foreground)]">
+            <p className="text-[var(--foreground-secondary)]">
               Slug{" "}
               <Link href={`/petitions/${encodeURIComponent(petition.slug)}`} className={primaryLinkClass} target="_blank" rel="noopener noreferrer">
                 /petitions/{petition.slug}
               </Link>
             </p>
-            <p className="text-[var(--muted-foreground)]">
+            <p className="text-[var(--foreground-secondary)]">
               Status: <span className="font-medium text-[var(--foreground)]">{petition.status}</span>
               {petition.region?.name ? ` · ${petition.region.name}` : ""}
             </p>
-            <p className="text-[var(--muted-foreground)]">
+            <p className="text-[var(--foreground-secondary)]">
               Author: {petition.author.displayName ?? petition.author.email}{" "}
               <span className="text-xs opacity-80">({petition.author.email})</span>
             </p>
@@ -155,19 +155,19 @@ export default async function AdminPetitionDetailPage({ params, searchParams }: 
             Download CSV
           </a>
         </div>
-        <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
           Removing a signature is irreversible — use for fraud or duplicated emails after review.
         </p>
         {petition.signatures.length === 0 ? (
-          <p className="mt-4 text-sm text-[var(--muted-foreground)]">None yet.</p>
+          <p className="mt-4 text-sm text-[var(--foreground-secondary)]">None yet.</p>
         ) : (
           <ul className="mt-4 divide-y divide-[var(--border)] text-sm">
             {petition.signatures.map((s) => (
               <li key={s.id} className="flex flex-col gap-2 py-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <p className="font-mono text-xs text-[var(--muted-foreground)]">{s.signerEmail}</p>
+                  <p className="font-mono text-xs text-[var(--foreground-secondary)]">{s.signerEmail}</p>
                   {s.signerName ? <p className="text-[var(--foreground)]">{s.signerName}</p> : null}
-                  <p className="text-xs text-[var(--muted-foreground)]">
+                  <p className="text-xs text-[var(--foreground-secondary)]">
                     {s.createdAt.toLocaleString("en-GB")}
                     {s.memberId ? ` · member ${s.memberId.slice(0, 8)}…` : ""} · show name: {s.consentShowName ? "yes" : "no"}
                     {" · updates: "}
@@ -198,15 +198,15 @@ export default async function AdminPetitionDetailPage({ params, searchParams }: 
           </Link>
         </div>
         {petition.pendingSignatures.length === 0 ? (
-          <p className="mt-4 text-sm text-[var(--muted-foreground)]">None.</p>
+          <p className="mt-4 text-sm text-[var(--foreground-secondary)]">None.</p>
         ) : (
           <ul className="mt-4 divide-y divide-[var(--border)] text-sm">
             {petition.pendingSignatures.map((p) => (
               <li key={p.id} className="flex flex-col gap-2 py-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <p className="font-mono text-xs text-[var(--muted-foreground)]">{p.signerEmail}</p>
+                  <p className="font-mono text-xs text-[var(--foreground-secondary)]">{p.signerEmail}</p>
                   {p.signerName ? <p>{p.signerName}</p> : null}
-                  <p className="text-xs text-[var(--muted-foreground)]">
+                  <p className="text-xs text-[var(--foreground-secondary)]">
                     Created {p.createdAt.toLocaleString("en-GB")} · expires {p.expiresAt.toLocaleString("en-GB")}
                   </p>
                 </div>

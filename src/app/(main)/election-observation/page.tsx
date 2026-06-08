@@ -51,11 +51,11 @@ export default function ElectionObservationPage() {
               Track a report
             </Button>
           </div>
-          <p className="mt-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--muted-foreground)]">
+          <p className="mt-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--foreground-secondary)]">
             <Link href="/citizens-voice" className={primaryNavLinkClass}>
               ← MBKRU Voice
             </Link>
-            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+            <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
               ·
             </span>
             <Link href="/situational-alerts" className={primaryNavLinkClass}>

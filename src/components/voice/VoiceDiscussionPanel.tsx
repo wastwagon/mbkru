@@ -155,7 +155,7 @@ export function VoiceDiscussionPanel({ initial, reportId }: Props) {
       <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
         <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">Report</h2>
         <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-[var(--foreground)]">{data.body}</p>
-        <p className="mt-4 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-4 text-xs text-[var(--foreground-secondary)]">
           Submitted {new Date(data.createdAt).toLocaleString("en-GB")}
           {data.regionName ? ` · ${data.regionName}` : ""}
         </p>
@@ -163,11 +163,11 @@ export function VoiceDiscussionPanel({ initial, reportId }: Props) {
 
       <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
         <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">Support</h2>
-        <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
           Members can signal shared concern — not a vote or legal filing.
         </p>
         <p className="mt-4 font-display text-3xl font-bold tabular-nums text-[var(--primary)]">{data.supportCount}</p>
-        <p className="text-xs text-[var(--muted-foreground)]">members voiced support</p>
+        <p className="text-xs text-[var(--foreground-secondary)]">members voiced support</p>
         {data.sessionSignedIn ? (
           <button
             type="button"
@@ -178,7 +178,7 @@ export function VoiceDiscussionPanel({ initial, reportId }: Props) {
             {data.viewerSupported ? "Remove my support" : "I share this concern"}
           </button>
         ) : (
-          <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
             <a href={`/login?next=${encodeURIComponent(basePath)}`} className={primaryLinkClass}>
               Sign in
             </a>{" "}
@@ -189,7 +189,7 @@ export function VoiceDiscussionPanel({ initial, reportId }: Props) {
 
       <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
         <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">Discussion</h2>
-        <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
           Stay factual and respectful. You are accountable for what you post.
         </p>
         {error ? (
@@ -198,7 +198,7 @@ export function VoiceDiscussionPanel({ initial, reportId }: Props) {
 
         <ul className="mt-6 space-y-6">
           {roots.length === 0 ? (
-            <li className="text-sm text-[var(--muted-foreground)]">No comments yet.</li>
+            <li className="text-sm text-[var(--foreground-secondary)]">No comments yet.</li>
           ) : (
             roots.map((c) => (
               <li key={c.id} className="border-b border-[var(--border)] pb-6 last:border-0">
@@ -232,7 +232,7 @@ export function VoiceDiscussionPanel({ initial, reportId }: Props) {
         {data.sessionSignedIn ? (
           <form onSubmit={(e) => postComment(e, replyParentId)} className="mt-8 space-y-3">
             {replyParentId ? (
-              <p className="text-xs text-[var(--muted-foreground)]">
+              <p className="text-xs text-[var(--foreground-secondary)]">
                 Replying to thread ·{" "}
                 <button type="button" className={primaryLinkClass} onClick={() => setReplyParentId(null)}>
                   Cancel
@@ -260,7 +260,7 @@ export function VoiceDiscussionPanel({ initial, reportId }: Props) {
             </button>
           </form>
         ) : (
-          <p className="mt-8 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-8 text-sm text-[var(--foreground-secondary)]">
             <a href={`/login?next=${encodeURIComponent(basePath)}`} className={primaryLinkClass}>
               Sign in
             </a>{" "}
@@ -295,7 +295,7 @@ function CommentBlock({
 
   return (
     <div>
-      <p className={`${small ? "text-[11px]" : "text-xs"} font-medium text-[var(--muted-foreground)]`}>
+      <p className={`${small ? "text-[11px]" : "text-xs"} font-medium text-[var(--foreground-secondary)]`}>
         {comment.authorLabel} · {new Date(comment.createdAt).toLocaleString()}
       </p>
       <p className="mt-1 whitespace-pre-wrap text-sm text-[var(--foreground)]">{comment.body}</p>
@@ -309,7 +309,7 @@ function CommentBlock({
               className={`rounded-full border px-2.5 py-1 text-xs font-medium transition ${
                 comment.viewerReaction === k
                   ? "border-[var(--primary)] bg-[var(--primary)]/12 text-[var(--primary)]"
-                  : "border-[var(--border)] bg-white text-[var(--muted-foreground)] hover:bg-[var(--section-light)]"
+                  : "border-[var(--border)] bg-white text-[var(--foreground-secondary)] hover:bg-[var(--section-light)]"
               }`}
             >
               {labels[k]} · {comment.reactions[k]}
@@ -318,7 +318,7 @@ function CommentBlock({
             <a
               key={k}
               href={discussionLoginHref}
-              className="rounded-full border border-[var(--border)] bg-[var(--section-light)] px-2.5 py-1 text-xs text-[var(--muted-foreground)] hover:bg-[var(--muted)]/15"
+              className="rounded-full border border-[var(--border)] bg-[var(--section-light)] px-2.5 py-1 text-xs text-[var(--foreground-secondary)] hover:bg-[var(--muted)]/15"
             >
               {labels[k]} · {comment.reactions[k]} — sign in
             </a>

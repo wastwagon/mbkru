@@ -21,7 +21,7 @@ export function MethodologyGhanaReportCardSection() {
       <h2 className="font-display text-xl font-bold text-[var(--foreground)]">
         People&apos;s Report Card — Ghana methodology (v1)
       </h2>
-      <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
+      <p className="mt-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
         MBKRU does not copy a single foreign scorecard wholesale. We combine international transparency practice with{" "}
         <strong className="text-[var(--foreground)]">Ghanaian institutions</strong> (Parliament, Hansard, constitutional
         attendance debate, constituency project transparency) and our own{" "}
@@ -30,7 +30,7 @@ export function MethodologyGhanaReportCardSection() {
       </p>
 
       <h3 className="mt-8 font-display text-lg font-semibold text-[var(--foreground)]">Evidence ladder</h3>
-      <ul className="mt-3 list-inside list-disc space-y-2 text-sm text-[var(--muted-foreground)]">
+      <ul className="mt-3 list-inside list-disc space-y-2 text-sm text-[var(--foreground-secondary)]">
         <li>
           <strong className="text-[var(--foreground)]">Tier A — Official / primary:</strong> Parliament materials,
           cited manifesto excerpts, gazettes, authoritative .gov.gh instructions.
@@ -48,11 +48,11 @@ export function MethodologyGhanaReportCardSection() {
       </ul>
 
       <h3 className="mt-8 font-display text-lg font-semibold text-[var(--foreground)]">MP index — three components</h3>
-      <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+      <p className="mt-3 text-sm text-[var(--foreground-secondary)]">
         Each component is scored and published with its own formula and limitations. A headline combines them with{" "}
         <strong className="text-[var(--foreground)]">fixed weights</strong> (reviewed annually, not changed mid-cycle).
       </p>
-      <ol className="mt-4 list-inside list-decimal space-y-3 text-sm text-[var(--muted-foreground)]">
+      <ol className="mt-4 list-inside list-decimal space-y-3 text-sm text-[var(--foreground-secondary)]">
         <li>
           <strong className="text-[var(--foreground)]">Legislative duty (0–100)</strong> — plenary and voting presence
           (with fair exclusions for Speaker, deputies, documented leave); legislative initiative (bills, motions,
@@ -77,7 +77,7 @@ export function MethodologyGhanaReportCardSection() {
       </p>
 
       <h3 className="mt-8 font-display text-lg font-semibold text-[var(--foreground)]">Government performance (parallel)</h3>
-      <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+      <p className="mt-3 text-sm text-[var(--foreground-secondary)]">
         Programme and manifesto commitments use a commitment lifecycle (not started → in progress → substantially
         complete → complete / blocked) with evidence packs — similar in spirit to open-government commitment tracking.
         Citizen reports can illustrate delivery problems but <strong className="text-[var(--foreground)]">do not alone</strong>{" "}
@@ -85,7 +85,7 @@ export function MethodologyGhanaReportCardSection() {
       </p>
 
       <h3 className="mt-8 font-display text-lg font-semibold text-[var(--foreground)]">Publication governance</h3>
-      <ul className="mt-3 list-inside list-disc space-y-2 text-sm text-[var(--muted-foreground)]">
+      <ul className="mt-3 list-inside list-disc space-y-2 text-sm text-[var(--foreground-secondary)]">
         <li>Fixed publication cycles and dataset freeze dates.</li>
         <li>
           <strong className="text-[var(--foreground)]">Pre-publication factual dispute window</strong> for Tier A
@@ -96,7 +96,7 @@ export function MethodologyGhanaReportCardSection() {
       </ul>
 
       <h3 className="mt-8 font-display text-lg font-semibold text-[var(--foreground)]">International references we adapted</h3>
-      <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+      <p className="mt-2 text-sm text-[var(--foreground-secondary)]">
         We drew structure and fairness ideas from the following; Ghana data availability and MBKRU editorial sign-off
         determine what is live in each cycle:
       </p>
@@ -110,7 +110,7 @@ export function MethodologyGhanaReportCardSection() {
         ))}
       </ul>
 
-      <p className="mt-8 text-sm text-[var(--muted-foreground)]">
+      <p className="mt-8 text-sm text-[var(--foreground-secondary)]">
         For diaspora-facing signposting and how accountability tools roll out by phase, see{" "}
         <Link href="/diaspora" className={primaryNavLinkClass}>
           Diaspora support

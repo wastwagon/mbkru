@@ -59,18 +59,18 @@ export default async function CommunityForumsIndexPage({ params }: Props) {
       <PageHeader title={`${c.name} · Forums`} description="Discussion spaces for this community." />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="text-sm text-[var(--muted-foreground)]">
+          <p className="text-sm text-[var(--foreground-secondary)]">
             <Link href={`/communities/${encodeURIComponent(c.slug)}`} className={primaryNavLinkClass}>
               ← Back to community
             </Link>
-            <span className="mx-2 text-[var(--muted-foreground)]/50">·</span>
+            <span className="mx-2 text-[var(--foreground-secondary)]/50">·</span>
             <Link href="/communities" className={primaryNavLinkClass}>
               All communities
             </Link>
           </p>
 
           {forums.length === 0 ? (
-            <p className="mt-8 text-sm text-[var(--muted-foreground)]">No forums yet. Run database migrations and seed, or ask an operator.</p>
+            <p className="mt-8 text-sm text-[var(--foreground-secondary)]">No forums yet. Run database migrations and seed, or ask an operator.</p>
           ) : (
             <ul className="mt-8 space-y-3">
               {forums.map((f) => (
@@ -86,7 +86,7 @@ export default async function CommunityForumsIndexPage({ params }: Props) {
                       Locked
                     </span>
                   ) : null}
-                  <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+                  <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
                     <span className="tabular-nums font-semibold text-[var(--foreground)]">{f.publishedThreadCount}</span>{" "}
                     published thread{f.publishedThreadCount === 1 ? "" : "s"}
                     {f.lastActivityAt ? (
@@ -99,8 +99,8 @@ export default async function CommunityForumsIndexPage({ params }: Props) {
                       </>
                     ) : null}
                   </p>
-                  {f.description ? <p className="mt-2 text-sm text-[var(--muted-foreground)]">{f.description}</p> : null}
-                  <p className="mt-2 font-mono text-[11px] text-[var(--muted-foreground)]">/{f.slug}</p>
+                  {f.description ? <p className="mt-2 text-sm text-[var(--foreground-secondary)]">{f.description}</p> : null}
+                  <p className="mt-2 font-mono text-[11px] text-[var(--foreground-secondary)]">/{f.slug}</p>
                 </li>
               ))}
             </ul>

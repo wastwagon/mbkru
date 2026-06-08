@@ -69,7 +69,7 @@ export default async function NewsArticlePage({ params }: Props) {
             </div>
             <div className="mt-8">
               {dateLabel ? (
-                <span className="text-sm font-medium text-[var(--muted-foreground)]">{dateLabel}</span>
+                <span className="text-sm font-medium text-[var(--foreground-secondary)]">{dateLabel}</span>
               ) : null}
               <div className="mt-6">
                 <MarkdownBody content={cms.body} />

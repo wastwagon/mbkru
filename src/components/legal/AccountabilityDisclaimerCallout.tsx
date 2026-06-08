@@ -17,7 +17,7 @@ export function AccountabilityDisclaimerCallout({ variant, className = "" }: Pro
 
   return (
     <aside
-      className={`rounded-xl border border-[var(--border)] bg-white/90 p-4 text-sm leading-relaxed text-[var(--muted-foreground)] shadow-sm ${className}`.trim()}
+      className={`rounded-xl border border-[var(--border)] bg-white/90 p-4 text-sm leading-relaxed text-[var(--foreground-secondary)] shadow-sm ${className}`.trim()}
       aria-label={entry.title}
     >
       <p className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground)]">{entry.title}</p>

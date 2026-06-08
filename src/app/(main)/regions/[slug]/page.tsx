@@ -69,17 +69,43 @@ export default async function RegionHubPage({ params, searchParams }: Props) {
       />
 
       <section className="section-spacing section-full bg-[var(--section-light)] pb-10">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <nav className="mb-8 text-sm text-[var(--muted-foreground)]">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <nav className="mb-6 text-sm text-[var(--foreground-secondary)]">
             <Link href="/about#key-operational-pillars" className={primaryNavLinkClass}>
               ← Ghana regions map
             </Link>
           </nav>
-          <RegionDetailContent region={staticRegion} />
+          <p className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+            Independent civic monitoring scoped to {staticRegion.name} — Voice reports, Report Card scores, and community
+            spaces linked to traditional areas. Not an official government channel.{" "}
+            <Link href="/methodology" className={primaryNavLinkClass}>
+              Methodology
+            </Link>
+          </p>
+          <p className="mt-4 hidden flex-wrap items-center gap-x-2 gap-y-1 text-sm text-[var(--foreground-secondary)] sm:flex">
+            <Link href="/parliament-tracker" className={primaryNavLinkClass}>
+              Parliament tracker
+            </Link>
+            <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
+              ·
+            </span>
+            <Link href="/communities" className={primaryNavLinkClass}>
+              Communities
+            </Link>
+            <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
+              ·
+            </span>
+            <Link href="/citizens-voice" className={primaryNavLinkClass}>
+              MBKRU Voice
+            </Link>
+          </p>
+          <div className="mt-8">
+            <RegionDetailContent region={staticRegion} />
+          </div>
         </div>
       </section>
 
-      <div className="mx-auto max-w-3xl space-y-8 px-4 pb-12 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-4xl space-y-8 px-4 pb-12 sm:px-6 lg:px-8">
         {dbRegion ? (
           <RegionCommunitiesSpotlight regionSlug={slug} regionName={staticRegion.name} />
         ) : null}
@@ -97,7 +123,7 @@ export default async function RegionHubPage({ params, searchParams }: Props) {
 
       {dbRegion && !reportBrowseEnabled ? (
         <section className="section-spacing pb-16">
-          <div className="mx-auto max-w-3xl px-4 text-center text-sm text-[var(--muted-foreground)] sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-3xl px-4 text-center text-sm text-[var(--foreground-secondary)] sm:px-6 lg:px-8">
             People&apos;s Report Card browse is not enabled on this deployment. Open{" "}
             <Link href="/about#key-operational-pillars" className={primaryNavLinkClass}>
               regional context
@@ -109,7 +135,7 @@ export default async function RegionHubPage({ params, searchParams }: Props) {
 
       {!dbRegion ? (
         <section className="section-spacing pb-16">
-          <div className="mx-auto max-w-3xl px-4 text-center text-sm text-[var(--muted-foreground)] sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-3xl px-4 text-center text-sm text-[var(--foreground-secondary)] sm:px-6 lg:px-8">
             Regional Report Card filters need this region in the database (run migrations / seed). Static facts and hub links
             above still apply.
           </div>

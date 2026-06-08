@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+import { MpCatalogueBrowseCard } from "@/components/accountability/MpCatalogueBrowseCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
@@ -9,7 +10,7 @@ import {
   accountabilityProse,
 } from "@/config/accountability-catalogue-destinations";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
-import { focusRingInsetRowClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { getCachedPromisesIndexMembers } from "@/lib/server/accountability-cache";
 import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
 
@@ -35,24 +36,25 @@ export default async function PromisesIndexPage() {
         description="Documented commitments we are tracking. Each row links to sources and current status. This is not a legal finding — see our methodology for how we work."
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--muted-foreground)]">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <p className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+            Independent commitment tracking for sitting parliamentarians — sourced pledges with verification notes, not
+            official Hansard.{" "}
+            <Link href="/methodology" className={primaryNavLinkClass}>
+              Methodology
+            </Link>
+          </p>
+          <p className="mt-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--foreground-secondary)]">
             <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={primaryNavLinkClass}>
               {accountabilityCatalogueNavMedium.browseAll}
             </Link>
-            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+            <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
               ·
             </span>
             <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments} className={primaryNavLinkClass}>
               {accountabilityCatalogueNavMedium.government}
             </Link>
-            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
-              ·
-            </span>
-            <Link href="/methodology" className={primaryNavLinkClass}>
-              Accountability methodology
-            </Link>
-            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+            <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
               ·
             </span>
             <Link href="/parliament-tracker" className={primaryNavLinkClass}>
@@ -61,32 +63,29 @@ export default async function PromisesIndexPage() {
           </p>
 
           {members.length === 0 ? (
-            <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
+            <p className="mt-10 text-center text-sm text-[var(--foreground-secondary)]">
               {accountabilityProse.promisesIndexEmptyState}
             </p>
           ) : (
-            <ul className="mt-10 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-white">
-              {members.map((m) => (
-                <li key={m.id}>
-                  <Link
-                    href={`/promises/${encodeURIComponent(m.slug)}`}
-                    className={`flex flex-col gap-1 px-4 py-4 touch-manipulation transition-colors hover:bg-[var(--section-light)]/60 sm:flex-row sm:items-center sm:justify-between ${focusRingInsetRowClass}`}
-                  >
-                    <div className="min-w-0">
-                      <p className="font-semibold text-[var(--foreground)]">{m.name}</p>
-                      <p className="text-xs text-[var(--muted-foreground)]">
-                        {m.role}
-                        {m.party ? ` · ${m.party}` : ""}
-                        {m.constituency ? ` · ${m.constituency.name}` : ""}
-                      </p>
-                    </div>
-                    <span className="shrink-0 text-sm font-medium text-[var(--primary)]">
-                      {m._count.promises} catalogue row{m._count.promises === 1 ? "" : "s"} →
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <>
+              <h2 className="mt-8 text-sm font-semibold text-[var(--foreground)]">
+                MPs &amp; ministers in catalogue ({members.length})
+              </h2>
+              <ul className="mt-4 space-y-3">
+                {members.map((m) => (
+                  <li key={m.id}>
+                    <MpCatalogueBrowseCard
+                      slug={m.slug}
+                      name={m.name}
+                      role={m.role}
+                      party={m.party}
+                      constituencyName={m.constituency?.name ?? null}
+                      promiseCount={m._count.promises}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
         </div>
       </section>

@@ -17,7 +17,7 @@ export default function AccessibilityPage() {
             <li>MBKRU Voice chatbot with microphone input and optional read-aloud responses.</li>
             <li>Fallback behavior when browser speech engines are unavailable.</li>
           </ul>
-          <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
             Some voice capabilities depend on operating-system language packs and browser support. If you need help using
             these features, contact MBKRU support through the contact page.
           </p>

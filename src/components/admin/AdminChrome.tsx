@@ -78,7 +78,7 @@ export function AdminChrome({ children }: Props) {
           >
             Admin
           </Link>
-          <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">MBKRU dashboard</p>
+          <p className="mt-0.5 text-xs text-[var(--foreground-secondary)]">MBKRU dashboard</p>
         </div>
         <div className="p-3">
           <AdminNavigation />

@@ -82,7 +82,7 @@ export function RoadmapModal({ phase, onClose }: RoadmapModalProps) {
               <button
                 type="button"
                 onClick={onClose}
-                className="shrink-0 rounded-lg p-2 text-[var(--muted-foreground)] transition-colors hover:bg-[var(--muted)] hover:text-[var(--foreground)]"
+                className="shrink-0 rounded-lg p-2 text-[var(--foreground-secondary)] transition-colors hover:bg-[var(--muted)] hover:text-[var(--foreground)]"
                 aria-label="Close"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,13 +91,13 @@ export function RoadmapModal({ phase, onClose }: RoadmapModalProps) {
               </button>
             </div>
 
-            <p className="mt-4 text-sm leading-relaxed text-[var(--muted-foreground)]">
+            <p className="mt-4 text-sm leading-relaxed text-[var(--foreground-secondary)]">
               {phase.description}
             </p>
 
             {phase.detailContent && (
               <div className="mt-6 rounded-lg border border-[var(--border)] bg-[var(--section-light)] p-4">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)]">
                   Full Details
                 </h4>
                 <p className="mt-2 text-sm leading-relaxed text-[var(--foreground)]">
@@ -108,7 +108,7 @@ export function RoadmapModal({ phase, onClose }: RoadmapModalProps) {
 
             {phase.items && phase.items.length > 0 && (
               <div className="mt-6">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)]">
                   {phase.status === "complete" ? "Completed" : "Planned"} Deliverables
                 </h4>
                 <ul className="mt-3 space-y-2">
@@ -127,7 +127,7 @@ export function RoadmapModal({ phase, onClose }: RoadmapModalProps) {
               </div>
             )}
 
-            <p className="mt-6 text-xs text-[var(--muted-foreground)]">
+            <p className="mt-6 text-xs text-[var(--foreground-secondary)]">
               Click outside or press Escape to close
             </p>
           </motion.div>

@@ -50,7 +50,7 @@ export function AboutTabs() {
               className={`border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
                 active === tab.id
                   ? "border-[var(--primary)] text-[var(--primary)]"
-                  : "border-transparent text-[var(--muted-foreground)] hover:border-[var(--border)] hover:text-[var(--foreground)]"
+                  : "border-transparent text-[var(--foreground-secondary)] hover:border-[var(--border)] hover:text-[var(--foreground)]"
               }`}
             >
               {tab.label}
@@ -62,7 +62,7 @@ export function AboutTabs() {
         <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">{data.title}</h3>
         <ul className="mt-4 space-y-3">
           {data.items.map((item, i) => (
-            <li key={i} className="flex items-start gap-3 text-[var(--muted-foreground)]">
+            <li key={i} className="flex items-start gap-3 text-[var(--foreground-secondary)]">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
               <span>{item}</span>
             </li>

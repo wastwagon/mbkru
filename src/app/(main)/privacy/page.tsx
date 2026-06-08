@@ -19,7 +19,7 @@ export default function PrivacyPage() {
 
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div
-          className={`prose prose-slate mx-auto max-w-4xl prose-headings:font-display prose-headings:text-[var(--foreground)] prose-p:text-[var(--muted-foreground)] prose-li:text-[var(--muted-foreground)] ${prosePrimaryAnchorClass}`}
+          className={`prose prose-slate mx-auto max-w-4xl prose-headings:font-display prose-headings:text-[var(--foreground)] prose-p:text-[var(--foreground-secondary)] prose-li:text-[var(--foreground-secondary)] ${prosePrimaryAnchorClass}`}
         >
           <h2>1. Introduction</h2>
           <p>

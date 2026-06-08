@@ -80,7 +80,7 @@ export function AccountHomeLocationForm({
       <h2 id="home-location-heading" className="font-display text-lg font-semibold text-[var(--foreground)]">
         Home region &amp; constituency
       </h2>
-      <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+      <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
         Used for regional chat presence and local filters. You can update these if you move.
       </p>
       <form
@@ -125,7 +125,7 @@ export function AccountHomeLocationForm({
         </div>
         <div>
           <label htmlFor="acct-const" className="block text-sm font-medium text-[var(--foreground)]">
-            Constituency <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+            Constituency <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
           </label>
           <select
             id="acct-const"

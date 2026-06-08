@@ -135,19 +135,17 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <p className="rounded-xl border border-[var(--border)] bg-white/90 px-4 py-3 text-xs leading-relaxed text-[var(--muted-foreground)] sm:text-sm">
-            Independent civic spaces linked to named traditional areas — not official Traditional Council channels.
-            Queen Mothers can request verified status after joining. See{" "}
+          <p className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+            Independent civic spaces linked to traditional areas — not official Traditional Council channels.{" "}
             <Link href="/methodology" className={primaryNavLinkClass}>
-              methodology
+              Methodology
             </Link>
-            .
           </p>
-          <p className="mt-6 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--muted-foreground)]">
+          <p className="mt-4 hidden flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-sm text-[var(--foreground-secondary)] sm:flex">
             <Link href="/parliament-tracker" className={primaryNavLinkClass}>
               Accountability hub
             </Link>
-            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+            <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
               ·
             </span>
             <Link href="/citizens-voice" className={primaryNavLinkClass}>
@@ -166,14 +164,14 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
           {searchResult ? (
             <div className="mt-8 space-y-8">
               {searchResult.communities.length === 0 && searchResult.posts.length === 0 ? (
-                <p className="text-center text-sm text-[var(--muted-foreground)]">No matches for your filters.</p>
+                <p className="text-center text-sm text-[var(--foreground-secondary)]">No matches for your filters.</p>
               ) : null}
               {searchResult.communities.length > 0 ? (
                 <div>
                   <h2 className="text-sm font-semibold text-[var(--foreground)]">
                     Communities ({searchResult.communities.length})
                   </h2>
-                  <ul className="mt-3 space-y-4">
+                  <ul className="mt-3 space-y-3">
                     {searchResult.communities.map((c) => (
                       <li key={c.slug}>
                         <CommunityBrowseCard
@@ -195,7 +193,7 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
               {searchResult.posts.length > 0 ? (
                 <div>
                   <h2 className="text-sm font-semibold text-[var(--foreground)]">Public posts</h2>
-                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                  <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                     From public communities only; members-only posts are not included.
                   </p>
                   <ul className="mt-3 space-y-3">
@@ -205,9 +203,9 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
                           href={`/communities/${p.communitySlug}/post/${p.postId}`}
                           className="block rounded-xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[var(--primary)]/30"
                         >
-                          <p className="text-xs font-medium text-[var(--muted-foreground)]">{p.communityName}</p>
+                          <p className="text-xs font-medium text-[var(--foreground-secondary)]">{p.communityName}</p>
                           <p className="mt-2 line-clamp-4 text-sm text-[var(--foreground)]">{p.snippet}</p>
-                          <p className="mt-2 text-[11px] text-[var(--muted-foreground)]">
+                          <p className="mt-2 text-[11px] text-[var(--foreground-secondary)]">
                             {new Date(p.createdAt).toLocaleDateString("en-GB", { dateStyle: "medium" })}
                           </p>
                         </Link>
@@ -218,7 +216,7 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
               ) : null}
             </div>
           ) : communities && communities.length === 0 ? (
-            <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
+            <p className="mt-10 text-center text-sm text-[var(--foreground-secondary)]">
               No communities match these filters. Try another region or clear filters above.
             </p>
           ) : communities ? (
@@ -228,7 +226,7 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
                   All communities ({communities.length})
                 </h2>
               ) : null}
-              <ul className={`space-y-4 ${invalidShort || regionFilter || joinFilter !== "all" ? "mt-8" : "mt-3"}`}>
+              <ul className={`space-y-3 ${invalidShort || regionFilter || joinFilter !== "all" ? "mt-6" : "mt-4"}`}>
                 {communities.map((c) => (
                   <li key={c.slug}>
                     <CommunityBrowseCard

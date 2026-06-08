@@ -4,7 +4,7 @@
 
 /** Uppercase label above metrics or form sections */
 export const adminKickerClass =
-  "text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]";
+  "text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]";
 
 /** Dashboard snapshot tiles that link to a queue */
 export const adminStatTileLinkClass =

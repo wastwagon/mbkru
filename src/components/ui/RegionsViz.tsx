@@ -23,10 +23,10 @@ export function RegionsViz() {
     <>
       <div className="rounded-xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow-card)] sm:p-5">
         <div>
-          <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
+          <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-[var(--foreground-secondary)]">
             16 Regions of Ghana
           </h3>
-          <p className="mt-1 flex items-center gap-1.5 text-xs text-[var(--muted-foreground)]">
+          <p className="mt-1 flex items-center gap-1.5 text-xs text-[var(--foreground-secondary)]">
             <span
               className="inline-flex h-4 w-4 items-center justify-center rounded bg-[var(--primary)]/10 text-[var(--primary)]"
               aria-hidden

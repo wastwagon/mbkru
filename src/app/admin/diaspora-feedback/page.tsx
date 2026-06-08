@@ -62,7 +62,7 @@ export default async function AdminDiasporaFeedbackPage() {
 
       <AdminTablePanel className="mt-2">
         <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-[var(--border)] bg-[var(--section-light)]/80 text-[var(--muted-foreground)]">
+          <thead className="border-b border-[var(--border)] bg-[var(--section-light)]/80 text-[var(--foreground-secondary)]">
             <tr>
               <th className="px-4 py-3 font-medium">Received</th>
               <th className="px-4 py-3 font-medium">Path</th>
@@ -78,14 +78,14 @@ export default async function AdminDiasporaFeedbackPage() {
           <tbody className="divide-y divide-[var(--border)]">
             {rows.length === 0 ? (
               <tr>
-                <td colSpan={9} className="px-4 py-8 text-center text-[var(--muted-foreground)]">
+                <td colSpan={9} className="px-4 py-8 text-center text-[var(--foreground-secondary)]">
                   <AdminEmptyState message="No submissions yet." className="text-center" />
                 </td>
               </tr>
             ) : (
               rows.map((row) => (
                 <tr key={row.id} className="align-top hover:bg-[var(--section-light)]/40">
-                  <td className="whitespace-nowrap px-4 py-3 text-[var(--muted-foreground)]">
+                  <td className="whitespace-nowrap px-4 py-3 text-[var(--foreground-secondary)]">
                     {row.createdAt.toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-[var(--foreground)]">
@@ -93,7 +93,7 @@ export default async function AdminDiasporaFeedbackPage() {
                   </td>
                   <td className="px-4 py-3">
                     <p className="font-medium text-[var(--foreground)]">{row.fullName}</p>
-                    <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
+                    <p className="mt-0.5 text-xs text-[var(--foreground-secondary)]">
                       Signed: {row.signature} · {formatDate(row.formSignedDate)}
                     </p>
                   </td>
@@ -105,27 +105,27 @@ export default async function AdminDiasporaFeedbackPage() {
                   <td className="whitespace-nowrap px-4 py-3 text-[var(--foreground)]">
                     {row.dateOfVisit ? formatDate(row.dateOfVisit) : "—"}
                   </td>
-                  <td className="max-w-[140px] px-4 py-3 text-[var(--muted-foreground)]">{row.durationOfStay ?? "—"}</td>
+                  <td className="max-w-[140px] px-4 py-3 text-[var(--foreground-secondary)]">{row.durationOfStay ?? "—"}</td>
                   <td className="px-4 py-3 text-[var(--foreground)]">{ratingLabel[row.overallRating] ?? row.overallRating}</td>
                   <td className="px-4 py-3 text-[var(--foreground)]">{returnLabel[row.returnOrInvest] ?? row.returnOrInvest}</td>
-                  <td className="max-w-md px-4 py-3 text-[var(--muted-foreground)]">
+                  <td className="max-w-md px-4 py-3 text-[var(--foreground-secondary)]">
                     <details className="cursor-pointer">
                       <summary className={`${primaryLinkClass} cursor-pointer text-xs`}>View responses</summary>
                       <div className="mt-3 space-y-3 text-sm text-[var(--foreground)]">
                         <div>
-                          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
                             Events / programmes
                           </p>
                           <p className="mt-1 whitespace-pre-wrap">{row.eventsAttended ?? "—"}</p>
                         </div>
                         <div>
-                          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
                             Most meaningful
                           </p>
                           <p className="mt-1 whitespace-pre-wrap">{row.meaningfulAspects}</p>
                         </div>
                         <div>
-                          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
                             Suggestions
                           </p>
                           <p className="mt-1 whitespace-pre-wrap">{row.suggestionsImprovement}</p>

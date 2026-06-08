@@ -11,7 +11,7 @@ export async function AboutPlatformLinks() {
   if (phase < 2) {
     return (
       <section className="border-b border-[var(--border)] bg-[var(--section-light)]/80 py-4">
-        <div className="mx-auto max-w-7xl px-4 text-center text-sm text-[var(--muted-foreground)] sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 text-center text-sm text-[var(--foreground-secondary)] sm:px-6 lg:px-8">
           Some civic tools appear gradually as the programme enables them. Use the links below when they are active on this
           site.
         </div>
@@ -27,7 +27,7 @@ export async function AboutPlatformLinks() {
         <p className="text-center text-[11px] font-bold uppercase tracking-wider text-[var(--primary)]">
           Live platform
         </p>
-        <p className="mx-auto mt-1 max-w-2xl text-center text-sm text-[var(--muted-foreground)]">
+        <p className="mx-auto mt-1 max-w-2xl text-center text-sm text-[var(--foreground-secondary)]">
           Explore tools available here — consistent with the main navigation.
         </p>
         <div className="mt-4 flex flex-wrap justify-center gap-2">

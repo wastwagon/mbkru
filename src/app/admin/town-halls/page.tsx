@@ -95,7 +95,7 @@ export default async function AdminTownHallsPage() {
             <li key={ev.id} className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="font-semibold text-[var(--foreground)]">{ev.title}</p>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p className="text-xs text-[var(--foreground-secondary)]">
                   <code className="rounded bg-[var(--section-light)] px-1">{ev.slug}</code>
                   {" · "}
                   {programmeEventKindLabel(ev.kind)}

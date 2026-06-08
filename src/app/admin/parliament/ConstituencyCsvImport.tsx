@@ -50,7 +50,7 @@ export function ConstituencyCsvImport() {
   return (
     <div className="rounded-2xl border border-[var(--border)] bg-white p-5">
       <h2 className="text-sm font-semibold text-[var(--foreground)]">Import constituencies (CSV)</h2>
-      <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+      <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
         Load EC-aligned constituency master rows before MP import. Header:{" "}
         <code className="rounded bg-[var(--section-light)] px-1 py-0.5 text-[11px]">
           name,slug,region_slug,code
@@ -84,7 +84,7 @@ export function ConstituencyCsvImport() {
         </button>
       </form>
       {message ? (
-        <p className="mt-3 text-sm text-[var(--muted-foreground)] whitespace-pre-wrap" role="status">
+        <p className="mt-3 text-sm text-[var(--foreground-secondary)] whitespace-pre-wrap" role="status">
           {message}
         </p>
       ) : null}

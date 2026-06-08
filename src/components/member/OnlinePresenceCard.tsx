@@ -33,16 +33,16 @@ export function OnlinePresenceCard({
   const { onlineCount, peerDetailsVisible, onlinePeers, presenceNote } = data;
 
   return (
-    <div className="rounded-lg border border-[var(--border)] bg-white p-4">
-      <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Who&apos;s online</p>
+    <div className="rounded-xl border border-[var(--border)] bg-[var(--section-light)]/40 p-4">
+      <p className="text-xs font-semibold text-[var(--foreground-secondary)]">Who&apos;s online</p>
       {onlineCount !== null ? (
         <p className="mt-1 text-2xl font-bold tabular-nums text-[var(--primary)]">{onlineCount}</p>
       ) : (
-        <p className="mt-1 text-sm text-[var(--muted-foreground)]">{signInToSeeCountLine}</p>
+        <p className="mt-1 text-sm text-[var(--foreground-secondary)]">{signInToSeeCountLine}</p>
       )}
-      <p className="mt-1 text-xs text-[var(--muted-foreground)]">{audienceLine}</p>
+      <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{audienceLine}</p>
       {!peerDetailsVisible && onlineCount !== null && onlineCount > 0 && aggregateGuestNote ? (
-        <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
           <Link href="/login" className={`font-semibold ${primaryLinkClass}`}>
             Sign in
           </Link>{" "}
@@ -54,7 +54,7 @@ export function OnlinePresenceCard({
           {onlinePeers.map((p) => (
             <li
               key={p.id}
-              className="rounded-full border border-[var(--border)] bg-[var(--section-light)] px-3 py-1 text-xs font-medium text-[var(--foreground)]"
+              className="rounded-full border border-[var(--border)] bg-white px-3 py-1 text-xs font-medium text-[var(--foreground)]"
             >
               {p.label}
             </li>
@@ -62,9 +62,9 @@ export function OnlinePresenceCard({
         </ul>
       ) : null}
       {peerDetailsVisible && onlinePeers.length === 0 ? (
-        <p className="mt-2 text-xs text-[var(--muted-foreground)]">{emptyPeersLine}</p>
+        <p className="mt-2 text-xs text-[var(--foreground-secondary)]">{emptyPeersLine}</p>
       ) : null}
-      <p className="mt-2 text-[11px] leading-relaxed text-[var(--muted-foreground)]">{presenceNote}</p>
+      <p className="mt-2 text-[11px] leading-relaxed text-[var(--foreground-secondary)]">{presenceNote}</p>
     </div>
   );
 }

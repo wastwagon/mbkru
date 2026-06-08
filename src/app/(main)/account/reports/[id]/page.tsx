@@ -41,11 +41,11 @@ export default async function AccountReportDetailPage({ params }: Props) {
 
   return (
     <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
-      <p className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm text-[var(--muted-foreground)]">
+      <p className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm text-[var(--foreground-secondary)]">
         <Link href="/account/reports" className={`${primaryNavLinkClass} rounded-md`}>
           ← My reports
         </Link>
-        <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+        <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
           ·
         </span>
         <Link href={`/track-report?code=${encodeURIComponent(report.trackingCode)}`} className={`${primaryNavLinkClass} rounded-md`}>
@@ -53,35 +53,35 @@ export default async function AccountReportDetailPage({ params }: Props) {
         </Link>
       </p>
       <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)]">{report.title}</h1>
-      <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+      <p className="mt-2 text-sm text-[var(--foreground-secondary)]">
         <span className="font-mono text-[var(--foreground)]">{report.trackingCode}</span> ·{" "}
         {report.kind.replace(/_/g, " ")} · {report.status.replace(/_/g, " ")}
         {report.region ? ` · ${report.region.name}` : null}
       </p>
       {report.category ? (
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">Category: {report.category}</p>
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">Category: {report.category}</p>
       ) : null}
-      <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+      <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
         Submitted{" "}
         <time dateTime={report.createdAt.toISOString()}>{formatSubmissionDateTime(report.createdAt)}</time>
       </p>
 
       <div className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--section-light)]/40 p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Your submission</h2>
-        <pre className="mt-3 whitespace-pre-wrap font-sans text-sm text-[var(--muted-foreground)]">{report.body}</pre>
+        <pre className="mt-3 whitespace-pre-wrap font-sans text-sm text-[var(--foreground-secondary)]">{report.body}</pre>
       </div>
 
       <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Notes from MBKRU</h2>
         {report.adminReplies.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-2 text-sm text-[var(--foreground-secondary)]">
             No team notes yet. You will see updates here when staff post a message on your report.
           </p>
         ) : (
           <ul className="mt-4 space-y-4">
             {report.adminReplies.map((r) => (
               <li key={r.id} className="border-b border-[var(--border)] pb-4 last:border-0 last:pb-0">
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p className="text-xs text-[var(--foreground-secondary)]">
                   <time dateTime={r.createdAt.toISOString()}>{formatSubmissionDateTime(r.createdAt)}</time>
                 </p>
                 <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--foreground)]">{r.body}</p>
@@ -91,7 +91,7 @@ export default async function AccountReportDetailPage({ params }: Props) {
         )}
       </div>
 
-      <p className="mt-8 text-xs text-[var(--muted-foreground)]">
+      <p className="mt-8 text-xs text-[var(--foreground-secondary)]">
         Last updated{" "}
         <time dateTime={report.updatedAt.toISOString()}>{formatSubmissionDateTime(report.updatedAt)}</time>
       </p>

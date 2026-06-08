@@ -41,7 +41,7 @@ export default function PartnerApiPage() {
           </p>
 
           <h2 className="mt-10 font-display text-xl font-bold">What is available</h2>
-          <p className="mt-4 text-[var(--muted-foreground)]">
+          <p className="mt-4 text-[var(--foreground-secondary)]">
             When parliament and catalogue features are enabled for this site, MBKRU exposes{" "}
             <strong className="text-[var(--foreground)]">GET</strong> JSON and UTF-8 CSV exports. Each handler may return{" "}
             <code className="text-[13px]">404</code> or <code className="text-[13px]">503</code> when data or the database is
@@ -56,7 +56,7 @@ export default function PartnerApiPage() {
                   <th className="border-b border-[var(--border)] px-3 py-2 font-semibold">Purpose</th>
                 </tr>
               </thead>
-              <tbody className="text-[var(--muted-foreground)]">
+              <tbody className="text-[var(--foreground-secondary)]">
                 <tr>
                   <td className="border-b border-[var(--border)] px-3 py-2 font-mono text-[13px] text-[var(--foreground)]">
                     /api/mps
@@ -110,13 +110,13 @@ export default function PartnerApiPage() {
               </tbody>
             </table>
           </div>
-          <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
             <code className="rounded bg-[var(--section-light)] px-1.5 py-0.5 text-[13px]">GET /api/health</code> reports
             capability flags for monitoring — it is not a dataset export.
           </p>
 
           <h2 className="mt-10 font-display text-xl font-bold">Caching and traffic</h2>
-          <ul className="mt-4 list-inside list-disc space-y-2 text-[var(--muted-foreground)]">
+          <ul className="mt-4 list-inside list-disc space-y-2 text-[var(--foreground-secondary)]">
             <li>
               Successful responses advertise <strong className="text-[var(--foreground)]">Cache-Control</strong> suitable
               for shared caches; respect those headers and avoid hammering origin.
@@ -132,7 +132,7 @@ export default function PartnerApiPage() {
           </ul>
 
           <h2 className="mt-10 font-display text-xl font-bold">Attribution and accuracy</h2>
-          <ul className="mt-4 list-inside list-disc space-y-2 text-[var(--muted-foreground)]">
+          <ul className="mt-4 list-inside list-disc space-y-2 text-[var(--foreground-secondary)]">
             <li>
               <strong className="text-[var(--foreground)]">Attribute MBKRU</strong> when you display derived tables,
               charts, or excerpts.
@@ -152,7 +152,7 @@ export default function PartnerApiPage() {
           </ul>
 
           <h2 className="mt-10 font-display text-xl font-bold">Versioning</h2>
-          <p className="mt-4 text-[var(--muted-foreground)]">
+          <p className="mt-4 text-[var(--foreground-secondary)]">
             URLs today do not include a version segment. Before breaking response shapes, we expect to introduce explicit
             versioning (for example <code className="text-[13px]">/api/v1/...</code> aliases or{" "}
             <code className="text-[13px]">Accept</code> negotiation) with a deprecation window — watch release notes and{" "}
@@ -160,7 +160,7 @@ export default function PartnerApiPage() {
           </p>
 
           <h2 className="mt-10 font-display text-xl font-bold">Get in touch</h2>
-          <p className="mt-4 text-[var(--muted-foreground)]">
+          <p className="mt-4 text-[var(--foreground-secondary)]">
             For traffic expectations, attribution assets, or a formal partnership conversation, use our{" "}
             <Link href="/contact" className={primaryNavLinkClass}>
               Contact

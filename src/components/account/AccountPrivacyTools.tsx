@@ -77,7 +77,7 @@ export function AccountPrivacyTools({ accountEmail }: { accountEmail: string }) 
       <h2 id="privacy-data-heading" className="font-display text-lg font-semibold text-[var(--foreground)]">
         Privacy &amp; your data
       </h2>
-      <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+      <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
         Download a machine-readable copy of the information we hold for this account, or permanently delete the account.
         See also our{" "}
         <a href="/privacy" className={prosePrimaryAnchorClass}>
@@ -137,7 +137,7 @@ export function AccountPrivacyTools({ accountEmail }: { accountEmail: string }) 
             <h3 id="delete-account-title" className="font-display text-lg font-bold text-[var(--foreground)]">
               Delete your account?
             </h3>
-            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+            <p className="mt-2 text-sm text-[var(--foreground-secondary)]">
               This removes your member profile, community posts you authored, and related activity. Voice reports you filed
               stay in the system with your identity unlinked where our retention rules require. You cannot delete your
               account if you created petitions — contact support in that case.

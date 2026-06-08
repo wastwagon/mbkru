@@ -1,12 +1,13 @@
 import Link from "next/link";
 
+import { CommunityBrowseCard } from "@/components/communities/CommunityBrowseCard";
 import {
   activeCommunityVisibilityFilter,
   communitiesBrowseHref,
 } from "@/lib/communities-browse-shared";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { isCommunitiesBrowseEnabled } from "@/lib/reports/accountability-pages";
-import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { focusRingSmClass } from "@/lib/primary-link-styles";
 import { countVerifiedQueenMothersByCommunityIds } from "@/lib/server/communities-verified";
 
 type Props = { regionSlug: string; regionName: string };
@@ -16,7 +17,7 @@ export async function RegionCommunitiesSpotlight({ regionSlug, regionName }: Pro
 
   const region = await prisma.region.findUnique({
     where: { slug: regionSlug },
-    select: { id: true },
+    select: { id: true, name: true, slug: true },
   });
   if (!region) return null;
 
@@ -30,8 +31,12 @@ export async function RegionCommunitiesSpotlight({ regionSlug, regionName }: Pro
       id: true,
       slug: true,
       name: true,
+      description: true,
       traditionalAreaName: true,
       joinPolicy: true,
+      visibility: true,
+      region: { select: { name: true, slug: true } },
+      _count: { select: { memberships: true } },
     },
     take: 6,
   });
@@ -49,48 +54,52 @@ export async function RegionCommunitiesSpotlight({ regionSlug, regionName }: Pro
   const verifiedTotal = [...verifiedById.values()].reduce((n, v) => n + v, 0);
 
   return (
-    <section className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
+    <section className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm sm:p-6">
       <h3 className="text-sm font-semibold text-[var(--foreground)]">Queen Mother &amp; traditional spaces</h3>
-      <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
-        {total} civic {total === 1 ? "space" : "spaces"} linked to traditional areas in {regionName}. Filter by town,
-        join instantly where open, and connect with verified Queen Mothers after sign-in.
+      <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+        {total} civic {total === 1 ? "space" : "spaces"} linked to traditional areas in {regionName}. Join open spaces
+        instantly and connect with verified Queen Mothers after sign-in.
       </p>
       {verifiedTotal > 0 ? (
-        <p className="mt-2 text-xs font-medium text-[var(--primary)]">
+        <p className="mt-2 text-xs font-semibold text-[var(--accent-gold)]">
           {verifiedTotal} verified Queen Mother {verifiedTotal === 1 ? "profile" : "profiles"} among featured spaces
         </p>
       ) : null}
-      <ul className="mt-4 space-y-2">
+      <ul className="mt-4 space-y-3">
         {communities.map((c) => (
-          <li key={c.slug} className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 text-sm">
-            <Link href={`/communities/${c.slug}`} className={`font-medium ${primaryNavLinkClass}`}>
-              {c.traditionalAreaName ?? c.name}
-            </Link>
-            <span className="text-xs text-[var(--muted-foreground)]">
-              {c.joinPolicy === "OPEN" ? "Open to join" : "Approval required"}
-              {verifiedById.get(c.id) ? " · Verified QM" : null}
-            </span>
+          <li key={c.slug}>
+            <CommunityBrowseCard
+              slug={c.slug}
+              name={c.name}
+              description={c.description}
+              traditionalAreaName={c.traditionalAreaName}
+              region={c.region ?? { name: region.name, slug: region.slug }}
+              visibility={c.visibility}
+              joinPolicy={c.joinPolicy}
+              memberCount={c._count.memberships}
+              verifiedQueenMotherCount={verifiedById.get(c.id) ?? 0}
+            />
           </li>
         ))}
       </ul>
       {total > communities.length ? (
-        <p className="mt-3 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-3 text-xs text-[var(--foreground-secondary)]">
           + {total - communities.length} more in {regionName}
         </p>
       ) : null}
-      <div className="mt-4 flex flex-wrap gap-2">
-          <Link
-            href={communitiesBrowseHref({ region: regionSlug, join: "open" })}
-            className={`inline-flex min-h-10 items-center rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] ${focusRingSmClass}`}
-          >
-            Browse {regionName} spaces
-          </Link>
-          <Link
-            href={communitiesBrowseHref({ region: regionSlug, verified: true })}
-            className={`inline-flex min-h-10 items-center rounded-xl border border-[var(--border)] bg-white px-4 py-2 text-sm font-semibold text-[var(--primary)] transition-colors hover:bg-[var(--section-light)] ${focusRingSmClass}`}
-          >
-            Verified Queen Mothers
-          </Link>
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+        <Link
+          href={communitiesBrowseHref({ region: regionSlug, join: "open" })}
+          className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] sm:w-auto ${focusRingSmClass}`}
+        >
+          Browse {regionName} spaces
+        </Link>
+        <Link
+          href={communitiesBrowseHref({ region: regionSlug, verified: true })}
+          className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[var(--accent-gold)]/40 bg-[var(--accent-gold-light)] px-4 py-2.5 text-sm font-semibold text-[var(--accent-gold)] transition-colors hover:border-[var(--accent-gold)]/60 sm:w-auto ${focusRingSmClass}`}
+        >
+          Verified Queen Mothers
+        </Link>
       </div>
     </section>
   );

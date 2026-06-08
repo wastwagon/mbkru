@@ -133,7 +133,7 @@ export default function DiasporaSeventeenthRegionBriefingPage() {
         breadcrumbCurrentLabel="Diaspora & 17th Region (briefing)"
       />
 
-      <p className="border-b border-[var(--border)] bg-[var(--section-light-tertiary)] px-4 py-2 text-center text-xs text-[var(--muted-foreground)] sm:px-6">
+      <p className="border-b border-[var(--border)] bg-[var(--section-light-tertiary)] px-4 py-2 text-center text-xs text-[var(--foreground-secondary)] sm:px-6">
         <span className="font-medium text-[var(--foreground)]">Last compiled for the site: {publishedLabel}.</span>{" "}
         Re-verify facts on official sites as policies and dates change.{" "}
         <Link href="/diaspora" className={primaryLinkClass}>
@@ -175,7 +175,7 @@ export default function DiasporaSeventeenthRegionBriefingPage() {
                 <h2 className="mt-4 font-display text-xl font-bold text-balance text-[var(--foreground)] sm:text-2xl">
                   Sixteen regions on the map — plus a policy “region” abroad
                 </h2>
-                <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+                <p className="mt-4 text-[15px] leading-relaxed text-[var(--foreground-secondary)] sm:text-base">
                   Ghana has{" "}
                   <strong className="font-semibold text-[var(--foreground)]">sixteen administrative regions</strong>.
                   The phrase <strong className="font-semibold text-[var(--foreground)]">“17th Region”</strong> names
@@ -197,13 +197,13 @@ export default function DiasporaSeventeenthRegionBriefingPage() {
               <h2 className="font-display text-2xl font-bold text-balance text-[var(--foreground)] sm:text-3xl">
                 The announcement &amp; reported Summit activities
               </h2>
-              <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+              <p className="mt-4 text-[15px] leading-relaxed text-[var(--foreground-secondary)] sm:text-base">
                 {announcementAndActivities.headline}
               </p>
               <h3 className="mt-10 font-display text-lg font-semibold text-[var(--foreground)]">
                 Themes and activities in public reporting
               </h3>
-              <ul className="mt-4 space-y-4 text-[15px] text-[var(--muted-foreground)] sm:text-base">
+              <ul className="mt-4 space-y-4 text-[15px] text-[var(--foreground-secondary)] sm:text-base">
                 {announcementAndActivities.activities.map((line) => (
                   <li key={line} className="flex gap-3">
                     <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--accent-gold)]" aria-hidden />
@@ -211,7 +211,7 @@ export default function DiasporaSeventeenthRegionBriefingPage() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-4 text-sm leading-relaxed text-[var(--muted-foreground)]">
+              <p className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-4 text-sm leading-relaxed text-[var(--foreground-secondary)]">
                 {announcementAndActivities.phaseNote}
               </p>
             </div>
@@ -226,7 +226,7 @@ export default function DiasporaSeventeenthRegionBriefingPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-tr from-[var(--primary)]/20 to-transparent" aria-hidden />
               </div>
-              <p className="mt-3 text-center text-xs text-[var(--muted-foreground)]">
+              <p className="mt-3 text-center text-xs text-[var(--foreground-secondary)]">
                 Imagery is illustrative; see official sources for event photography.
               </p>
             </div>
@@ -238,7 +238,7 @@ export default function DiasporaSeventeenthRegionBriefingPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="font-display text-2xl font-bold text-balance text-[var(--foreground)] sm:text-3xl">Policy highlights (public record)</h2>
-            <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+            <p className="mt-4 text-[15px] leading-relaxed text-[var(--foreground-secondary)] sm:text-base">
               Summaries reflect widely reported themes from the Summit and related communications. Figures and programmes
               may change—use the references at the end of this page.
             </p>
@@ -261,7 +261,7 @@ export default function DiasporaSeventeenthRegionBriefingPage() {
                 className="flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--section-light)]/40 p-6"
               >
                 <h3 className="font-display text-base font-semibold text-[var(--foreground)] sm:text-lg">{item.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-[15px]">{item.body}</p>
+                <p className="mt-3 text-sm leading-relaxed text-[var(--foreground-secondary)] sm:text-[15px]">{item.body}</p>
               </div>
             ))}
           </div>
@@ -294,7 +294,7 @@ export default function DiasporaSeventeenthRegionBriefingPage() {
             </div>
             <div>
               <h2 className="font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">Why this matters to MBKRU</h2>
-              <p className="mt-4 text-[15px] leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+              <p className="mt-4 text-[15px] leading-relaxed text-[var(--foreground-secondary)] sm:text-base">
                 MBKRU Advocates is <strong className="text-[var(--foreground)]">non-partisan</strong>. We care whether
                 public narratives translate into{" "}
                 <strong className="text-[var(--foreground)]">measurable inclusion, transparency, and citizen power</strong>
@@ -304,7 +304,7 @@ export default function DiasporaSeventeenthRegionBriefingPage() {
                 {mbkruConnections.map((item) => (
                   <div key={item.title} className="border-l-4 border-[var(--accent-gold)] bg-[var(--section-light)]/80 py-4 pl-5 pr-4">
                     <h3 className="font-semibold text-[var(--foreground)]">{item.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-[15px]">{item.body}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)] sm:text-[15px]">{item.body}</p>
                   </div>
                 ))}
               </div>
@@ -362,7 +362,7 @@ export default function DiasporaSeventeenthRegionBriefingPage() {
               </li>
             ))}
           </ul>
-          <p className="mt-8 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-8 text-sm text-[var(--foreground-secondary)]">
             Citations for datasets across the site are on{" "}
             <Link href="/data-sources" className={primaryLinkClass}>
               Data sources

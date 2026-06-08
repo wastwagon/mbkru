@@ -39,7 +39,7 @@ export default async function NewPetitionPage() {
             >
               Sign in to continue
             </Link>
-            <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+            <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
               <Link href="/petitions" className={`${primaryNavLinkClass} justify-center`}>
                 ← Browse petitions
               </Link>
@@ -64,7 +64,7 @@ export default async function NewPetitionPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
-          <p className="text-sm text-[var(--muted-foreground)]">
+          <p className="text-sm text-[var(--foreground-secondary)]">
             <Link
               href="/petitions"
               className={primaryNavLinkClass}

@@ -63,7 +63,7 @@ export default async function AdminOperationalAuditPage({ searchParams }: Props)
 
       <form className="mt-2 grid gap-3 rounded-xl border border-[var(--border)] bg-white p-4 md:grid-cols-4">
         <div>
-          <label htmlFor="hours" className="block text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+          <label htmlFor="hours" className="block text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">
             Window (hours)
           </label>
           <input
@@ -77,7 +77,7 @@ export default async function AdminOperationalAuditPage({ searchParams }: Props)
           />
         </div>
         <div>
-          <label htmlFor="action" className="block text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+          <label htmlFor="action" className="block text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">
             Action
           </label>
           <select
@@ -95,7 +95,7 @@ export default async function AdminOperationalAuditPage({ searchParams }: Props)
           </select>
         </div>
         <div>
-          <label htmlFor="adminId" className="block text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+          <label htmlFor="adminId" className="block text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">
             Admin
           </label>
           <select
@@ -126,22 +126,22 @@ export default async function AdminOperationalAuditPage({ searchParams }: Props)
       </form>
 
       <div className="mt-6 rounded-xl border border-[var(--border)] bg-white p-4">
-        <p className="text-xs text-[var(--muted-foreground)]">
+        <p className="text-xs text-[var(--foreground-secondary)]">
           Showing {logs.length} row(s), newest first. Time window starts at {since.toISOString()}.
         </p>
         <ul className="mt-3 space-y-2">
           {logs.length === 0 ? (
-            <li className="rounded-lg border border-[var(--border)] bg-[var(--section-light)]/30 px-3 py-2 text-sm text-[var(--muted-foreground)]">
+            <li className="rounded-lg border border-[var(--border)] bg-[var(--section-light)]/30 px-3 py-2 text-sm text-[var(--foreground-secondary)]">
               No audit rows for current filters.
             </li>
           ) : (
             logs.map((row) => (
               <li key={row.id} className="rounded-lg border border-[var(--border)] bg-[var(--section-light)]/20 px-3 py-2 text-sm">
-                <p className="font-mono text-[11px] text-[var(--muted-foreground)]">{row.id}</p>
+                <p className="font-mono text-[11px] text-[var(--foreground-secondary)]">{row.id}</p>
                 <p className="text-[var(--foreground)]">
                   <span className="font-semibold">{row.action}</span> · {row.admin.email}
                 </p>
-                <p className="text-xs text-[var(--muted-foreground)]">{row.createdAt.toISOString()}</p>
+                <p className="text-xs text-[var(--foreground-secondary)]">{row.createdAt.toISOString()}</p>
                 {row.details ? (
                   <pre className="mt-1 overflow-x-auto rounded bg-black/5 px-2 py-1 text-[11px] text-[var(--foreground)]">
                     {JSON.stringify(row.details, null, 2)}

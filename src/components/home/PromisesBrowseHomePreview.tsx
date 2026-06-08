@@ -39,7 +39,7 @@ export function PromisesBrowseHomePreview({ data }: Props) {
           <h2 className="mt-3 font-display text-2xl font-bold tracking-tight text-[var(--foreground)] sm:mt-4 sm:text-3xl">
             {accountabilityHomePreviewCopy.browseHeading}
           </h2>
-          <p className="mt-4 text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-base">
+          <p className="mt-4 text-sm leading-relaxed text-[var(--foreground-secondary)] sm:text-base">
             {accountabilityHomePreviewCopy.browseTeaserLead}{" "}
             <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={`${primaryLinkClass} font-semibold`}>
               Browse all
@@ -74,13 +74,13 @@ export function PromisesBrowseHomePreview({ data }: Props) {
             csvExportHref="/api/export/promises-csv"
             filterToolbarHeader={
               <div className="mt-6 space-y-2 border-b border-[var(--border)] pb-3 sm:mt-8">
-                <p className="mx-auto max-w-3xl text-center text-xs leading-relaxed text-[var(--muted-foreground)] sm:text-left">
+                <p className="mx-auto max-w-3xl text-center text-xs leading-relaxed text-[var(--foreground-secondary)] sm:text-left">
                   {accountabilityHomePreviewCopy.promiseCardSurfaceExplainerShort}
                 </p>
                 <h3 className="text-center font-display text-base font-semibold text-[var(--foreground)] sm:text-left">
                   Sample rows (five)
                 </h3>
-                <p className="text-center text-xs text-[var(--muted-foreground)] sm:text-left">
+                <p className="text-center text-xs text-[var(--foreground-secondary)] sm:text-left">
                   Use the full browse page (button below) for the interactive dashboard, all filters, and export.
                 </p>
               </div>

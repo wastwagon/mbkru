@@ -42,7 +42,7 @@ export default async function AdminContactSubmissionsPage() {
 
       <AdminTablePanel className="mt-2">
         <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-[var(--border)] bg-[var(--section-light)]/80 text-[var(--muted-foreground)]">
+          <thead className="border-b border-[var(--border)] bg-[var(--section-light)]/80 text-[var(--foreground-secondary)]">
             <tr>
               <th className="px-4 py-3 font-medium">Received</th>
               <th className="px-4 py-3 font-medium">From</th>
@@ -54,23 +54,23 @@ export default async function AdminContactSubmissionsPage() {
           <tbody className="divide-y divide-[var(--border)]">
             {rows.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-[var(--muted-foreground)]">
+                <td colSpan={5} className="px-4 py-8 text-center text-[var(--foreground-secondary)]">
                   <AdminEmptyState message="No submissions yet." className="text-center" />
                 </td>
               </tr>
             ) : (
               rows.map((row) => (
                 <tr key={row.id} className="align-top hover:bg-[var(--section-light)]/40">
-                  <td className="whitespace-nowrap px-4 py-3 text-[var(--muted-foreground)]">
+                  <td className="whitespace-nowrap px-4 py-3 text-[var(--foreground-secondary)]">
                     {row.createdAt.toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
                   </td>
                   <td className="px-4 py-3">
                     <p className="font-medium text-[var(--foreground)]">{row.name}</p>
-                    <p className="font-mono text-xs text-[var(--muted-foreground)]">{row.email}</p>
+                    <p className="font-mono text-xs text-[var(--foreground-secondary)]">{row.email}</p>
                   </td>
                   <td className="max-w-[200px] px-4 py-3 text-[var(--foreground)]">{row.subject}</td>
-                  <td className="px-4 py-3 text-[var(--muted-foreground)]">{row.enquiryType ?? "—"}</td>
-                  <td className="max-w-md px-4 py-3 text-[var(--muted-foreground)]">
+                  <td className="px-4 py-3 text-[var(--foreground-secondary)]">{row.enquiryType ?? "—"}</td>
+                  <td className="max-w-md px-4 py-3 text-[var(--foreground-secondary)]">
                     <details className="cursor-pointer">
                       <summary className={`${primaryLinkClass} cursor-pointer text-xs`}>View full message</summary>
                       <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--foreground)]">{row.message}</p>

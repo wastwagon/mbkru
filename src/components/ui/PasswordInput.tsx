@@ -78,7 +78,7 @@ export function PasswordInput({
       <button
         type="button"
         onClick={() => setVisible((v) => !v)}
-        className={`absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 touch-manipulation items-center justify-center rounded-lg text-[var(--muted-foreground)] transition hover:bg-[var(--section-light)] hover:text-[var(--foreground)] active:scale-[0.96] motion-reduce:active:scale-100 ${focusRingSmClass}`}
+        className={`absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 touch-manipulation items-center justify-center rounded-lg text-[var(--foreground-secondary)] transition hover:bg-[var(--section-light)] hover:text-[var(--foreground)] active:scale-[0.96] motion-reduce:active:scale-100 ${focusRingSmClass}`}
         aria-label={visible ? "Hide password" : "Show password"}
         aria-pressed={visible}
       >

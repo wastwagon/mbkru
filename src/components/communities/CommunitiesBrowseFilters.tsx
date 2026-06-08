@@ -18,6 +18,10 @@ type Props = {
   regionName?: string | null;
 };
 
+const fieldLabelClass =
+  "block text-xs font-semibold text-[var(--foreground-secondary)] sm:text-sm";
+const fieldClass = `mt-1.5 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`;
+
 export function CommunitiesBrowseFilters({
   regions,
   params,
@@ -36,55 +40,38 @@ export function CommunitiesBrowseFilters({
       <form
         action="/communities"
         method="get"
-        className="mt-8 space-y-4 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-5"
+        className="mt-6 space-y-4 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:mt-8 sm:p-5"
         role="search"
       >
         <div>
-          <p className="text-sm font-semibold text-[var(--foreground)]">Find your Queen Mother space</p>
-          <p className="mt-1 text-xs leading-relaxed text-[var(--muted-foreground)]">
-            Filter by region, search by town or traditional area name, then join open communities instantly after
-            sign-in.
+          <p className="text-base font-semibold text-[var(--foreground)]">Find your Queen Mother space</p>
+          <p className="mt-1 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+            Search by town or traditional area, then filter by region and join policy.
           </p>
         </div>
 
         <div>
-          <label htmlFor="community-search" className="sr-only">
-            Search communities and posts
+          <label htmlFor="community-search" className={fieldLabelClass}>
+            Search
           </label>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <input
-              id="community-search"
-              name="q"
-              type="search"
-              defaultValue={params.q ?? ""}
-              placeholder="Town, traditional area, or council name…"
-              minLength={2}
-              maxLength={120}
-              className={`w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-2.5 text-sm text-[var(--foreground)] shadow-sm transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`}
-            />
-            <button
-              type="submit"
-              className={`min-h-11 w-full shrink-0 touch-manipulation rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] active:scale-[0.99] motion-reduce:active:scale-100 sm:min-h-0 sm:w-auto ${focusRingSmClass}`}
-            >
-              Search
-            </button>
-          </div>
+          <input
+            id="community-search"
+            name="q"
+            type="search"
+            defaultValue={params.q ?? ""}
+            placeholder="Town, traditional area, or council name…"
+            minLength={2}
+            maxLength={120}
+            className={`${fieldClass} touch-manipulation`}
+          />
         </div>
 
         <div className="grid gap-3 sm:grid-cols-3">
           <div>
-            <label
-              htmlFor="community-region"
-              className="block text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]"
-            >
+            <label htmlFor="community-region" className={fieldLabelClass}>
               Region
             </label>
-            <select
-              id="community-region"
-              name="region"
-              defaultValue={params.region ?? ""}
-              className={`mt-1.5 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`}
-            >
+            <select id="community-region" name="region" defaultValue={params.region ?? ""} className={fieldClass}>
               <option value="">All regions ({regions.reduce((n, r) => n + r.count, 0)})</option>
               {regions.map((r) => (
                 <option key={r.slug} value={r.slug}>
@@ -94,36 +81,20 @@ export function CommunitiesBrowseFilters({
             </select>
           </div>
           <div>
-            <label
-              htmlFor="community-join"
-              className="block text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]"
-            >
+            <label htmlFor="community-join" className={fieldLabelClass}>
               Join policy
             </label>
-            <select
-              id="community-join"
-              name="join"
-              defaultValue={join}
-              className={`mt-1.5 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`}
-            >
+            <select id="community-join" name="join" defaultValue={join} className={fieldClass}>
               <option value="all">Any join policy</option>
               <option value="open">Open — join instantly</option>
               <option value="approval">Approval required</option>
             </select>
           </div>
           <div>
-            <label
-              htmlFor="community-sort"
-              className="block text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]"
-            >
+            <label htmlFor="community-sort" className={fieldLabelClass}>
               Sort by
             </label>
-            <select
-              id="community-sort"
-              name="sort"
-              defaultValue={sort}
-              className={`mt-1.5 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`}
-            >
+            <select id="community-sort" name="sort" defaultValue={sort} className={fieldClass}>
               <option value="name">Name A–Z</option>
               <option value="traditional">Traditional area A–Z</option>
               <option value="region">Region, then name</option>
@@ -131,31 +102,31 @@ export function CommunitiesBrowseFilters({
           </div>
         </div>
 
-        <label className="flex items-start gap-2 text-sm text-[var(--foreground)]">
+        <label className="flex items-start gap-3 rounded-xl border border-[var(--border)]/80 bg-[var(--section-light)] px-3 py-2.5 text-sm text-[var(--foreground)]">
           <input
             type="checkbox"
             name="verified"
             value="1"
             defaultChecked={verified}
-            className="mt-1 h-4 w-4 rounded border-[var(--border)] text-[var(--primary)]"
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-[var(--border)] text-[var(--primary)]"
           />
           <span>
             <span className="font-medium">Verified Queen Mothers only</span>
-            <span className="mt-0.5 block text-xs text-[var(--muted-foreground)]">
-              Show spaces where at least one Queen Mother has completed MBKRU verification.
+            <span className="mt-0.5 block text-xs leading-relaxed text-[var(--foreground-secondary)]">
+              At least one verified Queen Mother on the platform.
             </span>
           </span>
         </label>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
           <button
             type="submit"
-            className={`inline-flex min-h-10 items-center rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-2 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--primary)]/40 ${focusRingSmClass}`}
+            className={`min-h-11 w-full touch-manipulation rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] sm:w-auto ${focusRingSmClass}`}
           >
-            Apply filters
+            Show communities
           </button>
           {hasExtraFilters || params.q?.trim() ? (
-            <Link href="/communities" className={`text-sm font-semibold ${primaryNavLinkClass}`}>
+            <Link href="/communities" className={`text-center text-sm font-semibold sm:text-left ${primaryNavLinkClass}`}>
               Clear all
             </Link>
           ) : null}
@@ -163,11 +134,11 @@ export function CommunitiesBrowseFilters({
       </form>
 
       {invalidShort ? (
-        <p className="mt-2 text-sm text-amber-800">Enter at least 2 characters to search.</p>
+        <p className="mt-2 text-sm font-medium text-amber-900">Enter at least 2 characters to search.</p>
       ) : null}
 
       {params.q?.trim() ? (
-        <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-3 rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground-secondary)]">
           Results for &quot;{params.q.trim()}&quot;
           {regionName ? ` in ${regionName}` : null}
           {joinFilterLabel(join) ? ` · ${joinFilterLabel(join)}` : null}
@@ -180,7 +151,7 @@ export function CommunitiesBrowseFilters({
       ) : null}
 
       {!params.q?.trim() && (regionName || join !== "all" || sort !== "name" || verified) ? (
-        <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-3 rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground-secondary)]">
           {typeof resultCount === "number" ? (
             <>
               Showing {resultCount} {resultCount === 1 ? "space" : "spaces"}
@@ -209,7 +180,7 @@ export function CommunitiesBrowseFilters({
       ) : null}
 
       {params.region && !regionName && !params.q?.trim() ? (
-        <p className="mt-3 text-sm text-amber-800">
+        <p className="mt-3 text-sm font-medium text-amber-900">
           Unknown region filter.{" "}
           <Link href={communitiesBrowseHref({ join, sort })} className={primaryNavLinkClass}>
             Show all communities

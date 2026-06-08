@@ -79,23 +79,28 @@ export default async function CommunityDetailPage({ params }: Props) {
     <div>
       <PageHeader title={c.name} description={headerDescription} />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="text-sm text-[var(--muted-foreground)]">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <p className="text-sm text-[var(--foreground-secondary)]">
             <Link href="/communities" className={primaryNavLinkClass}>
               ← All communities
             </Link>
           </p>
-          <p className="mt-6 rounded-2xl border border-[var(--primary)]/25 bg-gradient-to-br from-[var(--primary)]/10 to-white px-5 py-4 text-sm leading-relaxed text-[var(--muted-foreground)]">
-            <span className="font-semibold text-[var(--foreground)]">Queen Mothers &amp; council workspace</span> — share
-            concerns, post announcements, and discuss with traditional council members in one focused portal.{" "}
-            <Link href={`/communities/${encodeURIComponent(c.slug)}/portal`} className={`${primaryLinkClass} font-semibold`}>
-              Open council workspace →
-            </Link>
-          </p>
+          <div className="mt-6 rounded-2xl border border-[var(--accent-gold)]/30 bg-gradient-to-br from-[var(--accent-gold-light)] to-white px-5 py-4 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+            <p>
+              <span className="font-semibold text-[var(--foreground)]">Queen Mothers &amp; council workspace</span> —
+              independent civic space linked to traditional areas, not an official Traditional Council channel.
+            </p>
+            <p className="mt-2">
+              Share concerns, post announcements, and discuss with council members in the focused portal.{" "}
+              <Link href={`/communities/${encodeURIComponent(c.slug)}/portal`} className={`${primaryLinkClass} font-semibold`}>
+                Open council workspace
+              </Link>
+            </p>
+          </div>
 
           <CommunityOnlinePresence communitySlug={c.slug} />
 
-          <dl className="mt-6 space-y-2 text-sm text-[var(--muted-foreground)]">
+          <dl className="mt-6 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm text-[var(--foreground-secondary)]">
             <div>
               <dt className="inline font-medium text-[var(--foreground)]">Visibility: </dt>
               <dd className="inline">{c.visibility === "PUBLIC" ? "Public" : "Members only"}</dd>
@@ -124,7 +129,7 @@ export default async function CommunityDetailPage({ params }: Props) {
             ) : null}
           </dl>
           {c.region ? (
-            <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+            <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
               More traditional spaces in {c.region.name}:{" "}
               <Link
                 href={communitiesBrowseHref({ region: c.region.slug, join: "open" })}
@@ -137,11 +142,11 @@ export default async function CommunityDetailPage({ params }: Props) {
           <div className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
             <h2 className="text-sm font-semibold text-[var(--foreground)]">About</h2>
             {showFullAbout ? (
-              <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-[var(--muted-foreground)]">
+              <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-[var(--foreground-secondary)]">
                 {c.description}
               </p>
             ) : (
-              <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
                 {c.visibility === "MEMBERS_ONLY"
                   ? "The full description is available to active members of this community. Use membership below to join or sign in."
                   : c.description}
@@ -154,7 +159,7 @@ export default async function CommunityDetailPage({ params }: Props) {
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <h2 className="text-sm font-semibold text-[var(--foreground)]">Forums</h2>
-                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                  <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                     Discussion spaces — open a forum for threads and replies. Moderators can add new forums.
                   </p>
                 </div>
@@ -167,7 +172,10 @@ export default async function CommunityDetailPage({ params }: Props) {
               </div>
               <ul className="mt-4 space-y-3">
                 {forums.map((f) => (
-                  <li key={f.id} className="rounded-xl border border-[var(--border)] bg-[var(--section-light)]/30 px-3 py-2.5">
+                  <li
+                    key={f.id}
+                    className="rounded-xl border border-[var(--border)] bg-[var(--section-light)]/30 px-3 py-2.5 transition hover:border-[var(--primary)]/35"
+                  >
                     <Link
                       href={`/communities/${encodeURIComponent(c.slug)}/forums/${encodeURIComponent(f.slug)}`}
                       className={`${primaryLinkClass} text-sm font-semibold`}
@@ -179,7 +187,7 @@ export default async function CommunityDetailPage({ params }: Props) {
                         Locked
                       </span>
                     ) : null}
-                    <p className="mt-1 text-[11px] text-[var(--muted-foreground)]">
+                    <p className="mt-1 text-[11px] text-[var(--foreground-secondary)]">
                       <span className="tabular-nums font-medium text-[var(--foreground)]">{f.publishedThreadCount}</span>{" "}
                       published thread{f.publishedThreadCount === 1 ? "" : "s"}
                       {f.lastActivityAt ? (
@@ -193,7 +201,7 @@ export default async function CommunityDetailPage({ params }: Props) {
                       ) : null}
                     </p>
                     {f.description ? (
-                      <p className="mt-1 text-xs text-[var(--muted-foreground)]">{f.description}</p>
+                      <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{f.description}</p>
                     ) : null}
                   </li>
                 ))}
@@ -215,16 +223,16 @@ export default async function CommunityDetailPage({ params }: Props) {
 
           <section className="mt-10">
             <h2 className="text-sm font-semibold text-[var(--foreground)]">Recent threads</h2>
-            <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
               Root posts across forums — pinned first, then by latest activity. Use a forum page for the full list in
               one space; open a thread for replies.
             </p>
             {!showPosts ? (
-              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+              <p className="mt-2 text-sm text-[var(--foreground-secondary)]">
                 Posts are visible to active members only.
               </p>
             ) : posts.length === 0 ? (
-              <p className="mt-2 text-sm text-[var(--muted-foreground)]">No threads yet.</p>
+              <p className="mt-2 text-sm text-[var(--foreground-secondary)]">No threads yet.</p>
             ) : (
               <ul className="mt-4 space-y-4">
                 {posts.map((p) => (
@@ -240,7 +248,7 @@ export default async function CommunityDetailPage({ params }: Props) {
             )}
           </section>
 
-          <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
+          <p className="mt-10 text-center text-sm text-[var(--foreground-secondary)]">
             For urgent wrongdoing, see{" "}
             <Link href="/whistleblowing" className={primaryLinkClass}>
               whistleblowing guidance

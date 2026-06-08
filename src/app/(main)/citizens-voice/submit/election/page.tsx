@@ -27,14 +27,14 @@ export default async function SubmitElectionObservationPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="mb-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--muted-foreground)]">
+          <p className="mb-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--foreground-secondary)]">
             <Link
               href="/election-observation"
               className={primaryNavLinkClass}
             >
               Election hub
             </Link>
-            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+            <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
               ·
             </span>
             <Link
@@ -43,7 +43,7 @@ export default async function SubmitElectionObservationPage() {
             >
               General submit
             </Link>
-            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+            <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
               ·
             </span>
             <Link

@@ -51,7 +51,7 @@ test.describe("public and auth smoke", () => {
     const slug = listBody.regions?.[0]?.slug;
     test.skip(!slug, "no regions seeded");
 
-    const hubRes = await request.get(`/api/regions/${encodeURIComponent(slug)}/hub`);
+    const hubRes = await request.get(`/api/regions/${encodeURIComponent(slug as string)}/hub`);
     expect(hubRes.status(), "hub route should not 5xx").toBeLessThan(500);
     test.skip(hubRes.status() !== 200, "/api/regions/[slug]/hub not 200");
 

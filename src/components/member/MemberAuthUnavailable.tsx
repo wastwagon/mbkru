@@ -23,7 +23,7 @@ export function MemberAuthUnavailable({ variant }: Props) {
               <strong>Member sign-in is not available on this site yet.</strong> Public pages and contact stay open;
               accounts and MBKRU Voice reporting open when the programme enables them here.
             </p>
-            <ul className="mt-5 list-disc space-y-2 pl-5 text-sm text-[var(--muted-foreground)]">
+            <ul className="mt-5 list-disc space-y-2 pl-5 text-sm text-[var(--foreground-secondary)]">
               <li>
                 <Link href="/citizens-voice" className={primaryLinkClass}>
                   MBKRU Voice

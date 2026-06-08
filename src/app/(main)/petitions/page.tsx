@@ -49,7 +49,7 @@ export default async function PetitionsIndexPage({ searchParams }: IndexProps) {
         breadcrumbCurrentLabel="Petitions"
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           {verifyMsg ? (
             <p
               className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950"
@@ -58,41 +58,63 @@ export default async function PetitionsIndexPage({ searchParams }: IndexProps) {
               {verifyMsg}
             </p>
           ) : null}
-          <p className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm">
+          <p className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+            Citizen signature campaigns — separate from MBKRU Voice reports and public cause threads.{" "}
+            <Link href="/citizens-voice/causes" className={primaryNavLinkClass}>
+              Public causes
+            </Link>
+          </p>
+          <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-2 text-sm text-[var(--foreground-secondary)]">
             <Link href="/petitions/new" className={primaryNavLinkClass}>
               Start a petition
             </Link>
-            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+            <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
               ·
             </span>
-            <Link href="/citizens-voice/causes" className={primaryNavLinkClass}>
-              Public causes (Voice threads)
+            <Link href="/citizens-voice" className={primaryNavLinkClass}>
+              MBKRU Voice
             </Link>
           </p>
 
           {petitions.length === 0 ? (
-            <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
+            <p className="mt-10 text-center text-sm text-[var(--foreground-secondary)]">
               No open petitions yet. Be the first to start one.
             </p>
           ) : (
-            <ul className="mt-10 space-y-4">
-              {petitions.map((p) => (
-                <li key={p.id}>
-                  <Link
-                    href={`/petitions/${encodeURIComponent(p.slug)}`}
-                    className={`block rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition-colors hover:border-[var(--primary)]/30 ${focusRingSmClass}`}
-                  >
-                    <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">{p.title}</h2>
-                    {p.summary ? (
-                      <p className="mt-2 line-clamp-2 text-sm text-[var(--muted-foreground)]">{p.summary}</p>
-                    ) : null}
-                    <p className="mt-3 text-xs text-[var(--muted-foreground)]">
-                      {p._count.signatures.toLocaleString()} signature{p._count.signatures === 1 ? "" : "s"}
-                      {p.region?.name ? ` · ${p.region.name}` : ""}
-                    </p>
-                  </Link>
-                </li>
-              ))}
+            <ul className="mt-8 space-y-3">
+              {petitions.map((p) => {
+                const href = `/petitions/${encodeURIComponent(p.slug)}`;
+                const metaParts = [
+                  `${p._count.signatures.toLocaleString()} signature${p._count.signatures === 1 ? "" : "s"}`,
+                  p.region?.name,
+                ].filter(Boolean);
+
+                return (
+                  <li key={p.id}>
+                    <article className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
+                      <h2 className="text-base font-semibold leading-snug text-[var(--foreground)] sm:text-lg">
+                        <Link href={href} className="hover:text-[var(--primary)]">
+                          {p.title}
+                        </Link>
+                      </h2>
+                      {p.summary ? (
+                        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+                          {p.summary}
+                        </p>
+                      ) : null}
+                      <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{metaParts.join(" · ")}</p>
+                      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+                        <Link
+                          href={href}
+                          className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] sm:w-auto ${focusRingSmClass}`}
+                        >
+                          View petition
+                        </Link>
+                      </div>
+                    </article>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>

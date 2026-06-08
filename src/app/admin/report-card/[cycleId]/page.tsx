@@ -50,7 +50,7 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
       />
       <div className="mt-2 space-y-1">
         {showStoredLine ? (
-          <p className="text-xs text-[var(--muted-foreground)]">
+          <p className="text-xs text-[var(--foreground-secondary)]">
             Stored label (database):{" "}
             <span className="font-mono text-[var(--foreground)]">{storedLabel.length > 0 ? storedLabel : "(empty)"}</span>
           </p>
@@ -64,7 +64,7 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
 
       <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Dispute window</h2>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Optional end datetime (UTC) for a published correction / dispute period — shown on the public cycle page when
           set. Clear the field and save to remove.
         </p>
@@ -93,7 +93,7 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
 
       <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Add or update entry</h2>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Same member + cycle updates the existing row. Index A/B/C are the Ghana triple ledger (0–100 each). Checking
           &quot;Set headline from triple&quot; overwrites the overall score with 0.5·A + 0.35·B + 0.15·C when all three
           are filled. Metrics remain optional structured JSON.
@@ -170,7 +170,7 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
           </div>
           <div>
             <label htmlFor="overallScore" className="block text-xs font-medium">
-              Headline score <span className="font-normal text-[var(--muted-foreground)]">(optional, e.g. 72.5)</span>
+              Headline score <span className="font-normal text-[var(--foreground-secondary)]">(optional, e.g. 72.5)</span>
             </label>
             <input
               id="overallScore"
@@ -188,7 +188,7 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
           </div>
           <div>
             <label htmlFor="metrics" className="block text-xs font-medium">
-              Metrics <span className="font-normal text-[var(--muted-foreground)]">(optional JSON object)</span>
+              Metrics <span className="font-normal text-[var(--foreground-secondary)]">(optional JSON object)</span>
             </label>
             <textarea
               id="metrics"
@@ -210,7 +210,7 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
       <section className="mt-10">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Entries</h2>
         {cycle.entries.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">None yet.</p>
+          <p className="mt-2 text-sm text-[var(--foreground-secondary)]">None yet.</p>
         ) : (
           <ul className="mt-4 space-y-6">
             {cycle.entries.map((e) => (
@@ -220,16 +220,16 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
                   <p className="mt-1 text-sm text-[var(--primary)]">Headline score: {e.overallScore}</p>
                 ) : null}
                 {e.indexAScore != null || e.indexBScore != null || e.indexCScore != null ? (
-                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                  <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                     Triple: A {e.indexAScore ?? "—"} · B {e.indexBScore ?? "—"} · C {e.indexCScore ?? "—"}
                   </p>
                 ) : null}
                 {e.narrative ? (
-                  <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--muted-foreground)]">{e.narrative}</p>
+                  <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--foreground-secondary)]">{e.narrative}</p>
                 ) : null}
                 {e.metrics != null ? (
                   <div className="mt-2 rounded-lg border border-[var(--border)] bg-[var(--section-light)]/60 p-3">
-                    <p className="text-xs font-medium text-[var(--muted-foreground)]">Metrics (read-only)</p>
+                    <p className="text-xs font-medium text-[var(--foreground-secondary)]">Metrics (read-only)</p>
                     <div className="mt-2">
                       <MetricsDisplay value={e.metrics} />
                     </div>
@@ -297,7 +297,7 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
                     </div>
                     <div>
                       <label className="block text-xs font-medium" htmlFor={`score-${e.id}`}>
-                        Headline score <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+                        Headline score <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
                       </label>
                       <input
                         id={`score-${e.id}`}
@@ -322,7 +322,7 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
                     </div>
                     <div>
                       <label className="block text-xs font-medium" htmlFor={`met-${e.id}`}>
-                        Metrics JSON <span className="font-normal text-[var(--muted-foreground)]">(optional object)</span>
+                        Metrics JSON <span className="font-normal text-[var(--foreground-secondary)]">(optional object)</span>
                       </label>
                       <textarea
                         id={`met-${e.id}`}

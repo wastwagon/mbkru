@@ -18,6 +18,8 @@
   --accent-warm: #c2410c;
   --muted: #f4fcf9;
   --muted-foreground: #5b6b7d;
+  /** Secondary body text — slightly darker than muted for 12–14px UI on mobile (≥4.5:1 on white). */
+  --foreground-secondary: #3f5366;
   --border: #e2e8f0;
   --card: #ffffff;
   --card-foreground: #1e3a4f;
@@ -63,6 +65,7 @@
   --color-accent-warm: var(--accent-warm);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  --color-foreground-secondary: var(--foreground-secondary);
   --color-border: var(--border);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);

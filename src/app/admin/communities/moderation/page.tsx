@@ -50,14 +50,14 @@ export default async function AdminCommunityPostsModerationPage() {
       />
 
       {pendingPosts.length === 0 ? (
-        <p className="mt-8 text-sm text-[var(--muted-foreground)]">No posts awaiting moderation.</p>
+        <p className="mt-8 text-sm text-[var(--foreground-secondary)]">No posts awaiting moderation.</p>
       ) : (
         <ul className="mt-8 space-y-6">
           {pendingPosts.map((p) => (
             <li id={`mod-post-${p.id}`} key={p.id} className="rounded-xl border border-[var(--border)] bg-white p-5">
-              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
                 {p.community.name}
-                <span className="ml-2 font-normal normal-case text-[var(--muted-foreground)]">
+                <span className="ml-2 font-normal normal-case text-[var(--foreground-secondary)]">
                   <Link href={`/communities/${p.community.slug}/post/${p.id}`} className={primaryLinkClass}>
                     View permalink
                   </Link>
@@ -67,7 +67,7 @@ export default async function AdminCommunityPostsModerationPage() {
                   </Link>
                 </span>
               </p>
-              <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+              <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
                 {p.kind} · {p.author.displayName ?? p.author.email} · {p.createdAt.toLocaleString()}
               </p>
               <p className="mt-3 whitespace-pre-wrap text-sm text-[var(--foreground)]">{p.body}</p>

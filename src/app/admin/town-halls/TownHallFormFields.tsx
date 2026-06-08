@@ -40,7 +40,7 @@ export function TownHallFormFields({
       {defaults.id ? <input type="hidden" name="id" value={defaults.id} /> : null}
       <div>
         <label htmlFor="slug" className={label}>
-          Slug <span className="font-normal text-[var(--muted-foreground)]">(lowercase, hyphens)</span>
+          Slug <span className="font-normal text-[var(--foreground-secondary)]">(lowercase, hyphens)</span>
         </label>
         <input
           id="slug"
@@ -86,7 +86,7 @@ export function TownHallFormFields({
       </div>
       <div>
         <label htmlFor="programmeQuarter" className={label}>
-          Programme quarter <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+          Programme quarter <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
         </label>
         <input
           id="programmeQuarter"
@@ -99,7 +99,7 @@ export function TownHallFormFields({
       </div>
       <div>
         <label htmlFor="regionId" className={label}>
-          Region <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+          Region <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
         </label>
         <select id="regionId" name="regionId" className={input} defaultValue={defaults.regionId}>
           <option value="">— None / national —</option>
@@ -112,7 +112,7 @@ export function TownHallFormFields({
       </div>
       <div className="sm:col-span-2">
         <label htmlFor="constituencyId" className={label}>
-          Constituency <span className="font-normal text-[var(--muted-foreground)]">(optional — for debates)</span>
+          Constituency <span className="font-normal text-[var(--foreground-secondary)]">(optional — for debates)</span>
         </label>
         <select id="constituencyId" name="constituencyId" className={input} defaultValue={defaults.constituencyId}>
           <option value="">— None —</option>
@@ -151,25 +151,25 @@ export function TownHallFormFields({
       </div>
       <div className="sm:col-span-2">
         <label htmlFor="venueLine" className={label}>
-          Venue line <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+          Venue line <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
         </label>
         <input id="venueLine" name="venueLine" maxLength={500} defaultValue={defaults.venueLine} className={input} />
       </div>
       <div>
         <label htmlFor="startsAt" className={label}>
-          Starts <span className="font-normal text-[var(--muted-foreground)]">(optional, local)</span>
+          Starts <span className="font-normal text-[var(--foreground-secondary)]">(optional, local)</span>
         </label>
         <input id="startsAt" name="startsAt" type="datetime-local" defaultValue={defaults.startsAt} className={input} />
       </div>
       <div>
         <label htmlFor="endsAt" className={label}>
-          Ends <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+          Ends <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
         </label>
         <input id="endsAt" name="endsAt" type="datetime-local" defaultValue={defaults.endsAt} className={input} />
       </div>
       <div className="sm:col-span-2">
         <label htmlFor="infoUrl" className={label}>
-          Info URL <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+          Info URL <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
         </label>
         <input
           id="infoUrl"
@@ -183,7 +183,7 @@ export function TownHallFormFields({
       </div>
       <div className="sm:col-span-2">
         <label htmlFor="sourceCitation" className={label}>
-          Source / citation <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+          Source / citation <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
         </label>
         <textarea
           id="sourceCitation"

@@ -11,7 +11,9 @@ import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
 import { nearestRegionSlug } from "@/lib/geo/ghana-region-centroids";
 import { roundApproximateCoord } from "@/lib/geo/round-approximate-coord";
+import { openAccessibilityTools } from "@/lib/a11y-voice-dispatch";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
+import { findVoiceLanguage } from "@/lib/voice-languages";
 import {
   enqueueReportDraft,
   isRetryableReportSubmitResponse,
@@ -95,6 +97,7 @@ export function VoiceReportForm({
   const electionOn = platformFeatures.electionObservatory(phase);
   const langId = useVoiceUiLanguageId();
   const str = useMemo(() => getVoiceReportFormStrings(langId), [langId]);
+  const voiceLanguageLabel = useMemo(() => findVoiceLanguage(langId).label, [langId]);
   const kindOptions = ALL_KIND_VALUES.filter((v) => v !== "ELECTION_OBSERVATION" || electionOn);
 
   const router = useRouter();
@@ -593,7 +596,7 @@ export function VoiceReportForm({
   if (authStatus === "loading") {
     return (
       <div className="mx-auto max-w-2xl rounded-xl border border-[var(--border)] bg-white/80 px-6 py-10 text-center">
-        <p className="text-sm text-[var(--muted-foreground)]">{str.checkingSignIn}</p>
+        <p className="text-sm text-[var(--foreground-secondary)]">{str.checkingSignIn}</p>
       </div>
     );
   }
@@ -601,13 +604,28 @@ export function VoiceReportForm({
   if (authStatus === "signedOut") {
     return (
       <div className="mx-auto max-w-2xl rounded-xl border border-[var(--border)] bg-white/80 px-6 py-10 text-center">
-        <p className="text-sm text-[var(--muted-foreground)]">{str.redirectingSignIn}</p>
+        <p className="text-sm text-[var(--foreground-secondary)]">{str.redirectingSignIn}</p>
       </div>
     );
   }
 
   return (
     <form onSubmit={onSubmit} className="mx-auto max-w-2xl space-y-5">
+      {langId !== "en-gh" ? (
+        <div
+          className="rounded-xl border border-[var(--primary)]/20 bg-[var(--section-light)] px-4 py-3 text-sm text-[var(--foreground-secondary)]"
+          role="note"
+        >
+          <p>
+            {str.formLanguageActive.replace("{language}", voiceLanguageLabel)}{" "}
+            <button type="button" className={primaryLinkClass} onClick={() => openAccessibilityTools()}>
+              {str.formLanguageChange}
+            </button>
+          </p>
+          <p className="mt-1 text-xs">{str.formLanguageLegalNote}</p>
+        </div>
+      ) : null}
+
       {onlineBanner ? (
         <p
           className="rounded-xl border border-[var(--primary)]/30 bg-[var(--primary)]/10 px-4 py-3 text-sm text-[var(--foreground)]"
@@ -634,7 +652,7 @@ export function VoiceReportForm({
       ) : null}
 
       {lockKind && queueItems.length > visibleQueueItems.length ? (
-        <p className="text-xs text-[var(--muted-foreground)]">
+        <p className="text-xs text-[var(--foreground-secondary)]">
           {str.draftsOtherTypesBefore}
           <Link href="/citizens-voice/submit" className={primaryLinkClass}>
             {str.draftsOtherTypesLink}
@@ -649,7 +667,7 @@ export function VoiceReportForm({
           aria-label={str.pendingDraftsAria}
         >
           <p className="text-sm font-semibold text-[var(--foreground)]">{str.pendingDraftsTitle}</p>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">{str.pendingDraftsHint}</p>
+          <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{str.pendingDraftsHint}</p>
           <ul className="mt-3 space-y-3">
             {visibleQueueItems.map((item) => (
               <li
@@ -658,7 +676,7 @@ export function VoiceReportForm({
               >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-[var(--foreground)]">{item.payload.title}</p>
-                  <p className="text-xs text-[var(--muted-foreground)]">
+                  <p className="text-xs text-[var(--foreground-secondary)]">
                     {kindOptionLabel(str, item.payload.kind)}
                     {" · "}
                     {formatDraftSavedAt(item.createdAt)}
@@ -747,7 +765,7 @@ export function VoiceReportForm({
       ) : null}
 
       {lockKind ? (
-        <div className="rounded-xl border border-[var(--border)] bg-white/80 px-4 py-3 text-sm text-[var(--muted-foreground)]">
+        <div className="rounded-xl border border-[var(--border)] bg-white/80 px-4 py-3 text-sm text-[var(--foreground-secondary)]">
           <span className="font-medium text-[var(--foreground)]">{str.reportTypeLockedPrefix} </span>
           {kindOptionLabel(str, kind)}
         </div>
@@ -787,8 +805,8 @@ export function VoiceReportForm({
           role="note"
         >
           <p className="font-semibold">{str.mpNoteTitle}</p>
-          <p className="mt-1 text-[var(--muted-foreground)]">{str.mpNoteBody}</p>
-          <p className="mt-2 text-[var(--muted-foreground)]">
+          <p className="mt-1 text-[var(--foreground-secondary)]">{str.mpNoteBody}</p>
+          <p className="mt-2 text-[var(--foreground-secondary)]">
             {str.mpNoteBody2Before}
             <Link href="/promises" className={primaryLinkClass}>
               {str.mpNoteBody2Link}
@@ -831,8 +849,8 @@ export function VoiceReportForm({
           role="note"
         >
           <p className="font-semibold">{str.govNoteTitle}</p>
-          <p className="mt-1 text-[var(--muted-foreground)]">{str.govNoteBody}</p>
-          <p className="mt-2 text-[var(--muted-foreground)]">
+          <p className="mt-1 text-[var(--foreground-secondary)]">{str.govNoteBody}</p>
+          <p className="mt-2 text-[var(--foreground-secondary)]">
             {str.govNoteBody2Before}
             <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments} className={primaryLinkClass}>
               {str.govNoteBody2Link}
@@ -856,7 +874,7 @@ export function VoiceReportForm({
           className={inputClass}
           placeholder={str.shortTitlePlaceholder}
         />
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">{str.shortTitleHelp}</p>
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{str.shortTitleHelp}</p>
       </div>
 
       <div>
@@ -874,14 +892,14 @@ export function VoiceReportForm({
           className={`${inputClass} resize-y min-h-[160px]`}
           placeholder={resolvedBodyPlaceholder}
         />
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">{str.bodyHelp}</p>
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{str.bodyHelp}</p>
       </div>
 
       <div className="rounded-xl border border-[var(--border)] bg-[var(--section-light)]/40 px-4 py-4">
         <p className="text-sm font-medium text-[var(--foreground)]">{str.locationTitle}</p>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">{str.locationHelp}</p>
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{str.locationHelp}</p>
         {geoStatus === "loading" ? (
-          <p className="mt-3 text-sm text-[var(--muted-foreground)]" role="status">
+          <p className="mt-3 text-sm text-[var(--foreground-secondary)]" role="status">
             {str.geoLoadingBanner}
           </p>
         ) : null}
@@ -926,7 +944,7 @@ export function VoiceReportForm({
             </option>
           ))}
         </select>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">{str.regionHelp}</p>
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{str.regionHelp}</p>
       </div>
 
       <div>
@@ -946,17 +964,17 @@ export function VoiceReportForm({
           autoComplete="off"
           aria-readonly="true"
         />
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">{str.localAreaHelp}</p>
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{str.localAreaHelp}</p>
       </div>
 
-      <p className="text-sm text-[var(--muted-foreground)]">{str.signedInFooter}</p>
+      <p className="text-sm text-[var(--foreground-secondary)]">{str.signedInFooter}</p>
 
       <div>
         <label htmlFor="report-files" className="block text-sm font-medium text-[var(--foreground)]">
           {str.evidenceLabel}{" "}
-          <span className="font-normal text-[var(--muted-foreground)]">{str.evidenceOptional}</span>
+          <span className="font-normal text-[var(--foreground-secondary)]">{str.evidenceOptional}</span>
         </label>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           {formatEvidenceHint(str, MAX_ATTACH_FILES, 5)}
         </p>
         <input
@@ -980,7 +998,7 @@ export function VoiceReportForm({
         <legend className="px-1 text-sm font-semibold text-[var(--foreground)]">
           {str.assistedSectionTitle} <span className="text-red-600">*</span>
         </legend>
-        <p className="text-xs text-[var(--muted-foreground)]">{str.assistedSectionHelp}</p>
+        <p className="text-xs text-[var(--foreground-secondary)]">{str.assistedSectionHelp}</p>
         <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:gap-6">
           <label className="flex items-center gap-2 text-sm text-[var(--foreground)]">
             <input
@@ -1035,7 +1053,7 @@ export function VoiceReportForm({
       ) : null}
 
       {!locationGateOk ? (
-        <p className="text-sm text-[var(--muted-foreground)]" role="status">
+        <p className="text-sm text-[var(--foreground-secondary)]" role="status">
           {str.submitDisabledHint}
         </p>
       ) : null}

@@ -20,7 +20,7 @@ function MaintainerDetails({ children }: { children: ReactNode }) {
       >
         File paths &amp; refresh commands (maintainers)
       </summary>
-      <div className="mt-2 space-y-2 leading-relaxed text-[var(--muted-foreground)]">{children}</div>
+      <div className="mt-2 space-y-2 leading-relaxed text-[var(--foreground-secondary)]">{children}</div>
     </details>
   );
 }
@@ -213,7 +213,7 @@ export default function DataSourcesPage() {
         breadcrumbCurrentLabel="Data sources"
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
-        <div className="mx-auto max-w-3xl space-y-10 px-4 text-sm text-[var(--muted-foreground)] sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl space-y-10 px-4 text-sm text-[var(--foreground-secondary)] sm:px-6 lg:px-8">
           <p className="leading-relaxed">
             This page lists <strong className="text-[var(--foreground)]">citable public sources</strong> so journalists,
             partners, and citizens can check what we publish. Where the site ships starter packaged data, MBKRU is still
@@ -234,7 +234,7 @@ export default function DataSourcesPage() {
             >
               Full technical runbook (repository)
             </summary>
-            <p className="mt-3 text-[var(--muted-foreground)]">
+            <p className="mt-3 text-[var(--foreground-secondary)]">
               Imports, CSV columns, and optional tooling for developers are documented in{" "}
               <code className="rounded bg-[var(--section-light)] px-1.5 py-0.5 text-[13px] text-[var(--foreground)]">
                 docs/DATA_SOURCES.md

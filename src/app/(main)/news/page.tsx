@@ -18,7 +18,7 @@ function NewsBriefingCallout() {
       <h2 className="mt-2 font-display text-lg font-bold text-[var(--foreground)] sm:text-xl">
         Diaspora &amp; the 17th Region (context and references)
       </h2>
-      <p className="mt-2 text-sm text-[var(--muted-foreground)] sm:text-base">
+      <p className="mt-2 text-sm text-[var(--foreground-secondary)] sm:text-base">
         Summit background, remittances, and what citizens can monitor—moved from the main diaspora hub so we can focus
         the diaspora page on documentation support. Includes external source links.
       </p>
@@ -50,8 +50,8 @@ export default async function NewsPage() {
             <NewsBriefingCallout />
           </div>
           <div className="mx-auto max-w-lg px-4 text-center sm:px-6 lg:px-8">
-            <p className="text-[var(--muted-foreground)]">No published news posts yet.</p>
-            <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+            <p className="text-[var(--foreground-secondary)]">No published news posts yet.</p>
+            <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
               Editors with access can create and publish posts from{" "}
               <Link href="/admin/posts" className={`${primaryLinkClass} font-semibold`}>
                 Admin → Posts
@@ -131,13 +131,13 @@ export default async function NewsPage() {
                     </div>
                     <div className="min-w-0 flex-1">
                       {d ? (
-                        <span className="text-sm font-medium text-[var(--muted-foreground)]">{d}</span>
+                        <span className="text-sm font-medium text-[var(--foreground-secondary)]">{d}</span>
                       ) : null}
                       <h3 className="mt-1 font-display text-lg font-semibold text-[var(--foreground)] group-hover:text-[var(--primary)]">
                         {article.title}
                       </h3>
                       {article.excerpt ? (
-                        <p className="mt-2 line-clamp-2 text-sm text-[var(--muted-foreground)]">{article.excerpt}</p>
+                        <p className="mt-2 line-clamp-2 text-sm text-[var(--foreground-secondary)]">{article.excerpt}</p>
                       ) : null}
                       <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)]">
                         Learn more
@@ -155,13 +155,13 @@ export default async function NewsPage() {
                 );
               })}
               {previews.length === 0 ? (
-                <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-[var(--border)] bg-white/50 p-8 text-center text-sm text-[var(--muted-foreground)]">
+                <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-[var(--border)] bg-white/50 p-8 text-center text-sm text-[var(--foreground-secondary)]">
                   Further featured articles will appear here as they are published.
                 </div>
               ) : null}
             </div>
           </div>
-          <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
+          <p className="mt-10 text-center text-sm text-[var(--foreground-secondary)]">
             More updates coming soon. Subscribe to our newsletter to stay informed.
           </p>
         </div>

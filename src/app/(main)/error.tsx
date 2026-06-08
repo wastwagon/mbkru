@@ -25,7 +25,7 @@ export default function Error({
         <h1 className="mt-6 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
           Something went wrong
         </h1>
-        <p className="mx-auto mt-3 max-w-md text-[var(--muted-foreground)]">
+        <p className="mx-auto mt-3 max-w-md text-[var(--foreground-secondary)]">
           We encountered an unexpected error. Please try again.
         </p>
         <Button type="button" onClick={reset} className="mt-8">

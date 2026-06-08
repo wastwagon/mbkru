@@ -98,11 +98,11 @@ export default async function CommunityPostDetailPage({ params }: Props) {
       <PageHeader title={post.title ?? c.name} description={threadDescription} />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm text-[var(--muted-foreground)]">
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm text-[var(--foreground-secondary)]">
             <Link href={`/communities/${c.slug}`} className={primaryNavLinkClass}>
               ← Back to community
             </Link>
-            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+            <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
               ·
             </span>
             {post.communityForum ? (
@@ -113,7 +113,7 @@ export default async function CommunityPostDetailPage({ params }: Props) {
                 >
                   Forum: {post.communityForum.name}
                 </Link>
-                <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+                <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
                   ·
                 </span>
               </>
@@ -124,7 +124,7 @@ export default async function CommunityPostDetailPage({ params }: Props) {
           </p>
 
           {post.parentPostId ? (
-            <p className="mt-6 text-sm text-[var(--muted-foreground)]">
+            <p className="mt-6 text-sm text-[var(--foreground-secondary)]">
               This message is a <strong>reply</strong>.{" "}
               <Link href={`/communities/${c.slug}/post/${post.parentPostId}`} className={primaryNavLinkClass}>
                 View the full thread
@@ -134,7 +134,7 @@ export default async function CommunityPostDetailPage({ params }: Props) {
           ) : null}
 
           <article className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
-            <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--muted-foreground)]">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--foreground-secondary)]">
               <span className="font-medium uppercase tracking-wide text-[var(--foreground)]">{post.kind}</span>
               <span>·</span>
               <span>{post.author.displayName ?? "Member"}</span>
@@ -185,7 +185,7 @@ export default async function CommunityPostDetailPage({ params }: Props) {
               <ul className="mt-4 space-y-4">
                 {replies.map((r) => (
                   <li key={r.id} className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm">
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--muted-foreground)]">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--foreground-secondary)]">
                       <span className="font-medium uppercase tracking-wide text-[var(--foreground)]">{r.kind}</span>
                       <span>·</span>
                       <span>{r.author.displayName ?? "Member"}</span>

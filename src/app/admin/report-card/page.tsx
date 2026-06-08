@@ -56,7 +56,7 @@ export default async function AdminReportCardPage() {
             <label htmlFor="label" className="block text-xs font-medium">
               Label
             </label>
-            <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
               Shown on the public site unless it looks like internal scaffolding (pilot, layout workflow, etc.) — then
               visitors see &quot;People&apos;s Report Card [year]&quot; instead.
             </p>
@@ -71,7 +71,7 @@ export default async function AdminReportCardPage() {
           </div>
           <div className="sm:col-span-2">
             <label htmlFor="methodology" className="block text-xs font-medium">
-              Methodology notes <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              Methodology notes <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
             </label>
             <textarea
               id="methodology"
@@ -106,16 +106,16 @@ export default async function AdminReportCardPage() {
                 <p className="font-semibold text-[var(--foreground)]">
                   {c.year} — {publicTitle}
                   {showStoredLine ? (
-                    <span className="ml-2 font-normal text-[var(--muted-foreground)]">(public title)</span>
+                    <span className="ml-2 font-normal text-[var(--foreground-secondary)]">(public title)</span>
                   ) : null}
                 </p>
                 {showStoredLine ? (
-                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                  <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                     Stored label:{" "}
                     <span className="font-mono text-[var(--foreground)]">{storedLabel.length > 0 ? storedLabel : "(empty)"}</span>
                   </p>
                 ) : null}
-                <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                   {c._count.entries} entr{c._count.entries === 1 ? "y" : "ies"}
                   {c.publishedAt ? (
                     <>

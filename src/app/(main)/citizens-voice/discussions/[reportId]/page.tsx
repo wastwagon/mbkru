@@ -44,7 +44,7 @@ export default async function VoiceDiscussionPage({ params }: Props) {
 
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="mb-8 text-sm text-[var(--muted-foreground)]">
+          <p className="mb-8 text-sm text-[var(--foreground-secondary)]">
             <Link href="/report-card" className={primaryNavLinkClass}>
               ← People&apos;s Report Card
             </Link>

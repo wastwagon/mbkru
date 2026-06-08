@@ -5,5 +5,5 @@ type Props = {
 
 /** Small muted empty-state text for admin panels and lists. */
 export function AdminEmptyState({ message, className = "" }: Props) {
-  return <p className={`text-sm text-[var(--muted-foreground)] ${className}`.trim()}>{message}</p>;
+  return <p className={`text-sm text-[var(--foreground-secondary)] ${className}`.trim()}>{message}</p>;
 }

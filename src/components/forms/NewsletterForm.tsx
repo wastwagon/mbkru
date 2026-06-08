@@ -55,7 +55,7 @@ export function NewsletterForm() {
           placeholder="Enter your email"
           required
           disabled={status === "loading"}
-          className={`min-h-[56px] w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-5 py-4 text-[var(--foreground)] shadow-[var(--shadow-card)] transition-shadow duration-200 placeholder:text-[var(--muted-foreground)]/70 focus-visible:border-[var(--primary)]/35 sm:min-h-[60px] sm:py-5 sm:w-80 sm:max-w-md ${focusRingSmClass}`}
+          className={`min-h-[56px] w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-5 py-4 text-[var(--foreground)] shadow-[var(--shadow-card)] transition-shadow duration-200 placeholder:text-[var(--foreground-secondary)]/70 focus-visible:border-[var(--primary)]/35 sm:min-h-[60px] sm:py-5 sm:w-80 sm:max-w-md ${focusRingSmClass}`}
           aria-label="Email address"
         />
         <Button

@@ -42,13 +42,13 @@ export default async function AccountNotificationsPage() {
     <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-sm text-[var(--muted-foreground)]">
+          <p className="text-sm text-[var(--foreground-secondary)]">
             <Link href="/account" className={`${primaryNavLinkTouchClass} rounded-md`}>
               ← Your account
             </Link>
           </p>
           <h1 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)]">Notifications</h1>
-          <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
             Verification updates, community activity, and moderation. Unread: {unreadCount}.
           </p>
         </div>
@@ -65,7 +65,7 @@ export default async function AccountNotificationsPage() {
       </div>
 
       {notifications.length === 0 ? (
-        <p className="mt-10 text-sm text-[var(--muted-foreground)]">No notifications yet.</p>
+        <p className="mt-10 text-sm text-[var(--foreground-secondary)]">No notifications yet.</p>
       ) : (
         <ul className="mt-8 space-y-3">
           {notifications.map((n) => {
@@ -83,7 +83,7 @@ export default async function AccountNotificationsPage() {
                     <p className={`text-sm ${unread ? "font-semibold text-[var(--foreground)]" : "text-[var(--foreground)]"}`}>
                       {memberNotificationSummary(n.type, n.payload)}
                     </p>
-                    <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                    <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                       {n.createdAt.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
                     </p>
                     {href ? (

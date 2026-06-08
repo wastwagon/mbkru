@@ -33,7 +33,7 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-md px-4 sm:px-6 lg:px-8">
           <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
-            <Suspense fallback={<p className="text-sm text-[var(--muted-foreground)]">Loading…</p>}>
+            <Suspense fallback={<p className="text-sm text-[var(--foreground-secondary)]">Loading…</p>}>
               <MemberRegisterForm />
             </Suspense>
           </div>

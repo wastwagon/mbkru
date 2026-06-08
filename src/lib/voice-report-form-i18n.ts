@@ -100,6 +100,9 @@ export type VoiceReportFormStrings = {
   submitDisabledHint: string;
   submit: string;
   submitting: string;
+  formLanguageActive: string;
+  formLanguageChange: string;
+  formLanguageLegalNote: string;
 };
 
 const BASE_EN: VoiceReportFormStrings = {
@@ -213,6 +216,9 @@ const BASE_EN: VoiceReportFormStrings = {
     "Submit stays disabled until automatic location capture finishes (browser permission + area label).",
   submit: "Submit report",
   submitting: "Submitting…",
+  formLanguageActive: "Form labels follow your voice language ({language}).",
+  formLanguageChange: "Change language",
+  formLanguageLegalNote: "Legal disclaimers and programme guidance stay in English.",
 };
 
 type Overlay = Partial<Omit<VoiceReportFormStrings, "placeholders">> & {
@@ -302,6 +308,16 @@ const OVERLAYS: Partial<Record<VoiceReportFormLangId, Overlay>> = {
     },
   },
   ga: {
+    checkingSignIn: "E check login…",
+    redirectingSignIn: "E redirect ma login…",
+    dismiss: "To",
+    restore: "San fa",
+    discard: "Pow",
+    reportTypeLabel: "Report type",
+    shortTitle: "Short title",
+    bodyLabel: "Dɛn na ɛbaa?",
+    locationTitle: "Place (automatic)",
+    regionLabel: "Region",
     submit: "Som report",
     submitting: "Resom…",
     kindVoice: "MBKRU Voice",
@@ -309,6 +325,17 @@ const OVERLAYS: Partial<Record<VoiceReportFormLangId, Overlay>> = {
     kindGov: "Government performance",
     kindSituational: "Situational alert",
     kindElection: "Election observation",
+    checkStatus: "Check status",
+    mpLabel: "Parliament MP",
+    mpPlaceholder: "Select MP from roster…",
+    evidenceLabel: "Evidence files",
+    evidenceOptional: "(optional)",
+    formLanguageActive: "Form labels follow your voice language ({language}).",
+    formLanguageChange: "Change language",
+    formLanguageLegalNote: "Legal disclaimers and programme guidance stay in English.",
+    placeholders: {
+      voice: "Describe what happened, where, when, and who was involved — avoid hearsay.",
+    },
   },
   "en-gh": {},
 };

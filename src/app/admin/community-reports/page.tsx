@@ -62,7 +62,7 @@ export default async function AdminCommunityReportsPage() {
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
                     <p className="text-sm font-medium text-[var(--foreground)]">{r.post.community.name}</p>
-                    <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                    <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                       Reported by {r.reporter.displayName || "Anonymous member"} ·{" "}
                       {r.createdAt.toLocaleDateString("en-GB", { dateStyle: "medium" })}
                     </p>
@@ -91,7 +91,7 @@ export default async function AdminCommunityReportsPage() {
                   </div>
                 </div>
                 <p className="mt-3 text-sm text-[var(--foreground)]">{r.reason}</p>
-                <p className="mt-3 rounded-lg bg-[var(--section-light)] p-3 text-xs text-[var(--muted-foreground)]">
+                <p className="mt-3 rounded-lg bg-[var(--section-light)] p-3 text-xs text-[var(--foreground-secondary)]">
                   {r.post.body}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-3 text-xs">
@@ -123,7 +123,7 @@ export default async function AdminCommunityReportsPage() {
                   <span className="font-medium">{r.post.community.name}</span> · {r.status.toLowerCase()} ·{" "}
                   {r.reason.slice(0, 80)}
                 </p>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p className="text-xs text-[var(--foreground-secondary)]">
                   {r.reviewedAt
                     ? r.reviewedAt.toLocaleDateString("en-GB", { dateStyle: "medium" })
                     : r.createdAt.toLocaleDateString("en-GB", { dateStyle: "medium" })}

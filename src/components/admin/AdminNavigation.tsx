@@ -11,7 +11,7 @@ function linkClass(active: boolean) {
     "block rounded-lg px-3 py-2 text-sm font-medium transition-colors",
     active
       ? "bg-[var(--primary)]/12 text-[var(--primary)]"
-      : "text-[var(--muted-foreground)] hover:bg-[var(--section-light)] hover:text-[var(--foreground)]",
+      : "text-[var(--foreground-secondary)] hover:bg-[var(--section-light)] hover:text-[var(--foreground)]",
     focusRingSmClass,
   ].join(" ");
 }
@@ -23,7 +23,7 @@ export function AdminNavigation() {
     <div className="space-y-6">
       {ADMIN_NAV_GROUPS.map((group) => (
         <div key={group.title}>
-          <p className="px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--muted-foreground)]">
+          <p className="px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--foreground-secondary)]">
             {group.title}
           </p>
           <ul className="mt-2 space-y-0.5">

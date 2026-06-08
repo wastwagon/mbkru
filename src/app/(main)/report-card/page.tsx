@@ -17,7 +17,7 @@ import { publicReportCardCycleTitle } from "@/lib/report-card-public-label";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
-import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { focusRingSmClass, primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import {
   isCivicPetitionsAndPublicCausesEnabled,
   isReportCardPublicEnabled,
@@ -197,7 +197,7 @@ export default async function ReportCardIndexPage({
           {/* Citizen submissions CTA */}
           <div className="mx-auto mb-10 max-w-4xl rounded-2xl border border-[var(--primary)]/25 bg-gradient-to-br from-[var(--primary)]/10 to-white px-5 py-6 sm:px-8">
             <p className="font-display text-lg font-semibold text-[var(--foreground)]">Your observations matter</p>
-            <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
               Report MP performance, government delivery, situational issues, or election observations. Staff triage every
               submission; you receive a tracking code. {voiceSharingMindfulNote}
             </p>
@@ -210,7 +210,7 @@ export default async function ReportCardIndexPage({
                   Submit a report (MBKRU Voice)
                 </Link>
               ) : (
-                <span className="text-sm text-[var(--muted-foreground)]">Voice submissions are not enabled on this deployment.</span>
+                <span className="text-sm text-[var(--foreground-secondary)]">Voice submissions are not enabled on this deployment.</span>
               )}
               <Link
                 href="/track-report"
@@ -227,17 +227,17 @@ export default async function ReportCardIndexPage({
             </div>
           </div>
 
-          <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--muted-foreground)]">
+          <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--foreground-secondary)]">
             <Link href="/methodology" className={primaryNavLinkClass}>
               Methodology
             </Link>
-            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+            <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
               ·
             </span>
             <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className={primaryNavLinkClass}>
               {accountabilityCatalogueNavMedium.byMp}
             </Link>
-            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+            <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
               ·
             </span>
             <Link href="/parliament-tracker" className={primaryNavLinkClass}>
@@ -246,7 +246,7 @@ export default async function ReportCardIndexPage({
           </p>
 
           {scorecardsMode ? (
-            <p className="mx-auto mt-6 max-w-3xl text-center text-sm leading-relaxed text-[var(--muted-foreground)]">
+            <p className="mx-auto mt-6 max-w-3xl text-center text-sm leading-relaxed text-[var(--foreground-secondary)]">
               Pre-election programme framing (including around elections) is described in{" "}
               <Link href="/methodology" className={primaryNavLinkClass}>
                 methodology
@@ -265,7 +265,7 @@ export default async function ReportCardIndexPage({
           ) : null}
 
           <p
-            className="mx-auto mt-4 max-w-2xl text-center text-sm leading-relaxed text-[var(--muted-foreground)]"
+            className="mx-auto mt-4 max-w-2xl text-center text-sm leading-relaxed text-[var(--foreground-secondary)]"
             id="prc-disambiguation"
           >
             {accountabilityProse.reportCardIndexDisambiguation}{" "}
@@ -283,9 +283,7 @@ export default async function ReportCardIndexPage({
                 id="browse-voice"
                 className="mx-auto mt-6 max-w-5xl rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6"
               >
-                <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
-                  Reports submitted (MBKRU Voice)
-                </p>
+                <p className="text-sm font-semibold text-[var(--foreground)]">Reports submitted (MBKRU Voice)</p>
                 <ReportCardVoiceFiltersForm
                   regions={regions}
                   preserve={{
@@ -307,16 +305,14 @@ export default async function ReportCardIndexPage({
                     page: page > 1 ? page : undefined,
                   })}
                 />
-                <p className="mt-3 text-xs text-[var(--muted-foreground)]">
-                  Listed by most recent (excluding archived). Support, comments, and reactions appear on cards when
-                  members engage on a staff-opened discussion — check the meta line for &quot;Discussion open&quot; and
-                  the engagement counts below it.
+                <p className="mt-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+                  Newest first (archived hidden). Engagement shows on cards when discussion is open.
                 </p>
               </div>
 
               <div className="mx-auto mt-8 max-w-6xl">
                 <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-                  <p className="text-sm text-[var(--muted-foreground)]">
+                  <p className="text-sm text-[var(--foreground-secondary)]">
                     <span className="font-semibold text-[var(--foreground)]">{voiceBrowse.totalFiltered}</span> submission
                     {voiceBrowse.totalFiltered === 1 ? "" : "s"}
                     {voiceBrowse.totalFiltered > 0 ? (
@@ -334,7 +330,7 @@ export default async function ReportCardIndexPage({
                 </div>
 
                 {voiceBrowse.rows.length === 0 ? (
-                  <p className="rounded-2xl border border-[var(--border)] bg-white px-6 py-12 text-center text-sm text-[var(--muted-foreground)]">
+                  <p className="rounded-2xl border border-[var(--border)] bg-white px-6 py-12 text-center text-sm text-[var(--foreground-secondary)]">
                     No submissions match these filters yet — or none have been received.{" "}
                     <Link href="/citizens-voice/submit" className={primaryNavLinkClass}>
                       Submit a report
@@ -342,7 +338,7 @@ export default async function ReportCardIndexPage({
                     to appear in this list (archived rows stay hidden).
                   </p>
                 ) : (
-                  <ul className="grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                  <ul className="grid items-stretch gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
                     {voiceBrowse.rows.map((row) => (
                       <li key={row.id} className="flex min-h-0">
                         <VoiceSubmissionBrowseCard row={row} />
@@ -356,7 +352,7 @@ export default async function ReportCardIndexPage({
                     className="mt-10 flex flex-col gap-3 border-t border-[var(--border)] pt-8 sm:flex-row sm:items-center sm:justify-between"
                     aria-label="Voice submissions pagination"
                   >
-                    <p className="text-xs text-[var(--muted-foreground)]">
+                    <p className="text-xs text-[var(--foreground-secondary)]">
                       Page {safeVPage} of {vTotalPages}
                     </p>
                     <div className="flex flex-wrap gap-4">
@@ -378,7 +374,7 @@ export default async function ReportCardIndexPage({
                           ← Previous
                         </Link>
                       ) : (
-                        <span className="text-[var(--muted-foreground)]">← Previous</span>
+                        <span className="text-[var(--foreground-secondary)]">← Previous</span>
                       )}
                       {safeVPage < vTotalPages ? (
                         <Link
@@ -398,7 +394,7 @@ export default async function ReportCardIndexPage({
                           Next →
                         </Link>
                       ) : (
-                        <span className="text-[var(--muted-foreground)]">Next →</span>
+                        <span className="text-[var(--foreground-secondary)]">Next →</span>
                       )}
                     </div>
                   </nav>
@@ -415,8 +411,8 @@ export default async function ReportCardIndexPage({
                 id="browse-scores"
                 className="mx-auto mt-6 max-w-5xl rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6"
               >
-                <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
-                  Official programme scores (People&apos;s Report Card)
+                <p className="text-sm font-semibold text-[var(--foreground)]">
+                  Programme scores (People&apos;s Report Card)
                 </p>
                 <form method="get" action="/report-card#browse-scores" className="mt-4 grid gap-4 lg:grid-cols-12 lg:items-end">
                   <input type="hidden" name="page" value="1" />
@@ -425,11 +421,13 @@ export default async function ReportCardIndexPage({
                   <input type="hidden" name="vpage" value={String(safeVPage)} />
                   <input type="hidden" name="vkind" value={voiceKindFilter ?? ""} />
                   <label className="lg:col-span-3">
-                    <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Cycle (year)</span>
+                    <span className="mb-1.5 block text-xs font-semibold text-[var(--foreground-secondary)] sm:text-sm">
+                      Cycle (year)
+                    </span>
                     <select
                       name="year"
                       defaultValue={selectedYear}
-                      className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)]"
+                      className={`w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`}
                     >
                       {cycles.map((c) => (
                         <option key={c.id} value={c.year}>
@@ -439,11 +437,13 @@ export default async function ReportCardIndexPage({
                     </select>
                   </label>
                   <label className="lg:col-span-3">
-                    <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Region</span>
+                    <span className="mb-1.5 block text-xs font-semibold text-[var(--foreground-secondary)] sm:text-sm">
+                      Region
+                    </span>
                     <select
                       name="region"
                       defaultValue={selectedRegionId}
-                      className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)]"
+                      className={`w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`}
                     >
                       <option value="">All regions</option>
                       {regions.map((r) => (
@@ -454,7 +454,7 @@ export default async function ReportCardIndexPage({
                     </select>
                   </label>
                   <label className="lg:col-span-4">
-                    <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">
+                    <span className="mb-1.5 block text-xs font-semibold text-[var(--foreground-secondary)] sm:text-sm">
                       Search office-holder name
                     </span>
                     <input
@@ -462,16 +462,16 @@ export default async function ReportCardIndexPage({
                       name="q"
                       defaultValue={qRaw}
                       placeholder="e.g. surname or first name"
-                      className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)]/70"
+                      className={`w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] placeholder:text-[var(--foreground-secondary)]/60 ${focusRingSmClass}`}
                       autoComplete="off"
                     />
                   </label>
-                  <div className="flex flex-wrap gap-2 lg:col-span-2">
+                  <div className="flex flex-col gap-2 sm:flex-row lg:col-span-2">
                     <button
                       type="submit"
-                      className="min-h-[44px] flex-1 rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-[var(--primary-foreground)] shadow-sm hover:bg-[var(--primary-dark)]"
+                      className={`min-h-11 w-full rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[var(--primary-dark)] sm:flex-1 ${focusRingSmClass}`}
                     >
-                      Apply
+                      Show scores
                     </button>
                     <Link
                       href={reportCardIndexHref({
@@ -481,13 +481,13 @@ export default async function ReportCardIndexPage({
                         vpage: vPage > 1 ? vPage : undefined,
                         vkind: voiceKindFilter ?? undefined,
                       })}
-                      className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-[var(--border)] px-3 py-2 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--section-light)]"
+                      className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[var(--border)] px-3 py-2.5 text-sm font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--section-light)] sm:flex-1 ${focusRingSmClass}`}
                     >
                       Reset
                     </Link>
                   </div>
                 </form>
-                <p className="mt-3 text-xs text-[var(--muted-foreground)]">
+                <p className="mt-3 text-xs text-[var(--foreground-secondary)]">
                   Showing scores for{" "}
                   <span className="font-medium text-[var(--foreground)]">{selectedYear}</span>
                   {cycleMeta ? (
@@ -503,7 +503,7 @@ export default async function ReportCardIndexPage({
 
               <div className="mx-auto mt-8 max-w-6xl">
                 <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-                  <p className="text-sm text-[var(--muted-foreground)]">
+                  <p className="text-sm text-[var(--foreground-secondary)]">
                     <span className="font-semibold text-[var(--foreground)]">{browse.totalFiltered}</span> match
                     {browse.totalFiltered === 1 ? "" : "es"}
                     {browse.totalFiltered > 0 ? (
@@ -519,7 +519,7 @@ export default async function ReportCardIndexPage({
                 </div>
 
                 {browse.rows.length === 0 ? (
-                  <p className="rounded-2xl border border-[var(--border)] bg-white px-6 py-12 text-center text-sm text-[var(--muted-foreground)]">
+                  <p className="rounded-2xl border border-[var(--border)] bg-white px-6 py-12 text-center text-sm text-[var(--foreground-secondary)]">
                     No programme entries match these filters. Try clearing search, choosing another region, or another cycle year.
                   </p>
                 ) : (
@@ -537,7 +537,7 @@ export default async function ReportCardIndexPage({
                     className="mt-10 flex flex-col gap-3 border-t border-[var(--border)] pt-8 sm:flex-row sm:items-center sm:justify-between"
                     aria-label="Programme scores pagination"
                   >
-                    <p className="text-xs text-[var(--muted-foreground)]">
+                    <p className="text-xs text-[var(--foreground-secondary)]">
                       Page {safePage} of {totalPages}
                     </p>
                     <div className="flex flex-wrap gap-4">
@@ -559,7 +559,7 @@ export default async function ReportCardIndexPage({
                           ← Previous
                         </Link>
                       ) : (
-                        <span className="text-[var(--muted-foreground)]">← Previous</span>
+                        <span className="text-[var(--foreground-secondary)]">← Previous</span>
                       )}
                       {safePage < totalPages ? (
                         <Link
@@ -579,7 +579,7 @@ export default async function ReportCardIndexPage({
                           Next →
                         </Link>
                       ) : (
-                        <span className="text-[var(--muted-foreground)]">Next →</span>
+                        <span className="text-[var(--foreground-secondary)]">Next →</span>
                       )}
                     </div>
                   </nav>
@@ -587,7 +587,7 @@ export default async function ReportCardIndexPage({
               </div>
             </>
           ) : showScores && !hasCycles ? (
-            <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-[var(--border)] bg-white px-6 py-10 text-center text-sm text-[var(--muted-foreground)]">
+            <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-[var(--border)] bg-white px-6 py-10 text-center text-sm text-[var(--foreground-secondary)]">
               No published programme cycles yet. Voice submissions appear above when Voice is enabled.
             </div>
           ) : null}

@@ -96,7 +96,7 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
           className={`${fieldClass} min-h-[200px] resize-y`}
           placeholder="Context, asks, and what success looks like. Be factual and respectful."
         />
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           MBKRU is independent; petitions express citizen concern, not a government or court filing.
         </p>
       </div>

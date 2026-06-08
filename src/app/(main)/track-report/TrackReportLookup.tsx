@@ -7,8 +7,10 @@ import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
 import { redirectToMemberLogin } from "@/lib/client/member-login-redirect";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
 
+const labelClass = "mb-1.5 block text-xs font-semibold text-[var(--foreground-secondary)] sm:text-sm";
+
 const inputClass =
-  `mt-1 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 font-mono uppercase tracking-wide text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
+  `mt-0 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 font-mono text-base uppercase tracking-wider text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
 
 type AdminReplyPayload = {
   id: string;
@@ -82,16 +84,16 @@ function Inner() {
 
   if (authStatus === "loading") {
     return (
-      <div className="rounded-xl border border-[var(--border)] bg-white/80 px-6 py-10 text-center">
-        <p className="text-sm text-[var(--muted-foreground)]">Checking sign-in…</p>
+      <div className="py-6 text-center">
+        <p className="text-sm text-[var(--foreground-secondary)]">Checking sign-in…</p>
       </div>
     );
   }
 
   if (authStatus === "signedOut") {
     return (
-      <div className="rounded-xl border border-[var(--border)] bg-white/80 px-6 py-10 text-center">
-        <p className="text-sm text-[var(--muted-foreground)]">Redirecting to sign in…</p>
+      <div className="py-6 text-center">
+        <p className="text-sm text-[var(--foreground-secondary)]">Redirecting to sign in…</p>
       </div>
     );
   }
@@ -99,7 +101,7 @@ function Inner() {
   return (
     <form onSubmit={lookup} className="space-y-4">
       <div>
-        <label htmlFor="code" className="block text-sm font-medium text-[var(--foreground)]">
+        <label htmlFor="code" className={labelClass}>
           Tracking code
         </label>
         <input
@@ -109,6 +111,7 @@ function Inner() {
           className={inputClass}
           placeholder="e.g. ABCD2345EFGH"
           autoComplete="off"
+          spellCheck={false}
         />
       </div>
       {error ? (
@@ -117,27 +120,30 @@ function Inner() {
         </p>
       ) : null}
       {result ? (
-        <div className="rounded-xl border border-[var(--border)] bg-white p-4 text-sm shadow-sm transition-shadow duration-200 motion-reduce:transition-none">
-          <p className="font-mono text-[var(--foreground)]">{result.trackingCode}</p>
-          <p className="mt-2 text-[var(--muted-foreground)]">
-            <span className="font-medium text-[var(--foreground)]">Status:</span>{" "}
-            {result.status.replace(/_/g, " ")}
-          </p>
-          <p className="mt-1 text-[var(--muted-foreground)]">
-            <span className="font-medium text-[var(--foreground)]">Type:</span>{" "}
-            {result.kind.replace(/_/g, " ")}
-          </p>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-            <span className="font-medium text-[var(--foreground)]">Submitted</span>{" "}
-            <time dateTime={result.createdAt}>{formatSubmissionDateTime(result.createdAt)}</time>
-          </p>
-          <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
-            <span className="font-medium text-[var(--foreground)]">Last updated</span>{" "}
-            <time dateTime={result.updatedAt}>{formatSubmissionDateTime(result.updatedAt)}</time>
-          </p>
+        <div className="rounded-xl border border-[var(--accent-gold)]/35 bg-[var(--accent-gold-light)] p-4 text-sm shadow-sm">
+          <p className="text-xs font-semibold text-[var(--accent-gold)]">Citizen receipt</p>
+          <p className="mt-1 font-mono text-lg font-bold tracking-wider text-[var(--foreground)]">{result.trackingCode}</p>
+          <div className="mt-3 space-y-1.5 text-[var(--foreground-secondary)]">
+            <p>
+              <span className="font-semibold text-[var(--foreground)]">Status:</span>{" "}
+              {result.status.replace(/_/g, " ")}
+            </p>
+            <p>
+              <span className="font-semibold text-[var(--foreground)]">Type:</span>{" "}
+              {result.kind.replace(/_/g, " ")}
+            </p>
+            <p className="text-xs">
+              <span className="font-semibold text-[var(--foreground)]">Submitted</span>{" "}
+              <time dateTime={result.createdAt}>{formatSubmissionDateTime(result.createdAt)}</time>
+            </p>
+            <p className="text-xs">
+              <span className="font-semibold text-[var(--foreground)]">Last updated</span>{" "}
+              <time dateTime={result.updatedAt}>{formatSubmissionDateTime(result.updatedAt)}</time>
+            </p>
+          </div>
           {(result.visibleTeamNoteCount ?? result.adminReplies?.length ?? 0) > 0 ? (
-            <p className="mt-2 text-xs text-[var(--muted-foreground)]">
-              <span className="font-medium text-[var(--foreground)]">
+            <p className="mt-3 text-xs text-[var(--foreground-secondary)]">
+              <span className="font-semibold text-[var(--foreground)]">
                 {result.visibleTeamNoteCount ?? result.adminReplies?.length ?? 0} team note
                 {(result.visibleTeamNoteCount ?? result.adminReplies?.length ?? 0) === 1 ? "" : "s"}
               </span>
@@ -153,14 +159,12 @@ function Inner() {
             </p>
           ) : null}
           {result.adminReplies && result.adminReplies.length > 0 ? (
-            <div className="mt-4 border-t border-[var(--border)] pt-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
-                Notes from MBKRU
-              </p>
+            <div className="mt-4 rounded-lg border border-[var(--border)] bg-white p-3">
+              <p className="text-xs font-semibold text-[var(--foreground)]">Notes from MBKRU</p>
               <ul className="mt-2 space-y-3">
                 {result.adminReplies.map((r) => (
                   <li key={r.id}>
-                    <p className="text-xs text-[var(--muted-foreground)]">
+                    <p className="text-xs text-[var(--foreground-secondary)]">
                       <time dateTime={r.createdAt}>{formatSubmissionDateTime(r.createdAt)}</time>
                     </p>
                     <p className="mt-1 whitespace-pre-wrap text-sm text-[var(--foreground)]">{r.body}</p>
@@ -171,7 +175,7 @@ function Inner() {
           ) : null}
         </div>
       ) : null}
-      <Button type="submit" disabled={loading} className="w-full justify-center sm:w-auto">
+      <Button type="submit" disabled={loading} className="min-h-11 w-full justify-center sm:w-auto">
         {loading ? "Checking…" : "Check status"}
       </Button>
     </form>
@@ -180,7 +184,7 @@ function Inner() {
 
 export function TrackReportLookup() {
   return (
-    <Suspense fallback={<p className="text-sm text-[var(--muted-foreground)]">Loading…</p>}>
+    <Suspense fallback={<p className="text-sm text-[var(--foreground-secondary)]">Loading…</p>}>
       <Inner />
     </Suspense>
   );

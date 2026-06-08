@@ -88,11 +88,11 @@ export default async function AdminMpPerformanceSignalsPage() {
       />
 
       {rows.length === 0 ? (
-        <p className="mt-8 text-sm text-[var(--muted-foreground)]">No MP performance reports in the database yet.</p>
+        <p className="mt-8 text-sm text-[var(--foreground-secondary)]">No MP performance reports in the database yet.</p>
       ) : (
         <div className="mt-8 overflow-x-auto rounded-xl border border-[var(--border)] bg-white">
           <table className="min-w-full text-left text-sm">
-            <thead className="border-b border-[var(--border)] bg-[var(--section-light)]/60 text-xs uppercase tracking-wide text-[var(--muted-foreground)]">
+            <thead className="border-b border-[var(--border)] bg-[var(--section-light)]/60 text-xs uppercase tracking-wide text-[var(--foreground-secondary)]">
               <tr>
                 <th className="px-4 py-3 font-semibold">MP</th>
                 <th className="px-4 py-3 font-semibold">Total</th>
@@ -110,11 +110,11 @@ export default async function AdminMpPerformanceSignalsPage() {
                     <Link href={`/admin/parliament/${r.mpId}`} className={primaryLinkClass}>
                       {r.name}
                     </Link>
-                    <div className="font-mono text-[11px] text-[var(--muted-foreground)]">{r.slug}</div>
+                    <div className="font-mono text-[11px] text-[var(--foreground-secondary)]">{r.slug}</div>
                   </td>
                   <td className="px-4 py-3 tabular-nums font-medium">{r.total}</td>
                   {TIERS.map((t) => (
-                    <td key={t} className="px-4 py-3 tabular-nums text-[var(--muted-foreground)]">
+                    <td key={t} className="px-4 py-3 tabular-nums text-[var(--foreground-secondary)]">
                       {r.byTier[t]}
                     </td>
                   ))}

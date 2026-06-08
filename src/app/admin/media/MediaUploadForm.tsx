@@ -38,7 +38,7 @@ export function MediaUploadForm() {
   return (
     <form onSubmit={onSubmit} className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
       <h2 className="font-semibold text-[var(--foreground)]">Upload image</h2>
-      <p className="mt-1 text-sm text-[var(--muted-foreground)]">JPEG, PNG, WebP or GIF · max 8MB</p>
+      <p className="mt-1 text-sm text-[var(--foreground-secondary)]">JPEG, PNG, WebP or GIF · max 8MB</p>
       <div className="mt-4 space-y-3">
         <input
           type="file"
@@ -60,7 +60,7 @@ export function MediaUploadForm() {
         >
           {loading ? "Uploading…" : "Upload"}
         </button>
-        {status ? <p className="text-sm text-[var(--muted-foreground)]">{status}</p> : null}
+        {status ? <p className="text-sm text-[var(--foreground-secondary)]">{status}</p> : null}
       </div>
     </form>
   );

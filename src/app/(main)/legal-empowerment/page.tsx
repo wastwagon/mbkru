@@ -26,7 +26,7 @@ export default function LegalEmpowermentPage() {
         breadcrumbCurrentLabel="Legal"
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
-        <div className="mx-auto max-w-3xl space-y-6 px-4 text-[var(--muted-foreground)] sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl space-y-6 px-4 text-[var(--foreground-secondary)] sm:px-6 lg:px-8">
           <p>
             This desk is a <strong className="text-[var(--foreground)]">navigation layer</strong>: we help citizens
             understand where different kinds of grievances usually belong — for example{" "}

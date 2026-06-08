@@ -32,13 +32,13 @@ function StatCard({
         className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${stripeClass}`}
         aria-hidden
       />
-      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--muted-foreground)]">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--foreground-secondary)]">
         {label}
       </p>
       <p className="mt-3 font-display text-3xl font-bold tabular-nums tracking-tight text-[var(--foreground)]">
         {value}
       </p>
-      {hint ? <p className="mt-2 text-xs leading-snug text-[var(--muted-foreground)]">{hint}</p> : null}
+      {hint ? <p className="mt-2 text-xs leading-snug text-[var(--foreground-secondary)]">{hint}</p> : null}
     </div>
   );
 }
@@ -60,12 +60,12 @@ export function AccountStatGrid({
           >
             Your Voice activity
           </h2>
-          <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
             Signed-in submissions and how they move through review.
           </p>
         </div>
         {lastSubmittedAt ? (
-          <p className="text-xs text-[var(--muted-foreground)]">
+          <p className="text-xs text-[var(--foreground-secondary)]">
             Last submission ·{" "}
             <time dateTime={lastSubmittedAt.toISOString()} className="text-[var(--foreground)]">
               {formatSubmissionDateTime(lastSubmittedAt)}

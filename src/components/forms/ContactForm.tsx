@@ -22,7 +22,7 @@ const contactSchema = z.object({
 type ContactFormData = z.infer<typeof contactSchema>;
 
 const inputBase =
-  `mt-1 block w-full touch-manipulation rounded-xl border bg-white px-4 py-3.5 text-[var(--foreground)] transition-all duration-200 placeholder:text-[var(--muted-foreground)]/70 focus-visible:border-[var(--primary)]/35 ${focusRingSmClass} disabled:opacity-60 disabled:cursor-not-allowed`;
+  `mt-1 block w-full touch-manipulation rounded-xl border bg-white px-4 py-3.5 text-[var(--foreground)] transition-all duration-200 placeholder:text-[var(--foreground-secondary)]/70 focus-visible:border-[var(--primary)]/35 ${focusRingSmClass} disabled:opacity-60 disabled:cursor-not-allowed`;
 
 const inputError = "border-red-400 focus-visible:border-red-400 focus-visible:outline-red-400/80";
 const inputNormal = "border-[var(--border)] hover:border-[var(--primary)]/30";
@@ -170,7 +170,7 @@ export function ContactForm() {
             Message
           </label>
           <span
-            className={`text-xs ${messageLength >= minMessageLength ? "text-[var(--muted-foreground)]" : "text-amber-600"}`}
+            className={`text-xs ${messageLength >= minMessageLength ? "text-[var(--foreground-secondary)]" : "text-amber-600"}`}
           >
             {messageLength}/{minMessageLength} min
           </span>

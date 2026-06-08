@@ -59,16 +59,16 @@ export default async function AdminCommunityVerificationsPage() {
       <section className="mt-2">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Pending requests ({pending.length})</h2>
         {pending.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">No pending requests.</p>
+          <p className="mt-2 text-sm text-[var(--foreground-secondary)]">No pending requests.</p>
         ) : (
           <ul className="mt-4 space-y-3">
             {pending.map((r) => (
               <li key={r.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
                 <p className="text-sm text-[var(--foreground)]">
                   <span className="font-medium">{r.member.displayName ?? r.member.email}</span>
-                  <span className="ml-2 text-xs text-[var(--muted-foreground)]">{r.member.email}</span>
+                  <span className="ml-2 text-xs text-[var(--foreground-secondary)]">{r.member.email}</span>
                 </p>
-                <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                   {r.community.name} · submitted{" "}
                   {r.createdAt.toLocaleDateString("en-GB", { dateStyle: "medium" })} · documents:{" "}
                   {Array.isArray(r.documentMediaIds) ? r.documentMediaIds.length : 0}
@@ -98,7 +98,7 @@ export default async function AdminCommunityVerificationsPage() {
                                 </div>
                               ) : null}
                               <div className="min-w-0">
-                                <p className="truncate font-mono text-[10px] text-[var(--muted-foreground)]">{docId}</p>
+                                <p className="truncate font-mono text-[10px] text-[var(--foreground-secondary)]">{docId}</p>
                                 {media ? (
                                   <a
                                     href={mediaUrl}
@@ -188,7 +188,7 @@ export default async function AdminCommunityVerificationsPage() {
       <section className="mt-10">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Recently reviewed</h2>
         {recent.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">None yet.</p>
+          <p className="mt-2 text-sm text-[var(--foreground-secondary)]">None yet.</p>
         ) : (
           <ul className="mt-4 space-y-2">
             {recent.map((r) => (
@@ -200,7 +200,7 @@ export default async function AdminCommunityVerificationsPage() {
                   <span className="font-medium">{r.community.name}</span> · {r.member.displayName ?? r.member.email} ·{" "}
                   {r.status.toLowerCase()}
                 </p>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p className="text-xs text-[var(--foreground-secondary)]">
                   {r.reviewedAt
                     ? r.reviewedAt.toLocaleDateString("en-GB", { dateStyle: "medium" })
                     : r.updatedAt.toLocaleDateString("en-GB", { dateStyle: "medium" })}

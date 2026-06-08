@@ -42,7 +42,7 @@ export function AdminLoginForm({ configError }: { configError: boolean }) {
     <div className="flex min-h-[70vh] items-center justify-center bg-[var(--section-light)] px-4 py-16">
       <div className="w-full max-w-md rounded-2xl border border-[var(--border)] bg-white p-8 shadow-[var(--shadow-card)]">
         <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">MBKRU Admin</h1>
-        <p className="mt-2 text-sm text-[var(--muted-foreground)]">Sign in to manage posts and media.</p>
+        <p className="mt-2 text-sm text-[var(--foreground-secondary)]">Sign in to manage posts and media.</p>
         <form onSubmit={onSubmit} className="mt-8 space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-[var(--foreground)]">

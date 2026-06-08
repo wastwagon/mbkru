@@ -119,6 +119,7 @@ describe("GET /api/promises", () => {
         catalogueThemeLabel: null,
         isGovernmentProgramme: false,
         policySector: null,
+        blockedReason: null,
         manifesto: null,
         member: { name: "A", slug: "a", role: "MP", party: null, constituency: null },
       },

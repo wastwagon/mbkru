@@ -75,6 +75,7 @@ export type AccessibilityVoiceStrings = {
   panelSubtitle: string;
   closeAria: string;
   voiceLanguageLabel: string;
+  languageScopeNote: string;
   speechSpeedLabel: string;
   cloudAudioHeading: string;
   whisperDictation: string;
@@ -445,6 +446,8 @@ const accessibilityByLang: Record<VoiceChromeLangId, AccessibilityVoiceStrings> 
     panelSubtitle: "Read aloud and dictation for this page. Press Escape or Close.",
     closeAria: "Close accessibility voice tools",
     voiceLanguageLabel: "Voice language",
+    languageScopeNote:
+      "Voice chat and read-aloud use this language. Report form labels may translate; legal text stays in English.",
     speechSpeedLabel: "Speech speed",
     cloudAudioHeading: "Cloud audio (OpenAI)",
     whisperDictation: "Whisper for dictation",
@@ -486,6 +489,8 @@ const accessibilityByLang: Record<VoiceChromeLangId, AccessibilityVoiceStrings> 
     panelSubtitle: "Kenkan ne nhomasua ma kratafa yi. Escape anaa Close.",
     closeAria: "To accessibility panel no mu",
     voiceLanguageLabel: "Voice kasa",
+    languageScopeNote:
+      "Voice chat ne kenkan fa kasa yi. Report form labels betumi akyerɛ; mmara nsɛm wɔ Borɔfo mu.",
     speechSpeedLabel: "Kenkan bere",
     cloudAudioHeading: "Cloud audio (OpenAI)",
     whisperDictation: "Whisper ma nhomasua",
@@ -526,6 +531,8 @@ const accessibilityByLang: Record<VoiceChromeLangId, AccessibilityVoiceStrings> 
     panelSubtitle: "Kenkan kɛ dictation ma page yi. Escape anaa Close.",
     closeAria: "To panel ni",
     voiceLanguageLabel: "Voice gɔŋ",
+    languageScopeNote:
+      "Voice chat kɛ kenkan fa gɔŋ ni. Report form labels le translate; legal text le English.",
     speechSpeedLabel: "Kenkan speed",
     cloudAudioHeading: "Cloud audio (OpenAI)",
     whisperDictation: "Whisper ma dictation",
@@ -565,6 +572,8 @@ const accessibilityByLang: Record<VoiceChromeLangId, AccessibilityVoiceStrings> 
     panelSubtitle: "Karatu da rubutu ta sautin don wannan shafin. Escape ko Close.",
     closeAria: "Rufe panel",
     voiceLanguageLabel: "Harshen murya",
+    languageScopeNote:
+      "Tattaunawa da karatu suna wannan harshe. Rubutun fom na iya fassara; rubutun doka yana Turanci.",
     speechSpeedLabel: "Gudun karatu",
     cloudAudioHeading: "Cloud audio (OpenAI)",
     whisperDictation: "Whisper don rubutu ta sautin",
@@ -604,6 +613,8 @@ const accessibilityByLang: Record<VoiceChromeLangId, AccessibilityVoiceStrings> 
     panelSubtitle: "Xlẽ kple nuŋlɔla na site sia. Escape alo Close.",
     closeAria: "Tu panel la",
     voiceLanguageLabel: "Voice gbegbe",
+    languageScopeNote:
+      "Voice chat kple xlẽ zãa gbegbe sia. Report form labels ate ŋu translate; legal nuwo nɔ English.",
     speechSpeedLabel: "Xlẽ ƒoƒo",
     cloudAudioHeading: "Cloud audio (OpenAI)",
     whisperDictation: "Whisper na nuŋlɔla",

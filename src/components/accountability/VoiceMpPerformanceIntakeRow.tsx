@@ -14,7 +14,9 @@ type Props = {
   showMpSheetLink?: boolean;
 };
 
-/** Shared compact row for MP performance intakes (MP sheet list + parliament tracker). */
+const secondaryText = "text-[var(--foreground-secondary)]";
+
+/** Compact intake row for parliament tracker — matches Voice card typography. */
 export function VoiceMpPerformanceIntakeRow({
   report,
   titleHeadingLevel = "h3",
@@ -32,11 +34,14 @@ export function VoiceMpPerformanceIntakeRow({
   );
 
   return (
-    <article aria-labelledby={titleId} className="py-3 first:pt-0 last:pb-0">
-      <TitleTag id={titleId} className="font-medium text-[var(--foreground)]">
+    <article
+      aria-labelledby={titleId}
+      className="rounded-xl border border-[var(--border)]/80 bg-[var(--section-light)]/60 px-3 py-3 first:mt-0 sm:bg-transparent sm:px-0 sm:py-3"
+    >
+      <TitleTag id={titleId} className="text-sm font-semibold leading-snug text-[var(--foreground)] sm:text-base">
         {report.title}
       </TitleTag>
-      <p id={metaId} className="mt-1 text-xs text-[var(--muted-foreground)]">
+      <p id={metaId} className={`mt-1 text-xs leading-relaxed ${secondaryText}`}>
         {reportStatusLabel(report.status)}
         {" · "}
         {formatMediumDate(report.createdAt)}
@@ -48,24 +53,22 @@ export function VoiceMpPerformanceIntakeRow({
         <span className="sr-only"> — tracking code for {report.title}</span>
       </p>
       {parliamentMember ? (
-        <p className="mt-1 text-xs font-medium text-[var(--foreground)]">
+        <p className={`mt-1 text-xs ${secondaryText}`}>
           MP in focus:{" "}
           {showMpSheetLink ? (
             <Link href={`/promises/${encodeURIComponent(parliamentMember.slug)}`} className={primaryLinkClass}>
               {parliamentMember.name}
             </Link>
           ) : (
-            parliamentMember.name
+            <span className="font-medium text-[var(--foreground)]">{parliamentMember.name}</span>
           )}
         </p>
       ) : null}
-      {engagementSummary ? (
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">{engagementSummary}</p>
-      ) : null}
+      {engagementSummary ? <p className={`mt-1 text-xs ${secondaryText}`}>{engagementSummary}</p> : null}
       {report.bodyPreview ? (
-        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[var(--muted-foreground)]">{report.bodyPreview}</p>
+        <p className={`mt-2 line-clamp-2 text-sm leading-relaxed ${secondaryText}`}>{report.bodyPreview}</p>
       ) : null}
-      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+      <div className="mt-3">
         <VoiceSubmissionPrimaryAction
           reportId={report.id}
           trackingCode={report.trackingCode}

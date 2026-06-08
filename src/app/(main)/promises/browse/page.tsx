@@ -149,15 +149,15 @@ export default async function PromisesBrowsePage({ searchParams }: Props) {
               Government programme lens
             </Link>
           </div>
-          <p className="mx-auto mt-3 max-w-2xl text-center text-xs leading-relaxed text-[var(--muted-foreground)]">
+          <p className="mx-auto mt-3 max-w-2xl text-center text-xs leading-relaxed text-[var(--foreground-secondary)]">
             One interactive dashboard — filters below update the KPI strip and rows together.
           </p>
 
-          <p className="mt-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-sm text-[var(--foreground-secondary)]">
             <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className={primaryNavLinkClass}>
               ← By MP roster
             </Link>
-            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+            <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
               ·
             </span>
             <Link href="/parliament-tracker" className={primaryNavLinkClass}>
@@ -167,7 +167,7 @@ export default async function PromisesBrowsePage({ searchParams }: Props) {
 
           <PromiseCatalogueSurfacesCallout catalogueLens={governmentOnly ? "government" : "full"} />
 
-          <p className="mx-auto mt-5 max-w-3xl text-center text-xs leading-relaxed text-[var(--muted-foreground)] sm:text-sm">
+          <p className="mx-auto mt-5 max-w-3xl text-center text-xs leading-relaxed text-[var(--foreground-secondary)] sm:text-sm">
             {accountabilityHomePreviewCopy.promiseCardSurfaceExplainer}
           </p>
 

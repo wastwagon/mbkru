@@ -34,6 +34,9 @@ export type VoiceSubmissionSurfaceCardProps = {
   staffSummaryPending?: boolean;
 };
 
+const secondaryText = "text-[var(--foreground-secondary)]";
+const metaText = `mt-2 text-xs leading-relaxed ${secondaryText} sm:text-sm`;
+
 export function VoiceSubmissionSurfaceCard({
   id,
   title,
@@ -68,7 +71,7 @@ export function VoiceSubmissionSurfaceCard({
   return (
     <article
       aria-labelledby={titleId}
-      className="flex h-full min-h-0 w-full flex-col rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5"
+      className="flex h-full min-h-0 w-full flex-col rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition-shadow hover:border-[var(--primary)]/30 sm:p-5"
     >
       <span
         className={`inline-flex max-w-full self-start rounded-full border px-2.5 py-0.5 text-[11px] font-semibold leading-tight ${kindBadgeClass(kind)}`}
@@ -76,11 +79,14 @@ export function VoiceSubmissionSurfaceCard({
         {reportKindLabel(kind)}
       </span>
 
-      <TitleTag id={titleId} className="mt-3 font-display text-lg font-semibold leading-snug text-[var(--foreground)]">
+      <TitleTag
+        id={titleId}
+        className="mt-2.5 font-display text-base font-semibold leading-snug text-[var(--foreground)] sm:mt-3 sm:text-lg"
+      >
         {title}
       </TitleTag>
 
-      <p id={metaId} className="mt-2 text-xs leading-relaxed text-[var(--muted-foreground)]">
+      <p id={metaId} className={metaText}>
         {reportStatusLabel(status)}
         {" · "}
         {formatMediumDate(createdAt)}
@@ -92,7 +98,7 @@ export function VoiceSubmissionSurfaceCard({
       </p>
 
       {contextLine || contextLink || contextSuffix ? (
-        <p className="mt-1.5 line-clamp-1 text-xs text-[var(--muted-foreground)]">
+        <p className={`mt-1.5 line-clamp-1 text-xs ${secondaryText}`}>
           {contextLink ? (
             <>
               <Link href={contextLink.href} className={`font-medium ${primaryLinkClass}`}>
@@ -107,22 +113,22 @@ export function VoiceSubmissionSurfaceCard({
       ) : null}
 
       {showPublishedTitle ? (
-        <p className="mt-2 line-clamp-1 text-xs text-[var(--muted-foreground)]">
-          Published as: <span className="text-[var(--foreground)]">{publishedTitle}</span>
+        <p className={`mt-2 line-clamp-1 text-xs ${secondaryText}`}>
+          Published as: <span className="font-medium text-[var(--foreground)]">{publishedTitle}</span>
         </p>
       ) : null}
 
       {narrative ? (
-        <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-[var(--muted-foreground)]">{narrative}</p>
+        <p className={`mt-2.5 line-clamp-2 text-sm leading-relaxed ${secondaryText}`}>{narrative}</p>
       ) : staffSummaryPending ? (
-        <p className="mt-3 line-clamp-2 text-sm italic text-[var(--muted-foreground)]">Staff summary pending publication.</p>
+        <p className={`mt-2.5 line-clamp-2 text-sm italic ${secondaryText}`}>Staff summary pending publication.</p>
       ) : null}
 
       {engagementSummary ? (
-        <p className="mt-3 text-xs text-[var(--muted-foreground)]">{engagementSummary}</p>
+        <p className={`mt-2.5 text-xs ${secondaryText}`}>{engagementSummary}</p>
       ) : null}
 
-      <div className="mt-auto flex flex-wrap gap-x-4 gap-y-2 border-t border-[var(--border)]/80 pt-4 text-sm">
+      <div className="mt-4 flex flex-col gap-2 sm:mt-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4 sm:border-t sm:border-[var(--border)]/80 sm:pt-4">
         <VoiceSubmissionPrimaryAction
           reportId={id}
           trackingCode={trackingCode}
@@ -133,7 +139,7 @@ export function VoiceSubmissionSurfaceCard({
         {legacyCauseSlug ? (
           <Link
             href={`/citizens-voice/causes/${encodeURIComponent(legacyCauseSlug)}`}
-            className={`${primaryLinkClass} text-xs font-semibold`}
+            className={`text-center text-xs font-semibold sm:text-left ${primaryLinkClass}`}
             prefetch={false}
           >
             Legacy thread →

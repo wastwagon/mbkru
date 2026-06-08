@@ -45,18 +45,19 @@ export default async function PublicCausesIndexPage() {
         breadcrumbCurrentLabel="Causes"
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm text-[var(--muted-foreground)]">
-            <Link href="/citizens-voice" className={primaryNavLinkClass}>
-              MBKRU Voice
-            </Link>
-            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
-              ·
-            </span>
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <p className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+            Editor-approved summaries from MBKRU Voice — not the full citizen report. Sign in to comment and show
+            support.{" "}
             <Link href="/petitions" className={primaryNavLinkClass}>
               Petitions
             </Link>
-            <span className="text-[var(--muted-foreground)]/50" aria-hidden>
+          </p>
+          <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-2 text-sm text-[var(--foreground-secondary)]">
+            <Link href="/citizens-voice" className={primaryNavLinkClass}>
+              MBKRU Voice
+            </Link>
+            <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
               ·
             </span>
             <Link href="/transparency" className={primaryNavLinkClass}>
@@ -65,30 +66,50 @@ export default async function PublicCausesIndexPage() {
           </p>
 
           {rows.length === 0 ? (
-            <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
+            <p className="mt-10 text-center text-sm text-[var(--foreground-secondary)]">
               No public causes yet. When editors open a submitted Voice report as a public thread, it will show here for
               others to support and discuss.
             </p>
           ) : (
-            <ul className="mt-10 space-y-4">
-              {rows.map((c) => (
-                <li key={c.id}>
-                  <Link
-                    href={`/citizens-voice/causes/${encodeURIComponent(c.publicCauseSlug!)}`}
-                    className={`block rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition-colors hover:border-[var(--primary)]/30 ${focusRingSmClass}`}
-                  >
-                    <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">
-                      {c.publicCauseTitle}
-                    </h2>
-                    <p className="mt-2 line-clamp-3 text-sm text-[var(--muted-foreground)]">{c.publicCauseSummary}</p>
-                    <p className="mt-3 text-xs text-[var(--muted-foreground)]">
-                      {reportKindLabel(c.kind as CitizenReportKind)}
-                      {c.region?.name ? ` · ${c.region.name}` : ""} · {c._count.publicCauseSupports} support ·{" "}
-                      {c._count.publicCauseComments} comments
-                    </p>
-                  </Link>
-                </li>
-              ))}
+            <ul className="mt-8 space-y-3">
+              {rows.map((c) => {
+                const href = `/citizens-voice/causes/${encodeURIComponent(c.publicCauseSlug!)}`;
+                const metaParts = [
+                  reportKindLabel(c.kind as CitizenReportKind),
+                  c.region?.name,
+                  `${c._count.publicCauseSupports} support`,
+                  `${c._count.publicCauseComments} comments`,
+                ].filter(Boolean);
+
+                return (
+                  <li key={c.id}>
+                    <article className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h2 className="min-w-0 flex-1 text-base font-semibold leading-snug text-[var(--foreground)] sm:text-lg">
+                          <Link href={href} className="hover:text-[var(--primary)]">
+                            {c.publicCauseTitle}
+                          </Link>
+                        </h2>
+                        <span className="rounded-full border border-[var(--primary)]/20 bg-[var(--primary)]/8 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--primary-dark)]">
+                          Public cause
+                        </span>
+                      </div>
+                      <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+                        {c.publicCauseSummary}
+                      </p>
+                      <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{metaParts.join(" · ")}</p>
+                      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+                        <Link
+                          href={href}
+                          className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] sm:w-auto ${focusRingSmClass}`}
+                        >
+                          Join discussion
+                        </Link>
+                      </div>
+                    </article>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>

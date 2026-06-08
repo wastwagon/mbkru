@@ -81,7 +81,7 @@ export default async function ResourcesPage() {
 
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-4xl">
-          <p className="mb-12 text-lg text-[var(--muted-foreground)]">
+          <p className="mb-12 text-lg text-[var(--foreground-secondary)]">
             Reports, policy briefs, and research documents anchor our accountability and poverty-eradication work —
             including legal empowerment (Pillar C) and direct citizen voice.
           </p>
@@ -99,7 +99,7 @@ export default async function ResourcesPage() {
             <h2 className="font-display text-2xl font-bold text-[var(--foreground)]">
               {resourcesConceptNote.title}
             </h2>
-            <p className="mt-3 leading-relaxed text-[var(--muted-foreground)]">{resourcesConceptNote.description}</p>
+            <p className="mt-3 leading-relaxed text-[var(--foreground-secondary)]">{resourcesConceptNote.description}</p>
             {resourcesConceptNote.fileUrl !== "#" ? (
               <Button href={resourcesConceptNote.fileUrl} className="mt-4">
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,14 +108,14 @@ export default async function ResourcesPage() {
                 {resourcesConceptNote.fileLabel}
               </Button>
             ) : (
-              <p className="mt-4 text-sm font-medium text-[var(--muted-foreground)]">{resourcesConceptNote.fileLabel}</p>
+              <p className="mt-4 text-sm font-medium text-[var(--foreground-secondary)]">{resourcesConceptNote.fileLabel}</p>
             )}
           </div>
 
           {published.length > 0 ? (
             <div className="mb-16">
               <h2 className="font-display text-2xl font-bold text-[var(--foreground)]">Downloads</h2>
-              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+              <p className="mt-2 text-sm text-[var(--foreground-secondary)]">
                 Verified uploads from our team. Prefer the latest methodology page for how we cite sources.
               </p>
               <div className="mt-8 space-y-10">
@@ -135,9 +135,9 @@ export default async function ResourcesPage() {
                                 {d.title}
                               </Link>
                               {d.summary ? (
-                                <p className="mt-1 text-sm leading-relaxed text-[var(--muted-foreground)]">{d.summary}</p>
+                                <p className="mt-1 text-sm leading-relaxed text-[var(--foreground-secondary)]">{d.summary}</p>
                               ) : null}
-                              <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                              <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                                 {d.originalFilename}
                                 {d.fileSize ? ` · ${formatResourceFileSize(d.fileSize)}` : ""}
                               </p>
@@ -162,7 +162,7 @@ export default async function ResourcesPage() {
               </div>
             </div>
           ) : dbOn ? (
-            <p className="mb-16 rounded-xl border border-[var(--border)] bg-white p-6 text-center text-sm text-[var(--muted-foreground)]">
+            <p className="mb-16 rounded-xl border border-[var(--border)] bg-white p-6 text-center text-sm text-[var(--foreground-secondary)]">
               Published documents will appear here. Editors can upload from{" "}
               <Link href="/admin/resources" className={`${primaryNavLinkClass} font-semibold`}>
                 Admin → Resource library
@@ -172,7 +172,7 @@ export default async function ResourcesPage() {
           ) : null}
 
           <h2 className="font-display text-2xl font-bold text-[var(--foreground)]">Document categories</h2>
-          <p className="mt-2 mb-8 text-[var(--muted-foreground)]">
+          <p className="mt-2 mb-8 text-[var(--foreground-secondary)]">
             We group materials for easy browsing. Additional files appear in the downloads section above when
             published.
           </p>
@@ -184,7 +184,7 @@ export default async function ResourcesPage() {
 
           <div className="mt-16 rounded-xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)]">
             <h2 className="font-display text-xl font-bold text-[var(--foreground)]">Have questions?</h2>
-            <p className="mt-2 text-[var(--muted-foreground)]">
+            <p className="mt-2 text-[var(--foreground-secondary)]">
               Visit our FAQ page for answers to common questions about MBKRU, membership, and our platform.
             </p>
             <Link href="/faq" className={`${primaryNavLinkClass} mt-4 gap-2 text-sm font-semibold`}>

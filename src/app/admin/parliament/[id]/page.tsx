@@ -75,7 +75,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
           </Link>
         }
       />
-      <dl className="mt-2 grid gap-1 text-sm text-[var(--muted-foreground)]">
+      <dl className="mt-2 grid gap-1 text-sm text-[var(--foreground-secondary)]">
         <div>
           <dt className="inline font-medium text-[var(--foreground)]">Slug: </dt>
           <dd className="inline font-mono">{member.slug}</dd>
@@ -104,7 +104,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
 
       <section className="mt-10 rounded-xl border border-[var(--border)] bg-white p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Methodology fairness metadata</h2>
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Optional flags for editorial methodology (e.g. Speaker of Parliament, attendance metric exclusions). Stored as JSON on this roster row.
         </p>
         <form action={updateParliamentMemberFairnessMetadataAction} className="mt-4 space-y-4">
@@ -131,7 +131,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
           </label>
           <div>
             <label htmlFor="fairnessNotes" className="block text-xs font-medium text-[var(--foreground)]">
-              Notes <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              Notes <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
             </label>
             <textarea
               id="fairnessNotes"
@@ -171,7 +171,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
           </div>
           <div>
             <label htmlFor="description" className="block text-xs font-medium text-[var(--foreground)]">
-              Description <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              Description <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
             </label>
             <textarea
               id="description"
@@ -195,7 +195,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
           </div>
           <div>
             <label htmlFor="sourceDate" className="block text-xs font-medium text-[var(--foreground)]">
-              Source date <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              Source date <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
             </label>
             <input
               id="sourceDate"
@@ -206,7 +206,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
           </div>
           <div>
             <label htmlFor="sourceUrl" className="block text-xs font-medium text-[var(--foreground)]">
-              Primary source URL <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              Primary source URL <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
             </label>
             <input
               id="sourceUrl"
@@ -217,13 +217,13 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
               maxLength={2000}
               className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             />
-            <p className="mt-1 text-[11px] text-[var(--muted-foreground)]">
+            <p className="mt-1 text-[11px] text-[var(--foreground-secondary)]">
               Public “Source” button; if empty, the linked manifesto document URL is used when set.
             </p>
           </div>
           <div>
             <label htmlFor="verificationNotes" className="block text-xs font-medium text-[var(--foreground)]">
-              Verification & impact notes <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              Verification & impact notes <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
             </label>
             <textarea
               id="verificationNotes"
@@ -252,7 +252,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
           </div>
           <div>
             <label htmlFor="policySector" className="block text-xs font-medium text-[var(--foreground)]">
-              Policy category <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              Policy category <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
             </label>
             <select
               id="policySector"
@@ -271,7 +271,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label htmlFor="partySlug" className="block text-xs font-medium text-[var(--foreground)]">
-                Party slug <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+                Party slug <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
               </label>
               <input
                 id="partySlug"
@@ -283,7 +283,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
             </div>
             <div>
               <label htmlFor="electionCycle" className="block text-xs font-medium text-[var(--foreground)]">
-                Election cycle <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+                Election cycle <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
               </label>
               <input
                 id="electionCycle"
@@ -296,7 +296,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
           </div>
           <div>
             <label htmlFor="manifestoDocumentId" className="block text-xs font-medium text-[var(--foreground)]">
-              Manifesto document <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              Manifesto document <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
             </label>
             <select
               id="manifestoDocumentId"
@@ -314,7 +314,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
           </div>
           <div>
             <label htmlFor="manifestoPageRef" className="block text-xs font-medium text-[var(--foreground)]">
-              Manifesto page ref <span className="font-normal text-[var(--muted-foreground)]">(optional)</span>
+              Manifesto page ref <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
             </label>
             <input
               id="manifestoPageRef"
@@ -336,7 +336,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
               Mark as government programme / executive commitment
             </label>
           </div>
-          <p className="mt-2 text-xs leading-relaxed text-[var(--muted-foreground)]">
+          <p className="mt-2 text-xs leading-relaxed text-[var(--foreground-secondary)]">
             {accountabilityProse.adminCreateGovernmentTagHint}
           </p>
           <button
@@ -353,7 +353,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
           {accountabilityProse.adminMemberCatalogueSectionHeading}
         </h2>
         {member.promises.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-2 text-sm text-[var(--foreground-secondary)]">
             {accountabilityProse.adminMemberCatalogueEmpty}
           </p>
         ) : (
@@ -362,11 +362,11 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
               <li key={p.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
                 <p className="font-medium text-[var(--foreground)]">{p.title}</p>
                 {p.description ? (
-                  <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--muted-foreground)]">
+                  <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--foreground-secondary)]">
                     {p.description}
                   </p>
                 ) : null}
-                <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+                <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
                   {p.sourceLabel}
                   {p.sourceDate
                     ? ` · ${p.sourceDate.toLocaleDateString("en-GB", { dateStyle: "medium" })}`
@@ -379,22 +379,22 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                     </span>
                   ) : null}
                   {p.partySlug ? (
-                    <span className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--muted-foreground)]">
+                    <span className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--foreground-secondary)]">
                       Party: {p.partySlug}
                     </span>
                   ) : null}
                   {p.electionCycle ? (
-                    <span className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--muted-foreground)]">
+                    <span className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--foreground-secondary)]">
                       Cycle: {p.electionCycle}
                     </span>
                   ) : null}
                   {p.manifestoDocument ? (
-                    <span className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--muted-foreground)]">
+                    <span className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--foreground-secondary)]">
                       Manifesto: {p.manifestoDocument.title}
                     </span>
                   ) : null}
                   {p.manifestoPageRef ? (
-                    <span className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--muted-foreground)]">
+                    <span className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--foreground-secondary)]">
                       Ref: {p.manifestoPageRef}
                     </span>
                   ) : null}
@@ -427,7 +427,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                   </div>
                   <div>
                     <label htmlFor={`blocked-${p.id}`} className="block text-[11px] font-medium text-[var(--foreground)]">
-                      Blocked reason <span className="font-normal text-[var(--muted-foreground)]">(public when status is Blocked)</span>
+                      Blocked reason <span className="font-normal text-[var(--foreground-secondary)]">(public when status is Blocked)</span>
                     </label>
                     <textarea
                       id={`blocked-${p.id}`}

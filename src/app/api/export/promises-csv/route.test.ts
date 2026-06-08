@@ -85,6 +85,7 @@ describe("GET /api/export/promises-csv", () => {
         verificationNotes: "Checked against PDF.",
         status: "TRACKING",
         policySector: "FISCAL",
+        blockedReason: null,
         updatedAt: "2026-03-28T00:00:00.000Z",
         electionCycle: "2024",
         partySlug: "ndc",

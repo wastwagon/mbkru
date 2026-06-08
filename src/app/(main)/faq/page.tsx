@@ -38,13 +38,13 @@ export default function FAQPage() {
                     </svg>
                   </span>
                 </summary>
-                <p className="mt-4 border-t border-[var(--border)] pt-4 text-[var(--muted-foreground)] leading-relaxed">
+                <p className="mt-4 border-t border-[var(--border)] pt-4 text-[var(--foreground-secondary)] leading-relaxed">
                   {item.answer}
                 </p>
               </details>
             ))}
           </div>
-          <p className="mt-10 text-center text-sm text-[var(--muted-foreground)]">
+          <p className="mt-10 text-center text-sm text-[var(--foreground-secondary)]">
             Have another question?{" "}
             <Link href="/contact" className={primaryLinkClass}>
               Get in touch

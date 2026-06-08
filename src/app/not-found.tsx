@@ -8,7 +8,7 @@ export default function NotFound() {
         <h1 className="mt-4 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
           Page not found
         </h1>
-        <p className="mx-auto mt-3 max-w-md text-pretty text-[var(--muted-foreground)]">
+        <p className="mx-auto mt-3 max-w-md text-pretty text-[var(--foreground-secondary)]">
           The page you&apos;re looking for doesn&apos;t exist or has been moved.
         </p>
         <Button href="/" className="mt-8 w-full justify-center sm:w-auto">

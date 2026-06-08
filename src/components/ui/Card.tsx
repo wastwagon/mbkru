@@ -34,13 +34,13 @@ export function Card({
         {badge && <Badge variant="gold">{badge}</Badge>}
       </div>
       <h3 className="mt-5 font-display text-xl font-semibold text-[var(--foreground)]">{title}</h3>
-      <p className="mt-3 text-[var(--muted-foreground)] leading-relaxed">{description}</p>
+      <p className="mt-3 text-[var(--foreground-secondary)] leading-relaxed">{description}</p>
       {children}
     </>
   );
 
   const baseClasses =
-    "rounded-2xl border border-[var(--border)] bg-white p-8 shadow-[var(--shadow-card)] transition-all duration-[400ms] ease-in-out hover:shadow-[var(--shadow-card-hover)] hover:border-[var(--primary)]/20";
+    "rounded-2xl border border-[var(--border)] bg-white p-8 shadow-sm transition-[border-color,box-shadow,transform] duration-300 ease-out hover:border-[var(--primary)]/35";
 
   if (href) {
     return (

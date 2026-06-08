@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 
+import { focusRingSmClass } from "@/lib/primary-link-styles";
 import { reportKindLabel } from "@/lib/report-status-text";
 import type { CitizenReportKind } from "@prisma/client";
 
@@ -78,25 +79,24 @@ export function ReportCardVoiceFiltersForm({
 
   const formKey = `${voice.vregion}|${voice.vkind}|${voice.vq}`;
 
+  const labelClass = "mb-1.5 block text-xs font-semibold text-[var(--foreground-secondary)] sm:text-sm";
+  const fieldClass = `w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`;
+
   return (
-    <form key={formKey} className="mt-4 grid gap-4 lg:grid-cols-12 lg:items-end" onSubmit={applyFilters}>
+    <form key={formKey} className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-12 lg:items-end" onSubmit={applyFilters}>
       {lockedVoiceRegion ? (
-        <div className="lg:col-span-3">
-          <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Region</span>
+        <div className="sm:col-span-2 lg:col-span-3">
+          <span className={labelClass}>Region</span>
           <p className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-3 py-2.5 text-sm text-[var(--foreground)]">
             <span className="font-semibold">{lockedVoiceRegion.name}</span>
-            <span className="text-[var(--muted-foreground)]"> · this page</span>
+            <span className="text-[var(--foreground-secondary)]"> · this page</span>
           </p>
           <input type="hidden" name="vregion" value={lockedVoiceRegion.id} />
         </div>
       ) : (
-        <label className="lg:col-span-3">
-          <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Region</span>
-          <select
-            name="vregion"
-            defaultValue={voice.vregion}
-            className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)]"
-          >
+        <label className="sm:col-span-1 lg:col-span-3">
+          <span className={labelClass}>Region</span>
+          <select name="vregion" defaultValue={voice.vregion} className={fieldClass}>
             <option value="">All regions</option>
             {regions.map((r) => (
               <option key={r.id} value={r.id}>
@@ -106,13 +106,9 @@ export function ReportCardVoiceFiltersForm({
           </select>
         </label>
       )}
-      <label className="lg:col-span-3">
-        <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Report type</span>
-        <select
-          name="vkind"
-          defaultValue={voice.vkind}
-          className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)]"
-        >
+      <label className="sm:col-span-1 lg:col-span-3">
+        <span className={labelClass}>Report type</span>
+        <select name="vkind" defaultValue={voice.vkind} className={fieldClass}>
           <option value="">All types</option>
           {VOICE_SUBMISSION_KIND_FILTERS.map((k: CitizenReportKind) => (
             <option key={k} value={k}>
@@ -121,27 +117,27 @@ export function ReportCardVoiceFiltersForm({
           ))}
         </select>
       </label>
-      <label className="lg:col-span-4">
-        <span className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Search title</span>
+      <label className="sm:col-span-2 lg:col-span-4">
+        <span className={labelClass}>Search title</span>
         <input
           type="search"
           name="vq"
           defaultValue={voice.vq}
           placeholder="Words from the submission title"
-          className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)]/70"
+          className={`${fieldClass} placeholder:text-[var(--foreground-secondary)]/60`}
           autoComplete="off"
         />
       </label>
-      <div className="flex flex-wrap gap-2 lg:col-span-2">
+      <div className="flex flex-col gap-2 sm:col-span-2 sm:flex-row lg:col-span-2">
         <button
           type="submit"
-          className="min-h-[44px] flex-1 rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-[var(--primary-foreground)] shadow-sm hover:bg-[var(--primary-dark)]"
+          className={`min-h-11 w-full rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[var(--primary-dark)] sm:flex-1 ${focusRingSmClass}`}
         >
-          Apply
+          Show reports
         </button>
         <Link
           href={resetHref}
-          className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-xl border border-[var(--border)] px-3 py-2 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--section-light)]"
+          className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[var(--border)] px-3 py-2.5 text-sm font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--section-light)] sm:flex-1 ${focusRingSmClass}`}
         >
           Reset
         </Link>

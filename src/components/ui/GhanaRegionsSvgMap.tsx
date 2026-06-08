@@ -172,8 +172,8 @@ export function GhanaRegionsSvgMap({ onSelectRegion, selectedRegionName }: Props
           }}
         >
           <p className="font-semibold text-[var(--foreground)]">{hoverData.name}</p>
-          <p className="mt-0.5 text-[var(--muted-foreground)]">Capital: {hoverData.capital}</p>
-          <p className="mt-1 max-h-10 overflow-hidden text-ellipsis text-[var(--muted-foreground)]">{hoverData.mbkruNote}</p>
+          <p className="mt-0.5 text-[var(--foreground-secondary)]">Capital: {hoverData.capital}</p>
+          <p className="mt-1 max-h-10 overflow-hidden text-ellipsis text-[var(--foreground-secondary)]">{hoverData.mbkruNote}</p>
           <p className="mt-1.5 text-[10px] font-medium uppercase tracking-wide text-[var(--primary)]">Click for full details</p>
         </div>
       ) : null}

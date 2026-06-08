@@ -128,7 +128,7 @@ export function PetitionSignPanel({
   return (
     <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
       <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">Sign this petition</h2>
-      <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+      <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
         Your email prevents duplicate signatures. Optional updates are only for this petition.
       </p>
       {!me && guestEmailVerificationEnabled ? (
@@ -144,18 +144,18 @@ export function PetitionSignPanel({
         </p>
       ) : null}
       <p className="mt-4 font-display text-3xl font-bold tabular-nums text-[var(--primary)]">{count}</p>
-      <p className="text-xs text-[var(--muted-foreground)]">signatures</p>
+      <p className="text-xs text-[var(--foreground-secondary)]">signatures</p>
       {pct != null ? (
         <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-[var(--section-light)]">
           <div className="h-full bg-[var(--primary)] transition-all" style={{ width: `${pct}%` }} />
         </div>
       ) : null}
       {targetSignatures != null ? (
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">Goal: {targetSignatures.toLocaleString()}</p>
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">Goal: {targetSignatures.toLocaleString()}</p>
       ) : null}
 
       {!me ? (
-        <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
           <a href={`/login?next=/petitions/${encodeURIComponent(slug)}`} className={primaryLinkClass}>
             Sign in
           </a>{" "}
