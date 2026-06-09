@@ -49,6 +49,11 @@
   --topbar-bg: #1e293b;
   /* Motion — cubic bezier for “premium” UI (use via arbitrary values or style) */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  /** Fixed mobile chrome — bottom tab bar + FAB stack (see mobile-ui-classes). */
+  --mobile-bottom-nav-height: 3.75rem;
+  --mobile-fab-stack-height: 6.5rem;
+  /** Extra main padding when PWA install banner is visible (set via JS). */
+  --mobile-install-banner-height: 0rem;
 }
 
 @theme inline {
@@ -114,6 +119,21 @@ body {
 
 html {
   scroll-behavior: smooth;
+  -webkit-tap-highlight-color: rgba(13, 148, 136, 0.12);
+}
+
+button,
+[type="button"],
+[type="submit"],
+[type="reset"],
+[role="button"] {
+  touch-action: manipulation;
+}
+
+@media (max-width: 1023px) {
+  html {
+    overscroll-behavior-y: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -239,4 +259,51 @@ html {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Admin tables — card stack on narrow viewports (requires `admin-table-stack` + `data-label` on cells). */
+@media (max-width: 639px) {
+  .admin-table-panel .admin-table-stack {
+    min-width: 0;
+  }
+
+  .admin-table-panel .admin-table-stack thead {
+    display: none;
+  }
+
+  .admin-table-panel .admin-table-stack tbody tr {
+    display: block;
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 1rem;
+  }
+
+  .admin-table-panel .admin-table-stack tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .admin-table-panel .admin-table-stack tbody td {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    border: 0;
+    padding: 0.5rem 0;
+  }
+
+  .admin-table-panel .admin-table-stack tbody td::before {
+    content: attr(data-label);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--foreground-secondary);
+  }
+
+  .admin-table-panel .admin-table-stack tbody td[colspan] {
+    display: block;
+    text-align: center;
+  }
+
+  .admin-table-panel .admin-table-stack tbody td[colspan]::before {
+    content: none;
+  }
 }

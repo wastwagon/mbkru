@@ -22,6 +22,7 @@ import {
 import { parsePromisesApiFilters, promisesFiltersNarrowCatalogue } from "@/lib/promises-api-filters";
 import type { PromiseTrackerStats } from "@/lib/promise-tracker-public-types";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
+import { mobileFilterChipClass, mobileFormFieldClass } from "@/lib/mobile-ui-classes";
 import type { PublicPromiseApiRow } from "@/lib/public-promise-api-row";
 import type { TrackerConstituencyOption } from "@/lib/tracker-constituency-public-types";
 
@@ -70,11 +71,11 @@ const MANIFESTO_CYCLE = "2024";
 
 const filterLabelClass = "mb-1.5 block text-xs font-semibold text-[var(--foreground-secondary)] sm:text-sm";
 
-const filterControlClass = `mt-0 w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
+const filterControlClass = `${mobileFormFieldClass.replace(/^mt-1 /, "mt-0 ")}`;
 
 const filterSelectClass = `${filterControlClass} cursor-pointer`;
 
-const clearFiltersLinkClass = `inline-flex min-h-9 items-center rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--section-light)] ${focusRingSmClass}`;
+const clearFiltersLinkClass = mobileFilterChipClass;
 
 function catalogueValueFromState(
   govLocked: boolean,
@@ -314,7 +315,7 @@ export function PromisesBrowseLive({
   const homeTeaserButtonLabel =
     mode === "government" ? accountabilityProse.governmentHomeTeaserCta : accountabilityProse.browseHomeTeaserCta;
 
-  const quickChipClass = `inline-flex min-h-9 items-center rounded-full border border-[var(--border)] bg-[var(--section-light)]/50 px-3.5 py-1.5 text-xs font-medium text-[var(--foreground)] transition hover:bg-[var(--section-light)] ${focusRingSmClass}`;
+  const quickChipClass = mobileFilterChipClass;
 
   const showCatalogueSnapshot = !(omitTrackerSnapshot && homeTeaser);
 

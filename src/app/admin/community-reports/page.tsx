@@ -6,6 +6,7 @@ import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
+import { adminQueueActionClass } from "@/lib/admin/admin-ui-classes";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminCommunityReportsPage() {
@@ -73,7 +74,7 @@ export default async function AdminCommunityReportsPage() {
                       <input type="hidden" name="status" value="REVIEWED" />
                       <button
                         type="submit"
-                        className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium hover:bg-[var(--muted)]"
+                        className={adminQueueActionClass}
                       >
                         Mark reviewed
                       </button>
@@ -83,7 +84,7 @@ export default async function AdminCommunityReportsPage() {
                       <input type="hidden" name="status" value="DISMISSED" />
                       <button
                         type="submit"
-                        className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium hover:bg-[var(--muted)]"
+                        className={adminQueueActionClass}
                       >
                         Dismiss
                       </button>

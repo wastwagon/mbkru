@@ -20,6 +20,7 @@ import {
   isCitizenReportSlaOverdue,
 } from "@/lib/admin/report-operations-datetime";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { adminQueueActionClass } from "@/lib/admin/admin-ui-classes";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
@@ -479,7 +480,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
                     ) : null}
                     <button
                       type="submit"
-                      className="rounded-lg border border-[var(--border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--foreground)] hover:bg-[var(--muted)]/15"
+                      className={adminQueueActionClass}
                     >
                       Save changes
                     </button>

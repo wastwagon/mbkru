@@ -4,6 +4,11 @@ import {
   retryNotificationJobAction,
 } from "@/app/admin/notifications/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import {
+  adminNumberInputClass,
+  adminPrimaryButtonClass,
+  adminQueueActionWarningOutlineClass,
+} from "@/lib/admin/admin-ui-classes";
 import { AdminMetricCard } from "@/components/admin/AdminMetricCard";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -74,7 +79,7 @@ export default async function AdminNotificationsPage({ searchParams }: Props) {
           <form action={resetStuckProcessingJobsAction} className="mt-2">
             <button
               type="submit"
-              className="rounded-lg border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold hover:bg-amber-100"
+              className={adminQueueActionWarningOutlineClass}
             >
               Reset stuck jobs
             </button>
@@ -82,7 +87,7 @@ export default async function AdminNotificationsPage({ searchParams }: Props) {
         </div>
       ) : null}
 
-      <form action={processNotificationQueueAction} className="mt-6 flex items-center gap-3 rounded-xl border border-[var(--border)] bg-white p-4">
+      <form action={processNotificationQueueAction} className="mt-6 flex flex-wrap items-center gap-3 rounded-xl border border-[var(--border)] bg-white p-4">
         <label htmlFor="limit" className="text-sm text-[var(--foreground)]">
           Process up to
         </label>
@@ -93,12 +98,12 @@ export default async function AdminNotificationsPage({ searchParams }: Props) {
           min={1}
           max={100}
           defaultValue={20}
-          className="w-24 rounded-lg border border-[var(--border)] px-2 py-1 text-sm"
+          className={adminNumberInputClass}
         />
         <span className="text-sm text-[var(--foreground-secondary)]">jobs now</span>
         <button
           type="submit"
-          className="rounded-lg bg-[var(--primary)] px-3 py-1.5 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
+          className={adminPrimaryButtonClass}
         >
           Run processor
         </button>
@@ -148,7 +153,7 @@ export default async function AdminNotificationsPage({ searchParams }: Props) {
                   <input type="hidden" name="id" value={job.id} />
                   <button
                     type="submit"
-                    className="rounded-lg border border-amber-400 bg-white px-2 py-1 text-xs font-semibold hover:bg-amber-100"
+                    className={adminQueueActionWarningOutlineClass}
                   >
                     Retry this job
                   </button>

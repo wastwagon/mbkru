@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { CitizenReportKind } from "@prisma/client";
 
 import { isCitizenReportSlaOverdue } from "@/lib/admin/report-operations-datetime";
+import { adminFilterChipClass } from "@/lib/admin/admin-ui-classes";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminListPanel } from "@/components/admin/AdminListPanel";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
@@ -88,11 +89,7 @@ export default async function AdminReportsPage({ searchParams }: Props) {
               key={t.param || "all"}
               href={href}
               scroll={false}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                active
-                  ? "bg-[var(--primary)] text-white"
-                  : "border border-[var(--border)] bg-white text-[var(--foreground)] hover:border-[var(--primary)]/40"
-              }`}
+              className={adminFilterChipClass(active)}
               aria-current={active ? "page" : undefined}
               title={t.description}
             >

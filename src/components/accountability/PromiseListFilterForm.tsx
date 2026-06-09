@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { mobileFormFieldClass } from "@/lib/mobile-ui-classes";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
 import {
   PROMISE_LIST_STATUS_FILTER,
@@ -32,7 +33,7 @@ export function PromiseListFilterForm({
   showGovernmentOnlyToggle,
   governmentOnlyChecked,
 }: Props) {
-  const fieldClass = `mt-1 w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
+  const fieldClass = mobileFormFieldClass;
 
   return (
     <form
@@ -106,14 +107,14 @@ export function PromiseListFilterForm({
       <div className="flex w-full flex-wrap gap-2 sm:w-auto">
         <button
           type="submit"
-          className={`min-h-10 flex-1 touch-manipulation rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] active:scale-[0.99] motion-reduce:active:scale-100 sm:flex-none ${focusRingSmClass}`}
+          className={`min-h-11 flex-1 touch-manipulation rounded-xl bg-[var(--primary)] px-4 py-2.5 text-base font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] active:scale-[0.99] motion-reduce:active:scale-100 sm:flex-none ${focusRingSmClass}`}
         >
           Apply
         </button>
         {hasActiveFilters ? (
           <Link
             href={hrefClear}
-            className={`inline-flex min-h-10 flex-1 touch-manipulation items-center justify-center rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--section-light)] sm:flex-none ${focusRingSmClass}`}
+            className={`inline-flex min-h-11 flex-1 touch-manipulation items-center justify-center rounded-xl border border-[var(--border)] px-4 py-2.5 text-base font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--section-light)] sm:flex-none ${focusRingSmClass}`}
           >
             Clear
           </Link>

@@ -13,6 +13,7 @@ import { nearestRegionSlug } from "@/lib/geo/ghana-region-centroids";
 import { roundApproximateCoord } from "@/lib/geo/round-approximate-coord";
 import { openAccessibilityTools } from "@/lib/a11y-voice-dispatch";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
+import { mobileInlineActionClass, mobileInlineActionDangerClass } from "@/lib/mobile-ui-classes";
 import { findVoiceLanguage } from "@/lib/voice-languages";
 import {
   enqueueReportDraft,
@@ -685,7 +686,7 @@ export function VoiceReportForm({
                 <div className="flex shrink-0 gap-2">
                   <button
                     type="button"
-                    className="rounded-lg border border-[var(--border)] bg-white px-3 py-1.5 text-xs font-medium text-[var(--foreground)]"
+                    className={mobileInlineActionClass}
                     onClick={() => {
                       applyPayloadToForm(item.payload);
                       removeReportQueueItem(item.id);
@@ -697,7 +698,7 @@ export function VoiceReportForm({
                   </button>
                   <button
                     type="button"
-                    className="rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-800"
+                    className={mobileInlineActionDangerClass}
                     onClick={() => {
                       removeReportQueueItem(item.id);
                       syncQueue();

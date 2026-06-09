@@ -5,6 +5,7 @@ import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminTablePanel } from "@/components/admin/AdminTablePanel";
+import { AdminTd } from "@/components/admin/AdminTd";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -61,7 +62,7 @@ export default async function AdminDiasporaFeedbackPage() {
       />
 
       <AdminTablePanel className="mt-2">
-        <table className="min-w-full text-left text-sm">
+        <table className="admin-table-stack min-w-full text-left text-sm">
           <thead className="border-b border-[var(--border)] bg-[var(--section-light)]/80 text-[var(--foreground-secondary)]">
             <tr>
               <th className="px-4 py-3 font-medium">Received</th>
@@ -85,30 +86,36 @@ export default async function AdminDiasporaFeedbackPage() {
             ) : (
               rows.map((row) => (
                 <tr key={row.id} className="align-top hover:bg-[var(--section-light)]/40">
-                  <td className="whitespace-nowrap px-4 py-3 text-[var(--foreground-secondary)]">
+                  <AdminTd label="Received" className="whitespace-nowrap px-4 py-3 text-[var(--foreground-secondary)] sm:px-4 sm:py-3">
                     {row.createdAt.toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
-                  </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-[var(--foreground)]">
+                  </AdminTd>
+                  <AdminTd label="Path" className="whitespace-nowrap px-4 py-3 text-[var(--foreground)] sm:px-4 sm:py-3">
                     {engagementLabel[row.engagementKind] ?? row.engagementKind}
-                  </td>
-                  <td className="px-4 py-3">
+                  </AdminTd>
+                  <AdminTd label="Name" className="px-4 py-3 sm:px-4 sm:py-3">
                     <p className="font-medium text-[var(--foreground)]">{row.fullName}</p>
                     <p className="mt-0.5 text-xs text-[var(--foreground-secondary)]">
                       Signed: {row.signature} · {formatDate(row.formSignedDate)}
                     </p>
-                  </td>
-                  <td className="px-4 py-3">
+                  </AdminTd>
+                  <AdminTd label="Email" className="px-4 py-3 sm:px-4 sm:py-3">
                     <a href={`mailto:${row.email}`} className={`${primaryLinkClass} font-mono text-xs`}>
                       {row.email}
                     </a>
-                  </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-[var(--foreground)]">
+                  </AdminTd>
+                  <AdminTd label="Visit" className="whitespace-nowrap px-4 py-3 text-[var(--foreground)] sm:px-4 sm:py-3">
                     {row.dateOfVisit ? formatDate(row.dateOfVisit) : "—"}
-                  </td>
-                  <td className="max-w-[140px] px-4 py-3 text-[var(--foreground-secondary)]">{row.durationOfStay ?? "—"}</td>
-                  <td className="px-4 py-3 text-[var(--foreground)]">{ratingLabel[row.overallRating] ?? row.overallRating}</td>
-                  <td className="px-4 py-3 text-[var(--foreground)]">{returnLabel[row.returnOrInvest] ?? row.returnOrInvest}</td>
-                  <td className="max-w-md px-4 py-3 text-[var(--foreground-secondary)]">
+                  </AdminTd>
+                  <AdminTd label="Stay" className="max-w-[140px] px-4 py-3 text-[var(--foreground-secondary)] sm:px-4 sm:py-3">
+                    {row.durationOfStay ?? "—"}
+                  </AdminTd>
+                  <AdminTd label="Rating" className="px-4 py-3 text-[var(--foreground)] sm:px-4 sm:py-3">
+                    {ratingLabel[row.overallRating] ?? row.overallRating}
+                  </AdminTd>
+                  <AdminTd label="Return / invest" className="px-4 py-3 text-[var(--foreground)] sm:px-4 sm:py-3">
+                    {returnLabel[row.returnOrInvest] ?? row.returnOrInvest}
+                  </AdminTd>
+                  <AdminTd label="Details" className="max-w-md px-4 py-3 text-[var(--foreground-secondary)] sm:px-4 sm:py-3">
                     <details className="cursor-pointer">
                       <summary className={`${primaryLinkClass} cursor-pointer text-xs`}>View responses</summary>
                       <div className="mt-3 space-y-3 text-sm text-[var(--foreground)]">
@@ -132,7 +139,7 @@ export default async function AdminDiasporaFeedbackPage() {
                         </div>
                       </div>
                     </details>
-                  </td>
+                  </AdminTd>
                 </tr>
               ))
             )}

@@ -134,7 +134,7 @@ export function ObjectivesCarousel({ objectives }: ObjectivesCarouselProps) {
             type="button"
             onClick={() => scrollToSlide(activeSlide - 1)}
             aria-label="Previous"
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border)] bg-white text-[var(--foreground)] shadow-sm transition-all hover:border-[var(--accent-warm)] hover:bg-[var(--accent-warm)]/5 disabled:opacity-40 disabled:pointer-events-none"
+            className="flex h-11 w-11 touch-manipulation items-center justify-center rounded-full border border-[var(--border)] bg-white text-[var(--foreground)] shadow-sm transition-all hover:border-[var(--accent-warm)] hover:bg-[var(--accent-warm)]/5 disabled:opacity-40 disabled:pointer-events-none sm:h-10 sm:w-10"
             disabled={activeSlide === 0}
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -145,7 +145,7 @@ export function ObjectivesCarousel({ objectives }: ObjectivesCarouselProps) {
             type="button"
             onClick={() => scrollToSlide(activeSlide + 1)}
             aria-label="Next"
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--primary)] bg-[var(--primary)] text-white shadow-sm transition-all hover:bg-[var(--primary-dark)] disabled:opacity-40 disabled:pointer-events-none"
+            className="flex h-11 w-11 touch-manipulation items-center justify-center rounded-full border border-[var(--primary)] bg-[var(--primary)] text-white shadow-sm transition-all hover:bg-[var(--primary-dark)] disabled:opacity-40 disabled:pointer-events-none sm:h-10 sm:w-10"
             disabled={activeSlide >= slideCount - 1}
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

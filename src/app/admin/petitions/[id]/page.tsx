@@ -6,6 +6,7 @@ import {
   adminRemovePetitionPendingSignatureAction,
   adminRemovePetitionSignatureAction,
 } from "@/app/admin/petitions/manage-signatures-actions";
+import { adminQueueActionDangerClass, adminQueueActionWarningClass } from "@/lib/admin/admin-ui-classes";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -179,7 +180,7 @@ export default async function AdminPetitionDetailPage({ params, searchParams }: 
                   <input type="hidden" name="signatureId" value={s.id} />
                   <button
                     type="submit"
-                    className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-900 hover:bg-rose-100"
+                    className={adminQueueActionDangerClass}
                   >
                     Remove
                   </button>
@@ -215,7 +216,7 @@ export default async function AdminPetitionDetailPage({ params, searchParams }: 
                   <input type="hidden" name="pendingId" value={p.id} />
                   <button
                     type="submit"
-                    className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-950 hover:bg-amber-100"
+                    className={adminQueueActionWarningClass}
                   >
                     Revoke invite
                   </button>

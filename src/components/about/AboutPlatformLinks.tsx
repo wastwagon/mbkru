@@ -2,9 +2,7 @@ import Link from "next/link";
 
 import { getServerPlatformPhase } from "@/config/platform";
 import { getAboutPhaseQuickLinks } from "@/config/public-platform-nav";
-import { focusRingPillClass } from "@/lib/primary-link-styles";
-
-const pill = `inline-flex rounded-full border border-[var(--border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--foreground)] shadow-sm transition hover:border-[var(--primary)]/40 hover:text-[var(--primary)] ${focusRingPillClass}`;
+import { mobileNavPillClass } from "@/lib/mobile-ui-classes";
 
 export async function AboutPlatformLinks() {
   const phase = getServerPlatformPhase();
@@ -32,7 +30,7 @@ export async function AboutPlatformLinks() {
         </p>
         <div className="mt-4 flex flex-wrap justify-center gap-2">
           {quickLinks.map(({ href, label }) => (
-            <Link key={href} href={href} className={pill}>
+            <Link key={href} href={href} className={mobileNavPillClass}>
               {label}
             </Link>
           ))}

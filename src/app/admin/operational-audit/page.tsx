@@ -4,6 +4,11 @@ import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
+import {
+  adminFormFieldClass,
+  adminPrimaryButtonClass,
+  adminSecondaryButtonClass,
+} from "@/lib/admin/admin-ui-classes";
 
 type Props = {
   searchParams?: Promise<{
@@ -73,7 +78,7 @@ export default async function AdminOperationalAuditPage({ searchParams }: Props)
             min={1}
             max={24 * 30}
             defaultValue={hours}
-            className="mt-1 w-full rounded-lg border border-[var(--border)] px-2 py-1.5 text-sm"
+            className={adminFormFieldClass}
           />
         </div>
         <div>
@@ -84,7 +89,7 @@ export default async function AdminOperationalAuditPage({ searchParams }: Props)
             id="action"
             name="action"
             defaultValue={selectedAction}
-            className="mt-1 w-full rounded-lg border border-[var(--border)] px-2 py-1.5 text-sm"
+            className={`${adminFormFieldClass} cursor-pointer`}
           >
             <option value="">All</option>
             {actions.map((a) => (
@@ -102,7 +107,7 @@ export default async function AdminOperationalAuditPage({ searchParams }: Props)
             id="adminId"
             name="adminId"
             defaultValue={selectedAdminId}
-            className="mt-1 w-full rounded-lg border border-[var(--border)] px-2 py-1.5 text-sm"
+            className={`${adminFormFieldClass} cursor-pointer`}
           >
             <option value="">All</option>
             {admins.map((a) => (
@@ -112,14 +117,11 @@ export default async function AdminOperationalAuditPage({ searchParams }: Props)
             ))}
           </select>
         </div>
-        <div className="flex items-end gap-2">
-          <button
-            type="submit"
-            className="rounded-lg bg-[var(--primary)] px-4 py-1.5 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
-          >
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+          <button type="submit" className={adminPrimaryButtonClass}>
             Apply
           </button>
-          <Link href="/admin/operational-audit" className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm">
+          <Link href="/admin/operational-audit" className={adminSecondaryButtonClass}>
             Reset
           </Link>
         </div>

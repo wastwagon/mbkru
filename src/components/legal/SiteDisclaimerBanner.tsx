@@ -54,7 +54,7 @@ export function SiteDisclaimerBanner() {
         <button
           type="button"
           onClick={dismiss}
-          className={`shrink-0 rounded-md px-2 py-1 text-xs font-semibold text-[var(--foreground)] transition hover:bg-[var(--primary)]/10 ${focusRingSmClass}`}
+          className={`shrink-0 inline-flex min-h-11 touch-manipulation items-center rounded-md px-3 py-2 text-sm font-semibold text-[var(--foreground)] transition hover:bg-[var(--primary)]/10 ${focusRingSmClass}`}
           aria-label="Dismiss site notice"
         >
           Close

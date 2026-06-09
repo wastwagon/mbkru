@@ -33,8 +33,8 @@ export default async function TransparencyPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-4xl space-y-10 px-4 sm:px-6 lg:px-8">
-          <p className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-center text-sm leading-relaxed text-[var(--foreground-secondary)]">
-            Aggregate counts only — no personal data or report text. Updated on each page load.
+          <p className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+            Aggregate counts only — no personal data or report text.
           </p>
           <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--foreground-secondary)]">
             <Link href="/citizens-voice" className={primaryNavLinkClass}>

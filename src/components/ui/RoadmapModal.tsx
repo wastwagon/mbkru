@@ -3,6 +3,10 @@
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { mobileIconButtonClass } from "@/lib/mobile-ui-classes";
+import { useBodyScrollLock } from "@/lib/use-body-scroll-lock";
+
 export type RoadmapPhase = {
   period: string;
   phase?: string;
@@ -19,44 +23,47 @@ type RoadmapModalProps = {
 };
 
 export function RoadmapModal({ phase, onClose }: RoadmapModalProps) {
+  const prefersReducedMotion = usePrefersReducedMotion();
+  useBodyScrollLock(Boolean(phase));
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
-    if (phase) {
-      document.addEventListener("keydown", handleEscape);
-      document.body.style.overflow = "hidden";
-    }
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
-    };
+    if (phase) document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
   }, [phase, onClose]);
 
   return (
     <AnimatePresence>
       {phase && (
         <>
-          <motion.div
+          <motion.button
+            type="button"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: prefersReducedMotion ? 0.01 : 0.2 }}
             className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
             onClick={onClose}
-            aria-hidden
+            aria-label="Close dialog"
           />
           <motion.div
             role="dialog"
             aria-modal="true"
             aria-labelledby="roadmap-modal-title"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="fixed left-1/2 top-1/2 z-50 max-h-[90vh] w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-[var(--border)] bg-white p-6 shadow-xl focus-visible:outline-none sm:p-8"
+            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: "100%" }}
+            animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: "100%" }}
+            transition={
+              prefersReducedMotion
+                ? { duration: 0.15 }
+                : { type: "spring", stiffness: 420, damping: 36, mass: 0.75 }
+            }
+            className="fixed inset-x-0 bottom-0 z-50 max-h-[min(90dvh,calc(100dvh-env(safe-area-inset-bottom)))] overflow-y-auto overscroll-contain rounded-t-2xl border border-[var(--border)] bg-white p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-xl focus-visible:outline-none sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:max-h-[90vh] sm:w-[calc(100%-2rem)] sm:max-w-2xl sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl sm:p-8"
             onClick={(e) => e.stopPropagation()}
           >
+            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-[var(--border)] sm:hidden" aria-hidden />
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
@@ -82,7 +89,7 @@ export function RoadmapModal({ phase, onClose }: RoadmapModalProps) {
               <button
                 type="button"
                 onClick={onClose}
-                className="shrink-0 rounded-lg p-2 text-[var(--foreground-secondary)] transition-colors hover:bg-[var(--muted)] hover:text-[var(--foreground)]"
+                className={`shrink-0 ${mobileIconButtonClass} rounded-xl text-[var(--foreground-secondary)] transition-colors hover:bg-[var(--muted)] hover:text-[var(--foreground)]`}
                 aria-label="Close"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,10 +133,6 @@ export function RoadmapModal({ phase, onClose }: RoadmapModalProps) {
                 </ul>
               </div>
             )}
-
-            <p className="mt-6 text-xs text-[var(--foreground-secondary)]">
-              Click outside or press Escape to close
-            </p>
           </motion.div>
         </>
       )}

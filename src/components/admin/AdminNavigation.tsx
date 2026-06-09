@@ -4,17 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { ADMIN_NAV_GROUPS, adminNavLinkActive } from "@/config/admin-nav";
-import { focusRingSmClass } from "@/lib/primary-link-styles";
-
-function linkClass(active: boolean) {
-  return [
-    "block rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-    active
-      ? "bg-[var(--primary)]/12 text-[var(--primary)]"
-      : "text-[var(--foreground-secondary)] hover:bg-[var(--section-light)] hover:text-[var(--foreground)]",
-    focusRingSmClass,
-  ].join(" ");
-}
+import { adminNavLinkClass } from "@/lib/admin/admin-ui-classes";
 
 export function AdminNavigation() {
   const pathname = usePathname() ?? "";
@@ -31,7 +21,7 @@ export function AdminNavigation() {
               const active = adminNavLinkActive(pathname, item.href);
               return (
                 <li key={item.href}>
-                  <Link href={item.href} className={linkClass(active)} prefetch={false}>
+                  <Link href={item.href} className={adminNavLinkClass(active)} prefetch={false}>
                     {item.label}
                   </Link>
                 </li>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FooterMobileInstallLink } from "@/components/pwa/FooterMobileInstallLink";
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { Logo } from "@/components/ui/Logo";
@@ -17,7 +18,7 @@ import {
 } from "@/lib/primary-link-styles";
 import { content, footerGalleryAlts, footerGalleryImages } from "@/lib/site-content";
 
-const footerNavLinkClass = `inline-flex min-h-10 max-w-full items-center rounded-md px-1 py-1.5 -mx-1 text-sm text-white/80 transition-[color,transform] duration-200 ease-out hover:text-white hover:translate-x-0.5 motion-reduce:hover:translate-x-0 ${focusRingOnDark60Class}`;
+const footerNavLinkClass = `inline-flex min-h-11 max-w-full items-center rounded-md px-1 py-1.5 -mx-1 text-sm text-white/80 transition-[color,transform] duration-200 ease-out hover:text-white hover:translate-x-0.5 motion-reduce:hover:translate-x-0 ${focusRingOnDark60Class}`;
 
 export async function Footer() {
   const currentYear = new Date().getFullYear();
@@ -103,6 +104,7 @@ export async function Footer() {
             <div className="mt-5 grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-x-10">
               <ul className="space-y-3">
                 <FooterMemberAuth />
+                <FooterMobileInstallLink />
                 {platformLinksCol1.map((link) => (
                   <li key={link.href}>
                     <Link href={link.href} className={footerNavLinkClass}>

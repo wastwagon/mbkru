@@ -38,6 +38,8 @@ export type VoiceChromeStrings = {
   asOfPrefix: string;
   launcherAria: string;
   launcherButton: string;
+  /** Link in chat header to full Voice hub (reports, submit, stats). */
+  voiceHubLink: string;
   micAriaWhisperStop: string;
   micAriaWhisperRecord: string;
   micAriaListening: string;
@@ -147,6 +149,7 @@ const voiceChromeByLang: Record<VoiceChromeLangId, VoiceChromeStrings> = {
     asOfPrefix: "As of",
     launcherAria: "Open MBKRU Voice chatbot",
     launcherButton: "MBKRU Voice",
+    voiceHubLink: "All voice tools",
     micAriaWhisperStop: "Stop recording and transcribe",
     micAriaWhisperRecord: "Record with Whisper (cloud transcription)",
     micAriaListening: "Listening to microphone input",
@@ -212,6 +215,7 @@ const voiceChromeByLang: Record<VoiceChromeLangId, VoiceChromeStrings> = {
     asOfPrefix: "Bere",
     launcherAria: "Bue MBKRU Voice",
     launcherButton: "MBKRU Voice",
+    voiceHubLink: "Voice nneɛma nyinaa",
     micAriaWhisperStop: "Gyae kenkan na kyɛfa",
     micAriaWhisperRecord: "Kenkyɛɛ gyae Whisper",
     micAriaListening: "Retie microphone",
@@ -277,6 +281,7 @@ const voiceChromeByLang: Record<VoiceChromeLangId, VoiceChromeStrings> = {
     asOfPrefix: "Ni date",
     launcherAria: "We MBKRU Voice",
     launcherButton: "MBKRU Voice",
+    voiceHubLink: "Voice tools katama",
     micAriaWhisperStop: "Stop recording ni transcribe",
     micAriaWhisperRecord: "Record ni Whisper",
     micAriaListening: "E nyɛ mi te microphone",
@@ -342,6 +347,7 @@ const voiceChromeByLang: Record<VoiceChromeLangId, VoiceChromeStrings> = {
     asOfPrefix: "Kamar yadda",
     launcherAria: "Buɗe MBKRU Voice",
     launcherButton: "MBKRU Voice",
+    voiceHubLink: "Dukkan Voice kayan aiki",
     micAriaWhisperStop: "Tsaya rikodin kuma transcribe",
     micAriaWhisperRecord: "Yi rikodin da Whisper",
     micAriaListening: "Ana sauraron makirufo",
@@ -407,6 +413,7 @@ const voiceChromeByLang: Record<VoiceChromeLangId, VoiceChromeStrings> = {
     asOfPrefix: "Le esia",
     launcherAria: "Yi MBKRU Voice",
     launcherButton: "MBKRU Voice",
+    voiceHubLink: "Voice nɔnɔme katã",
     micAriaWhisperStop: "Tu recording eye transcribe",
     micAriaWhisperRecord: "Record kple Whisper",
     micAriaListening: "Le microphone",

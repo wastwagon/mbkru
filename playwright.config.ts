@@ -1,4 +1,4 @@
-import { defineConfig } from "@playwright/test";
+import { defineConfig, devices } from "@playwright/test";
 
 /** Dedicated port so `npm run dev` on 1100 does not satisfy Playwright with a stale bundle. */
 const e2ePort = Number(process.env.PLAYWRIGHT_PORT ?? "1101");
@@ -9,9 +9,16 @@ export default defineConfig({
   testDir: "./tests/e2e",
   timeout: 30_000,
   expect: { timeout: 5_000 },
-  use: {
-    baseURL,
-  },
+  projects: [
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"], baseURL },
+    },
+    {
+      name: "mobile-chrome",
+      use: { ...devices["Pixel 5"], baseURL },
+    },
+  ],
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {

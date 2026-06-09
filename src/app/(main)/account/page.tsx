@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AccountPwaInstallCard } from "@/components/account/AccountPwaInstallCard";
 import { AccountHomeRegionBanner } from "@/components/account/AccountHomeRegionBanner";
 import { AccountHomeLocationForm } from "@/components/account/AccountHomeLocationForm";
 import { AccountPrivacyTools } from "@/components/account/AccountPrivacyTools";
@@ -201,6 +202,10 @@ export default async function AccountPage() {
         initialRegionId={member?.regionId ?? null}
         initialConstituencyId={member?.constituencyId ?? null}
       />
+
+      <div className="mt-8 lg:hidden">
+        <AccountPwaInstallCard />
+      </div>
 
       {voiceOn ? (
         <AccountStatGrid

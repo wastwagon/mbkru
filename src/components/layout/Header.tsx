@@ -15,6 +15,7 @@ import {
 } from "@/config/public-platform-nav";
 import { useMemberMe } from "@/hooks/useMemberMe";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { useBodyScrollLock } from "@/lib/use-body-scroll-lock";
 import { AccessibilityMenuIcon } from "@/components/ui/AccessibilityMenuIcon";
 import { openAccessibilityTools } from "@/lib/a11y-voice-dispatch";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
@@ -104,10 +105,10 @@ function ChevronDownIcon({ className, open }: { className?: string; open?: boole
 }
 
 const accountMenuItemClass =
-  "flex min-h-[40px] w-full items-center px-4 py-2.5 text-left text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--muted)] focus-visible:bg-[var(--muted)] focus-visible:outline-none";
+  "flex min-h-[44px] w-full items-center px-4 py-2.5 text-left text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--muted)] focus-visible:bg-[var(--muted)] focus-visible:outline-none";
 
 const dropdownItemClass =
-  "flex min-h-[40px] items-center px-4 py-2.5 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--section-light)] focus-visible:bg-[var(--section-light)] focus-visible:outline-none";
+  "flex min-h-[44px] items-center px-4 py-2.5 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--section-light)] focus-visible:bg-[var(--section-light)] focus-visible:outline-none";
 
 function MemberAuthNav({
   isHomeHero,
@@ -441,18 +442,15 @@ export function Header() {
 
   useEffect(() => () => cancelDesktopFlyoutLeaveTimer(), [cancelDesktopFlyoutLeaveTimer]);
 
+  useBodyScrollLock(mobileMenuOpen);
+
   useEffect(() => {
     if (!mobileMenuOpen) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") setMobileMenuOpen(false);
     }
     document.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = prev;
-      document.removeEventListener("keydown", onKey);
-    };
+    return () => document.removeEventListener("keydown", onKey);
   }, [mobileMenuOpen]);
 
   useEffect(() => {
@@ -655,7 +653,7 @@ export function Header() {
                   onNavigate={() => setMobileMenuOpen(false)}
                 />
               ) : null}
-              <div className="sticky bottom-0 border-t border-[var(--border)]/60 bg-white pt-3 pb-1">
+              <div className="sticky bottom-0 border-t border-[var(--border)]/60 bg-white pt-3 pb-[max(0.25rem,env(safe-area-inset-bottom))]">
                 <Link
                   href="/contact"
                   onClick={() => setMobileMenuOpen(false)}
@@ -663,9 +661,6 @@ export function Header() {
                 >
                   Contact
                 </Link>
-                <p className="mt-2 text-center text-[11px] text-[var(--foreground-secondary)]">
-                  Or use <strong>Get in touch</strong> in the gold top bar
-                </p>
               </div>
             </div>
             </motion.div>

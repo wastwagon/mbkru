@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { primaryLinkClass } from "@/lib/primary-link-styles";
+import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 
 const STORAGE_KEY = "mbkru_home_region_nudge_dismissed";
 
@@ -51,7 +51,7 @@ export function AccountHomeRegionBanner({ show }: { show: boolean }) {
         <button
           type="button"
           onClick={dismiss}
-          className="shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium text-amber-900 underline-offset-2 hover:underline"
+          className={`inline-flex min-h-11 shrink-0 touch-manipulation items-center rounded-lg px-3 py-2 text-sm font-medium text-amber-900 underline-offset-2 hover:underline ${focusRingSmClass}`}
         >
           Dismiss
         </button>

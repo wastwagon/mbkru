@@ -9,6 +9,10 @@ import { BackToTop } from "@/components/ui/BackToTop";
 import { MBKRUVoiceChatbot } from "@/components/voice/MBKRUVoiceChatbot";
 import { AccessibilityVoiceTools } from "@/components/accessibility/AccessibilityVoiceTools";
 import { MemberPresenceHeartbeat } from "@/components/member/MemberPresenceHeartbeat";
+import { PwaInstallBanner } from "@/components/pwa/PwaInstallBanner";
+import { PwaServiceWorkerRegister } from "@/components/pwa/PwaServiceWorkerRegister";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
+import { mobileMainBottomPadClass } from "@/lib/mobile-ui-classes";
 
 export default function MainLayout({
   children,
@@ -36,22 +40,25 @@ export default function MainLayout({
       </div>
       <main
         id="main"
-        className="min-w-0 flex-1 overflow-x-hidden pb-[max(1rem,env(safe-area-inset-bottom))]"
+        className={`min-w-0 flex-1 overflow-x-hidden ${mobileMainBottomPadClass}`}
         tabIndex={-1}
       >
         {children}
       </main>
       <Footer />
-      <div className="pointer-events-none fixed bottom-[max(6.5rem,calc(env(safe-area-inset-bottom)+1rem))] right-3 z-[105] flex max-w-full flex-col-reverse items-end gap-3 sm:right-6 sm:gap-4">
-        <div className="pointer-events-auto translate-y-2.5 sm:translate-y-3">
+      <MobileBottomNav />
+      <PwaInstallBanner />
+      <div className="pointer-events-none fixed bottom-[max(calc(var(--mobile-bottom-nav-height)+0.75rem),calc(env(safe-area-inset-bottom)+4.25rem))] right-3 z-[105] flex max-w-full flex-col-reverse items-end gap-3 sm:right-6 sm:gap-4 lg:bottom-[max(1rem,calc(env(safe-area-inset-bottom)+1rem))]">
+        <div className="pointer-events-auto hidden translate-y-2.5 sm:translate-y-3 lg:block">
           <BackToTop />
         </div>
-        <div className="pointer-events-auto">
+        <div className="pointer-events-auto max-lg:[&:empty]:hidden">
           <MBKRUVoiceChatbot />
         </div>
       </div>
       <AccessibilityVoiceTools />
       <MemberPresenceHeartbeat />
+      <PwaServiceWorkerRegister />
       <AnalyticsScripts />
     </>
   );

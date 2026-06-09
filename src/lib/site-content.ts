@@ -309,6 +309,16 @@ export const faqContent = [
     answer:
       "Yes. MBKRU Voice is for everyone on this site. It can guide you to our diaspora support content, accountability tools, and contact options. For fees, rules, and appointments, always confirm on official .gov.gh sites and at embassies or consulates.",
   },
+  {
+    question: "Can I add MBKRU to my phone's home screen?",
+    answer:
+      "Yes. On Android (Chrome), use the install prompt or browser menu → Install app. On iPhone (Safari), tap Share → Add to Home Screen. Installed MBKRU opens like an app with bottom navigation and quick access to Voice. See the mobile help box on this FAQ page, or Account settings when signed in.",
+  },
+  {
+    question: "How do I open MBKRU Voice chat on mobile?",
+    answer:
+      "Tap Voice in the bottom navigation bar to open the chat assistant. You can also use Open MBKRU Voice chat on the Citizens Voice page. For reports and submissions, use the links inside chat or visit Citizens Voice and your Account dashboard.",
+  },
 ] as const;
 
 /**

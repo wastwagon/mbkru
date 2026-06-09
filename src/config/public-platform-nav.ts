@@ -384,3 +384,60 @@ export function getAccountSidebarExploreLinks(phase: PlatformPhase): PublicNavLi
   }
   return out;
 }
+
+export type MobileBottomNavItem = {
+  href: string;
+  label: string;
+  icon: "home" | "voice" | "tracker" | "communities" | "account";
+  activeWhenPathStartsWith?: string;
+  /** Mobile: open MBKRU Voice chat instead of navigating (hub still reachable via header). */
+  opensVoiceChat?: boolean;
+};
+
+/** Bottom tab bar — keep to 4–5 items; phase-gated like header nav. */
+export function getMobileBottomNavLinks(phase: PlatformPhase): MobileBottomNavItem[] {
+  const links: MobileBottomNavItem[] = [
+    { href: "/", label: "Home", icon: "home" },
+    {
+      href: "/citizens-voice",
+      label: "Voice",
+      icon: "voice",
+      opensVoiceChat: true,
+      activeWhenPathStartsWith: "/citizens-voice",
+    },
+  ];
+
+  if (platformFeatures.parliamentTrackerData(phase)) {
+    links.push({
+      href: "/parliament-tracker",
+      label: "Tracker",
+      icon: "tracker",
+      activeWhenPathStartsWith: "/parliament-tracker",
+    });
+  } else {
+    links.push({
+      href: "/promises",
+      label: "Tracker",
+      icon: "tracker",
+      activeWhenPathStartsWith: "/promises",
+    });
+  }
+
+  if (platformFeatures.communities(phase)) {
+    links.push({
+      href: "/communities",
+      label: "Groups",
+      icon: "communities",
+      activeWhenPathStartsWith: "/communities",
+    });
+  }
+
+  links.push({
+    href: "/account",
+    label: "Account",
+    icon: "account",
+    activeWhenPathStartsWith: "/account",
+  });
+
+  return links;
+}

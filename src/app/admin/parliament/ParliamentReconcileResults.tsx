@@ -1,5 +1,7 @@
 "use client";
 
+import { AdminTablePanel } from "@/components/admin/AdminTablePanel";
+import { AdminTd } from "@/components/admin/AdminTd";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
 import type {
   ParliamentMemberReconcileDbRow,
@@ -85,8 +87,8 @@ export function ParliamentReconcileResults({
             Would create ({wouldCreate.length}
             {wouldCreate.length > PREVIEW_LIMIT ? ` — showing first ${PREVIEW_LIMIT}` : ""})
           </h3>
-          <div className="mt-2 overflow-x-auto rounded-xl border border-[var(--border)]">
-            <table className="w-full min-w-[32rem] text-left text-xs">
+          <AdminTablePanel className="mt-2">
+            <table className="admin-table-stack w-full text-left text-xs">
               <thead className="bg-[var(--section-light)] text-[var(--foreground-secondary)]">
                 <tr>
                   <th className="px-3 py-2 font-medium">Slug</th>
@@ -98,15 +100,23 @@ export function ParliamentReconcileResults({
               <tbody className="divide-y divide-[var(--border)] bg-white">
                 {wouldCreate.slice(0, PREVIEW_LIMIT).map((r) => (
                   <tr key={r.slug}>
-                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[11px]">{r.slug}</td>
-                    <td className="px-3 py-2">{r.name}</td>
-                    <td className="px-3 py-2 text-[var(--foreground-secondary)]">{r.party ?? "—"}</td>
-                    <td className="px-3 py-2 text-[var(--foreground-secondary)]">{r.constituencySlug ?? "—"}</td>
+                    <AdminTd label="Slug" className="whitespace-nowrap px-3 py-2 font-mono text-[11px] sm:px-3 sm:py-2">
+                      {r.slug}
+                    </AdminTd>
+                    <AdminTd label="Name" className="px-3 py-2 sm:px-3 sm:py-2">
+                      {r.name}
+                    </AdminTd>
+                    <AdminTd label="Party" className="px-3 py-2 text-[var(--foreground-secondary)] sm:px-3 sm:py-2">
+                      {r.party ?? "—"}
+                    </AdminTd>
+                    <AdminTd label="Constituency" className="px-3 py-2 text-[var(--foreground-secondary)] sm:px-3 sm:py-2">
+                      {r.constituencySlug ?? "—"}
+                    </AdminTd>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
+          </AdminTablePanel>
         </section>
       ) : null}
 
@@ -156,8 +166,8 @@ export function ParliamentReconcileResults({
             In database, not in file ({inDatabaseNotInCsv.length}
             {inDatabaseNotInCsv.length > PREVIEW_LIMIT ? ` — showing first ${PREVIEW_LIMIT}` : ""})
           </h3>
-          <div className="mt-2 overflow-x-auto rounded-xl border border-[var(--border)]">
-            <table className="w-full min-w-[28rem] text-left text-xs">
+          <AdminTablePanel className="mt-2">
+            <table className="admin-table-stack w-full text-left text-xs">
               <thead className="bg-[var(--section-light)] text-[var(--foreground-secondary)]">
                 <tr>
                   <th className="px-3 py-2 font-medium">Slug</th>
@@ -168,14 +178,20 @@ export function ParliamentReconcileResults({
               <tbody className="divide-y divide-[var(--border)] bg-white">
                 {inDatabaseNotInCsv.slice(0, PREVIEW_LIMIT).map((r) => (
                   <tr key={r.slug}>
-                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[11px]">{r.slug}</td>
-                    <td className="px-3 py-2">{r.name}</td>
-                    <td className="px-3 py-2 text-[var(--foreground-secondary)]">{r.party ?? "—"}</td>
+                    <AdminTd label="Slug" className="whitespace-nowrap px-3 py-2 font-mono text-[11px] sm:px-3 sm:py-2">
+                      {r.slug}
+                    </AdminTd>
+                    <AdminTd label="Name" className="px-3 py-2 sm:px-3 sm:py-2">
+                      {r.name}
+                    </AdminTd>
+                    <AdminTd label="Party" className="px-3 py-2 text-[var(--foreground-secondary)] sm:px-3 sm:py-2">
+                      {r.party ?? "—"}
+                    </AdminTd>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
+          </AdminTablePanel>
         </section>
       ) : null}
     </div>

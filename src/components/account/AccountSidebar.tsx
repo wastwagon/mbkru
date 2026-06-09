@@ -9,6 +9,7 @@ import {
 } from "@/config/accountability-catalogue-destinations";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { getAccountSidebarExploreLinks, getAccountSidebarVoiceLinks } from "@/config/public-platform-nav";
+import { focusRingSmClass } from "@/lib/primary-link-styles";
 
 type NavItem = { href: string; label: string };
 
@@ -37,54 +38,82 @@ export function AccountSidebar() {
   const externalVoice = getAccountSidebarVoiceLinks(phase) as NavItem[];
   const explore = getAccountSidebarExploreLinks(phase) as NavItem[];
 
+  const mobileItems: NavItem[] = [...main, ...externalVoice, ...explore.slice(0, 4)];
+
   const linkClass = (active: boolean) =>
     [
-      "flex min-h-[44px] items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-[background-color,color,transform] duration-200 ease-out motion-reduce:transition-colors",
+      "flex min-h-[44px] items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-[background-color,color,transform] duration-200 ease-out motion-reduce:transition-colors touch-manipulation",
       active
         ? "bg-[var(--primary)]/12 text-[var(--primary)] shadow-sm ring-1 ring-[var(--primary)]/15"
         : "text-[var(--foreground-secondary)] hover:bg-[var(--section-light)] hover:text-[var(--foreground)] active:scale-[0.99] motion-reduce:active:scale-100",
     ].join(" ");
 
+  const chipClass = (active: boolean) =>
+    [
+      `inline-flex min-h-11 shrink-0 items-center rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap touch-manipulation ${focusRingSmClass}`,
+      active
+        ? "bg-[var(--primary)] text-white shadow-sm"
+        : "border border-[var(--border)] bg-white text-[var(--foreground-secondary)]",
+    ].join(" ");
+
   return (
     <aside className="lg:w-60 lg:shrink-0">
-      <nav aria-label="Account" className="space-y-8">
-        <div>
-          <p className="px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--foreground-secondary)]">Account</p>
-          <ul className="mt-3 space-y-1">
-            {main.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href} className={linkClass(accountNavActive(pathname, item.href))}>
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+      <nav aria-label="Account" className="lg:space-y-8">
+        {/* Mobile — compact horizontal chips */}
+        <div className="-mx-1 flex gap-2 overflow-x-auto overscroll-x-contain px-1 pb-1 lg:hidden">
+          {mobileItems.map((item) => {
+            const active =
+              item.href.startsWith("/account") || item.href.startsWith("/promises")
+                ? accountNavActive(pathname, item.href) || exploreNavActive(pathname, item.href)
+                : pathname === item.href || pathname.startsWith(`${item.href}/`);
+            return (
+              <Link key={item.href} href={item.href} className={chipClass(active)} aria-current={active ? "page" : undefined}>
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
-        {externalVoice.length > 0 ? (
+
+        {/* Desktop — grouped vertical nav */}
+        <div className="hidden lg:block space-y-8">
           <div>
-            <p className="px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--foreground-secondary)]">Voice</p>
+            <p className="px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--foreground-secondary)]">Account</p>
             <ul className="mt-3 space-y-1">
-              {externalVoice.map((item) => (
+              {main.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className={linkClass(pathname === item.href)}>
+                  <Link href={item.href} className={linkClass(accountNavActive(pathname, item.href))}>
                     {item.label}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
-        ) : null}
-        <div>
-          <p className="px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--foreground-secondary)]">Explore</p>
-          <ul className="mt-3 space-y-1">
-            {explore.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href} className={linkClass(exploreNavActive(pathname, item.href))}>
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          {externalVoice.length > 0 ? (
+            <div>
+              <p className="px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--foreground-secondary)]">Voice</p>
+              <ul className="mt-3 space-y-1">
+                {externalVoice.map((item) => (
+                  <li key={item.href}>
+                    <Link href={item.href} className={linkClass(pathname === item.href)}>
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+          <div>
+            <p className="px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--foreground-secondary)]">Explore</p>
+            <ul className="mt-3 space-y-1">
+              {explore.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href} className={linkClass(exploreNavActive(pathname, item.href))}>
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </nav>
     </aside>

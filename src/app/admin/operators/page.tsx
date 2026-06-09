@@ -1,3 +1,9 @@
+import {
+  adminFormFieldClass,
+  adminInlineSelectClass,
+  adminPrimaryButtonClass,
+  adminSecondaryButtonClass,
+} from "@/lib/admin/admin-ui-classes";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -96,7 +102,7 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
               autoComplete="off"
               required
               maxLength={320}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+              className={adminFormFieldClass}
             />
           </div>
           <div>
@@ -111,7 +117,7 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
               required
               minLength={12}
               maxLength={200}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+              className={adminFormFieldClass}
             />
           </div>
           <div>
@@ -126,12 +132,12 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
               required
               minLength={12}
               maxLength={200}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+              className={adminFormFieldClass}
             />
           </div>
           <button
             type="submit"
-            className="w-fit rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
+            className={adminPrimaryButtonClass}
           >
             Create operator
           </button>
@@ -151,7 +157,7 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
               type="password"
               autoComplete="current-password"
               required
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+              className={adminFormFieldClass}
             />
           </div>
           <div>
@@ -166,7 +172,7 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
               required
               minLength={12}
               maxLength={200}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+              className={adminFormFieldClass}
             />
           </div>
           <div>
@@ -181,12 +187,12 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
               required
               minLength={12}
               maxLength={200}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+              className={adminFormFieldClass}
             />
           </div>
           <button
             type="submit"
-            className="w-fit rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-5 py-2.5 text-sm font-semibold hover:bg-[var(--muted)]"
+            className={adminSecondaryButtonClass}
           >
             Update my password
           </button>
@@ -210,11 +216,11 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
                 <label htmlFor={`active-${a.id}`} className="text-xs font-medium text-[var(--foreground-secondary)]">
                   Access
                 </label>
-                <select id={`active-${a.id}`} name="active" defaultValue={a.active ? "1" : "0"} className="rounded-lg border border-[var(--border)] px-2 py-1.5 text-sm">
+                <select id={`active-${a.id}`} name="active" defaultValue={a.active ? "1" : "0"} className={adminInlineSelectClass}>
                   <option value="1">Active</option>
                   <option value="0">Disabled</option>
                 </select>
-                <button type="submit" className="rounded-lg border border-[var(--border)] bg-[var(--section-light)] px-3 py-1.5 text-xs font-medium hover:bg-[var(--muted)]">
+                <button type="submit" className={adminSecondaryButtonClass}>
                   Save access
                 </button>
               </form>
@@ -235,7 +241,7 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
                       minLength={12}
                       maxLength={200}
                       required
-                      className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                      className={adminFormFieldClass}
                     />
                   </div>
                   <div>
@@ -250,10 +256,10 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
                       minLength={12}
                       maxLength={200}
                       required
-                      className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                      className={adminFormFieldClass}
                     />
                   </div>
-                  <button type="submit" className="w-fit rounded-lg bg-[var(--primary)] px-4 py-2 text-xs font-semibold text-white hover:bg-[var(--primary-dark)]">
+                  <button type="submit" className={adminPrimaryButtonClass}>
                     Apply new password
                   </button>
                 </form>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import { focusRingOnDark80TileClass, focusRingOnDark85PillClass } from "@/lib/primary-link-styles";
 import { content, getTopBarSocialLinks } from "@/lib/site-content";
 
@@ -34,26 +35,40 @@ function SocialIcon({ icon }: { icon: "facebook" | "linkedin" | "twitter" }) {
   );
 }
 
-const contactLinkClass = `flex min-h-[44px] min-w-0 touch-manipulation items-center justify-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs text-white/95 transition-colors duration-200 hover:bg-white/20 hover:text-white sm:min-h-0 sm:justify-start sm:bg-transparent sm:px-0 sm:py-0 sm:text-sm ${focusRingOnDark85PillClass}`;
+const contactLinkClass = `flex min-h-11 min-w-0 touch-manipulation items-center justify-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs text-white/95 transition-colors duration-200 hover:bg-white/20 hover:text-white sm:min-h-0 sm:justify-start sm:bg-transparent sm:px-0 sm:py-0 sm:text-sm ${focusRingOnDark85PillClass}`;
 
 export function TopBar() {
+  const [collapsed, setCollapsed] = useState(false);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (y < 48) {
+        setCollapsed(false);
+      } else if (y > lastScrollY.current + 8) {
+        setCollapsed(true);
+      } else if (y < lastScrollY.current - 8) {
+        setCollapsed(false);
+      }
+      lastScrollY.current = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <div className="relative z-40 overflow-hidden bg-[var(--accent-gold)] text-white">
-      <div className="relative mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-2 sm:px-6 sm:py-2 lg:px-8">
+    <div
+      className={`relative z-40 overflow-hidden bg-[var(--accent-gold)] text-white transition-[max-height,opacity,transform] duration-300 ease-out motion-reduce:transition-none lg:max-h-none lg:opacity-100 lg:translate-y-0 ${
+        collapsed
+          ? "max-h-0 opacity-0 -translate-y-full pointer-events-none lg:pointer-events-auto"
+          : "max-h-48 opacity-100 translate-y-0"
+      }`}
+      aria-hidden={collapsed}
+    >
+      <div className="relative mx-auto flex max-w-7xl flex-col gap-2 px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2 sm:px-6 sm:py-2 lg:px-8">
         <div className="absolute bottom-0 left-4 right-4 h-[2px] bg-gradient-to-r from-transparent via-white/40 to-transparent sm:left-6 sm:right-6 lg:left-8 lg:right-8" aria-hidden />
-        <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-start sm:gap-x-6 sm:gap-y-1">
-          <a
-            href={`https://maps.google.com/?q=${encodeURIComponent(contactInfo.address)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={contactLinkClass}
-          >
-            <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <span className="min-w-0 text-center sm:text-left">{contactInfo.address}</span>
-          </a>
+        <div className="flex w-full flex-wrap items-center justify-center gap-2 sm:flex-nowrap sm:justify-start sm:gap-x-6">
           <a
             href={`mailto:${contactInfo.email}`}
             title={contactInfo.email}
@@ -62,7 +77,7 @@ export function TopBar() {
             <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
-            <span className="min-w-0 break-all text-center sm:break-normal sm:text-left">{contactInfo.email}</span>
+            <span className="min-w-0 truncate text-center sm:max-w-none sm:break-normal sm:text-left">{contactInfo.email}</span>
           </a>
           {contactInfo.tel ? (
             <a
@@ -75,30 +90,23 @@ export function TopBar() {
               <span className="min-w-0 text-center sm:text-left">{contactInfo.tel}</span>
             </a>
           ) : null}
-          <Link href="/data-sources" className={`${contactLinkClass} touch-manipulation`}>
-            <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span className="hidden sm:inline">Data sources</span>
-            <span className="sm:hidden">Sources</span>
+          <Link href="/data-sources" className={`${contactLinkClass} hidden sm:flex`}>
+            Data sources
           </Link>
         </div>
-        <div className="flex w-full flex-col items-center gap-3 border-t border-white/20 pt-3 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end sm:border-t-0 sm:pt-0 sm:gap-x-4 sm:gap-y-2">
+        <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-end sm:gap-3">
           <Link
             href="/contact"
-            className={`inline-flex min-h-11 w-full min-w-0 max-w-sm touch-manipulation items-center justify-center gap-1.5 rounded-full border-2 border-white/90 bg-white/15 px-4 py-2.5 text-center text-xs font-bold uppercase tracking-wide text-white transition hover:bg-white/25 sm:min-h-0 sm:max-w-none sm:w-auto sm:py-2 ${focusRingOnDark85PillClass}`}
+            className={`inline-flex min-h-11 shrink-0 touch-manipulation items-center justify-center gap-1.5 rounded-full border-2 border-white/90 bg-white/15 px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-white/25 sm:min-h-0 sm:py-2 ${focusRingOnDark85PillClass}`}
           >
-            Get in touch
+            Contact
             <span aria-hidden className="text-base leading-none">
               →
             </span>
           </Link>
-          <span className="w-full max-w-md px-1 text-center text-[10px] font-semibold uppercase leading-relaxed tracking-wide text-white/95 sm:w-auto sm:max-w-none sm:px-0 sm:text-left sm:text-xs">
-            {content.topBarTagline}
-          </span>
-          <div className="flex shrink-0 items-center justify-center gap-2.5 sm:gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             {socialLinks.map(({ href, label, icon, external }) => {
-              const className = `flex h-11 w-11 touch-manipulation items-center justify-center rounded-xl bg-white/20 text-white transition-all duration-300 hover:bg-white hover:text-[var(--section-dark)] active:scale-[0.96] motion-reduce:active:scale-100 sm:h-8 sm:w-8 sm:rounded-lg ${focusRingOnDark80TileClass}`;
+              const className = `flex h-11 w-11 touch-manipulation items-center justify-center rounded-xl bg-white/20 text-white transition-all duration-300 hover:bg-white hover:text-[var(--section-dark)] active:scale-[0.96] motion-reduce:active:scale-100 sm:h-9 sm:w-9 sm:rounded-lg ${focusRingOnDark80TileClass}`;
               const inner = <SocialIcon icon={icon} />;
               if (external) {
                 return (

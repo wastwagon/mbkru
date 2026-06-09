@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
 import { AdminTablePanel } from "@/components/admin/AdminTablePanel";
+import { AdminTd } from "@/components/admin/AdminTd";
 import { AdminMetricCard } from "@/components/admin/AdminMetricCard";
 import { AdminSectionCard } from "@/components/admin/AdminSectionCard";
 import { requireAdminSession } from "@/lib/admin/require-session";
@@ -133,7 +134,7 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
       ) : null}
 
       <AdminTablePanel className="mt-8 shadow-sm">
-        <table className="min-w-full text-left text-sm">
+        <table className="admin-table-stack min-w-full text-left text-sm">
           <thead className="border-b border-[var(--border)] bg-[var(--muted)]/40 text-xs uppercase tracking-wide text-[var(--foreground-secondary)]">
             <tr>
               <th className="px-4 py-3 font-medium">Event name</th>
@@ -144,11 +145,15 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
           <tbody>
             {trackedEvents.map((event) => (
               <tr key={event.name} className="border-b border-[var(--border)] last:border-0">
-                <td className="px-4 py-3 align-top">
+                <AdminTd label="Event name" className="px-4 py-3 align-top sm:px-4 sm:py-3">
                   <code className="text-xs text-[var(--foreground)]">{event.name}</code>
-                </td>
-                <td className="px-4 py-3 align-top text-[var(--foreground)]">{event.meaning}</td>
-                <td className="px-4 py-3 align-top text-[var(--foreground-secondary)]">{event.signal}</td>
+                </AdminTd>
+                <AdminTd label="Meaning" className="px-4 py-3 align-top text-[var(--foreground)] sm:px-4 sm:py-3">
+                  {event.meaning}
+                </AdminTd>
+                <AdminTd label="Why it matters" className="px-4 py-3 align-top text-[var(--foreground-secondary)] sm:px-4 sm:py-3">
+                  {event.signal}
+                </AdminTd>
               </tr>
             ))}
           </tbody>

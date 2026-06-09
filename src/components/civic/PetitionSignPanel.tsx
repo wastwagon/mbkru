@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { FormTurnstile, isTurnstileWidgetEnabled } from "@/components/forms/FormTurnstile";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
+import { mobileInlineActionSuccessClass } from "@/lib/mobile-ui-classes";
 
 type Me = { email: string; displayName: string | null };
 
@@ -174,7 +175,7 @@ export function PetitionSignPanel({
             type="button"
             disabled={busy}
             onClick={() => void onWithdraw()}
-            className="mt-3 rounded-lg border border-emerald-300 px-3 py-1.5 text-xs font-semibold hover:bg-white disabled:opacity-50"
+            className={`mt-3 ${mobileInlineActionSuccessClass}`}
           >
             Withdraw my signature
           </button>

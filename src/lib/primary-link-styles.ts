@@ -50,7 +50,7 @@ export const focusRingOnDark80TileClass =
 export const primaryLinkClass = `font-medium text-[var(--primary)] underline-offset-4 transition-colors hover:underline ${focusRingSmClass}`;
 
 /** Primary links in toolbars / wrapped nav rows (~44px min tap height). */
-export const primaryNavLinkClass = `inline-flex min-h-9 items-center font-medium text-[var(--primary)] underline-offset-4 transition-colors hover:underline ${focusRingMdClass}`;
+export const primaryNavLinkClass = `inline-flex min-h-11 items-center font-medium text-[var(--primary)] underline-offset-4 transition-colors hover:underline ${focusRingMdClass}`;
 
 /** Same as `primaryNavLinkClass` with a 44px minimum touch target. */
 export const primaryNavLinkTouchClass = `inline-flex min-h-[44px] items-center font-medium text-[var(--primary)] underline-offset-4 transition-colors hover:underline ${focusRingMdClass}`;

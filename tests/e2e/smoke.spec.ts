@@ -112,3 +112,32 @@ test.describe("proxy member gates (guest, no cookies)", () => {
     }
   });
 });
+
+test.describe("mobile shell", () => {
+  test("bottom nav opens voice chat dialog", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "mobile-chrome", "mobile viewport project only");
+    await page.goto("/");
+    await page.getByRole("navigation", { name: "Primary" }).getByLabel("Open MBKRU Voice chat").click();
+    await expect(page.getByRole("dialog", { name: "MBKRU Voice chatbot" })).toBeVisible();
+  });
+
+  test("offline page loads", async ({ request }) => {
+    const res = await request.get("/offline");
+    expect(res.status()).toBeLessThan(500);
+  });
+
+  test("FAQ includes mobile install help", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "mobile-chrome", "mobile viewport project only");
+    await page.goto("/faq");
+    await expect(page.getByRole("heading", { name: "Using MBKRU on your phone" })).toBeVisible();
+  });
+
+  test("sw precache manifest is served after build", async ({ request }) => {
+    const res = await request.get("/sw-precache.json");
+    test.skip(res.status() === 404, "sw-precache.json only exists after production build");
+    expect(res.status()).toBe(200);
+    const body = (await res.json()) as { buildId?: string; urls?: string[] };
+    expect(body.buildId).toBeTruthy();
+    expect(Array.isArray(body.urls)).toBe(true);
+  });
+});

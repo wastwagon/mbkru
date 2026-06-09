@@ -27,13 +27,13 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const sizeStyles = {
-  sm: "h-9 rounded-lg px-4 text-sm",
+  sm: "min-h-11 h-11 rounded-lg px-4 text-sm",
   md: "h-11 rounded-xl px-6 text-base",
   lg: "h-12 rounded-xl px-8 text-base",
 };
 
 const pillSizeStyles = {
-  sm: "h-9 rounded-full px-5 text-sm",
+  sm: "min-h-11 h-11 rounded-full px-5 text-sm",
   md: "h-12 rounded-full px-6 py-3 text-base",
   lg: "h-14 rounded-full px-8 py-4 text-base",
 };

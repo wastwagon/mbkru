@@ -14,5 +14,5 @@ type Props = {
  */
 export function AdminPageContainer({ children, width = "default", className = "" }: Props) {
   const w = adminPageWidthClass(width);
-  return <div className={`mx-auto ${w} px-4 py-10 sm:px-6 ${className}`.trim()}>{children}</div>;
+  return <div className={`mx-auto ${w} px-4 py-8 sm:px-6 sm:py-10 ${className}`.trim()}>{children}</div>;
 }

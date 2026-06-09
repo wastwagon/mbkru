@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { focusRingSmClass } from "@/lib/primary-link-styles";
+import { mobileFormFieldClass } from "@/lib/mobile-ui-classes";
 
 type Region = { id: string; name: string };
 
@@ -17,7 +17,7 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fieldClass = `mt-1 w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
+  const fieldClass = mobileFormFieldClass;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();

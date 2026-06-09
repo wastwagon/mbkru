@@ -4,6 +4,8 @@ import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminMetricCard } from "@/components/admin/AdminMetricCard";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { AdminTablePanel } from "@/components/admin/AdminTablePanel";
+import { AdminTd } from "@/components/admin/AdminTd";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { getPetitionPendingAnalytics } from "@/lib/server/petition-pending-analytics";
@@ -109,8 +111,8 @@ export default async function AdminPetitionPendingAnalyticsPage() {
         <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
           Petitions that currently have at least one pending row (active or expired).
         </p>
-        <div className="mt-4 overflow-x-auto rounded-2xl border border-[var(--border)] bg-white shadow-sm">
-          <table className="min-w-full text-left text-sm">
+        <AdminTablePanel className="mt-4 shadow-sm">
+          <table className="admin-table-stack min-w-full text-left text-sm">
             <thead className="border-b border-[var(--border)] bg-[var(--muted)]/40 text-xs uppercase tracking-wide text-[var(--foreground-secondary)]">
               <tr>
                 <th className="px-4 py-3 font-medium">Petition</th>
@@ -129,21 +131,27 @@ export default async function AdminPetitionPendingAnalyticsPage() {
               ) : (
                 data.byPetition.map((row) => (
                   <tr key={row.petitionId} className="border-b border-[var(--border)] last:border-0">
-                    <td className="px-4 py-3">
+                    <AdminTd label="Petition" className="px-4 py-3 sm:px-4 sm:py-3">
                       <Link href={`/petitions/${row.slug}`} className={primaryLinkClass}>
                         {row.title}
                       </Link>
                       <p className="mt-0.5 font-mono text-xs text-[var(--foreground-secondary)]">{row.slug}</p>
-                    </td>
-                    <td className="px-4 py-3 text-[var(--foreground-secondary)]">{row.petitionStatus}</td>
-                    <td className="px-4 py-3 text-right tabular-nums">{row.activePending}</td>
-                    <td className="px-4 py-3 text-right tabular-nums">{row.expiredPending}</td>
+                    </AdminTd>
+                    <AdminTd label="Status" className="px-4 py-3 text-[var(--foreground-secondary)] sm:px-4 sm:py-3">
+                      {row.petitionStatus}
+                    </AdminTd>
+                    <AdminTd label="Active" className="px-4 py-3 text-right tabular-nums sm:px-4 sm:py-3 sm:text-right">
+                      {row.activePending}
+                    </AdminTd>
+                    <AdminTd label="Expired" className="px-4 py-3 text-right tabular-nums sm:px-4 sm:py-3 sm:text-right">
+                      {row.expiredPending}
+                    </AdminTd>
                   </tr>
                 ))
               )}
             </tbody>
           </table>
-        </div>
+        </AdminTablePanel>
       </section>
     </AdminPageContainer>
   );

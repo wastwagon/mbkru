@@ -40,12 +40,13 @@ export function Card({
   );
 
   const baseClasses =
-    "rounded-2xl border border-[var(--border)] bg-white p-8 shadow-sm transition-[border-color,box-shadow,transform] duration-300 ease-out hover:border-[var(--primary)]/35";
+    "rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition-[border-color,box-shadow,transform] duration-300 ease-out hover:border-[var(--primary)]/35 sm:p-8";
 
   if (href) {
     return (
       <motion.div
         whileHover={{ y: -4 }}
+        whileTap={{ scale: 0.985 }}
         transition={{ duration: 0.2 }}
         className={className}
       >
@@ -75,6 +76,7 @@ export function Card({
   return (
     <motion.div
       whileHover={{ y: -4 }}
+      whileTap={{ scale: 0.985 }}
       transition={{ duration: 0.2 }}
       className={`${baseClasses} ${className}`}
     >

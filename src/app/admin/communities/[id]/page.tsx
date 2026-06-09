@@ -13,6 +13,7 @@ import {
   updateCommunityPostReportStatusAction,
 } from "@/app/admin/communities/actions";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { adminQueueActionDangerClass } from "@/lib/admin/admin-ui-classes";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
@@ -282,7 +283,7 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
                     <input type="hidden" name="communityId" value={community.id} />
                     <button
                       type="submit"
-                      className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-900 hover:bg-rose-100"
+                      className={adminQueueActionDangerClass}
                     >
                       Delete empty forum (any status)
                     </button>

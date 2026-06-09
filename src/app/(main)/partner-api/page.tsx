@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ApiEndpointReference } from "@/components/partner/ApiEndpointReference";
 import { PageHeader } from "@/components/ui/PageHeader";
 import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
@@ -48,20 +49,12 @@ export default function PartnerApiPage() {
             unavailable — design integrations to degrade gracefully.
           </p>
 
-          <div className="mt-6 overflow-x-auto rounded-lg border border-[var(--border)]">
-            <table className="w-full min-w-[32rem] border-collapse text-left text-sm">
-              <thead className="bg-[var(--section-light)] text-[var(--foreground)]">
-                <tr>
-                  <th className="border-b border-[var(--border)] px-3 py-2 font-semibold">Path</th>
-                  <th className="border-b border-[var(--border)] px-3 py-2 font-semibold">Purpose</th>
-                </tr>
-              </thead>
-              <tbody className="text-[var(--foreground-secondary)]">
-                <tr>
-                  <td className="border-b border-[var(--border)] px-3 py-2 font-mono text-[13px] text-[var(--foreground)]">
-                    /api/mps
-                  </td>
-                  <td className="border-b border-[var(--border)] px-3 py-2">
+          <ApiEndpointReference
+            endpoints={[
+              {
+                path: "/api/mps",
+                purpose: (
+                  <>
                     Active MP/minister roster (when{" "}
                     {showMpsPromises ? (
                       <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={primaryLinkClass}>
@@ -71,21 +64,17 @@ export default function PartnerApiPage() {
                       "parliament data"
                     )}{" "}
                     is enabled on this site).
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border-b border-[var(--border)] px-3 py-2 font-mono text-[13px] text-[var(--foreground)]">
-                    /api/promises
-                  </td>
-                  <td className="border-b border-[var(--border)] px-3 py-2">
-                    {accountabilityProse.apiPromisesTableRow}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border-b border-[var(--border)] px-3 py-2 font-mono text-[13px] text-[var(--foreground)]">
-                    /api/report-card/[year]
-                  </td>
-                  <td className="border-b border-[var(--border)] px-3 py-2">
+                  </>
+                ),
+              },
+              {
+                path: "/api/promises",
+                purpose: accountabilityProse.apiPromisesTableRow,
+              },
+              {
+                path: "/api/report-card/[year]",
+                purpose: (
+                  <>
                     Published People&apos;s Report Card cycle when{" "}
                     {showReportCard ? (
                       <Link href="/report-card" className={primaryLinkClass}>
@@ -95,21 +84,19 @@ export default function PartnerApiPage() {
                       "the report card"
                     )}{" "}
                     is public on this site.
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border-b border-[var(--border)] px-3 py-2 font-mono text-[13px] text-[var(--foreground)]">
-                    /api/export/mps-csv
-                  </td>
-                  <td className="border-b border-[var(--border)] px-3 py-2">CSV roster (same feature gate as JSON MPs).</td>
-                </tr>
-                <tr>
-                  <td className="px-3 py-2 font-mono text-[13px] text-[var(--foreground)]">/api/export/promises-csv</td>
-                  <td className="px-3 py-2">Full promise export with the same filter semantics as JSON (separate rate bucket).</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+                  </>
+                ),
+              },
+              {
+                path: "/api/export/mps-csv",
+                purpose: "CSV roster (same feature gate as JSON MPs).",
+              },
+              {
+                path: "/api/export/promises-csv",
+                purpose: "Full promise export with the same filter semantics as JSON (separate rate bucket).",
+              },
+            ]}
+          />
           <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
             <code className="rounded bg-[var(--section-light)] px-1.5 py-0.5 text-[13px]">GET /api/health</code> reports
             capability flags for monitoring — it is not a dataset export.

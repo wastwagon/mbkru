@@ -5,6 +5,7 @@ import { AdminListPanel } from "@/components/admin/AdminListPanel";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { adminFilterChipClass } from "@/lib/admin/admin-ui-classes";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { reportKindLabel } from "@/lib/report-status-text";
@@ -114,11 +115,7 @@ export default async function AdminPublicCausesPage({ searchParams }: Props) {
               href={href}
               scroll={false}
               title={t.hint}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                active
-                  ? "bg-[var(--primary)] text-white"
-                  : "border border-[var(--border)] bg-white text-[var(--foreground)] hover:border-[var(--primary)]/40"
-              }`}
+              className={adminFilterChipClass(active)}
               aria-current={active ? "page" : undefined}
             >
               {t.label}

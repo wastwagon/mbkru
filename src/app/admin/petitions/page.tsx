@@ -5,6 +5,7 @@ import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminListPanel } from "@/components/admin/AdminListPanel";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { adminFilterChipClass, adminQueueActionMutedClass, adminQueueActionNeutralClass, adminQueueActionSuccessClass, adminQueueActionWarningClass } from "@/lib/admin/admin-ui-classes";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -90,11 +91,7 @@ export default async function AdminPetitionsPage({ searchParams }: Props) {
               key={t.param || "all"}
               href={href}
               scroll={false}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                active
-                  ? "bg-[var(--primary)] text-white"
-                  : "border border-[var(--border)] bg-white text-[var(--foreground)] hover:border-[var(--primary)]/40"
-              }`}
+              className={adminFilterChipClass(active)}
               aria-current={active ? "page" : undefined}
             >
               {t.label}
@@ -151,7 +148,7 @@ export default async function AdminPetitionsPage({ searchParams }: Props) {
                       <input type="hidden" name="status" value="CLOSED" />
                       <button
                         type="submit"
-                        className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-950 hover:bg-amber-100"
+                        className={adminQueueActionWarningClass}
                       >
                         Close
                       </button>
@@ -161,7 +158,7 @@ export default async function AdminPetitionsPage({ searchParams }: Props) {
                       <input type="hidden" name="status" value="ARCHIVED" />
                       <button
                         type="submit"
-                        className="rounded-lg border border-[var(--border)] bg-[var(--section-light)] px-3 py-1.5 text-xs font-semibold text-[var(--foreground)] hover:bg-[var(--muted)]/20"
+                        className={adminQueueActionMutedClass}
                       >
                         Archive
                       </button>
@@ -175,7 +172,7 @@ export default async function AdminPetitionsPage({ searchParams }: Props) {
                       <input type="hidden" name="status" value="OPEN" />
                       <button
                         type="submit"
-                        className="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-950 hover:bg-emerald-100"
+                        className={adminQueueActionSuccessClass}
                       >
                         Reopen
                       </button>
@@ -185,7 +182,7 @@ export default async function AdminPetitionsPage({ searchParams }: Props) {
                       <input type="hidden" name="status" value="ARCHIVED" />
                       <button
                         type="submit"
-                        className="rounded-lg border border-[var(--border)] bg-[var(--section-light)] px-3 py-1.5 text-xs font-semibold text-[var(--foreground)] hover:bg-[var(--muted)]/20"
+                        className={adminQueueActionMutedClass}
                       >
                         Archive
                       </button>
@@ -198,7 +195,7 @@ export default async function AdminPetitionsPage({ searchParams }: Props) {
                     <input type="hidden" name="status" value="CLOSED" />
                     <button
                       type="submit"
-                      className="rounded-lg border border-[var(--border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--foreground)] hover:bg-[var(--section-light)]"
+                      className={adminQueueActionNeutralClass}
                       title="Restore as closed (visible but no new signatures); reopen from there if needed."
                     >
                       Un-archive (closed)

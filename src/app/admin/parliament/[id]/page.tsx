@@ -12,6 +12,12 @@ import {
   accountabilityProse,
 } from "@/config/accountability-catalogue-destinations";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import {
+  adminFormFieldClass,
+  adminInlineSelectClass,
+  adminQueueActionClass,
+  adminSecondaryButtonClass,
+} from "@/lib/admin/admin-ui-classes";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
@@ -410,7 +416,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                       id={`st-${p.id}`}
                       name="status"
                       defaultValue={p.status}
-                      className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                      className={adminInlineSelectClass}
                     >
                       {STATUS_OPTIONS.map((o) => (
                         <option key={o.value} value={o.value}>
@@ -420,7 +426,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                     </select>
                     <button
                       type="submit"
-                      className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-2 text-sm font-medium hover:bg-[var(--muted)]"
+                      className={adminSecondaryButtonClass}
                     >
                       Update status
                     </button>
@@ -436,7 +442,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                       maxLength={2000}
                       defaultValue={p.blockedReason ?? ""}
                       placeholder="e.g. Awaiting court determination — pledge on hold."
-                      className="mt-1 w-full max-w-xl rounded-lg border border-[var(--border)] px-2 py-1.5 text-sm"
+                      className={`${adminFormFieldClass} max-w-xl`}
                     />
                   </div>
                 </form>
@@ -454,7 +460,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                       required
                       maxLength={200}
                       defaultValue={p.sourceLabel}
-                      className="mt-1 w-full rounded-lg border border-[var(--border)] px-2 py-1.5 text-sm"
+                      className={adminFormFieldClass}
                     />
                   </div>
                   <div>
@@ -468,7 +474,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                       defaultValue={p.sourceUrl ?? ""}
                       placeholder="https://…"
                       maxLength={2000}
-                      className="mt-1 w-full rounded-lg border border-[var(--border)] px-2 py-1.5 text-sm"
+                      className={adminFormFieldClass}
                     />
                   </div>
                   <div>
@@ -481,7 +487,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                       rows={3}
                       maxLength={50000}
                       defaultValue={p.verificationNotes ?? ""}
-                      className="mt-1 w-full rounded-lg border border-[var(--border)] px-2 py-1.5 text-sm"
+                      className={adminFormFieldClass}
                     />
                   </div>
                   <div>
@@ -492,7 +498,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                       id={`pol-${p.id}`}
                       name="policySector"
                       defaultValue={p.policySector ?? ""}
-                      className="mt-1 w-full rounded-lg border border-[var(--border)] px-2 py-1.5 text-sm"
+                      className={adminFormFieldClass}
                     >
                       <option value="">— None —</option>
                       {POLICY_SECTOR_VALUES.map((v) => (
@@ -518,7 +524,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                   </div>
                   <button
                     type="submit"
-                    className="rounded-lg border border-[var(--border)] bg-white px-3 py-1.5 text-xs font-medium hover:bg-[var(--section-light)]"
+                    className={adminQueueActionClass}
                   >
                     Save source & verification
                   </button>

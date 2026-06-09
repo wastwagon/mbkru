@@ -1,5 +1,6 @@
 "use client";
 
+import { adminQueueActionDeleteClass } from "@/lib/admin/admin-ui-classes";
 import { deleteResourceDocumentAction } from "@/app/admin/resources/actions";
 
 export function DeleteResourceDocumentForm({ id }: { id: string }) {
@@ -13,7 +14,7 @@ export function DeleteResourceDocumentForm({ id }: { id: string }) {
       <input type="hidden" name="id" value={id} />
       <button
         type="submit"
-        className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-900 hover:bg-red-100"
+        className={adminQueueActionDeleteClass}
       >
         Delete
       </button>

@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev -p 1100 --webpack",
-    "build": "prisma generate && next build",
+    "build": "prisma generate && next build && node scripts/generate-sw-precache.mjs",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
@@ -40,6 +40,7 @@
     "data:refresh-members-seed": "node scripts/refresh-parliament-members-seed.mjs",
     "data:refresh-members-seed-wikipedia": "node scripts/wikipedia-mps-2024-to-parliament-members-seed.mjs",
     "data:ghana-map-paths": "node scripts/generate-ghana-regions-map-paths.mjs",
+    "icons:pwa": "node scripts/generate-pwa-icons.mjs",
     "data:list-mp-constituency-slugs": "tsx scripts/list-mp-constituency-slugs.ts",
     "postinstall": "prisma generate"
   },

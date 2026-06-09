@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
+import { VoiceOpenChatCTA } from "@/components/voice/VoiceOpenChatCTA";
 import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
@@ -73,7 +74,20 @@ export default async function CitizensVoicePage() {
       <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <AccountabilityDisclaimerCallout variant="voiceSubmit" className="mb-6" />
-          <div className="mb-6 rounded-xl border border-[var(--border)] bg-white p-4 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+          <div className="mb-4 lg:hidden">
+            <VoiceOpenChatCTA />
+          </div>
+          <p className="mb-6 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)] sm:hidden">
+            AI chat for questions — not for emergencies or legal advice.{" "}
+            <Link href="/privacy" className={primaryLinkClass}>
+              Privacy
+            </Link>
+            {" · "}
+            <Link href="/terms" className={primaryLinkClass}>
+              Terms
+            </Link>
+          </p>
+          <div className="mb-6 hidden rounded-xl border border-[var(--border)] bg-white p-4 text-sm leading-relaxed text-[var(--foreground-secondary)] sm:block">
             MBKRU Voice includes reporting tools and an AI-assisted customer service chat experience. Do not use chat for
             legal strategy or emergency response. For urgent safety matters, contact local emergency services first. See{" "}
             <Link href="/privacy" className={primaryLinkClass}>
@@ -107,24 +121,16 @@ export default async function CitizensVoicePage() {
               <ul className="mt-6 space-y-3 text-[var(--foreground-secondary)]">
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
-                  <span>Secure national membership portal (mbkru.org.gh)</span>
+                  <span>File geo-tagged reports with evidence and track responses by code or account</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
-                  <span>Register with email and password; eligibility is Ghanaian citizens 18+ — stronger identity checks may be added as rules allow</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
-                  <span>Personal dashboard for filing complaints, tracking responses, and receiving updates</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
-                  <span>Geo-tagged complaint system (district, region, constituency)</span>
+                  <span>Personal dashboard for submissions, updates, and notifications</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
                   <span>
-                    Public aggregate statistics (counts by kind, status, and region) on{" "}
+                    Public aggregate statistics on{" "}
                     {showStats ? (
                       <Link href="/transparency" className={primaryLinkClass}>
                         Voice statistics
@@ -132,7 +138,7 @@ export default async function CitizensVoicePage() {
                     ) : (
                       "the transparency page"
                     )}{" "}
-                    when public statistics are published
+                    when published
                   </span>
                 </li>
               </ul>

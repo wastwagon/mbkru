@@ -7,6 +7,8 @@ import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminTablePanel } from "@/components/admin/AdminTablePanel";
+import { AdminTd } from "@/components/admin/AdminTd";
+import { adminFilterChipClass } from "@/lib/admin/admin-ui-classes";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -108,11 +110,7 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
               key={t.param || "all"}
               href={href}
               scroll={false}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                active
-                  ? "bg-[var(--primary)] text-white"
-                  : "border border-[var(--border)] bg-white text-[var(--foreground)] hover:border-[var(--primary)]/40"
-              }`}
+              className={adminFilterChipClass(active)}
               aria-current={active ? "page" : undefined}
             >
               {t.label}
@@ -122,7 +120,7 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
       </div>
 
       <AdminTablePanel className="mt-6">
-        <table className="min-w-full text-left text-sm">
+        <table className="admin-table-stack min-w-full text-left text-sm">
           <thead className="border-b border-[var(--border)] bg-[var(--section-light)]/80 text-[var(--foreground-secondary)]">
             <tr>
               <th className="px-4 py-3 font-medium">Email</th>
@@ -140,13 +138,15 @@ export default async function AdminLeadsPage({ searchParams }: Props) {
             ) : (
               leads.map((row) => (
                 <tr key={row.id} className="hover:bg-[var(--section-light)]/40">
-                  <td className="px-4 py-3 font-mono text-xs sm:text-sm">{row.email}</td>
-                  <td className="px-4 py-3 text-[var(--foreground-secondary)]">
+                  <AdminTd label="Email" className="px-4 py-3 font-mono text-xs sm:px-4 sm:py-3 sm:text-sm">
+                    {row.email}
+                  </AdminTd>
+                  <AdminTd label="Source" className="px-4 py-3 text-[var(--foreground-secondary)] sm:px-4 sm:py-3">
                     {row.source.replace(/_/g, " ")}
-                  </td>
-                  <td className="px-4 py-3 text-[var(--foreground-secondary)]">
+                  </AdminTd>
+                  <AdminTd label="Signed up" className="px-4 py-3 text-[var(--foreground-secondary)] sm:px-4 sm:py-3">
                     {row.createdAt.toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
-                  </td>
+                  </AdminTd>
                 </tr>
               ))
             )}

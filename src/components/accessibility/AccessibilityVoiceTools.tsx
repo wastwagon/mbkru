@@ -12,6 +12,8 @@ import {
 import { trackUiEvent } from "@/lib/client/analytics-events";
 import type { SpeechRecognitionCtor, SpeechRecognitionEventLike, SpeechRecognitionLike } from "@/lib/client/web-speech-recognition";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
+import { mobileFormFieldClass, mobileIconButtonClass, mobileOverlayTopClass } from "@/lib/mobile-ui-classes";
+import { useBodyScrollLock } from "@/lib/use-body-scroll-lock";
 import { splitTextForSpeechSynthesis } from "@/lib/client/speech-synthesis-chunks";
 import {
   getAccessibilityVoiceStrings,
@@ -61,6 +63,8 @@ export function AccessibilityVoiceTools() {
   const useWhisperInput = Boolean(preferences.useOpenAiWhisperMic && audioCaps?.whisper);
   const readAloudPossible =
     speechSupported || Boolean(audioCaps?.tts && preferences.useOpenAiTtsPlayback);
+
+  useBodyScrollLock(isOpen);
 
   function stopOpenAiPlayback() {
     playbackAudioRef.current?.pause();
@@ -586,17 +590,24 @@ export function AccessibilityVoiceTools() {
                 window.localStorage.setItem("mbkru_voice_onboarding_seen_v1", "true");
               }
             }}
-            className={`mt-2 rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-xs font-semibold text-[var(--foreground)] ${focusRingSmClass}`}
+            className={`mt-2 inline-flex min-h-11 items-center rounded-lg border border-[var(--border)] px-3 py-2 text-sm font-semibold text-[var(--foreground)] touch-manipulation ${focusRingSmClass}`}
           >
             {a11y.onboardingGotIt}
           </button>
         </aside>
       ) : null}
       {isOpen ? (
-        <section
+        <>
+          <button
+            type="button"
+            aria-label={a11y.closeAria}
+            className="fixed inset-0 z-[99] bg-slate-900/40 backdrop-blur-[2px] lg:hidden"
+            onClick={closeAccessibilityPanel}
+          />
+          <section
           ref={panelRef}
           id="mbkru-accessibility-tools"
-          className="fixed left-3 right-3 top-[4.75rem] z-[100] mx-auto mt-0 w-auto max-w-[min(30rem,calc(100vw-1.5rem))] max-h-[min(72vh,40rem)] overflow-y-auto rounded-2xl border border-[var(--border)] bg-white p-3.5 pb-4 shadow-xl sm:left-auto sm:right-4 sm:top-24 sm:p-4 sm:pb-4"
+          className={`fixed left-3 right-3 z-[100] mx-auto mt-0 w-auto max-w-[min(30rem,calc(100vw-1.5rem))] max-h-[min(72dvh,calc(100dvh-env(safe-area-inset-top)-6rem))] overflow-y-auto overscroll-contain rounded-2xl border border-[var(--border)] bg-white p-3.5 pb-4 shadow-xl sm:left-auto sm:right-4 sm:p-4 sm:pb-4 ${mobileOverlayTopClass}`}
           aria-label={a11y.panelAria}
           role="dialog"
           aria-modal="true"
@@ -607,7 +618,7 @@ export function AccessibilityVoiceTools() {
             <button
               type="button"
               onClick={closeAccessibilityPanel}
-              className={`absolute right-0 top-0 inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--section-light)] text-[var(--foreground)] hover:bg-[var(--muted)] ${focusRingSmClass}`}
+              className={`absolute right-0 top-0 ${mobileIconButtonClass} rounded-full border border-[var(--border)] bg-[var(--section-light)] text-[var(--foreground)] hover:bg-[var(--muted)]`}
               aria-label={a11y.closeAria}
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
@@ -624,7 +635,7 @@ export function AccessibilityVoiceTools() {
               id="accessibility-language-select"
               value={preferences.languageId}
               onChange={(event) => updateLanguage(event.target.value as VoicePreferences["languageId"])}
-              className={`h-10 rounded-xl border border-[var(--border)] px-3 text-sm text-[var(--foreground)] ${focusRingSmClass}`}
+              className={`h-11 ${mobileFormFieldClass.replace("mt-1 ", "")}`}
             >
               {voiceLanguageOptions.map((option) => (
                 <option key={option.id} value={option.id}>
@@ -775,6 +786,7 @@ export function AccessibilityVoiceTools() {
             {lastError ?? a11y.footerHint}
           </p>
         </section>
+        </>
       ) : null}
     </>
   );

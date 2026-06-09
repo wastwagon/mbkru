@@ -6,14 +6,17 @@ import { usePathname } from "next/navigation";
 
 import { AdminNavigation } from "@/components/admin/AdminNavigation";
 import { focusRingMdClass, primaryLinkClass } from "@/lib/primary-link-styles";
+import { useBodyScrollLock } from "@/lib/use-body-scroll-lock";
 
 type Props = { children: React.ReactNode };
 
 function AdminMobileNavControls() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
+  useBodyScrollLock(mobileNavOpen);
+
   const menuToggleClass = [
-    "inline-flex min-h-[44px] items-center justify-center rounded-xl border border-[var(--border)] bg-white px-4 text-sm font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--muted)]",
+    "inline-flex min-h-[44px] items-center justify-center rounded-xl border border-[var(--border)] bg-white px-4 text-sm font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--muted)] touch-manipulation",
     focusRingMdClass,
   ].join(" ");
 
@@ -38,17 +41,25 @@ function AdminMobileNavControls() {
       </header>
 
       {mobileNavOpen ? (
-        <div
-          id="admin-mobile-nav"
-          className="border-b border-[var(--border)] bg-white px-3 py-4 lg:hidden"
-        >
-          <AdminNavigation />
-          <div className="mt-4 border-t border-[var(--border)] pt-4">
-            <Link href="/" className={`${primaryLinkClass} text-sm`}>
-              ← Public site
-            </Link>
+        <>
+          <button
+            type="button"
+            aria-label="Close menu"
+            className="fixed inset-0 z-30 bg-slate-900/40 backdrop-blur-[2px] lg:hidden"
+            onClick={() => setMobileNavOpen(false)}
+          />
+          <div
+            id="admin-mobile-nav"
+            className="relative z-40 border-b border-[var(--border)] bg-white px-3 py-4 lg:hidden"
+          >
+            <AdminNavigation />
+            <div className="mt-4 border-t border-[var(--border)] pt-4">
+              <Link href="/" className={`${primaryLinkClass} text-sm`}>
+                ← Public site
+              </Link>
+            </div>
           </div>
-        </div>
+        </>
       ) : null}
     </>
   );
@@ -94,7 +105,7 @@ export function AdminChrome({ children }: Props) {
         {/* Remount on route change so the mobile menu closes without an effect. */}
         <AdminMobileNavControls key={pathname} />
 
-        <div className="min-w-0 flex-1">{children}</div>
+        <div className="min-w-0 flex-1 pb-[max(1rem,env(safe-area-inset-bottom))]">{children}</div>
       </div>
     </div>
   );

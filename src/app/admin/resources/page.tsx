@@ -10,6 +10,11 @@ import { DeleteResourceDocumentForm } from "@/components/admin/DeleteResourceDoc
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import {
+  adminQueueActionClass,
+  adminQueueActionLinkClass,
+  adminQueueActionSuccessPublishClass,
+} from "@/lib/admin/admin-ui-classes";
 import { resourceCategoryLabel } from "@/lib/content/resource-documents";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
@@ -162,7 +167,7 @@ export default async function AdminResourcesPage() {
                 {d.publishedAt ? (
                   <Link
                     href={`/resources/${d.slug}`}
-                    className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--primary)] hover:bg-[var(--muted)]"
+                    className={adminQueueActionLinkClass}
                   >
                     Public page
                   </Link>
@@ -171,7 +176,7 @@ export default async function AdminResourcesPage() {
                   href={d.filePath}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--primary)] hover:bg-[var(--muted)]"
+                  className={adminQueueActionLinkClass}
                 >
                   Download
                 </a>
@@ -180,7 +185,7 @@ export default async function AdminResourcesPage() {
                     <input type="hidden" name="id" value={d.id} />
                     <button
                       type="submit"
-                      className="rounded-lg border border-emerald-600/40 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-900 hover:bg-emerald-100"
+                      className={adminQueueActionSuccessPublishClass}
                     >
                       Publish
                     </button>
@@ -190,7 +195,7 @@ export default async function AdminResourcesPage() {
                     <input type="hidden" name="id" value={d.id} />
                     <button
                       type="submit"
-                      className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--foreground)] hover:bg-[var(--muted)]"
+                      className={adminQueueActionClass}
                     >
                       Unpublish
                     </button>

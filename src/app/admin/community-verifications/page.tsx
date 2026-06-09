@@ -5,6 +5,7 @@ import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
+import { adminFormFieldClass, adminPrimaryButtonClass, adminSecondaryButtonClass } from "@/lib/admin/admin-ui-classes";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { isPrivateStoragePath } from "@/lib/server/private-upload-storage";
 
@@ -148,11 +149,11 @@ export default async function AdminCommunityVerificationsPage() {
                       name="notes"
                       maxLength={2000}
                       rows={2}
-                      className="mt-1 w-full rounded-lg border border-[var(--border)] px-2 py-1 text-sm"
+                      className={adminFormFieldClass.replace(/^mt-1 /, "mt-1 ")}
                     />
                     <button
                       type="submit"
-                      className="mt-2 rounded-lg bg-[var(--primary)] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[var(--primary-dark)]"
+                      className={adminPrimaryButtonClass}
                     >
                       Approve & verify role
                     </button>
@@ -169,11 +170,11 @@ export default async function AdminCommunityVerificationsPage() {
                       name="notes"
                       maxLength={2000}
                       rows={2}
-                      className="mt-1 w-full rounded-lg border border-[var(--border)] px-2 py-1 text-sm"
+                      className={adminFormFieldClass.replace(/^mt-1 /, "mt-1 ")}
                     />
                     <button
                       type="submit"
-                      className="mt-2 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium hover:bg-[var(--muted)]"
+                      className={`mt-2 ${adminSecondaryButtonClass}`}
                     >
                       Reject request
                     </button>

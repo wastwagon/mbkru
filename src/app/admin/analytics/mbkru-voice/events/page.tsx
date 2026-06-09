@@ -4,8 +4,11 @@ import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
+import { AdminTablePanel } from "@/components/admin/AdminTablePanel";
+import { AdminTd } from "@/components/admin/AdminTd";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
+import { mobileFormFieldClass } from "@/lib/mobile-ui-classes";
 import { listMbkruVoiceAnalyticsEventRows } from "@/lib/server/mbkru-voice-analytics";
 
 type Props = {
@@ -65,10 +68,13 @@ export default async function AdminMbkruVoiceAnalyticsEventsPage({ searchParams 
                 type="search"
                 defaultValue={q}
                 maxLength={120}
-                className="mt-1 w-48 rounded-lg border border-[var(--border)] px-2 py-1.5 text-sm"
+                className={`${mobileFormFieldClass} w-full min-w-0 sm:w-48`}
               />
             </div>
-            <button type="submit" className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]">
+            <button
+              type="submit"
+              className="inline-flex min-h-11 touch-manipulation items-center rounded-lg bg-[var(--primary)] px-4 py-2 text-base font-semibold text-white hover:bg-[var(--primary-dark)] sm:text-sm"
+            >
               Apply
             </button>
           </form>
@@ -92,38 +98,42 @@ export default async function AdminMbkruVoiceAnalyticsEventsPage({ searchParams 
           {!result?.rows?.length ? (
             <AdminEmptyState className="mt-8" message="No events in view." />
           ) : (
-            <div className="mt-6 overflow-x-auto rounded-xl border border-[var(--border)] bg-white shadow-sm">
-              <table className="min-w-full text-left text-sm">
+            <AdminTablePanel className="mt-6 shadow-sm">
+              <table className="admin-table-stack min-w-full text-left text-sm">
                 <thead className="border-b border-[var(--border)] bg-[var(--muted)]/40 text-xs uppercase tracking-wide text-[var(--foreground-secondary)]">
                   <tr>
-                    <th className="whitespace-nowrap px-3 py-2 font-medium">Time (UTC)</th>
-                    <th className="px-3 py-2 font-medium">Event</th>
-                    <th className="px-3 py-2 font-medium">Source</th>
-                    <th className="px-3 py-2 font-medium">Lang</th>
-                    <th className="min-w-[12rem] px-3 py-2 font-medium">Payload</th>
+                    <th className="whitespace-nowrap px-3 py-2 font-medium sm:px-3 sm:py-2">Time (UTC)</th>
+                    <th className="px-3 py-2 font-medium sm:px-3 sm:py-2">Event</th>
+                    <th className="px-3 py-2 font-medium sm:px-3 sm:py-2">Source</th>
+                    <th className="px-3 py-2 font-medium sm:px-3 sm:py-2">Lang</th>
+                    <th className="min-w-[12rem] px-3 py-2 font-medium sm:px-3 sm:py-2">Payload</th>
                   </tr>
                 </thead>
                 <tbody>
                   {result.rows.map((row) => (
                     <tr key={String(row.id)} className="border-b border-[var(--border)] align-top text-xs">
-                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[var(--foreground-secondary)]">
+                      <AdminTd label="Time (UTC)" className="whitespace-nowrap px-3 py-2 font-mono text-[var(--foreground-secondary)] sm:px-3 sm:py-2">
                         {row.createdAt.toISOString().replace("T", " ").slice(0, 19)}
-                      </td>
-                      <td className="px-3 py-2">
+                      </AdminTd>
+                      <AdminTd label="Event" className="px-3 py-2 sm:px-3 sm:py-2">
                         <code>{row.eventName}</code>
-                      </td>
-                      <td className="px-3 py-2">{row.source}</td>
-                      <td className="px-3 py-2">{row.language ?? "—"}</td>
-                      <td className="max-w-xl px-3 py-2">
+                      </AdminTd>
+                      <AdminTd label="Source" className="px-3 py-2 sm:px-3 sm:py-2">
+                        {row.source}
+                      </AdminTd>
+                      <AdminTd label="Lang" className="px-3 py-2 sm:px-3 sm:py-2">
+                        {row.language ?? "—"}
+                      </AdminTd>
+                      <AdminTd label="Payload" className="max-w-xl px-3 py-2 sm:px-3 sm:py-2">
                         <pre className="whitespace-pre-wrap break-all font-mono text-[var(--foreground-secondary)]">
                           {row.payload === null ? "—" : JSON.stringify(row.payload).slice(0, 1200)}
                         </pre>
-                      </td>
+                      </AdminTd>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
+            </AdminTablePanel>
           )}
         </>
       )}

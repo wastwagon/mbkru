@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 
 import { focusRingSmClass, prosePrimaryAnchorClass } from "@/lib/primary-link-styles";
+import { mobileFormFieldClass } from "@/lib/mobile-ui-classes";
+import { useBodyScrollLock } from "@/lib/use-body-scroll-lock";
 
 export function AccountPrivacyTools({ accountEmail }: { accountEmail: string }) {
   const [busy, setBusy] = useState<"export" | "delete" | null>(null);
@@ -18,6 +20,8 @@ export function AccountPrivacyTools({ accountEmail }: { accountEmail: string }) 
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [deleteOpen]);
+
+  useBodyScrollLock(deleteOpen);
 
   async function downloadExport() {
     setMessage(null);
@@ -124,16 +128,17 @@ export function AccountPrivacyTools({ accountEmail }: { accountEmail: string }) 
 
       {deleteOpen ? (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby="delete-account-title"
           onClick={() => setDeleteOpen(false)}
         >
           <div
-            className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-[var(--border)] bg-white p-5 shadow-xl sm:p-6"
+            className="max-h-[min(90dvh,calc(100dvh-env(safe-area-inset-bottom)))] w-full max-w-md overflow-y-auto overscroll-contain rounded-t-2xl border border-[var(--border)] bg-white p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-xl sm:rounded-2xl sm:p-6"
             onClick={(e) => e.stopPropagation()}
           >
+            <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-[var(--border)] sm:hidden" aria-hidden />
             <h3 id="delete-account-title" className="font-display text-lg font-bold text-[var(--foreground)]">
               Delete your account?
             </h3>
@@ -154,7 +159,7 @@ export function AccountPrivacyTools({ accountEmail }: { accountEmail: string }) 
               autoComplete="email"
               value={confirmEmail}
               onChange={(e) => setConfirmEmail(e.target.value)}
-              className={`mt-2 w-full rounded-xl border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`}
+              className={mobileFormFieldClass.replace(/^mt-1 /, "mt-2 ")}
               placeholder={accountEmail}
             />
             <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">

@@ -8,6 +8,7 @@ import {
 import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
 import { AdminListPanel } from "@/components/admin/AdminListPanel";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { adminQueueActionNeutralClass, adminSuccessButtonClass } from "@/lib/admin/admin-ui-classes";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
@@ -137,7 +138,7 @@ export default async function AdminReportCardPage() {
                     <input type="hidden" name="cycleId" value={c.id} />
                     <button
                       type="submit"
-                      className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium hover:bg-[var(--section-light)]"
+                      className={adminQueueActionNeutralClass}
                     >
                       Unpublish
                     </button>
@@ -147,7 +148,7 @@ export default async function AdminReportCardPage() {
                     <input type="hidden" name="cycleId" value={c.id} />
                     <button
                       type="submit"
-                      className="rounded-lg bg-green-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-800"
+                      className={adminSuccessButtonClass}
                     >
                       Publish
                     </button>
