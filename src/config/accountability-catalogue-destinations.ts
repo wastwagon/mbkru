@@ -61,6 +61,12 @@ export const accountabilityCatalogueNavMedium = {
 
 /** Homepage embedded previews — H2 matches full routes; body explains “live” scope. */
 export const accountabilityHomePreviewCopy = {
+  accountabilityTeaserHeading: "What we're tracking",
+  accountabilityTeaserLead:
+    "Public commitments and pledges documented by MBKRU — with sources you can verify on the full accountability hub.",
+  accountabilityTeaserRecentHeading: "Recently tracked commitments",
+  accountabilityTeaserCardHint:
+    "Each card shows a short summary and citation on the face. Expand for full text, verification notes, and source links.",
   governmentHeading: `${accountabilityCatalogueNavMedium.government} — live`,
   governmentLead:
     "Programme- and executive-tagged pledges only. Same underlying rows as MP pledge sheets when a member is linked — one status everywhere.",

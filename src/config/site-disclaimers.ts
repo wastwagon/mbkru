@@ -11,6 +11,13 @@ export const siteDisclaimerBanner = {
   termsLabel: "Terms",
 } as const;
 
+/** One-line trust copy for the homepage body (banner uses the fuller `body`). */
+export const homepageTrustLine = {
+  body: "MBKRU is an independent, non-partisan civic programme — not a government agency, court, or regulator.",
+  emergencyNote: "For emergencies, contact local emergency services.",
+  methodologyLabel: "How we work",
+} as const;
+
 /** Reused wherever users submit or browse Voice reports. */
 export const voiceSharingMindfulNote =
   "Be mindful of what you share: describe what you observed, avoid threats or knowingly false claims, and include others’ personal details only when necessary for accountability.";

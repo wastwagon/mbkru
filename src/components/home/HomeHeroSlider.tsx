@@ -5,7 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
+import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import type { HomeHeroGlanceStat } from "@/lib/home-hero-glance-stats";
 import { heroContent, images } from "@/lib/site-content";
 
 const AUTO_MS = 7500;
@@ -36,11 +38,21 @@ function buildSlides(news: HeroNewsSlide[]): Slide[] {
   ];
 }
 
-export function HomeHeroSlider({ newsForSlides }: { newsForSlides: HeroNewsSlide[] }) {
+export function HomeHeroSlider({
+  newsForSlides,
+  glanceStats,
+}: {
+  newsForSlides: HeroNewsSlide[];
+  glanceStats: HomeHeroGlanceStat[];
+}) {
   const slides = useMemo(() => buildSlides(newsForSlides), [newsForSlides]);
   const [active, setActive] = useState(0);
   const reducedMotion = usePrefersReducedMotion();
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const phase = getPublicPlatformPhase();
+  const voiceLive = platformFeatures.citizensVoicePlatform(phase);
+  const voicePrimaryHref = voiceLive ? "/citizens-voice/submit" : "/citizens-voice";
+  const voicePrimaryLabel = voiceLive ? "Report an issue" : "Explore Voice";
 
   const go = useCallback((i: number) => {
     const n = slides.length;
@@ -115,24 +127,35 @@ export function HomeHeroSlider({ newsForSlides }: { newsForSlides: HeroNewsSlide
                     <span className="h-1.5 w-1.5 rounded-full bg-[var(--ghana-gold)]" />
                     MBKRU
                   </span>
-                  <h1 className="mt-2 font-logo text-lg font-bold leading-[1.15] tracking-tight text-white sm:text-2xl lg:text-3xl xl:text-4xl 2xl:text-[2.75rem]">
-                    {heroContent.tagline.split("President")[0]}
-                    <span className="text-[var(--ghana-gold)]">President</span>
-                    {heroContent.tagline.split("President")[1]}
+                  <h1 className="mt-2 font-logo text-lg font-bold leading-[1.15] tracking-tight text-white sm:text-2xl lg:text-3xl xl:text-4xl 2xl:text-[2.65rem]">
+                    {heroContent.homepageHeadline}
                   </h1>
                   <p className="mt-1.5 max-w-xl text-xs font-medium leading-snug text-white/95 sm:text-sm lg:text-base">
-                    {heroContent.subhead}
+                    {heroContent.homepageSubhead}
                   </p>
                   <p className="mt-1 text-xs font-medium text-[var(--ghana-gold)]">{heroContent.motto}</p>
-                  <div className="mt-5">
-                    <Link
-                      href="/about"
-                      className="inline-flex items-center gap-2 rounded-xl border-2 border-white/60 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:border-[var(--ghana-gold)] hover:bg-white/20"
+                  <div className="mt-5 flex flex-wrap gap-3">
+                    <Button
+                      href={voicePrimaryHref}
+                      variant="primary"
+                      className="inline-flex items-center gap-2 border border-white/25 bg-[var(--ghana-green)] text-white hover:bg-[color-mix(in_oklab,var(--ghana-green)_85%,black)]"
                     >
-                      Learn More
+                      {voicePrimaryLabel}
                       <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                       </svg>
+                    </Button>
+                    <Link
+                      href="/parliament-tracker"
+                      className="inline-flex items-center gap-2 rounded-xl border-2 border-white/55 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:border-[var(--ghana-gold)] hover:bg-white/20"
+                    >
+                      Accountability hub
+                    </Link>
+                    <Link
+                      href="/about"
+                      className="inline-flex items-center gap-2 rounded-xl border-2 border-white/35 px-5 py-2.5 text-sm font-semibold text-white/95 hover:border-white/55 hover:bg-white/10"
+                    >
+                      About MBKRU
                     </Link>
                   </div>
                 </>
@@ -247,24 +270,32 @@ export function HomeHeroSlider({ newsForSlides }: { newsForSlides: HeroNewsSlide
             At a glance
           </p>
           <div className="mt-3 flex flex-wrap items-stretch justify-center gap-6 sm:justify-between sm:gap-8 lg:gap-10">
-            {[
-              { value: "5", label: "Operational Pillars" },
-              { value: "16", label: "Regions of Ghana" },
-              { value: "100%", label: "Non-Partisan" },
-              { value: "SDG 1", label: "Poverty Eradication" },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                className="flex min-w-[5.5rem] flex-col items-center text-center sm:min-w-0 sm:items-start sm:text-left"
-              >
-                <span className="font-display text-xl font-bold tabular-nums text-white sm:text-2xl lg:text-3xl">
-                  {stat.value}
-                </span>
-                <span className="mt-1 max-w-[10rem] text-[10px] font-medium uppercase leading-snug tracking-wide text-white/80 sm:max-w-none sm:text-xs">
-                  {stat.label}
-                </span>
-              </div>
-            ))}
+            {glanceStats.map((stat) => {
+              const inner = (
+                <>
+                  <span className="font-display text-xl font-bold tabular-nums text-white sm:text-2xl lg:text-3xl">
+                    {stat.value}
+                  </span>
+                  <span className="mt-1 max-w-[10rem] text-[10px] font-medium uppercase leading-snug tracking-wide text-white/80 sm:max-w-none sm:text-xs">
+                    {stat.label}
+                  </span>
+                </>
+              );
+              return (
+                <div
+                  key={stat.label}
+                  className="flex min-w-[5.5rem] flex-col items-center text-center sm:min-w-0 sm:items-start sm:text-left"
+                >
+                  {stat.href ? (
+                    <Link href={stat.href} className="group transition-opacity hover:opacity-90">
+                      {inner}
+                    </Link>
+                  ) : (
+                    inner
+                  )}
+                </div>
+              );
+            })}
           </div>
         </motion.div>
       </div>

@@ -128,7 +128,7 @@ export const mbkruStrategicContent = {
   vision:
     "A Ghana where no citizen feels powerless, where government listens, responds, and delivers, and where poverty is treated as a national emergency rather than an acceptable condition.",
   mission:
-    "To serve as the official, trusted conduit between the President of the Republic and the ordinary people of Ghana, giving voice to the voiceless, protecting the vulnerable, and enforcing accountability at every level of governance.",
+    "To serve as an independent, trusted platform connecting the ordinary people of Ghana with accountable national leadership — giving voice to the voiceless, protecting the vulnerable, and enforcing accountability at every level of governance.",
   missionRestorativeContext:
     "To advance restorative justice and sustainable development in Ghana by facilitating equitable reparations for historical injustice, including the transatlantic slave trade and colonial exploitation. Through transparent governance, community empowerment, and strategic partnerships, we commit to transforming reparative resources into tangible benefits that uplift affected communities, preserve cultural heritage, and foster economic resilience for future generations.",
   coreObjectives: [
@@ -145,12 +145,67 @@ export const mbkruStrategicContent = {
  * Single source of truth for tagline, motto, subhead
  */
 export const heroContent = {
-  /** Official tagline — MBKRU Advocates.pages */
+  /** Official tagline — MBKRU Advocates.pages; full presidential-bridge narrative on About. */
   tagline: "A Direct Voice Between the President and the People of Ghana",
+  /** Homepage H1 — independent platform first (citizen-facing). */
+  homepageHeadline: "Independent citizens' platform for accountable governance in Ghana",
+  /** Homepage hero body — plain language, non-partisan. */
+  homepageSubhead:
+    "A non-partisan bridge between Ghanaians and national leadership — advocate for the disenfranchised, watchdog for accountability, catalyst for poverty eradication.",
   /** Three pillars tagline — same as `mbkruStrategicContent.pillarTagline` */
   subhead: mbkruStrategicContent.pillarTagline,
   /** Official motto — MBKRU Advocates.pages */
   motto: "For the People, By the People, With the People",
+  /** Primary action cards on the homepage (phase 1 / preview). */
+  homepagePrimaryActionsPhase1: [
+    {
+      href: "/citizens-voice",
+      title: "MBKRU Voice",
+      body: "Learn how to report issues, what we moderate, and how citizen voice fits the programme.",
+    },
+    {
+      href: "/parliament-tracker",
+      title: "Accountability hub",
+      body: "Track public commitments, MPs, and published accountability data with cited sources.",
+    },
+    {
+      href: "/about",
+      title: "About MBKRU",
+      body: "Mission, vision, operational pillars, and how the programme is governed.",
+    },
+    {
+      href: "/contact",
+      title: "Contact us",
+      body: "Partnerships, media, and general enquiries — we aim to respond within two business days.",
+    },
+  ],
+  /** Primary action cards when live civic tools are enabled. */
+  homepagePrimaryActionsLive: [
+    {
+      href: "/citizens-voice/submit",
+      title: "Report an issue",
+      body: "File through MBKRU Voice with evidence when reporting is open.",
+    },
+    {
+      href: "/track-report",
+      title: "Track a report",
+      body: "Use your tracking code to follow triage and updates on a submission.",
+    },
+    {
+      href: "/parliament-tracker",
+      title: "Accountability hub",
+      body: "Browse tracked commitments, MPs, and published accountability datasets.",
+    },
+    {
+      href: "#ghana-regions",
+      title: "Find your region",
+      body: "Open your regional hub for local context and programme routes.",
+    },
+  ],
+  homepageBrowseAllToolsLabel: "Browse all tools and resources",
+  homepageBrowseAllToolsHref: "/about",
+  homepageStartHereHeading: "Start here",
+  homepageStartHereLead: "Four common starting points. Every tool and reference page is linked from About and the site menu.",
 } as const;
 
 function publicContactPhone(): string {

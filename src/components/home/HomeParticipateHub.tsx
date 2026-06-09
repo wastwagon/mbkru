@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/Button";
+import { HomeLiveToolsPills } from "@/components/home/HomeLiveToolsPills";
 import { getAccountabilityParticipateHubTiles } from "@/config/accountability-catalogue-destinations";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
@@ -108,9 +109,11 @@ type Props = {
   data: HomeAtAGlanceData;
   /** When false, hides the DB-backed “Top petitions / causes / communities / forums” preview grid (homepage). */
   showLiveHighlights?: boolean;
+  /** When true, shows the horizontal live-tool shortcut pills above the action cards. */
+  showLiveTools?: boolean;
 };
 
-export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
+export function HomeParticipateHub({ data, showLiveHighlights = true, showLiveTools = false }: Props) {
   const phase = getPublicPlatformPhase();
   const phase1 = phase < 2;
   const voice = platformFeatures.citizensVoicePlatform(phase);
@@ -258,28 +261,29 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
         >
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--primary)]">Participate &amp; explore</p>
           <h2 className="mt-3 font-display text-2xl font-bold tracking-tight text-[var(--foreground)] sm:mt-4 sm:text-3xl">
-            {phase1 ? "Explore MBKRU" : "How to use MBKRU"}
+            How to use the platform
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-[var(--foreground-secondary)] sm:text-base">
             {phase1 ? (
               <>
-                Use the cards to explore the programme, contact the team, and read published materials. As civic tools and
-                live data roll out nationally, petitions, communities, and tracker highlights appear here automatically —
-                aligned with the same routes as the dedicated index pages.
+                Pick a card below to explore Voice, accountability, contact, and published programme materials. The same
+                routes are available from the site menu and About page.
               </>
             ) : (
               <>
-                Below matches the same public routes and data rules as our dedicated index pages — pick an action or skim
-                live highlights when they are published.
+                Every card matches a public route on this site — report, track, browse accountability data, join communities,
+                and more. Live shortcuts appear above when tools are enabled for visitors.
               </>
             )}
           </p>
         </motion.div>
 
+        {showLiveTools ? <HomeLiveToolsPills /> : null}
+
         <div className="mt-10 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:mt-12 lg:grid-cols-3 xl:grid-cols-4">
           {actions.map((a, i) => (
             <motion.div
-              key={a.href}
+              key={`${a.href}-${a.title}`}
               initial={reducedMotion ? false : { opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-28px 0px" }}
@@ -325,7 +329,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
 
         {phase1 ? (
           <p className="mt-10 text-center text-sm leading-relaxed text-[var(--foreground-secondary)] sm:mt-12">
-            Scroll the roadmap section below for programme milestones. For full narrative and restorative justice context,{" "}
+            For mission, vision, operational pillars, and governance detail,{" "}
             <Link href="/about" className={`${primaryLinkClass} font-semibold`}>
               open About
             </Link>
@@ -333,8 +337,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true }: Props) {
           </p>
         ) : !showLiveHighlights ? (
           <p className="mt-10 text-center text-sm leading-relaxed text-[var(--foreground-secondary)] sm:mt-12">
-            Use the action cards above for the main routes. Open petitions, public causes, communities, and programme rows
-            are also listed on their dedicated index pages.
+            Each card above opens a dedicated page with full guidance. Accountability data and regional hubs follow below.
           </p>
         ) : !live ? (
           <p className="mt-10 text-center text-sm leading-relaxed text-[var(--foreground-secondary)] sm:mt-12">

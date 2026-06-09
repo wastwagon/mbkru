@@ -9,10 +9,17 @@ import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { sectionRevealTransition } from "@/lib/motion-reveal";
 
+type Props = {
+  /** When false, only the 16-regions map is shown (homepage). Full block stays on About. */
+  showPillars?: boolean;
+  id?: string;
+};
+
 /**
- * Key operational pillars (A–E) + 16 regions map — rendered on About (`#key-operational-pillars`).
+ * Key operational pillars (A–E) + 16 regions map — full block on About (`#key-operational-pillars`).
+ * Homepage passes `showPillars={false}` to keep only the regional map.
  */
-export function OperationalPillarsRegionsSection() {
+export function OperationalPillarsRegionsSection({ showPillars = true, id = "key-operational-pillars" }: Props) {
   const phase = getPublicPlatformPhase();
   const parliamentLive = platformFeatures.parliamentTrackerData(phase);
   const reducedMotion = usePrefersReducedMotion();
@@ -65,7 +72,7 @@ export function OperationalPillarsRegionsSection() {
 
   return (
     <section
-      id="key-operational-pillars"
+      id={id}
       className="relative section-spacing section-full overflow-hidden bg-[var(--section-dark)]"
     >
       <div
@@ -73,63 +80,87 @@ export function OperationalPillarsRegionsSection() {
         aria-hidden
       />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={reducedMotion ? false : { opacity: 0, y: 22 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-48px 0px" }}
-          transition={sectionRevealTransition(reducedMotion)}
-          className="mx-auto max-w-3xl text-center"
-        >
-          <h2 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl xl:text-4xl">
-            Key Operational Pillars
-          </h2>
-          <p className="mt-4 text-sm leading-relaxed text-white/80 sm:text-[15px]">
-            A direct bridge between citizens and government. Accountability, transparency, and citizen voice.
-          </p>
-        </motion.div>
-        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:mt-12 lg:grid-cols-3 lg:gap-6">
-          {pillars.map((pillar, i) => (
+        {showPillars ? (
+          <>
             <motion.div
-              key={pillar.title}
-              initial={reducedMotion ? false : { opacity: 0, y: 26 }}
+              initial={reducedMotion ? false : { opacity: 0, y: 22 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-32px 0px" }}
-              transition={sectionRevealTransition(reducedMotion, i * 0.06)}
-              whileHover={reducedMotion ? undefined : { y: -3 }}
-              whileTap={reducedMotion ? undefined : { scale: 0.99 }}
+              viewport={{ once: true, margin: "-48px 0px" }}
+              transition={sectionRevealTransition(reducedMotion)}
+              className="mx-auto max-w-3xl text-center"
             >
-              <Link
-                href={pillar.href}
-                className="group flex gap-4 rounded-xl border border-white/20 bg-white/5 p-4 shadow-lg backdrop-blur-md transition-[border-color,background-color,transform,box-shadow] duration-300 ease-out hover:border-[var(--accent-warm)]/50 hover:bg-white/10 sm:p-5"
-              >
-                <div
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg font-display text-lg font-bold ${i % 2 === 0 ? "text-[var(--accent-gold)]" : "text-[var(--accent-warm)]"}`}
-                >
-                  {pillar.letter}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="flex flex-wrap items-center gap-2 font-display text-base font-semibold text-white group-hover:text-[var(--accent-gold)] sm:text-lg">
-                    <span>{pillar.title}</span>
-                    {pillar.letter === "D" && parliamentLive ? (
-                      <span className="rounded-full bg-emerald-400/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-200">
-                        Live data
-                      </span>
-                    ) : null}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-white/90">
-                    {pillar.items.slice(0, 2).join(". ")}
-                  </p>
-                </div>
-              </Link>
+              <h2 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl xl:text-4xl">
+                Key Operational Pillars
+              </h2>
+              <p className="mt-4 text-sm leading-relaxed text-white/80 sm:text-[15px]">
+                A direct bridge between citizens and government. Accountability, transparency, and citizen voice.
+              </p>
             </motion.div>
-          ))}
-        </div>
+            <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:mt-12 lg:grid-cols-3 lg:gap-6">
+              {pillars.map((pillar, i) => (
+                <motion.div
+                  key={pillar.title}
+                  initial={reducedMotion ? false : { opacity: 0, y: 26 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-32px 0px" }}
+                  transition={sectionRevealTransition(reducedMotion, i * 0.06)}
+                  whileHover={reducedMotion ? undefined : { y: -3 }}
+                  whileTap={reducedMotion ? undefined : { scale: 0.99 }}
+                >
+                  <Link
+                    href={pillar.href}
+                    className="group flex gap-4 rounded-xl border border-white/20 bg-white/5 p-4 shadow-lg backdrop-blur-md transition-[border-color,background-color,transform,box-shadow] duration-300 ease-out hover:border-[var(--accent-warm)]/50 hover:bg-white/10 sm:p-5"
+                  >
+                    <div
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg font-display text-lg font-bold ${i % 2 === 0 ? "text-[var(--accent-gold)]" : "text-[var(--accent-warm)]"}`}
+                    >
+                      {pillar.letter}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="flex flex-wrap items-center gap-2 font-display text-base font-semibold text-white group-hover:text-[var(--accent-gold)] sm:text-lg">
+                        <span>{pillar.title}</span>
+                        {pillar.letter === "D" && parliamentLive ? (
+                          <span className="rounded-full bg-emerald-400/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-200">
+                            Live data
+                          </span>
+                        ) : null}
+                      </h3>
+                      <p className="mt-2 text-sm leading-relaxed text-white/90">
+                        {pillar.items.slice(0, 2).join(". ")}
+                      </p>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <motion.div
+            initial={reducedMotion ? false : { opacity: 0, y: 22 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-48px 0px" }}
+            transition={sectionRevealTransition(reducedMotion)}
+            className="mx-auto max-w-3xl text-center"
+          >
+            <h2 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
+              Find your region
+            </h2>
+            <p className="mt-4 text-sm leading-relaxed text-white/80 sm:text-[15px]">
+              Select a region to open its hub — local routes, programme context, and accountability tools. The five
+              operational pillars are on{" "}
+              <Link href="/about#key-operational-pillars" className="font-semibold text-[var(--accent-gold)] underline-offset-2 hover:underline">
+                About
+              </Link>
+              .
+            </p>
+          </motion.div>
+        )}
         <motion.div
           initial={reducedMotion ? false : { opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px 0px" }}
           transition={sectionRevealTransition(reducedMotion, 0.06)}
-          className="mt-10 lg:mt-12"
+          className={showPillars ? "mt-10 lg:mt-12" : "mt-8 lg:mt-10"}
         >
           <RegionsViz />
         </motion.div>
