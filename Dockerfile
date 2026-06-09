@@ -44,62 +44,64 @@ RUN apk add --no-cache openssl libc6-compat su-exec
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
+COPY --chown=nextjs:nodejs --from=builder /app/public ./public
 RUN mkdir -p /app/public/uploads /app/var/private-uploads \
   && chown -R nextjs:nodejs /app/public/uploads /app/var/private-uploads
 
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+COPY --chown=nextjs:nodejs --from=builder /app/.next/standalone ./
+COPY --chown=nextjs:nodejs --from=builder /app/.next/static ./.next/static
 
 # Standalone only traces @prisma/client — replace Prisma dirs with full copies from builder.
 RUN rm -rf /app/node_modules/.prisma /app/node_modules/@prisma /app/node_modules/prisma
 
-COPY --from=builder /app/prisma ./prisma
+COPY --chown=nextjs:nodejs --from=builder /app/prisma ./prisma
 # Required for `prisma db seed` — seed command lives in prisma.config.ts (not package.json).
-COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
+COPY --chown=nextjs:nodejs --from=builder /app/prisma.config.ts ./prisma.config.ts
+COPY --chown=nextjs:nodejs --from=builder /app/package.json ./package.json
+COPY --chown=nextjs:nodejs --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --chown=nextjs:nodejs --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --chown=nextjs:nodejs --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --chown=nextjs:nodejs --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
 
 # prisma.config.ts imports dotenv (devDependency in package.json — present in deps stage).
-COPY --from=deps /app/node_modules/dotenv ./node_modules/dotenv
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/dotenv ./node_modules/dotenv
 
 # @prisma/config / prisma CLI — hoisted siblings must come from `deps`, not `builder`
 # (Next build can remove them from builder’s node_modules).
-COPY --from=deps /app/node_modules/@standard-schema ./node_modules/@standard-schema
-COPY --from=deps /app/node_modules/effect ./node_modules/effect
-COPY --from=deps /app/node_modules/fast-check ./node_modules/fast-check
-COPY --from=deps /app/node_modules/pure-rand ./node_modules/pure-rand
-COPY --from=deps /app/node_modules/c12 ./node_modules/c12
-COPY --from=deps /app/node_modules/deepmerge-ts ./node_modules/deepmerge-ts
-COPY --from=deps /app/node_modules/empathic ./node_modules/empathic
-COPY --from=deps /app/node_modules/confbox ./node_modules/confbox
-COPY --from=deps /app/node_modules/defu ./node_modules/defu
-COPY --from=deps /app/node_modules/destr ./node_modules/destr
-COPY --from=deps /app/node_modules/exsolve ./node_modules/exsolve
-COPY --from=deps /app/node_modules/giget ./node_modules/giget
-COPY --from=deps /app/node_modules/jiti ./node_modules/jiti
-COPY --from=deps /app/node_modules/ohash ./node_modules/ohash
-COPY --from=deps /app/node_modules/pathe ./node_modules/pathe
-COPY --from=deps /app/node_modules/perfect-debounce ./node_modules/perfect-debounce
-COPY --from=deps /app/node_modules/pkg-types ./node_modules/pkg-types
-COPY --from=deps /app/node_modules/rc9 ./node_modules/rc9
-COPY --from=deps /app/node_modules/citty ./node_modules/citty
-COPY --from=deps /app/node_modules/consola ./node_modules/consola
-COPY --from=deps /app/node_modules/node-fetch-native ./node_modules/node-fetch-native
-COPY --from=deps /app/node_modules/nypm ./node_modules/nypm
-COPY --from=deps /app/node_modules/tinyexec ./node_modules/tinyexec
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/@standard-schema ./node_modules/@standard-schema
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/effect ./node_modules/effect
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/fast-check ./node_modules/fast-check
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/pure-rand ./node_modules/pure-rand
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/c12 ./node_modules/c12
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/deepmerge-ts ./node_modules/deepmerge-ts
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/empathic ./node_modules/empathic
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/confbox ./node_modules/confbox
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/defu ./node_modules/defu
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/destr ./node_modules/destr
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/exsolve ./node_modules/exsolve
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/giget ./node_modules/giget
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/jiti ./node_modules/jiti
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/ohash ./node_modules/ohash
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/pathe ./node_modules/pathe
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/perfect-debounce ./node_modules/perfect-debounce
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/pkg-types ./node_modules/pkg-types
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/rc9 ./node_modules/rc9
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/citty ./node_modules/citty
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/consola ./node_modules/consola
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/node-fetch-native ./node_modules/node-fetch-native
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/nypm ./node_modules/nypm
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules/tinyexec ./node_modules/tinyexec
 
 # Fail the image build if Prisma CLI cannot load (catches missing hoisted deps early).
 RUN cd /app && node -e "require('effect'); require('@prisma/config');"
 
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 # Standalone omits `.next/cache`; Next image optimizer writes there at runtime as user `nextjs`.
+# Ownership is set via COPY --chown above — avoid a final recursive chown over node_modules/.next
+# (OOM/timeouts on small Coolify hosts during `docker compose build --no-cache`).
 RUN mkdir -p /app/.next/cache \
-  && chmod +x /app/docker-entrypoint.sh \
-  && chown -R nextjs:nodejs /app/prisma /app/prisma.config.ts /app/node_modules /app/.next
+  && chown nextjs:nodejs /app/.next/cache \
+  && chmod +x /app/docker-entrypoint.sh
 
 # Entrypoint runs as root so mounted upload volumes can be chowned for user `nextjs`.
 EXPOSE 3000
