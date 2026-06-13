@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { PromiseCatalogueSurfacesCallout } from "@/components/accountability/PromiseCatalogueSurfacesCallout";
 import { PromisesBrowseLive } from "@/components/accountability/PromisesBrowseLive";
+import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
 import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
@@ -152,6 +153,8 @@ export default async function PromisesBrowsePage({ searchParams }: Props) {
           <p className="mx-auto mt-3 max-w-2xl text-center text-xs leading-relaxed text-[var(--foreground-secondary)]">
             One interactive dashboard — filters below update the KPI strip and rows together.
           </p>
+
+          <AccountabilityDisclaimerCallout variant="promiseCatalogue" className="mx-auto mt-8 max-w-3xl" />
 
           <p className="mt-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-sm text-[var(--foreground-secondary)]">
             <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className={primaryNavLinkClass}>

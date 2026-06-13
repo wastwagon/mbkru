@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { VoiceReportForm } from "@/components/forms/VoiceReportForm";
+import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
@@ -53,6 +54,7 @@ export default async function SubmitElectionObservationPage() {
               Track a report
             </Link>
           </p>
+          <AccountabilityDisclaimerCallout variant="voiceSubmit" className="mb-8" />
           <VoiceReportForm regions={regions} defaultKind="ELECTION_OBSERVATION" lockKind />
         </div>
       </section>

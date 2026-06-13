@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { PromiseEvidenceCard } from "@/components/accountability/PromiseEvidenceCard";
 import { MpPerformanceIntakeList } from "@/components/accountability/MpPerformanceIntakeList";
+import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
 import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
@@ -58,6 +59,8 @@ export default async function PromisesByMemberPage({ params }: Props) {
               {accountabilityProse.mpRosterBackLink}
             </Link>
           </p>
+
+          <AccountabilityDisclaimerCallout variant="promiseCatalogue" className="mt-4" />
 
           <p className="mt-4 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
             MP commitment sheet — verified catalogue rows below, plus Citizen Voice intakes filed by residents. Not a legal

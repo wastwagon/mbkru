@@ -10,6 +10,7 @@ import {
   getFooterOrganizationLinks,
   getFooterPlatformFlowLinks,
 } from "@/config/public-platform-nav";
+import { footerTrustLine } from "@/config/site-disclaimers";
 import {
   focusRingOnDark50Class,
   focusRingOnDark60Class,
@@ -190,6 +191,16 @@ export async function Footer() {
 
         {/* Bottom bar — logo, socials, legal, copyright */}
         <div className="border-t border-white/20 py-6">
+          <p className="mb-5 max-w-4xl text-xs leading-relaxed text-white/65">
+            {footerTrustLine.body} {footerTrustLine.emergencyNote}{" "}
+            <Link href="/methodology" className={`font-medium text-white/80 underline-offset-2 hover:text-white hover:underline ${focusRingOnDark50Class}`}>
+              {footerTrustLine.methodologyLabel}
+            </Link>
+            {" · "}
+            <Link href="/terms" className={`text-white/80 underline-offset-2 hover:text-white hover:underline ${focusRingOnDark50Class}`}>
+              {footerTrustLine.termsLabel}
+            </Link>
+          </p>
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-3">
               <Logo href="/" theme="dark" className="w-fit scale-90 origin-left opacity-90 sm:scale-95" />

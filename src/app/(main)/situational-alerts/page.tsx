@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
+import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { images } from "@/lib/site-content";
@@ -53,6 +54,12 @@ export default async function SituationalAlertsPage() {
         title="Physical Engagement Network"
         description="Physical engagement network — Town Hall Meetings, Regional Forums, and National People's Assembly."
       />
+
+      <div className="border-b border-[var(--border)] bg-white py-6">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <AccountabilityDisclaimerCallout variant="situationalAlerts" />
+        </div>
+      </div>
 
       {/* Hero section — full-width with hero image */}
       <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-white">

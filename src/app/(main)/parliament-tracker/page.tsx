@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ParliamentaryRosterList } from "@/components/accountability/ParliamentaryRosterList";
 import { VoiceMpPerformanceIntakeRow } from "@/components/accountability/VoiceMpPerformanceIntakeRow";
 import { TrackerSignupForm } from "@/components/forms/TrackerSignupForm";
+import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import {
@@ -104,8 +105,9 @@ export default async function ParliamentTrackerPage() {
       />
 
       <div className="section-spacing border-b border-[var(--border)] bg-white pb-8">
-        <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
-          <p className="text-sm leading-relaxed text-[var(--foreground-secondary)]">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <AccountabilityDisclaimerCallout variant="parliamentHub" className="mb-6" />
+          <p className="text-center text-sm leading-relaxed text-[var(--foreground-secondary)]">
             {accountabilityProse.parliamentTrackerHubOrientation}
           </p>
         </div>

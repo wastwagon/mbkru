@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/ui/PageHeader";
+import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { isCivicPetitionsAndPublicCausesEnabled } from "@/lib/reports/accountability-pages";
@@ -58,6 +59,7 @@ export default async function PetitionsIndexPage({ searchParams }: IndexProps) {
               {verifyMsg}
             </p>
           ) : null}
+          <AccountabilityDisclaimerCallout variant="civicParticipation" className="mb-6" />
           <p className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
             Citizen signature campaigns — separate from MBKRU Voice reports and public cause threads.{" "}
             <Link href="/citizens-voice/causes" className={primaryNavLinkClass}>

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { MpCatalogueBrowseCard } from "@/components/accountability/MpCatalogueBrowseCard";
+import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
 import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
@@ -37,6 +38,7 @@ export default async function PromisesIndexPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <AccountabilityDisclaimerCallout variant="promiseCatalogue" className="mb-6" />
           <p className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
             Independent commitment tracking for sitting parliamentarians — sourced pledges with verification notes, not
             official Hansard.{" "}

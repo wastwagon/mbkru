@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { VoiceReportForm } from "@/components/forms/VoiceReportForm";
+import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
@@ -51,6 +52,7 @@ export default async function SubmitSituationalAlertPage() {
               MBKRU Voice (general reports)
             </Link>
           </p>
+          <AccountabilityDisclaimerCallout variant="voiceSubmit" className="mb-8" />
           <VoiceReportForm
             regions={regions}
             defaultKind="SITUATIONAL_ALERT"

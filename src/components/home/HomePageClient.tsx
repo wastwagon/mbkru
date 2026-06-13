@@ -11,6 +11,7 @@ import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles
 import { buildHomeHeroGlanceStats } from "@/lib/home-hero-glance-stats";
 import { formatPublishedNewsCount, newsArchiveLinkLabel } from "@/lib/public-news-copy";
 import type { PublicNewsItem } from "@/lib/public-news-catalog";
+import { HomeDataProvenanceRibbon } from "@/components/home/HomeDataProvenanceRibbon";
 import { HomeHeroSlider } from "@/components/home/HomeHeroSlider";
 import { HomeTrustStrip } from "@/components/home/HomeTrustStrip";
 import { HomeParticipateHub } from "@/components/home/HomeParticipateHub";
@@ -49,6 +50,8 @@ export function HomePageClient({
       />
 
       <HomeTrustStrip />
+
+      <HomeDataProvenanceRibbon />
 
       <HomeParticipateHub data={atAGlance} showLiveHighlights={false} showLiveTools />
 

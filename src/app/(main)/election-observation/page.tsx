@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { Button } from "@/components/ui/Button";
+import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
@@ -32,6 +33,7 @@ export default function ElectionObservationPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <AccountabilityDisclaimerCallout variant="electionObservation" className="mb-8" />
           <ul className="list-inside list-disc space-y-3 text-sm leading-relaxed text-[var(--foreground)]">
             <li>Use the dedicated form so your report is tagged for election-season review.</li>
             <li>Save your tracking code — staff may follow up only where policy allows.</li>
