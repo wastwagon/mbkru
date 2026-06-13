@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 
 import { AnalyticsScripts } from "@/components/analytics/AnalyticsScripts";
-import { SiteDisclaimerBanner } from "@/components/legal/SiteDisclaimerBanner";
 import { SiteTrustNotice } from "@/components/legal/SiteTrustNotice";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -28,7 +27,6 @@ export default function MainLayout({
       >
         Skip to main content
       </a>
-      <SiteDisclaimerBanner />
       <SiteTrustNotice />
       <div className="sticky top-0 z-50">
         <div className="relative z-[60]">

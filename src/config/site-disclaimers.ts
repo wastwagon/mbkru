@@ -1,20 +1,13 @@
 /** Central copy for public trust / limitation notices (counsel may revise Terms; these are UX summaries). */
 
-export const siteDisclaimerBanner = {
-  /** Bump when banner copy changes so returning visitors see the updated notice once. */
-  version: 3,
-  storageKey: "mbkru-site-disclaimer-banner-dismissed-v",
+/** Sitewide header notice above the navigation — dismiss once per browser (version bump re-shows). */
+export const siteTrustNotice = {
+  version: 1,
+  storageKey: "mbkru-site-trust-notice-dismissed-v",
   ariaLabel: "Site notice",
   body:
-    "MBKRU is an independent civic accountability programme — not a government agency, court, or the Electoral Commission. Scores and citizen reports are editorial or triage tools, not legal findings. When you share a report, stick to facts you can stand behind and avoid threats or knowingly false claims.",
-  methodologyLabel: "Methodology",
-  termsLabel: "Terms",
-} as const;
-
-/** Persistent one-line trust notice above the header — always visible (not dismissible). */
-export const siteTrustNotice = {
-  ariaLabel: "Independent programme notice",
-  body: "Independent civic programme — not government, court, or the Electoral Commission.",
+    "MBKRU is an independent civic accountability programme — not a government agency, court, or the Electoral Commission. People's Report Card scores and narratives are editorial assessments with published methodology — not legal findings or official oversight. Citizen Voice reports are moderated programme submissions, not regulator decisions. Share only what you can stand behind.",
+  reportCardLabel: "People's Report Card",
   methodologyLabel: "Methodology",
   termsLabel: "Terms",
 } as const;
