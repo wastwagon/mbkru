@@ -24,6 +24,7 @@ import { loadVoiceSubmissionEngagementByReportIds } from "@/lib/server/voice-sub
 import { getPromiseCatalogueApiFields } from "@/lib/promise-catalogue-display";
 import { publicReportCardCycleTitle } from "@/lib/report-card-public-label";
 import { REPORT_CARD_HEADLINE_WEIGHTS } from "@/lib/report-card-headline";
+import { coerceCachedDate } from "@/lib/coerce-cached-date";
 import { getPromiseTrackerStats } from "@/lib/server/promise-tracker-stats";
 
 export {
@@ -135,11 +136,40 @@ export async function getCachedPublishedReportCardCycles() {
 /** Server-rendered report card year page — keep small to avoid gateway timeouts on large cycles (e.g. full-roster simulation). */
 export const REPORT_CARD_PUBLIC_PAGE_SIZE = 40;
 
+type ReportCardCycleMetaCached = {
+  id: string;
+  year: number;
+  label: string | null;
+  methodology: string | null;
+  publishedAt: string | null;
+  disputeWindowEndsAt: string | null;
+};
+
+export type PublishedReportCardCycleMeta = {
+  id: string;
+  year: number;
+  label: string | null;
+  methodology: string | null;
+  publishedAt: Date | null;
+  disputeWindowEndsAt: Date | null;
+};
+
+function normalizeReportCardCycleMeta(row: ReportCardCycleMetaCached | null): PublishedReportCardCycleMeta | null {
+  if (!row) return null;
+  return {
+    ...row,
+    publishedAt: coerceCachedDate(row.publishedAt),
+    disputeWindowEndsAt: coerceCachedDate(row.disputeWindowEndsAt),
+  };
+}
+
 /** Published cycle header only (no entries). */
-export async function getCachedPublishedReportCardCycleMeta(year: number) {
-  return unstable_cache(
-    async () => {
-      return prisma.reportCardCycle.findFirst({
+export async function getCachedPublishedReportCardCycleMeta(
+  year: number,
+): Promise<PublishedReportCardCycleMeta | null> {
+  const row = await unstable_cache(
+    async (): Promise<ReportCardCycleMetaCached | null> => {
+      const cycle = await prisma.reportCardCycle.findFirst({
         where: { year, publishedAt: { not: null } },
         select: {
           id: true,
@@ -150,10 +180,17 @@ export async function getCachedPublishedReportCardCycleMeta(year: number) {
           disputeWindowEndsAt: true,
         },
       });
+      if (!cycle) return null;
+      return {
+        ...cycle,
+        publishedAt: cycle.publishedAt?.toISOString() ?? null,
+        disputeWindowEndsAt: cycle.disputeWindowEndsAt?.toISOString() ?? null,
+      };
     },
-    ["report-card-cycle-meta-v4", String(year)],
+    ["report-card-cycle-meta-v5", String(year)],
     { tags: [REPORT_CARD_INDEX_TAG, reportCardYearTag(year)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
+  return normalizeReportCardCycleMeta(row);
 }
 
 export type ReportCardMpPickerOption = { slug: string; name: string };
