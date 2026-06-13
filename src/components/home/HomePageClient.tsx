@@ -9,6 +9,8 @@ import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { sectionRevealTransition } from "@/lib/motion-reveal";
 import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { buildHomeHeroGlanceStats } from "@/lib/home-hero-glance-stats";
+import { formatPublishedNewsCount, newsArchiveLinkLabel } from "@/lib/public-news-copy";
+import type { PublicNewsItem } from "@/lib/public-news-catalog";
 import { HomeHeroSlider } from "@/components/home/HomeHeroSlider";
 import { HomeTrustStrip } from "@/components/home/HomeTrustStrip";
 import { HomeParticipateHub } from "@/components/home/HomeParticipateHub";
@@ -17,35 +19,34 @@ import { OperationalPillarsRegionsSection } from "@/components/operational-pilla
 import type { HomeAtAGlanceData } from "@/lib/home-at-a-glance-types";
 import type { GovernmentCommitmentsHomePreview as GovernmentCommitmentsHomePreviewData } from "@/lib/home-government-preview-types";
 
-export type HomePageNewsItem = {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string | null;
-  image: string;
-  dateLabel: string;
-};
+export type HomePageNewsItem = PublicNewsItem;
 
 export function HomePageClient({
-  cmsPosts,
+  newsCatalog,
   accountabilityPreview,
   atAGlance,
 }: {
-  cmsPosts: HomePageNewsItem[];
+  newsCatalog: PublicNewsItem[];
   accountabilityPreview: GovernmentCommitmentsHomePreviewData | null;
   atAGlance: HomeAtAGlanceData;
 }) {
   const reducedMotion = usePrefersReducedMotion();
-  const heroNewsSlugs = new Set(cmsPosts.slice(0, 2).map((p) => p.slug));
-  const newsBeyondHero = cmsPosts.filter((p) => !heroNewsSlugs.has(p.slug));
+  const totalNewsCount = newsCatalog.length;
+  const heroNews = newsCatalog.slice(0, 2);
+  const heroNewsSlugs = new Set(heroNews.map((p) => p.slug));
+  const newsBeyondHero = newsCatalog.filter((p) => !heroNewsSlugs.has(p.slug));
   const glanceStats = useMemo(
-    () => buildHomeHeroGlanceStats(atAGlance, accountabilityPreview?.stats),
-    [atAGlance, accountabilityPreview?.stats],
+    () => buildHomeHeroGlanceStats(atAGlance, accountabilityPreview?.stats, totalNewsCount),
+    [atAGlance, accountabilityPreview?.stats, totalNewsCount],
   );
 
   return (
     <div>
-      <HomeHeroSlider newsForSlides={cmsPosts.slice(0, 2)} glanceStats={glanceStats} />
+      <HomeHeroSlider
+        newsForSlides={heroNews}
+        totalNewsCount={totalNewsCount}
+        glanceStats={glanceStats}
+      />
 
       <HomeTrustStrip />
 
@@ -73,14 +74,15 @@ export function HomePageClient({
                   More news
                 </h2>
                 <p className="mt-2 text-sm text-[var(--foreground-secondary)]">
-                  Additional updates from the MBKRU newsroom.
+                  {newsBeyondHero.length} of {totalNewsCount} {totalNewsCount === 1 ? "story" : "stories"} on the
+                  newsroom — {heroNews.length} also in the hero above.
                 </p>
               </div>
               <Link
                 href="/news"
                 className={`${primaryNavLinkClass} shrink-0 gap-2 text-sm font-semibold hover:text-[var(--primary-dark)]`}
               >
-                View all news
+                {newsArchiveLinkLabel(totalNewsCount)}
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
@@ -98,7 +100,7 @@ export function HomePageClient({
                   whileHover={reducedMotion ? undefined : { y: -2 }}
                 >
                   <Link
-                    href={`/news/${article.slug}`}
+                    href={article.href}
                     className="group flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-white shadow-[var(--shadow-card)] transition-all duration-300 hover:border-[var(--primary)]/20 hover:shadow-[var(--shadow-card-hover)]"
                   >
                     <div className="relative aspect-[16/10] overflow-hidden">
@@ -128,17 +130,26 @@ export function HomePageClient({
             </div>
           </div>
         </section>
-      ) : cmsPosts.length === 0 ? (
+      ) : totalNewsCount > 0 ? (
         <section className="border-t border-[var(--border)] bg-[var(--section-light)]/50 py-8">
           <p className="text-center text-sm text-[var(--foreground-secondary)]">
-            News and programme updates will appear in the hero and on the{" "}
+            All {totalNewsCount} {totalNewsCount === 1 ? "story is" : "stories are"} featured in the hero.{" "}
+            <Link href="/news" className={primaryLinkClass}>
+              {newsArchiveLinkLabel(totalNewsCount)}
+            </Link>
+          </p>
+        </section>
+      ) : (
+        <section className="border-t border-[var(--border)] bg-[var(--section-light)]/50 py-8">
+          <p className="text-center text-sm text-[var(--foreground-secondary)]">
+            {formatPublishedNewsCount(0)} — updates will appear in the hero and on the{" "}
             <Link href="/news" className={primaryLinkClass}>
               News
             </Link>{" "}
             page when published.
           </p>
         </section>
-      ) : null}
+      )}
     </div>
   );
 }

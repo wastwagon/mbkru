@@ -1,34 +1,22 @@
-import { formatPostDate, getPublishedPostSummaries, postHeroImage } from "@/lib/content/posts-db";
-import { HomePageClient, type HomePageNewsItem } from "@/components/home/HomePageClient";
+import { HomePageClient } from "@/components/home/HomePageClient";
 import { getServerPlatformPhase } from "@/config/platform";
 import { emptyHomeAtAGlanceData } from "@/lib/home-at-a-glance-types";
+import { getPublicNewsCatalog } from "@/lib/public-news-catalog";
 import { getHomeAtAGlanceData } from "@/lib/server/home-at-a-glance-data";
 import { getGovernmentCommitmentsHomePreview } from "@/lib/server/home-government-preview";
 
 export const dynamic = "force-dynamic";
 
-function mapPostsForHome(posts: Awaited<ReturnType<typeof getPublishedPostSummaries>>): HomePageNewsItem[] {
-  return posts.map((p) => ({
-    id: p.id,
-    slug: p.slug,
-    title: p.title,
-    excerpt: p.excerpt,
-    image: postHeroImage(p),
-    dateLabel: formatPostDate(p.publishedAt, p.createdAt),
-  }));
-}
-
 export default async function Home() {
   const phase = getServerPlatformPhase();
-  const [raw, accountabilityPreview, atAGlance] = await Promise.all([
-    getPublishedPostSummaries(),
+  const [newsCatalog, accountabilityPreview, atAGlance] = await Promise.all([
+    getPublicNewsCatalog(),
     getGovernmentCommitmentsHomePreview(),
     phase >= 2 ? getHomeAtAGlanceData() : Promise.resolve(emptyHomeAtAGlanceData()),
   ]);
-  const cmsPosts = mapPostsForHome(raw).slice(0, 3);
   return (
     <HomePageClient
-      cmsPosts={cmsPosts}
+      newsCatalog={newsCatalog}
       accountabilityPreview={accountabilityPreview}
       atAGlance={atAGlance}
     />

@@ -31,12 +31,12 @@ const RULES: readonly Rule[] = [
       "mission",
       "abroad",
     ],
-    blurb: `Diaspora support hub (/diaspora): signposts to NIA (Ghana Card), Ministry of Foreign Affairs, Ghana Immigration, and ghana.gov.gh — not consular processing. For “17th Region” policy and Summit context, the News briefing is at /news/diaspora-17th-region-2025. Feedback form: /diaspora/feedback.`,
+    blurb: `Diaspora support hub (/diaspora): signposts to NIA (Ghana Card), Ministry of Foreign Affairs, Ghana Immigration, and ghana.gov.gh — not consular processing. For “17th Region” policy and Summit context, see the CMS news post at /news/diaspora-17th-region-2025 when published. Feedback form: /diaspora/feedback.`,
   },
   {
     path: "/news/diaspora-17th-region-2025",
     keywords: ["17th region", "diaspora summit", "summit 2025", "seventeenth region", "remittance and diaspora policy"],
-    blurb: `News briefing “Diaspora & the 17th Region” (/news/diaspora-17th-region-2025): civic summary with external references; not a government communique. Practical help stays on /diaspora.`,
+    blurb: `CMS news post “Diaspora & the 17th Region” (/news/diaspora-17th-region-2025): civic summary with external references; not a government communique. Practical help stays on /diaspora.`,
   },
   {
     path: "/faq",

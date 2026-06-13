@@ -25,6 +25,11 @@ describe("buildHomeHeroGlanceStats", () => {
     expect(stats[3]).toEqual({ value: "16", label: "Regions of Ghana", href: "#ghana-regions" });
   });
 
+  it("includes published news count when provided", () => {
+    const stats = buildHomeHeroGlanceStats(emptyAtAGlance, null, 5);
+    expect(stats.some((s) => s.label === "Published stories" && s.value === "5")).toBe(true);
+  });
+
   it("falls back to trust and geography when no live totals exist", () => {
     const stats = buildHomeHeroGlanceStats(emptyAtAGlance, null);
     expect(stats).toEqual([

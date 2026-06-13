@@ -11,6 +11,7 @@ export type HomeHeroGlanceStat = {
 export function buildHomeHeroGlanceStats(
   atAGlance: HomeAtAGlanceData,
   accountabilityStats: PromiseTrackerStats | null | undefined,
+  publishedNewsCount = 0,
 ): HomeHeroGlanceStat[] {
   const stats: HomeHeroGlanceStat[] = [];
 
@@ -27,6 +28,14 @@ export function buildHomeHeroGlanceStats(
     stats.push({
       value: commitments.toLocaleString("en-GH"),
       label: "Commitments tracked",
+    });
+  }
+
+  if (publishedNewsCount > 0) {
+    stats.push({
+      value: publishedNewsCount.toLocaleString("en-GH"),
+      label: publishedNewsCount === 1 ? "Published story" : "Published stories",
+      href: "/news",
     });
   }
 

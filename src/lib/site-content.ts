@@ -302,6 +302,15 @@ export const starterNewsArticles = [
     featured: false,
   },
   {
+    slug: "diaspora-17th-region-2025",
+    title: "Diaspora & the 17th Region — context and public reporting (briefing)",
+    excerpt:
+      "Policy context for Ghana's 17th Region framing, the 2025 Diaspora Summit, remittances, and what citizens can monitor.",
+    date: "15 Jan 2026",
+    image: images.diaspora,
+    featured: false,
+  },
+  {
     slug: "citizen-engagement",
     title: "Town Hall Meetings & Regional Forums",
     excerpt: "Physical engagement network bringing citizens face-to-face with decision-makers across all 16 regions.",

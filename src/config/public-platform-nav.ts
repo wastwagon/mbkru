@@ -281,7 +281,6 @@ export function getPublicSitemapStaticPaths(phase: PlatformPhase): string[] {
     "/parliament-tracker",
     "/methodology",
     "/news",
-    "/news/diaspora-17th-region-2025",
     "/diaspora",
     "/diaspora/feedback",
     "/resources",

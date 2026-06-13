@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import type { HomeHeroGlanceStat } from "@/lib/home-hero-glance-stats";
+import { newsArchiveLinkLabel } from "@/lib/public-news-copy";
 import { heroContent, images } from "@/lib/site-content";
 
 const AUTO_MS = 7500;
@@ -19,30 +20,26 @@ export type HeroNewsSlide = {
   excerpt: string | null;
   image: string;
   dateLabel: string;
+  href: string;
 };
 
-type Slide =
-  | { key: "brand"; kind: "brand" }
-  | { key: string; kind: "news"; post: HeroNewsSlide }
-  | { key: string; kind: "placeholder"; index: 1 | 2 };
+type Slide = { key: "brand"; kind: "brand" } | { key: string; kind: "news"; post: HeroNewsSlide };
 
 function buildSlides(news: HeroNewsSlide[]): Slide[] {
-  return [
-    { key: "brand", kind: "brand" },
-    news[0]
-      ? { key: `news-${news[0].id}`, kind: "news", post: news[0] }
-      : { key: "placeholder-1", kind: "placeholder", index: 1 },
-    news[1]
-      ? { key: `news-${news[1].id}`, kind: "news", post: news[1] }
-      : { key: "placeholder-2", kind: "placeholder", index: 2 },
-  ];
+  const slides: Slide[] = [{ key: "brand", kind: "brand" }];
+  for (const post of news.slice(0, 2)) {
+    slides.push({ key: `news-${post.id}`, kind: "news", post });
+  }
+  return slides;
 }
 
 export function HomeHeroSlider({
   newsForSlides,
+  totalNewsCount,
   glanceStats,
 }: {
   newsForSlides: HeroNewsSlide[];
+  totalNewsCount: number;
   glanceStats: HomeHeroGlanceStat[];
 }) {
   const slides = useMemo(() => buildSlides(newsForSlides), [newsForSlides]);
@@ -173,7 +170,7 @@ export function HomeHeroSlider({
                   ) : null}
                   <div className="mt-5 flex flex-wrap gap-3">
                     <Button
-                      href={`/news/${slide.post.slug}`}
+                      href={slide.post.href}
                       variant="primary"
                       className="inline-flex items-center gap-2 border border-white/25 bg-[var(--ghana-green)] text-white hover:bg-[color-mix(in_oklab,var(--ghana-green)_85%,black)]"
                     >
@@ -186,34 +183,11 @@ export function HomeHeroSlider({
                       href="/news"
                       className="inline-flex items-center gap-2 rounded-xl border-2 border-white/45 px-5 py-2.5 text-sm font-semibold text-white hover:border-[var(--ghana-gold)] hover:bg-white/10"
                     >
-                      All news
+                      {newsArchiveLinkLabel(totalNewsCount)}
                     </Link>
                   </div>
                 </>
-              ) : (
-                <>
-                  <span className="inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--ghana-gold)]">
-                    From the newsroom
-                  </span>
-                  <h2 className="mt-3 font-display text-xl font-bold text-white sm:text-2xl">Latest updates</h2>
-                  <p className="mt-2 text-sm leading-relaxed text-white/88">
-                    New stories will appear here as soon as they are published. Browse the news archive for programme
-                    updates and accountability explainers.
-                  </p>
-                  <div className="mt-5">
-                    <Button
-                      href="/news"
-                      variant="primary"
-                      className="inline-flex items-center gap-2 border border-white/25 bg-[var(--ghana-green)] text-white hover:bg-[color-mix(in_oklab,var(--ghana-green)_85%,black)]"
-                    >
-                      Go to news
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </Button>
-                  </div>
-                </>
-              )}
+              ) : null}
             </motion.div>
           </AnimatePresence>
 
@@ -226,7 +200,7 @@ export function HomeHeroSlider({
                   type="button"
                   role="tab"
                   aria-selected={i === active}
-                  aria-label={s.kind === "brand" ? "Home message" : s.kind === "news" ? `News: ${s.post.title}` : "News highlight"}
+                  aria-label={s.kind === "brand" ? "Home message" : `News: ${s.post.title}`}
                   onClick={() => go(i)}
                   className={`h-2.5 rounded-full transition-all duration-300 ${
                     i === active ? "w-8 bg-[var(--ghana-gold)]" : "w-2.5 bg-white/40 hover:bg-white/60"
