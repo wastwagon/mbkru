@@ -16,6 +16,8 @@ import { HomeHeroSlider } from "@/components/home/HomeHeroSlider";
 import { HomeTrustStrip } from "@/components/home/HomeTrustStrip";
 import { HomeParticipateHub } from "@/components/home/HomeParticipateHub";
 import { AccountabilityHomePreview } from "@/components/home/AccountabilityHomePreview";
+import { FindYourRepresentative } from "@/components/accountability/FindYourRepresentative";
+import type { RepresentativeSearchRow } from "@/components/accountability/FindYourRepresentative";
 import { OperationalPillarsRegionsSection } from "@/components/operational-pillars/OperationalPillarsRegionsSection";
 import type { HomeAtAGlanceData } from "@/lib/home-at-a-glance-types";
 import type { GovernmentCommitmentsHomePreview as GovernmentCommitmentsHomePreviewData } from "@/lib/home-government-preview-types";
@@ -26,10 +28,14 @@ export function HomePageClient({
   newsCatalog,
   accountabilityPreview,
   atAGlance,
+  mpRoster = [],
+  showMpSearch = false,
 }: {
   newsCatalog: PublicNewsItem[];
   accountabilityPreview: GovernmentCommitmentsHomePreviewData | null;
   atAGlance: HomeAtAGlanceData;
+  mpRoster?: RepresentativeSearchRow[];
+  showMpSearch?: boolean;
 }) {
   const reducedMotion = usePrefersReducedMotion();
   const totalNewsCount = newsCatalog.length;
@@ -54,6 +60,14 @@ export function HomePageClient({
       <HomeDataProvenanceRibbon />
 
       <HomeParticipateHub data={atAGlance} showLiveHighlights={false} showLiveTools />
+
+      {showMpSearch ? (
+        <section className="section-spacing section-full border-t border-[var(--border)] bg-white">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <FindYourRepresentative rows={mpRoster} variant="prominent" />
+          </div>
+        </section>
+      ) : null}
 
       {accountabilityPreview ? <AccountabilityHomePreview data={accountabilityPreview} /> : null}
 

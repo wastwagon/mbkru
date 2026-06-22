@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { DiasporaProgrammePhaseNotice } from "@/components/diaspora/DiasporaProgrammePhaseNotice";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 import { MbkruVoiceCallout } from "@/components/voice/MbkruVoiceCallout";
 import { Card } from "@/components/ui/Card";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
@@ -101,6 +102,9 @@ export default function DiasporaPage() {
       <PageHeader
         title="Diaspora support"
         description="For Ghanaians abroad and returnees: signposting to official channels for Ghana Card, passport, and nationality—plus how to join MBKRU’s citizen accountability work. The “17th Region” policy context lives in our News briefing."
+        eyebrow={pageHeaderPresets.diaspora.eyebrow}
+        heroImage={pageHeaderPresets.diaspora.heroImage}
+        heroImageAlt={pageHeaderPresets.diaspora.heroImageAlt}
       />
 
       <section className="section-spacing section-full border-b border-[var(--border)] bg-white">

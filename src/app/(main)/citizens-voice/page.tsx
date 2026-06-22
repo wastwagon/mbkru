@@ -5,6 +5,7 @@ import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
 import { VoiceOpenChatCTA } from "@/components/voice/VoiceOpenChatCTA";
 import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 import { Card } from "@/components/ui/Card";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 import {
@@ -57,6 +58,8 @@ export default async function CitizensVoicePage() {
   const showStats = isPublicVoiceStatisticsEnabled();
   const civicEngagement = isCivicPetitionsAndPublicCausesEnabled();
 
+  const voicePreset = pageHeaderPresets.voice;
+
   return (
     <div>
       <PageHeader
@@ -68,6 +71,9 @@ export default async function CitizensVoicePage() {
               : "Submit reports with evidence, track with a code, and manage submissions from your account."
             : "Digital platform for citizen voice — membership portal, personal dashboard, and public statistics."
         }
+        eyebrow={voicePreset.eyebrow}
+        heroImage={voicePreset.heroImage}
+        heroImageAlt={voicePreset.heroImageAlt}
       />
 
       {/* Hero section — full-width with hero image */}

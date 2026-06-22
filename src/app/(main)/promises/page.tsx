@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { MpCatalogueBrowseCard } from "@/components/accountability/MpCatalogueBrowseCard";
 import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
   accountabilityCatalogueNavMedium,
@@ -30,11 +31,16 @@ export default async function PromisesIndexPage() {
 
   const members = await getCachedPromisesIndexMembers();
 
+  const preset = pageHeaderPresets.accountability;
+
   return (
     <div>
       <PageHeader
         title={accountabilityCatalogueNavMedium.byMp}
         description="Documented commitments we are tracking. Each row links to sources and current status. This is not a legal finding — see our methodology for how we work."
+        eyebrow={preset.eyebrow}
+        heroImage={preset.heroImage}
+        heroImageAlt={preset.heroImageAlt}
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">

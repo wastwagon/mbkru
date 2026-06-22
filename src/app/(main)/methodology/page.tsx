@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
   accountabilityCatalogueNavMedium,
@@ -27,11 +28,16 @@ export default async function MethodologyPage() {
   const showPartnerApi = isPartnerApiTermsPageEnabled();
   const methodologyLive = isGhanaReportCardMethodologyPublicEnabled();
 
+  const preset = pageHeaderPresets.accountability;
+
   return (
     <div>
       <PageHeader
         title="Accountability methodology"
         description="MBKRU combines public data, documented commitments, and careful editorial judgement. We do not replace official regulators or electoral bodies."
+        eyebrow={preset.eyebrow}
+        heroImage={preset.heroImage}
+        heroImageAlt={preset.heroImageAlt}
       />
 
       <section className="section-spacing section-full bg-white">

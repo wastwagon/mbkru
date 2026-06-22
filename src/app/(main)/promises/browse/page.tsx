@@ -6,6 +6,7 @@ import { PromiseCatalogueSurfacesCallout } from "@/components/accountability/Pro
 import { PromisesBrowseLive } from "@/components/accountability/PromisesBrowseLive";
 import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
   accountabilityCatalogueNavMedium,
@@ -129,9 +130,17 @@ export default async function PromisesBrowsePage({ searchParams }: Props) {
   const fullDescription =
     "All tracked commitments we publish for sitting parliamentarians unless you narrow filters. Toggle the government-programme preset for the executive slice — same dashboard, smarter filters.";
 
+  const headerPreset = pageHeaderPresets.accountability;
+
   return (
     <div>
-      <PageHeader title={pageTitle} description={governmentOnly ? govDescription : fullDescription} />
+      <PageHeader
+        title={pageTitle}
+        description={governmentOnly ? govDescription : fullDescription}
+        eyebrow={headerPreset.eyebrow}
+        heroImage={headerPreset.heroImage}
+        heroImageAlt={headerPreset.heroImageAlt}
+      />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto mt-6 flex flex-wrap justify-center gap-3" role="tablist" aria-label="Catalogue presets">

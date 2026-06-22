@@ -8,6 +8,7 @@ import { VoiceSubmissionBrowseCard } from "@/components/accountability/VoiceSubm
 import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { voiceSharingMindfulNote } from "@/config/site-disclaimers";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
   accountabilityCatalogueNavMedium,
@@ -190,7 +191,13 @@ export default async function ReportCardIndexPage({
 
   return (
     <div>
-      <PageHeader title="People&apos;s Report Card" description={headerDescription} />
+      <PageHeader
+        title="People&apos;s Report Card"
+        description={headerDescription}
+        eyebrow={pageHeaderPresets.accountability.eyebrow}
+        heroImage={pageHeaderPresets.accountability.heroImage}
+        heroImageAlt={pageHeaderPresets.accountability.heroImageAlt}
+      />
 
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

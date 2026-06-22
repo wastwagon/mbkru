@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/ui/PageHeader";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { isLegalEmpowermentPageEnabled } from "@/lib/reports/accountability-pages";
 
@@ -18,12 +19,17 @@ export const metadata: Metadata = {
 export default function LegalEmpowermentPage() {
   if (!isLegalEmpowermentPageEnabled()) notFound();
 
+  const legalPreset = pageHeaderPresets.legal;
+
   return (
     <div>
       <PageHeader
         title="Legal empowerment desk"
         description="Plain-language signposting to official channels. MBKRU does not provide individual legal representation or formal complaints handling on behalf of regulators."
         breadcrumbCurrentLabel="Legal"
+        eyebrow={legalPreset.eyebrow}
+        heroImage={legalPreset.heroImage}
+        heroImageAlt={legalPreset.heroImageAlt}
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl space-y-6 px-4 text-[var(--foreground-secondary)] sm:px-6 lg:px-8">

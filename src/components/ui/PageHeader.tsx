@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { DataFreshnessBadge } from "@/components/ui/DataFreshnessBadge";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
 
 interface BreadcrumbItem {
@@ -21,6 +23,13 @@ interface PageHeaderProps {
   breadcrumbs?: BreadcrumbItem[];
   /** Override last breadcrumb label (e.g. article title for /news/[slug]) */
   breadcrumbCurrentLabel?: string;
+  /** Short section label above the title */
+  eyebrow?: string;
+  /** Optional contextual hero image — displayed beside title on large screens, below on mobile */
+  heroImage?: string;
+  heroImageAlt?: string;
+  /** When set, shows a live-data freshness badge under the description */
+  lastUpdated?: string | Date;
 }
 
 const PATH_BREADCRUMBS: Record<string, string> = {
@@ -171,56 +180,96 @@ function buildBreadcrumbs(pathname: string, currentLabel?: string): BreadcrumbIt
   return items;
 }
 
-export function PageHeader({ title, description, subtitle, breadcrumbs, breadcrumbCurrentLabel }: PageHeaderProps) {
+export function PageHeader({
+  title,
+  description,
+  subtitle,
+  breadcrumbs,
+  breadcrumbCurrentLabel,
+  eyebrow,
+  heroImage,
+  heroImageAlt,
+  lastUpdated,
+}: PageHeaderProps) {
   const pathname = usePathname();
   const crumbs = breadcrumbs ?? buildBreadcrumbs(pathname, breadcrumbCurrentLabel);
   const blurb = description ?? subtitle;
+  const hasHero = Boolean(heroImage && heroImageAlt);
 
   return (
     <section className="relative overflow-hidden border-b border-[var(--border)] section-full bg-[var(--section-light-tertiary)]">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,var(--primary)/[0.08),transparent)]" aria-hidden />
-      <div className="relative mx-auto max-w-4xl px-4 py-9 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
-        {crumbs.length > 0 && (
-          <nav aria-label="Breadcrumb" className="-mx-1 mb-5 overflow-x-auto overscroll-x-contain px-1 sm:mb-6">
-            <ol className="flex min-w-max flex-nowrap items-center gap-x-1.5 gap-y-1 text-[13px] sm:min-w-0 sm:flex-wrap sm:gap-x-2 sm:text-sm">
-              {crumbs.map((item, i) => (
-                <li key={i} className="flex shrink-0 items-center gap-x-1.5 sm:gap-x-2">
-                  {i > 0 && (
-                    <span className="shrink-0 text-[var(--foreground-secondary)]/50" aria-hidden>
-                      /
-                    </span>
-                  )}
-                  {item.href ? (
-                    <Link
-                      href={item.href}
-                      className={`rounded-md px-1 py-1 font-medium text-[var(--foreground-secondary)] underline-offset-4 transition-colors hover:text-[var(--primary)] sm:px-0 sm:py-0.5 ${focusRingSmClass}`}
-                    >
-                      {item.label}
-                    </Link>
-                  ) : (
-                    <span
-                      className="max-w-[min(100vw-3rem,42rem)] truncate font-semibold text-[var(--foreground)] sm:max-w-none sm:overflow-visible sm:whitespace-normal sm:text-clip"
-                      aria-current="page"
-                      title={item.label}
-                    >
-                      {item.label}
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ol>
-          </nav>
-        )}
-        <div className="max-w-2xl">
-          <h1 className="font-display text-xl font-bold tracking-tight text-[var(--foreground)] sm:text-2xl lg:text-3xl lg:leading-[1.2]">
-            {title}
-          </h1>
-          {blurb && (
-            <p className="mt-4 text-[15px] leading-relaxed text-[var(--foreground-secondary)] sm:text-base">
-              {blurb}
-            </p>
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,var(--primary)/[0.08],transparent)]" aria-hidden />
+      <div
+        className={`relative mx-auto max-w-7xl px-4 py-9 sm:px-6 sm:py-10 lg:px-8 lg:py-12 ${hasHero ? "lg:grid lg:grid-cols-[minmax(0,1fr)_min(38%,22rem)] lg:items-center lg:gap-10 xl:grid-cols-[minmax(0,1fr)_min(42%,26rem)]" : "max-w-4xl"}`}
+      >
+        <div className={hasHero ? "min-w-0" : ""}>
+          {crumbs.length > 0 && (
+            <nav aria-label="Breadcrumb" className="-mx-1 mb-5 overflow-x-auto overscroll-x-contain px-1 sm:mb-6">
+              <ol className="flex min-w-max flex-nowrap items-center gap-x-1.5 gap-y-1 text-[13px] sm:min-w-0 sm:flex-wrap sm:gap-x-2 sm:text-sm">
+                {crumbs.map((item, i) => (
+                  <li key={i} className="flex shrink-0 items-center gap-x-1.5 sm:gap-x-2">
+                    {i > 0 && (
+                      <span className="shrink-0 text-[var(--foreground-secondary)]/50" aria-hidden>
+                        /
+                      </span>
+                    )}
+                    {item.href ? (
+                      <Link
+                        href={item.href}
+                        className={`rounded-md px-1 py-1 font-medium text-[var(--foreground-secondary)] underline-offset-4 transition-colors hover:text-[var(--primary)] sm:px-0 sm:py-0.5 ${focusRingSmClass}`}
+                      >
+                        {item.label}
+                      </Link>
+                    ) : (
+                      <span
+                        className="max-w-[min(100vw-3rem,42rem)] truncate font-semibold text-[var(--foreground)] sm:max-w-none sm:overflow-visible sm:whitespace-normal sm:text-clip"
+                        aria-current="page"
+                        title={item.label}
+                      >
+                        {item.label}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            </nav>
           )}
+          <div className="max-w-2xl">
+            {eyebrow ? (
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--primary)]">{eyebrow}</p>
+            ) : null}
+            <h1
+              className={`font-display text-xl font-bold tracking-tight text-[var(--foreground)] sm:text-2xl lg:text-3xl lg:leading-[1.2] ${eyebrow ? "mt-2" : ""}`}
+            >
+              {title}
+            </h1>
+            {blurb ? (
+              <p className="mt-4 text-[15px] leading-relaxed text-[var(--foreground-secondary)] sm:text-base">{blurb}</p>
+            ) : null}
+            {lastUpdated ? (
+              <div className="mt-4">
+                <DataFreshnessBadge generatedAt={lastUpdated} />
+              </div>
+            ) : null}
+          </div>
         </div>
+
+        {hasHero ? (
+          <div className="relative mt-8 aspect-[16/10] overflow-hidden rounded-2xl shadow-[var(--shadow-card)] ring-1 ring-black/5 lg:mt-0 lg:aspect-[4/3]">
+            <Image
+              src={heroImage!}
+              alt={heroImageAlt!}
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 26rem"
+              priority
+            />
+            <div
+              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent"
+              aria-hidden
+            />
+          </div>
+        ) : null}
       </div>
     </section>
   );

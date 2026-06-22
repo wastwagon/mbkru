@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { FindYourRepresentative } from "@/components/accountability/FindYourRepresentative";
 import { ParliamentaryRosterList } from "@/components/accountability/ParliamentaryRosterList";
 import { VoiceMpPerformanceIntakeRow } from "@/components/accountability/VoiceMpPerformanceIntakeRow";
 import { TrackerSignupForm } from "@/components/forms/TrackerSignupForm";
@@ -14,6 +15,7 @@ import {
 } from "@/config/accountability-catalogue-destinations";
 import { ghanaParliamentTermShortLabel } from "@/config/ghana-parliament-term";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 import { images } from "@/lib/site-content";
 import {
   isPartnerApiTermsPageEnabled,
@@ -97,11 +99,16 @@ export default async function ParliamentTrackerPage() {
     },
   ];
 
+  const headerPreset = pageHeaderPresets.accountability;
+
   return (
     <div>
       <PageHeader
         title={accountabilityProse.parliamentPageDocumentTitle}
         description={`${accountabilityProse.parliamentPageHeaderFullProgrammeLead} — ${accountabilityProse.parliamentPageHeaderDescription}`}
+        eyebrow={headerPreset.eyebrow}
+        heroImage={headerPreset.heroImage}
+        heroImageAlt={headerPreset.heroImageAlt}
       />
 
       <div className="section-spacing border-b border-[var(--border)] bg-white pb-8">
@@ -112,6 +119,14 @@ export default async function ParliamentTrackerPage() {
           </p>
         </div>
       </div>
+
+      {dbReady && mpRoster.length > 0 ? (
+        <section className="section-spacing section-full bg-white pb-6">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <FindYourRepresentative rows={mpRoster} showPromises={showPromises} variant="prominent" />
+          </div>
+        </section>
+      ) : null}
 
       {dbReady ? (
         <section className="section-spacing section-full bg-[var(--section-light)] pb-10">
