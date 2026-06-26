@@ -117,8 +117,8 @@ def draw_cover(pdf: FPDF) -> None:
     box_w = (w - 36 - 8) / 3
     facts = [
         ("Agreed programme total (Ph 1–3)", "GHS 84,000"),
-        ("Received to date (confirmed)", "GHS 20,000"),
-        ("Balance due (programme)", "GHS 64,000"),
+        ("Received to date (confirmed)", "GHS 39,850"),
+        ("Balance due (programme)", "GHS 44,150"),
     ]
     pdf.set_font("DejaVu", "", 7.5)
     for i, (label, value) in enumerate(facts):
