@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 
 import { heatFillColor, normalizeHeatIntensity } from "@/lib/viz/heat-scale";
 import { GHANA_REGION_MAP_PATHS, GHANA_REGION_MAP_VIEWBOX } from "@/lib/geo/ghana-region-map-paths.generated";
-import { ghanaRegionsData } from "@/lib/site-content";
+import { ghanaRegionSlugFromDisplayName } from "@/lib/geo/ghana-region-slug";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 type RegionCount = { regionName: string; regionSlug: string; count: number };
@@ -54,7 +54,7 @@ export function GhanaRegionsReportHeatMap({ regions }: Props) {
             const count = row?.count ?? 0;
             const intensity = normalizeHeatIntensity(count, maxCount);
             const fill = heatFillColor(intensity, count > 0);
-            const slug = row?.regionSlug ?? ghanaRegionsData.find((r) => r.name === name)?.slug;
+            const slug = row?.regionSlug || ghanaRegionSlugFromDisplayName(name);
             const isHover = hover?.name === name;
 
             return (
