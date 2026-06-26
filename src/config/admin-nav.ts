@@ -136,7 +136,7 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
         label: "Operational audit",
         description: "Inspect sensitive admin action logs.",
       },
-      { href: "/admin/settings", label: "Settings", description: "Run operational maintenance tasks." },
+      { href: "/admin/settings", label: "Settings", description: "Site visibility and operational maintenance." },
     ],
   },
 ];

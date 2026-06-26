@@ -1,7 +1,20 @@
 import { MetadataRoute } from "next";
 
-export default function robots(): MetadataRoute.Robots {
+import { isPublicSiteUnderConstruction } from "@/lib/server/site-config";
+
+export default async function robots(): Promise<MetadataRoute.Robots> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mbkruadvocates.org";
+  const underConstruction = await isPublicSiteUnderConstruction();
+
+  if (underConstruction) {
+    return {
+      rules: {
+        userAgent: "*",
+        disallow: "/",
+      },
+    };
+  }
+
   return {
     rules: {
       userAgent: "*",

@@ -20,6 +20,7 @@ model Admin {
   editedCitizenReportAdminReplies   CitizenReportAdminReply[]     @relation("CitizenReportAdminReplyEditor")
   citizenReportAdminReplyAuditLogs  CitizenReportAdminReplyAuditLog[]
   operationalAuditLogs              AdminOperationalAuditLog[]
+  siteConfigUpdates                 SiteConfig[]
 }
 
 /// Reusable images for posts (and future resources).
@@ -888,4 +889,15 @@ model MbkruVoiceAnalyticsEvent {
   @@index([createdAt])
   @@index([eventName])
   @@map("mbkru_voice_analytics_events")
+}
+
+/// Singleton runtime flags (public under-construction gate, etc.).
+model SiteConfig {
+  id                      String   @id @default("default")
+  publicUnderConstruction Boolean  @default(false)
+  constructionHeadline    String?  @db.VarChar(200)
+  constructionBody        String?  @db.Text
+  updatedAt               DateTime @updatedAt
+  updatedByAdminId        String?
+  updatedByAdmin          Admin?   @relation(fields: [updatedByAdminId], references: [id], onDelete: SetNull)
 }

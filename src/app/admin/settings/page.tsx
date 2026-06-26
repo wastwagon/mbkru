@@ -1,5 +1,6 @@
 import { DatabaseMaintenancePanel } from "@/app/admin/settings/DatabaseMaintenancePanel";
 import { PetitionPendingCleanupPanel } from "@/app/admin/settings/PetitionPendingCleanupPanel";
+import { SiteVisibilityPanel } from "@/app/admin/settings/SiteVisibilityPanel";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -11,7 +12,7 @@ export default async function AdminSettingsPage() {
     <AdminPageContainer width="narrow">
       <AdminPageHeader
         title="Settings"
-        description="Run database maintenance when deploy-time migrate or seed did not complete successfully."
+        description="Site visibility, database maintenance, and operational tools."
       />
 
       <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
@@ -19,6 +20,8 @@ export default async function AdminSettingsPage() {
         {" · "}
         Region reference data: <a className="underline text-[var(--primary)]" href="/admin/regions">Regions</a>
       </p>
+
+      <SiteVisibilityPanel />
 
       <DatabaseMaintenancePanel />
 

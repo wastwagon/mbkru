@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 
+import { AdminConstructionPreviewBar } from "@/components/admin/AdminConstructionPreviewBar";
 import { AnalyticsScripts } from "@/components/analytics/AnalyticsScripts";
 import { SiteTrustNotice } from "@/components/legal/SiteTrustNotice";
 import { Header } from "@/components/layout/Header";
@@ -14,7 +15,7 @@ import { PwaServiceWorkerRegister } from "@/components/pwa/PwaServiceWorkerRegis
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { mobileMainBottomPadClass } from "@/lib/mobile-ui-classes";
 
-export default function MainLayout({
+export default async function MainLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -28,6 +29,7 @@ export default function MainLayout({
         Skip to main content
       </a>
       <SiteTrustNotice />
+      <AdminConstructionPreviewBar />
       <div className="sticky top-0 z-50">
         <div className="relative z-[60]">
           <TopBar />

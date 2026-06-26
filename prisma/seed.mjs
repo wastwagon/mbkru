@@ -2660,6 +2660,13 @@ async function main() {
 
   await seedRegionalHubWelcomePosts();
 
+  await prisma.siteConfig.upsert({
+    where: { id: "default" },
+    create: { id: "default" },
+    update: {},
+  });
+  console.log("SiteConfig singleton ready.");
+
   logDevelopmentLoginReference();
   console.log("MBKRU prisma seed: finished OK.");
 }
