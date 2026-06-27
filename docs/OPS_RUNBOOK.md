@@ -79,6 +79,19 @@ You can still run seed manually when needed:
 docker compose exec mbkru-web node /app/node_modules/prisma/build/index.js db seed
 ```
 
+### Community steward logins (Queen Mother / manage dashboard)
+
+On every **`prisma db seed`** (unless **`SEED_COMMUNITY_STEWARDS=0`**), the seed pass provisions **one default member account per community** that does not yet have an ACTIVE **Queen Mother (verified)** or **Moderator**:
+
+| Field | Value |
+|-------|--------|
+| Email | `steward.{community-slug}@mbkru-stewards.local` (override domain with **`SEED_COMMUNITY_STEWARD_EMAIL_DOMAIN`**) |
+| Password | **`SEED_COMMUNITY_STEWARD_PASSWORD`** or default `CommunitySteward!change-me-2026` |
+| Sign in | `/login` |
+| Manage | `/communities/{slug}/manage` |
+
+**Coolify / first deploy:** set **`RUN_DB_SEED_ON_BOOT=1`** once so migrate + seed run together, or after migrate run **`npm run db:seed:community-stewards`** inside the container. Communities that already have leadership (e.g. pilot `pilot.member@mbkru.local` on Ajumako) are **skipped**. Rotate the shared steward password before real pilots.
+
 ## Secrets and build-time variables
 
 - Rotate **`ADMIN_SESSION_SECRET`**, **`MEMBER_SESSION_SECRET`** (Phase 2+), **`ADMIN_PASSWORD`**, Resend, Turnstile, and database credentials on any suspected leak.

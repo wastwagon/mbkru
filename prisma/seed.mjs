@@ -6,6 +6,9 @@
  * Town hall / forum / constituency debate programme: `TownHallEvent` after bundled constituencies (see `prisma/data/TOWN_HALL_SEED_SOURCES.txt`). Opt out: `SEED_TOWN_HALL_PROGRAMME=0`.
  * NDC 2024 manifesto promise catalogue (editorial JSON → `CampaignPromise`): set `SEED_NDC_2024_MANIFESTO_CATALOGUE=1` when running accountability seed (`SEED_ACCOUNTABILITY_DEMO` not `0`). Rows are tagged in `verificationNotes` for idempotent re-seed.
  * Opt out: `SEED_COMMUNITIES_DEMO=0`. Pilot posts need `SEED_MEMBER_DEMO=1`.
+ * Default steward logins (one per community without leadership): runs on every seed unless `SEED_COMMUNITY_STEWARDS=0`.
+ *   Email `steward.{slug}@mbkru-stewards.local` (override domain via `SEED_COMMUNITY_STEWARD_EMAIL_DOMAIN`).
+ *   Password `SEED_COMMUNITY_STEWARD_PASSWORD` or default `CommunitySteward!change-me-2026`.
  *
  * **Quick member logins** (after `SEED_MEMBER_DEMO=1`, e.g. `npm run db:seed:pilots`):
  * | Account | Password (override with `SEED_MEMBER_PASSWORD`) |
@@ -25,6 +28,8 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+
+import { lastCommunityStewardSeedStats, seedCommunityStewards } from "./lib/seed-community-stewards.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -1236,6 +1241,28 @@ function logDevelopmentLoginReference() {
     lines.push("Presentation demo members (SEED_PRESENTATION_DEMO):");
     lines.push("  presentation.demo.01@mbkru.local … presentation.demo.20@mbkru.local");
     lines.push(`  Password: ${presPw}`);
+  }
+
+  if (
+    process.env.SEED_COMMUNITY_STEWARDS !== "0" &&
+    process.env.SEED_COMMUNITY_STEWARDS !== "false" &&
+    lastCommunityStewardSeedStats
+  ) {
+    const s = lastCommunityStewardSeedStats;
+    lines.push("Community stewards (SEED_COMMUNITY_STEWARDS — one login per community without leadership):");
+    lines.push(`  Email pattern: steward.{community-slug}@${s.emailDomain}`);
+    lines.push(`  Password: ${s.passwordPlain}`);
+    lines.push("  Sign in: /login · Manage: /communities/{slug}/manage · Council: /communities/{slug}/portal");
+    lines.push(
+      `  This run: ${s.created} provisioned, ${s.skipped} skipped (already had Queen Mother or Moderator).`,
+    );
+  } else if (
+    process.env.SEED_COMMUNITY_STEWARDS !== "0" &&
+    process.env.SEED_COMMUNITY_STEWARDS !== "false"
+  ) {
+    lines.push(
+      "Community stewards: enabled — run seed again after adding communities, or npm run db:seed:community-stewards.",
+    );
   }
 
   lines.push("----------------------------------------------------------------", "");
@@ -2659,6 +2686,8 @@ async function main() {
   }
 
   await seedRegionalHubWelcomePosts();
+
+  await seedCommunityStewards(prisma, bcrypt);
 
   await prisma.siteConfig.upsert({
     where: { id: "default" },
