@@ -19,11 +19,11 @@ export function memberIdentityStatusLabel(status: MemberIdentityVerificationStat
 export function memberIdentityStatusDescription(status: MemberIdentityVerificationStatus): string {
   switch (status) {
     case "UNVERIFIED":
-      return "You can use MBKRU Voice with email registration. Stronger identity checks may be added later; staff may upgrade your status after manual review.";
+      return "You can use MBKRU Voice with email registration. Optional programme review is separate from Ghana Card verification.";
     case "PENDING_REVIEW":
       return "Our team is reviewing your account against programme rules. You will be notified when the status changes.";
     case "VERIFIED":
-      return "Your membership has been confirmed for programme purposes. This is not a government ID check.";
+      return "Your membership has been confirmed for programme purposes. This is staff review — not a Ghana Card check.";
     case "REJECTED":
       return "We could not confirm eligibility under current rules. Use Contact if you think this is a mistake.";
     default:

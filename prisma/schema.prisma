@@ -161,6 +161,12 @@ enum CitizenReportKind {
   GOVERNMENT_PERFORMANCE
 }
 
+/// Distinguishes citizen Voice intake from Queen Mother council institutional submissions.
+enum CitizenReportIntakeSource {
+  CITIZEN_VOICE
+  COUNCIL_EVALUATION
+}
+
 enum CitizenReportStatus {
   RECEIVED
   UNDER_REVIEW
@@ -296,12 +302,19 @@ model Constituency {
   @@index([regionId])
 }
 
-/// Staff-reviewed civic identity (not Ghana Card upload in MVP — status + notes only).
+/// Staff-reviewed civic identity (programme eligibility — separate from Ghana Card).
 enum MemberIdentityVerificationStatus {
   UNVERIFIED
   PENDING_REVIEW
   VERIFIED
   REJECTED
+}
+
+/// Hubtel / NIA-backed Ghana Card check for high-trust Voice submissions.
+enum MemberGhanaCardVerificationStatus {
+  UNVERIFIED
+  VERIFIED
+  FAILED
 }
 
 /// Public registered user (MBKRU Voice) — separate from Admin
@@ -320,6 +333,14 @@ model Member {
   identityVerifiedAt             DateTime?
   identityReviewRequestedAt      DateTime?
   identityReviewRequestMessage   String?                          @db.VarChar(2000)
+  /// Ghana Card verification via Hubtel (hashed PAN — never store raw number).
+  ghanaCardVerificationStatus    MemberGhanaCardVerificationStatus @default(UNVERIFIED)
+  ghanaCardNumberHash            String?                          @unique
+  ghanaCardLastFour              String?                          @db.VarChar(4)
+  ghanaCardVerifiedAt            DateTime?
+  ghanaCardLegalSurname          String?                          @db.VarChar(120)
+  ghanaCardLegalForenames        String?                          @db.VarChar(160)
+  ghanaCardHubtelRef             String?                          @db.VarChar(128)
   createdAt                      DateTime                         @default(now())
   updatedAt                      DateTime                         @updatedAt
   reports                        CitizenReport[]
@@ -334,18 +355,26 @@ model Member {
   publicCauseComments    CitizenReportPublicComment[]
   publicCauseSupports    CitizenReportSupport[]
   voiceCommentReactions  CitizenReportCommentReaction[]
+  councilMpEvaluationsAuthored CouncilMpEvaluation[] @relation("CouncilMpEvaluationAuthor")
+  councilMpEvaluationsSigned   CouncilMpEvaluation[] @relation("CouncilMpEvaluationSigner")
 
   @@index([regionId])
   @@index([constituencyId])
   @@index([identityVerificationStatus])
+  @@index([ghanaCardVerificationStatus])
 }
 
 model CitizenReport {
   id                    String                  @id @default(cuid())
   trackingCode          String                  @unique
   kind                  CitizenReportKind
+  /// Citizen Voice vs Queen Mother council evaluation promoted to staff queue.
+  intakeSource          CitizenReportIntakeSource @default(CITIZEN_VOICE)
   memberId              String?
   member                Member?                 @relation(fields: [memberId], references: [id], onDelete: SetNull)
+  /// Community that submitted a council evaluation (when intakeSource is COUNCIL_EVALUATION).
+  communityId           String?
+  community             Community?              @relation(fields: [communityId], references: [id], onDelete: SetNull)
   /// MP performance intake — links submitter narrative to a roster MP (parliamentary tracker / pledge sheet).
   parliamentMemberId    String?
   parliamentMember      ParliamentMember?       @relation(fields: [parliamentMemberId], references: [id], onDelete: SetNull)
@@ -387,8 +416,11 @@ model CitizenReport {
   publicCauseSupports   CitizenReportSupport[]
   adminReplies               CitizenReportAdminReply[]
   adminReplyAuditLogs        CitizenReportAdminReplyAuditLog[]
+  councilMpEvaluation        CouncilMpEvaluation?
 
   @@index([kind, status])
+  @@index([intakeSource])
+  @@index([communityId])
   @@index([experienceVerificationTier])
   @@index([memberId])
   @@index([parliamentMemberId])
@@ -566,6 +598,8 @@ model ParliamentMember {
   promises           CampaignPromise[]
   scoreEntries       ScorecardEntry[]
   citizenReports     CitizenReport[]
+  councilMpEvaluations CouncilMpEvaluation[]
+  defaultForCommunities Community[] @relation("CommunityDefaultMp")
 
   @@index([constituencyId])
 }
@@ -712,6 +746,9 @@ model Community {
   description         String              @db.Text
   regionId            String?
   region              Region?             @relation(fields: [regionId], references: [id], onDelete: SetNull)
+  /// Optional default MP for council evaluation forms in this community.
+  defaultParliamentMemberId String?
+  defaultParliamentMember   ParliamentMember? @relation("CommunityDefaultMp", fields: [defaultParliamentMemberId], references: [id], onDelete: SetNull)
   traditionalAreaName String?
   visibility          CommunityVisibility @default(PUBLIC)
   joinPolicy          CommunityJoinPolicy @default(OPEN)
@@ -725,6 +762,8 @@ model Community {
   forums         CommunityForum[]
   posts          CommunityPost[]
   verifications  CommunityVerificationRequest[]
+  citizenReports CitizenReport[]
+  mpEvaluations  CouncilMpEvaluation[]
 
   @@index([regionId])
   @@index([status])
@@ -831,6 +870,39 @@ model CommunityVerificationRequest {
 
   @@index([communityId, status])
   @@index([memberId])
+}
+
+enum CouncilMpEvaluationStatus {
+  DRAFT
+  SUBMITTED
+}
+
+/// Queen Mother / council structured MP meeting evaluation — QM sign-off promotes to CitizenReport staff queue.
+model CouncilMpEvaluation {
+  id                 String                    @id @default(cuid())
+  communityId        String
+  community          Community                 @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  parliamentMemberId String
+  parliamentMember   ParliamentMember          @relation(fields: [parliamentMemberId], references: [id], onDelete: Restrict)
+  meetingDate        DateTime
+  meetingSummary     String                    @db.Text
+  projectsDiscussed  String?                   @db.Text
+  attendeesNotes     String?                   @db.Text
+  rubric             Json?
+  status             CouncilMpEvaluationStatus @default(DRAFT)
+  createdByMemberId  String
+  createdBy          Member                    @relation("CouncilMpEvaluationAuthor", fields: [createdByMemberId], references: [id], onDelete: Restrict)
+  signedByMemberId   String?
+  signedBy           Member?                   @relation("CouncilMpEvaluationSigner", fields: [signedByMemberId], references: [id], onDelete: SetNull)
+  signedAt           DateTime?
+  citizenReportId    String?                   @unique
+  citizenReport      CitizenReport?            @relation(fields: [citizenReportId], references: [id], onDelete: SetNull)
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
+
+  @@index([communityId, status])
+  @@index([parliamentMemberId])
+  @@index([createdByMemberId])
 }
 
 model MemberNotification {

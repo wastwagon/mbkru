@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { CitizenReportKind } from "@prisma/client";
+import type { CitizenReportIntakeSource, CitizenReportKind } from "@prisma/client";
 
 import { isCitizenReportSlaOverdue } from "@/lib/admin/report-operations-datetime";
 import { adminFilterChipClass } from "@/lib/admin/admin-ui-classes";
@@ -33,19 +33,41 @@ function parseKindParam(raw: string | string[] | undefined): CitizenReportKind |
   return allowed.includes(v as CitizenReportKind) ? (v as CitizenReportKind) : undefined;
 }
 
-type Props = { searchParams?: Promise<{ kind?: string | string[] }> };
+function parseIntakeParam(raw: string | string[] | undefined): CitizenReportIntakeSource | undefined {
+  const v = (Array.isArray(raw) ? raw[0] : raw)?.trim().toLowerCase();
+  if (v === "council") return "COUNCIL_EVALUATION";
+  if (v === "citizen") return "CITIZEN_VOICE";
+  return undefined;
+}
+
+function reportsListHref(kind?: CitizenReportKind, intake?: CitizenReportIntakeSource): string {
+  const params = new URLSearchParams();
+  if (kind) params.set("kind", kind);
+  if (intake) params.set("intake", intake === "COUNCIL_EVALUATION" ? "council" : "citizen");
+  const q = params.toString();
+  return q ? `/admin/reports?${q}` : "/admin/reports";
+}
+
+type Props = {
+  searchParams?: Promise<{ kind?: string | string[]; intake?: string | string[] }>;
+};
 
 export default async function AdminReportsPage({ searchParams }: Props) {
   await requireAdminSession();
 
   const sp = (await searchParams) ?? {};
   const kindFilter = parseKindParam(sp.kind);
+  const intakeFilter = parseIntakeParam(sp.intake);
 
   const reports = await prisma.citizenReport.findMany({
-    where: kindFilter ? { kind: kindFilter } : undefined,
+    where: {
+      ...(kindFilter ? { kind: kindFilter } : {}),
+      ...(intakeFilter ? { intakeSource: intakeFilter } : {}),
+    },
     orderBy: { createdAt: "desc" },
     include: {
       region: { select: { name: true } },
+      community: { select: { name: true } },
       adminReplies: {
         where: { visibleToSubmitter: true },
         orderBy: { createdAt: "desc" },
@@ -56,6 +78,8 @@ export default async function AdminReportsPage({ searchParams }: Props) {
     },
     take: 200,
   });
+
+  const showIntakeFilters = !kindFilter || kindFilter === "MP_PERFORMANCE";
 
   return (
     <AdminPageContainer>
@@ -83,7 +107,10 @@ export default async function AdminReportsPage({ searchParams }: Props) {
       <div className="mt-6 flex flex-wrap gap-2" role="tablist" aria-label="Filter by report kind">
         {KIND_TABS.map((t) => {
           const active = (t.param === "" && !kindFilter) || t.param === kindFilter;
-          const href = t.param ? `/admin/reports?kind=${encodeURIComponent(t.param)}` : "/admin/reports";
+          const href =
+            t.param === ""
+              ? reportsListHref(undefined, intakeFilter)
+              : reportsListHref(t.param as CitizenReportKind, intakeFilter);
           return (
             <Link
               key={t.param || "all"}
@@ -99,6 +126,35 @@ export default async function AdminReportsPage({ searchParams }: Props) {
         })}
       </div>
 
+      {showIntakeFilters ? (
+        <div className="mt-3 flex flex-wrap gap-2" role="tablist" aria-label="Filter MP intake source">
+          <Link
+            href={reportsListHref(kindFilter ?? "MP_PERFORMANCE", undefined)}
+            scroll={false}
+            className={adminFilterChipClass(!intakeFilter && kindFilter === "MP_PERFORMANCE")}
+            aria-current={!intakeFilter && kindFilter === "MP_PERFORMANCE" ? "page" : undefined}
+          >
+            All MP intakes
+          </Link>
+          <Link
+            href={reportsListHref(kindFilter ?? "MP_PERFORMANCE", "CITIZEN_VOICE")}
+            scroll={false}
+            className={adminFilterChipClass(intakeFilter === "CITIZEN_VOICE")}
+            aria-current={intakeFilter === "CITIZEN_VOICE" ? "page" : undefined}
+          >
+            Citizen Voice MP
+          </Link>
+          <Link
+            href={reportsListHref(kindFilter ?? "MP_PERFORMANCE", "COUNCIL_EVALUATION")}
+            scroll={false}
+            className={adminFilterChipClass(intakeFilter === "COUNCIL_EVALUATION")}
+            aria-current={intakeFilter === "COUNCIL_EVALUATION" ? "page" : undefined}
+          >
+            Council evaluation
+          </Link>
+        </div>
+      ) : null}
+
       <AdminListPanel className="mt-6">
         {reports.length === 0 ? (
           <li className="p-6 text-sm text-[var(--foreground-secondary)]">No reports yet.</li>
@@ -112,7 +168,12 @@ export default async function AdminReportsPage({ searchParams }: Props) {
                 <p className="text-xs text-[var(--foreground-secondary)]">
                   <span className="font-mono">{r.trackingCode}</span> · {r.kind.replace(/_/g, " ")} ·{" "}
                   <span className="text-[var(--primary)]">{r.status.replace(/_/g, " ")}</span>
-                  {r.region ? ` · ${r.region.name}` : ""}
+                  {r.intakeSource === "COUNCIL_EVALUATION" ? (
+                    <span className="ml-1 rounded bg-[var(--accent-gold-light)] px-1.5 py-0.5 font-semibold text-[var(--foreground)]">
+                      Council
+                    </span>
+                  ) : null}
+                  {r.community ? ` · ${r.community.name}` : r.region ? ` · ${r.region.name}` : ""}
                   {slaOverdue ? (
                     <span className="ml-1 font-semibold text-amber-800">· SLA overdue</span>
                   ) : null}

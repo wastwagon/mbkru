@@ -1,6 +1,11 @@
 import Link from "next/link";
 
 import { AccountChangePasswordForm } from "@/components/account/AccountChangePasswordForm";
+import { AccountGhanaCardVerifyForm } from "@/components/account/AccountGhanaCardVerifyForm";
+import {
+  AccountWelcomeGhanaCardBanner,
+  MemberGhanaCardVerifiedBadge,
+} from "@/components/account/AccountWelcomeGhanaCardBanner";
 import { AccountPwaInstallCard } from "@/components/account/AccountPwaInstallCard";
 import { AccountHomeRegionBanner } from "@/components/account/AccountHomeRegionBanner";
 import { AccountHomeLocationForm } from "@/components/account/AccountHomeLocationForm";
@@ -20,6 +25,7 @@ import {
   memberIdentityStatusDescription,
   memberIdentityStatusLabel,
 } from "@/lib/member-identity-labels";
+import { isHubtelGhanaCardConfigured } from "@/lib/server/hubtel-ghana-card-config";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
 import { requestIdentityReviewAction } from "./actions";
 import { SignOutButton } from "./SignOutButton";
@@ -43,9 +49,16 @@ function ChevronIcon({ className }: { className?: string }) {
   );
 }
 
-export default async function AccountPage() {
+export default async function AccountPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ welcome?: string }>;
+}) {
   const session = await getMemberSession();
   if (!session) return null;
+
+  const sp = (await searchParams) ?? {};
+  const showWelcomeBanner = sp.welcome === "1";
 
   const voiceOn = isCitizensVoiceEnabled();
   const showPromises = isPromisesBrowseEnabled();
@@ -64,8 +77,13 @@ export default async function AccountPage() {
       identityVerificationStatus: true,
       identityVerifiedAt: true,
       identityReviewRequestedAt: true,
+      ghanaCardVerificationStatus: true,
+      ghanaCardVerifiedAt: true,
+      ghanaCardLastFour: true,
     },
   });
+
+  const hubtelConfigured = isHubtelGhanaCardConfigured();
 
   const unreadNotifications = await prisma.memberNotification.count({
     where: { memberId: session.memberId, readAt: null },
@@ -125,6 +143,15 @@ export default async function AccountPage() {
                 ({member.displayName})
               </>
             ) : null}
+            {member?.ghanaCardVerificationStatus === "VERIFIED" ? (
+              <>
+                {" "}
+                <MemberGhanaCardVerifiedBadge
+                  verified
+                  lastFour={member.ghanaCardLastFour}
+                />
+              </>
+            ) : null}
           </p>
           {member?.createdAt ? (
             <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
@@ -145,6 +172,12 @@ export default async function AccountPage() {
         ) : null}
       </div>
 
+      <AccountWelcomeGhanaCardBanner
+        show={showWelcomeBanner}
+        ghanaCardVerified={member?.ghanaCardVerificationStatus === "VERIFIED"}
+        hubtelConfigured={hubtelConfigured}
+      />
+
       <AccountHomeRegionBanner show={Boolean(member && !member.regionId)} />
 
       {member ? (
@@ -153,7 +186,7 @@ export default async function AccountPage() {
           aria-labelledby="identity-heading"
         >
           <h2 id="identity-heading" className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
-            Membership verification
+            Programme membership
           </h2>
           <p className="mt-2 text-sm font-semibold text-[var(--foreground)]">
             {memberIdentityStatusLabel(member.identityVerificationStatus)}
@@ -197,6 +230,15 @@ export default async function AccountPage() {
             </form>
           ) : null}
         </section>
+      ) : null}
+
+      {member ? (
+        <AccountGhanaCardVerifyForm
+          status={member.ghanaCardVerificationStatus}
+          verifiedAt={member.ghanaCardVerifiedAt}
+          lastFour={member.ghanaCardLastFour}
+          hubtelConfigured={hubtelConfigured}
+        />
       ) : null}
 
       <AccountHomeLocationForm

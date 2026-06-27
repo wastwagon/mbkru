@@ -79,6 +79,8 @@ export type VoiceReportFormProps = {
   regions: RegionOption[];
   /** Roster MPs for MP performance — label shown as Name · party · constituency. */
   mpOptions?: MpOption[];
+  /** Pre-select MP (e.g. member's constituency MP). */
+  defaultParliamentMemberId?: string | null;
   /** When set with `lockKind`, submission uses this kind only. */
   defaultKind?: VoiceReportKindValue;
   /** Hide report-type selector (e.g. situational submit page). */
@@ -90,6 +92,7 @@ export type VoiceReportFormProps = {
 export function VoiceReportForm({
   regions,
   mpOptions = [],
+  defaultParliamentMemberId,
   defaultKind = "VOICE",
   lockKind = false,
   bodyPlaceholder,
@@ -104,6 +107,8 @@ export function VoiceReportForm({
   const router = useRouter();
   const pathname = usePathname();
   const [authStatus, setAuthStatus] = useState<"loading" | "signedOut" | "signedIn">("loading");
+  const [ghanaCardVerified, setGhanaCardVerified] = useState<boolean | null>(null);
+  const [ghanaCardLastFour, setGhanaCardLastFour] = useState<string | null>(null);
   const [kind, setKind] = useState<string>(() => {
     if (lockKind && defaultKind) return defaultKind;
     if (defaultKind && kindOptions.some((v) => v === defaultKind)) return defaultKind;
@@ -124,6 +129,9 @@ export function VoiceReportForm({
   const [submittedAtIso, setSubmittedAtIso] = useState<string | null>(null);
   const [uploadNote, setUploadNote] = useState<string | null>(null);
   const [parliamentMemberId, setParliamentMemberId] = useState("");
+  const [rubricAccessibility, setRubricAccessibility] = useState("");
+  const [rubricResponsiveness, setRubricResponsiveness] = useState("");
+  const [rubricFollowThrough, setRubricFollowThrough] = useState("");
   const [disclaimerAgreed, setDisclaimerAgreed] = useState(false);
   const [submitterWasAssisted, setSubmitterWasAssisted] = useState<"" | "yes" | "no">("");
   const [submittedMpSlug, setSubmittedMpSlug] = useState<string | null>(null);
@@ -171,8 +179,15 @@ export function VoiceReportForm({
   useEffect(() => {
     if (kind !== "MP_PERFORMANCE") {
       setParliamentMemberId("");
+      return;
     }
-  }, [kind]);
+    if (
+      defaultParliamentMemberId &&
+      mpOptions.some((m) => m.id === defaultParliamentMemberId)
+    ) {
+      setParliamentMemberId(defaultParliamentMemberId);
+    }
+  }, [kind, defaultParliamentMemberId, mpOptions]);
 
   useEffect(() => {
     if (lockKind) return;
@@ -214,8 +229,31 @@ export function VoiceReportForm({
   useEffect(() => {
     fetch("/api/auth/me", { credentials: "include" })
       .then((r) => r.json())
-      .then((d: { member?: unknown }) => setAuthStatus(d.member ? "signedIn" : "signedOut"))
-      .catch(() => setAuthStatus("signedOut"));
+      .then(
+        (d: {
+          member?: {
+            ghanaCardVerificationStatus?: string;
+            ghanaCardLastFour?: string | null;
+          } | null;
+        }) => {
+          if (d.member) {
+            setAuthStatus("signedIn");
+            setGhanaCardVerified(d.member.ghanaCardVerificationStatus === "VERIFIED");
+            setGhanaCardLastFour(
+              typeof d.member.ghanaCardLastFour === "string" ? d.member.ghanaCardLastFour : null,
+            );
+          } else {
+            setAuthStatus("signedOut");
+            setGhanaCardVerified(null);
+            setGhanaCardLastFour(null);
+          }
+        },
+      )
+      .catch(() => {
+        setAuthStatus("signedOut");
+        setGhanaCardVerified(null);
+        setGhanaCardLastFour(null);
+      });
   }, []);
 
   useEffect(() => {
@@ -437,6 +475,11 @@ export function VoiceReportForm({
       return;
     }
     if (kind === "MP_PERFORMANCE") {
+      if (ghanaCardVerified === false) {
+        setError(str.mpGhanaCardGateBody);
+        setLoading(false);
+        return;
+      }
       if (!parliamentMemberId.trim()) {
         setError("Select the Member of Parliament this MP performance report is about.");
         setLoading(false);
@@ -476,6 +519,20 @@ export function VoiceReportForm({
       submitterWasAssisted: submitterWasAssisted === "yes",
       ...(kind === "MP_PERFORMANCE" && parliamentMemberId.trim()
         ? { parliamentMemberId: parliamentMemberId.trim() }
+        : {}),
+      ...(kind === "MP_PERFORMANCE"
+        ? {
+            mpPerformanceRubric: (() => {
+              const rubric: Record<string, number> = {};
+              const a = Number.parseInt(rubricAccessibility, 10);
+              const r = Number.parseInt(rubricResponsiveness, 10);
+              const f = Number.parseInt(rubricFollowThrough, 10);
+              if (Number.isFinite(a) && a >= 1 && a <= 5) rubric.accessibility = a;
+              if (Number.isFinite(r) && r >= 1 && r <= 5) rubric.responsiveness = r;
+              if (Number.isFinite(f) && f >= 1 && f <= 5) rubric.followThrough = f;
+              return Object.keys(rubric).length > 0 ? rubric : undefined;
+            })(),
+          }
         : {}),
     };
 
@@ -817,6 +874,32 @@ export function VoiceReportForm({
         </div>
       ) : null}
 
+      {kind === "MP_PERFORMANCE" && ghanaCardVerified === true ? (
+        <p className="text-xs text-green-800">
+          <span className="rounded-full border border-green-200 bg-green-50 px-2 py-0.5 font-semibold">
+            Verified constituent
+          </span>
+          {ghanaCardLastFour ? (
+            <span className="ml-2 font-mono text-[var(--foreground-secondary)]">····{ghanaCardLastFour}</span>
+          ) : null}
+        </p>
+      ) : null}
+
+      {kind === "MP_PERFORMANCE" && ghanaCardVerified === false ? (
+        <div
+          className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950"
+          role="alert"
+        >
+          <p className="font-semibold">{str.mpGhanaCardGateTitle}</p>
+          <p className="mt-1">{str.mpGhanaCardGateBody}</p>
+          <p className="mt-2">
+            <Link href="/account" className={primaryLinkClass}>
+              {str.mpGhanaCardGateLink}
+            </Link>
+          </p>
+        </div>
+      ) : null}
+
       {kind === "MP_PERFORMANCE" && !lockKind ? (
         <div>
           <label htmlFor="parliament-member" className="block text-sm font-medium text-[var(--foreground)]">
@@ -842,6 +925,43 @@ export function VoiceReportForm({
             </p>
           ) : null}
         </div>
+      ) : null}
+
+      {kind === "MP_PERFORMANCE" ? (
+        <fieldset className="rounded-xl border border-[var(--border)] bg-[var(--section-light)]/40 px-4 py-4">
+          <legend className="px-1 text-sm font-medium text-[var(--foreground)]">
+            Optional performance scores (1–5)
+          </legend>
+          <p className="mb-3 text-xs text-[var(--foreground-secondary)]">
+            Rate your experience on accessibility, responsiveness, and follow-through — helps staff aggregate Index C
+            signals.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {(
+              [
+                ["rubric-accessibility", rubricAccessibility, setRubricAccessibility, "Accessibility"],
+                ["rubric-responsiveness", rubricResponsiveness, setRubricResponsiveness, "Responsiveness"],
+                ["rubric-follow-through", rubricFollowThrough, setRubricFollowThrough, "Follow-through"],
+              ] as const
+            ).map(([id, value, setter, label]) => (
+              <div key={id}>
+                <label htmlFor={id} className="block text-xs font-medium text-[var(--foreground-secondary)]">
+                  {label}
+                </label>
+                <input
+                  id={id}
+                  type="number"
+                  min={1}
+                  max={5}
+                  step={1}
+                  value={value}
+                  onChange={(e) => setter(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+            ))}
+          </div>
+        </fieldset>
       ) : null}
 
       {kind === "GOVERNMENT_PERFORMANCE" ? (
@@ -1069,6 +1189,7 @@ export function VoiceReportForm({
           (submitterWasAssisted !== "yes" && submitterWasAssisted !== "no") ||
           title.trim().length < TITLE_MIN_LEN ||
           body.trim().length < BODY_MIN_LEN ||
+          (kind === "MP_PERFORMANCE" && ghanaCardVerified === false) ||
           (kind === "MP_PERFORMANCE" && !lockKind && (!parliamentMemberId.trim() || mpOptions.length === 0))
         }
         size="lg"

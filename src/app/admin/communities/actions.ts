@@ -673,3 +673,42 @@ export async function resendCommunityStewardCredentialsAction(formData: FormData
   revalidatePath(base);
   stewardRedirect(`${base}?steward=resent`);
 }
+
+const updateCommunityDefaultMpSchema = z.object({
+  communityId: cuid,
+  defaultParliamentMemberId: z.preprocess(
+    (v) => (typeof v === "string" && v.trim().length ? v.trim() : null),
+    z.string().cuid().nullable(),
+  ),
+});
+
+export async function updateCommunityDefaultParliamentMemberAction(formData: FormData): Promise<void> {
+  await requireAdminSession();
+  const parsed = updateCommunityDefaultMpSchema.safeParse({
+    communityId: formData.get("communityId"),
+    defaultParliamentMemberId: formData.get("defaultParliamentMemberId"),
+  });
+  if (!parsed.success) return;
+
+  const community = await prisma.community.findUnique({
+    where: { id: parsed.data.communityId },
+    select: { id: true, slug: true },
+  });
+  if (!community) return;
+
+  if (parsed.data.defaultParliamentMemberId) {
+    const mp = await prisma.parliamentMember.findUnique({
+      where: { id: parsed.data.defaultParliamentMemberId, active: true },
+      select: { id: true },
+    });
+    if (!mp) return;
+  }
+
+  await prisma.community.update({
+    where: { id: community.id },
+    data: { defaultParliamentMemberId: parsed.data.defaultParliamentMemberId },
+  });
+
+  revalidatePath(`/admin/communities/${community.id}`);
+  revalidatePath(`/communities/${community.slug}/portal`);
+}

@@ -32,6 +32,9 @@ import type {
   CitizenReportKind,
   CitizenReportStatus,
 } from "@prisma/client";
+import { ReportCardEditorialPanel } from "@/components/admin/ReportCardEditorialPanel";
+import { buildReportCardEditorialHint } from "@/lib/server/report-card-editorial-hint";
+import { suggestIndexCFromRubric } from "@/lib/mp-rubric-index-c";
 import { reportKindLabel } from "@/lib/report-status-text";
 
 const STATUS_OPTIONS: { value: CitizenReportStatus; label: string }[] = [
@@ -64,7 +67,25 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
       region: true,
       constituency: true,
       parliamentMember: { select: { id: true, name: true, slug: true } },
-      member: { select: { id: true, email: true, displayName: true, phone: true } },
+      community: { select: { id: true, name: true, slug: true } },
+      councilMpEvaluation: {
+        select: {
+          id: true,
+          meetingDate: true,
+          signedAt: true,
+          signedBy: { select: { email: true, displayName: true } },
+        },
+      },
+      member: {
+        select: {
+          id: true,
+          email: true,
+          displayName: true,
+          phone: true,
+          ghanaCardVerificationStatus: true,
+          ghanaCardLastFour: true,
+        },
+      },
       attachments: { orderBy: { createdAt: "asc" } },
       publicCauseComments: {
         orderBy: { createdAt: "desc" },
@@ -83,6 +104,29 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
 
   if (!report) notFound();
 
+  const latestReportCardCycle =
+    report.kind === "MP_PERFORMANCE" && report.parliamentMember
+      ? await prisma.reportCardCycle.findFirst({
+          orderBy: { year: "desc" },
+          select: { id: true },
+        })
+      : null;
+
+  const reportCardHint =
+    report.kind === "MP_PERFORMANCE" && report.parliamentMember
+      ? buildReportCardEditorialHint({
+          trackingCode: report.trackingCode,
+          title: report.title,
+          body: report.body,
+          intakeSource: report.intakeSource,
+          experienceVerificationTier: report.experienceVerificationTier,
+          mpPerformanceRubric: report.mpPerformanceRubric,
+          staffNotes: report.staffNotes,
+          parliamentMember: report.parliamentMember,
+          community: report.community,
+        })
+      : null;
+
   const replyAuditLogs = await prisma.citizenReportAdminReplyAuditLog.findMany({
     where: { reportId: report.id },
     orderBy: { createdAt: "desc" },
@@ -91,6 +135,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
   });
 
   const slaOverdue = isCitizenReportSlaOverdue(report.slaDueAt, report.status);
+  const suggestedIndexC = suggestIndexCFromRubric(report.mpPerformanceRubric);
   const smsEligible = Boolean(
     report.submitterPhone?.trim().startsWith("+") || report.member?.phone?.trim().startsWith("+"),
   );
@@ -267,6 +312,14 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
           <dt className="inline font-medium text-[var(--foreground)]">Experience verification tier: </dt>
           <dd className="inline">{report.experienceVerificationTier.replace(/_/g, " ")}</dd>
         </div>
+        {report.kind === "MP_PERFORMANCE" ? (
+          <div>
+            <dt className="inline font-medium text-[var(--foreground)]">Intake source: </dt>
+            <dd className="inline">
+              {report.intakeSource === "COUNCIL_EVALUATION" ? "Council evaluation" : "Citizen Voice"}
+            </dd>
+          </div>
+        ) : null}
         {report.parliamentMember ? (
           <div>
             <dt className="inline font-medium text-[var(--foreground)]">Roster MP: </dt>
@@ -351,6 +404,25 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
             <dd className="inline font-mono text-sm">{report.member.phone}</dd>
           </div>
         ) : null}
+        {report.kind === "MP_PERFORMANCE" &&
+        report.intakeSource === "CITIZEN_VOICE" &&
+        report.member ? (
+          <div>
+            <dt className="inline font-medium text-[var(--foreground)]">Ghana Card: </dt>
+            <dd className="inline">
+              {report.member.ghanaCardVerificationStatus === "VERIFIED" ? (
+                <>
+                  Verified constituent
+                  {report.member.ghanaCardLastFour ? (
+                    <span className="ml-1 font-mono text-xs">····{report.member.ghanaCardLastFour}</span>
+                  ) : null}
+                </>
+              ) : (
+                report.member.ghanaCardVerificationStatus.replace(/_/g, " ")
+              )}
+            </dd>
+          </div>
+        ) : null}
         {report.category ? (
           <div>
             <dt className="inline font-medium text-[var(--foreground)]">Category: </dt>
@@ -361,6 +433,35 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
 
       {report.kind === "MP_PERFORMANCE" ? (
         <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
+          {report.intakeSource === "COUNCIL_EVALUATION" ? (
+            <div className="mb-5 rounded-lg border border-[var(--accent-gold)]/40 bg-[var(--accent-gold-light)]/25 px-4 py-3 text-sm">
+              <p className="font-semibold text-[var(--foreground)]">Council evaluation intake</p>
+              <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
+                Submitted from a Queen Mother council workspace — pre-tiered as corroborated institutional signal, not a
+                published Report Card score.
+              </p>
+              {report.community ? (
+                <p className="mt-2 text-xs">
+                  Community:{" "}
+                  <Link href={`/communities/${encodeURIComponent(report.community.slug)}/portal`} className={primaryLinkClass}>
+                    {report.community.name}
+                  </Link>
+                </p>
+              ) : null}
+              {report.councilMpEvaluation?.signedAt ? (
+                <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
+                  Queen Mother signed{" "}
+                  {report.councilMpEvaluation.signedAt.toLocaleString("en-GB", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  })}
+                  {report.councilMpEvaluation.signedBy
+                    ? ` · ${report.councilMpEvaluation.signedBy.displayName ?? report.councilMpEvaluation.signedBy.email}`
+                    : null}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
           <h2 className="text-sm font-semibold text-[var(--foreground)]">MP methodology signals</h2>
           <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
             Tier is staff-set (evidence ladder). Optional submitter rubric is stored as structured JSON from Citizens Voice.
@@ -396,6 +497,13 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
               <p className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
                 Submitter rubric (JSON)
               </p>
+              {suggestedIndexC != null ? (
+                <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
+                  Suggested Index C for editorial draft:{" "}
+                  <span className="font-semibold tabular-nums text-[var(--foreground)]">{suggestedIndexC}</span>
+                  {" "}(0–100 from rubric average)
+                </p>
+              ) : null}
               <pre className="mt-2 max-h-48 overflow-auto rounded-lg bg-[var(--section-light)] p-3 font-mono text-xs text-[var(--foreground)]">
                 {JSON.stringify(report.mpPerformanceRubric, null, 2)}
               </pre>
@@ -404,6 +512,14 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
             <p className="mt-4 text-sm text-[var(--foreground-secondary)]">No optional rubric fields on this intake.</p>
           )}
         </div>
+      ) : null}
+
+      {reportCardHint ? (
+        <ReportCardEditorialPanel
+          hint={reportCardHint}
+          cycleId={latestReportCardCycle?.id ?? null}
+          reportId={report.id}
+        />
       ) : null}
 
       <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">

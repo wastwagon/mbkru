@@ -90,4 +90,24 @@ describe("notification-labels", () => {
       memberNotificationHref("citizen_report_admin_reply_visible_again", { reportId: "r2" }),
     ).toBe("/account/reports/r2");
   });
+
+  it("summarizes ghana card verified notification", () => {
+    expect(memberNotificationSummary("ghana_card_verified", {})).toContain("Ghana Card");
+    expect(memberNotificationHref("ghana_card_verified", {})).toBe("/account#ghana-card-verify");
+    expect(memberNotificationLinkLabel("ghana_card_verified")).toBe("View account");
+  });
+
+  it("summarizes council MP evaluation submitted notification", () => {
+    expect(
+      memberNotificationSummary("COUNCIL_MP_EVALUATION_SUBMITTED", {
+        parliamentMemberName: "Hon. Ada",
+        trackingCode: "MP-1",
+        communityName: "Demo",
+      }),
+    ).toContain("Hon. Ada");
+    expect(
+      memberNotificationHref("COUNCIL_MP_EVALUATION_SUBMITTED", { communitySlug: "demo" }),
+    ).toBe("/communities/demo/portal#mp-evaluation");
+    expect(memberNotificationLinkLabel("COUNCIL_MP_EVALUATION_SUBMITTED")).toBe("Open council workspace");
+  });
 });

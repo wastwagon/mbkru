@@ -11,6 +11,7 @@ import {
   resendCommunityStewardCredentialsAction,
   setCommunityMembershipRoleAction,
   setCommunityMembershipStateAction,
+  updateCommunityDefaultParliamentMemberAction,
   updateCommunityForumAdminAction,
   updateCommunityPostReportStatusAction,
 } from "@/app/admin/communities/actions";
@@ -19,6 +20,7 @@ import { adminQueueActionDangerClass } from "@/lib/admin/admin-ui-classes";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
+import { loadMpOptionsForCommunityRegion } from "@/lib/server/council-mp-evaluation";
 import { listCommunityForums } from "@/lib/server/community-forums-public";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -36,6 +38,7 @@ export default async function AdminCommunityDetailPage({ params, searchParams }:
     where: { id },
     include: {
       region: { select: { name: true } },
+      defaultParliamentMember: { select: { id: true, name: true } },
       memberships: {
         where: { state: "PENDING_JOIN" },
         orderBy: { createdAt: "asc" },
@@ -45,6 +48,8 @@ export default async function AdminCommunityDetailPage({ params, searchParams }:
   });
 
   if (!community) notFound();
+
+  const mpOptions = await loadMpOptionsForCommunityRegion(community.regionId);
 
   const forums = await listCommunityForums(community.id);
   const forumIds = forums.map((f) => f.id);
@@ -139,6 +144,47 @@ export default async function AdminCommunityDetailPage({ params, searchParams }:
           </div>
         ) : null}
       </dl>
+
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-5">
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">Default MP for council evaluation</h2>
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
+          Pre-selects the MP in the council workspace evaluation form for this community. Leave unset to require manual
+          selection each time.
+        </p>
+        {community.defaultParliamentMember ? (
+          <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
+            Current:{" "}
+            <span className="font-medium text-[var(--foreground)]">{community.defaultParliamentMember.name}</span>
+          </p>
+        ) : null}
+        <form action={updateCommunityDefaultParliamentMemberAction} className="mt-4 flex flex-wrap items-end gap-3">
+          <input type="hidden" name="communityId" value={community.id} />
+          <div className="min-w-[16rem] flex-1">
+            <label htmlFor="defaultParliamentMemberId" className="block text-xs font-medium">
+              Parliament member
+            </label>
+            <select
+              id="defaultParliamentMemberId"
+              name="defaultParliamentMemberId"
+              defaultValue={community.defaultParliamentMemberId ?? ""}
+              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            >
+              <option value="">— None (manual select) —</option>
+              {mpOptions.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button
+            type="submit"
+            className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-2 text-sm font-medium hover:bg-[var(--muted)]"
+          >
+            Save default MP
+          </button>
+        </form>
+      </section>
 
       {community.status === "ACTIVE" ? (
         <p className="mt-4 text-sm">

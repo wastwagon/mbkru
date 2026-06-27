@@ -4,10 +4,12 @@ import type { Metadata } from "next";
 import type { CommunityPostKind } from "@prisma/client";
 
 import { CommunityMemberPanel } from "@/components/communities/CommunityMemberPanel";
+import { CouncilMpEvaluationSection } from "@/components/communities/CouncilMpEvaluationSection";
 import { CommunityThreadCard } from "@/components/communities/CommunityThreadCard";
 import { CommunityOnlinePresence } from "@/components/member/CommunityOnlinePresence";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
+import { canManageCommunityAffairs } from "@/lib/communities/community-affairs-roles";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { getMemberSession } from "@/lib/member/session";
 import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
@@ -19,6 +21,10 @@ import {
 } from "@/lib/server/communities-access";
 import { findCommunityForumBySlug } from "@/lib/server/community-forums-public";
 import { listCommunityPostsVisibleToViewer } from "@/lib/server/community-posts-public";
+import {
+  listCouncilMpEvaluationsForCommunity,
+  loadMpOptionsForCommunityRegion,
+} from "@/lib/server/council-mp-evaluation";
 import { isCommunitySlug } from "@/lib/validation/communities";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -70,7 +76,16 @@ export default async function CommunityCouncilPortalPage({ params }: Props) {
 
   const c = await prisma.community.findFirst({
     where: { slug, status: "ACTIVE" },
-    include: {
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      description: true,
+      joinPolicy: true,
+      visibility: true,
+      traditionalAreaName: true,
+      regionId: true,
+      defaultParliamentMemberId: true,
       region: { select: { name: true } },
       _count: { select: { memberships: true } },
     },
@@ -112,6 +127,16 @@ export default async function CommunityCouncilPortalPage({ params }: Props) {
 
   const memberAccountsEnabled = platformFeatures.authentication(getServerPlatformPhase());
 
+  const isLeadership =
+    membership?.state === "ACTIVE" && membership.role && canManageCommunityAffairs(membership.role);
+
+  const [councilEvaluations, mpOptions] = isLeadership
+    ? await Promise.all([
+        listCouncilMpEvaluationsForCommunity(c.id),
+        loadMpOptionsForCommunityRegion(c.regionId),
+      ])
+    : [[], []];
+
   const portalPath = `/communities/${encodeURIComponent(c.slug)}/portal`;
 
   return (
@@ -150,6 +175,16 @@ export default async function CommunityCouncilPortalPage({ params }: Props) {
           <Link href="#discussion" className={`${primaryNavLinkClass} font-medium`}>
             Discussion
           </Link>
+          {isLeadership ? (
+            <>
+              <span className="text-[var(--foreground-secondary)]/40" aria-hidden>
+                ·
+              </span>
+              <Link href="#mp-evaluation" className={`${primaryNavLinkClass} font-medium`}>
+                MP evaluation
+              </Link>
+            </>
+          ) : null}
           <span className="ml-auto text-xs text-[var(--foreground-secondary)]">
             <Link href={`/communities/${encodeURIComponent(c.slug)}`} className={primaryNavLinkClass}>
               Community overview →
@@ -181,6 +216,12 @@ export default async function CommunityCouncilPortalPage({ params }: Props) {
                 <strong className="text-[var(--foreground)]">Council discussion</strong> — everyday dialogue with traditional
                 council members and others who join this community.
               </li>
+              {isLeadership ? (
+                <li>
+                  <strong className="text-[var(--foreground)]">MP evaluation</strong> — record development meetings with your MP,
+                  score performance, and submit institutional assessments to MBKRU staff (Queen Mother sign-off required).
+                </li>
+              ) : null}
             </ul>
             {c.region ? (
               <p className="mt-3 text-xs text-[var(--foreground-secondary)]">
@@ -205,6 +246,16 @@ export default async function CommunityCouncilPortalPage({ params }: Props) {
               signInReturnPath={portalPath}
             />
           </section>
+
+          {isLeadership ? (
+            <CouncilMpEvaluationSection
+              communitySlug={c.slug}
+              isQueenMother={membership!.role === "QUEEN_MOTHER_VERIFIED"}
+              mpOptions={mpOptions}
+              defaultParliamentMemberId={c.defaultParliamentMemberId}
+              evaluations={councilEvaluations}
+            />
+          ) : null}
 
           <PortalFeedSection
             id="concerns"

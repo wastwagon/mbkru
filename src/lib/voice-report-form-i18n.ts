@@ -55,6 +55,9 @@ export type VoiceReportFormStrings = {
   mpLabel: string;
   mpPlaceholder: string;
   mpRosterUnavailable: string;
+  mpGhanaCardGateTitle: string;
+  mpGhanaCardGateBody: string;
+  mpGhanaCardGateLink: string;
   govNoteTitle: string;
   govNoteBody: string;
   govNoteBody2Before: string;
@@ -154,6 +157,10 @@ const BASE_EN: VoiceReportFormStrings = {
   mpPlaceholder: "Select an MP from the roster…",
   mpRosterUnavailable:
     "MP roster is unavailable (database or configuration). You cannot submit an MP performance report until the roster loads — refresh the page or try again later.",
+  mpGhanaCardGateTitle: "Ghana Card verification required",
+  mpGhanaCardGateBody:
+    "MP performance reports must come from a verified Ghana Card holder. Verify on your account page — we check against NIA via Hubtel and do not store your full card number.",
+  mpGhanaCardGateLink: "Verify Ghana Card on your account",
   govNoteTitle: "Government performance",
   govNoteBody:
     "Use this for ministry, agency, or programme delivery you want documented — facts and observed outcomes, not speculation. MBKRU triages submissions; use official agency channels where you need a binding government response.",

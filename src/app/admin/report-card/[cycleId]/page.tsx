@@ -8,14 +8,23 @@ import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
+import { buildReportCardEditorialHint } from "@/lib/server/report-card-editorial-hint";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { reportCardPublicVersusStoredLabel } from "@/lib/report-card-public-label";
 
-type Props = { params: Promise<{ cycleId: string }> };
+type Props = {
+  params: Promise<{ cycleId: string }>;
+  searchParams?: Promise<{
+    memberId?: string;
+    indexCScore?: string;
+    fromReportId?: string;
+  }>;
+};
 
-export default async function AdminReportCardCyclePage({ params }: Props) {
+export default async function AdminReportCardCyclePage({ params, searchParams }: Props) {
   await requireAdminSession();
   const { cycleId } = await params;
+  const sp = (await searchParams) ?? {};
 
   const cycle = await prisma.reportCardCycle.findUnique({
     where: { id: cycleId },
@@ -28,6 +37,38 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
   });
 
   if (!cycle) notFound();
+
+  let prefillMemberId = typeof sp.memberId === "string" ? sp.memberId.trim() : "";
+  let prefillNarrative = "";
+  let prefillIndexC = typeof sp.indexCScore === "string" ? sp.indexCScore.trim() : "";
+
+  if (typeof sp.fromReportId === "string" && sp.fromReportId.trim()) {
+    const sourceReport = await prisma.citizenReport.findUnique({
+      where: { id: sp.fromReportId.trim() },
+      select: {
+        id: true,
+        trackingCode: true,
+        title: true,
+        body: true,
+        intakeSource: true,
+        experienceVerificationTier: true,
+        mpPerformanceRubric: true,
+        staffNotes: true,
+        parliamentMember: { select: { id: true, name: true } },
+        community: { select: { name: true } },
+      },
+    });
+    if (sourceReport?.parliamentMember) {
+      const hint = buildReportCardEditorialHint(sourceReport);
+      if (hint) {
+        if (!prefillMemberId) prefillMemberId = hint.parliamentMemberId;
+        prefillNarrative = hint.suggestedNarrative;
+        if (!prefillIndexC && hint.suggestedIndexC != null) {
+          prefillIndexC = String(hint.suggestedIndexC);
+        }
+      }
+    }
+  }
 
   const { publicTitle, storedLabel, showStoredLine } = reportCardPublicVersusStoredLabel(cycle.year, cycle.label);
 
@@ -98,6 +139,11 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
           &quot;Set headline from triple&quot; overwrites the overall score with 0.5·A + 0.35·B + 0.15·C when all three
           are filled. Metrics remain optional structured JSON.
         </p>
+        {prefillNarrative ? (
+          <p className="mt-3 rounded-lg border border-[var(--accent-gold)]/30 bg-[var(--accent-gold-light)]/20 px-3 py-2 text-xs text-[var(--foreground-secondary)]">
+            Prefilled from MP performance report — review and edit before saving.
+          </p>
+        ) : null}
         <form action={upsertScorecardEntryAction} className="mt-4 space-y-3">
           <input type="hidden" name="cycleId" value={cycle.id} />
           <div>
@@ -108,6 +154,7 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
               id="memberId"
               name="memberId"
               required
+              defaultValue={prefillMemberId}
               className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             >
               <option value="">— Select —</option>
@@ -127,6 +174,7 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
               name="narrative"
               rows={4}
               maxLength={100000}
+              defaultValue={prefillNarrative}
               className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             />
           </div>
@@ -164,6 +212,7 @@ export default async function AdminReportCardCyclePage({ params }: Props) {
                 name="indexCScore"
                 type="text"
                 inputMode="decimal"
+                defaultValue={prefillIndexC}
                 className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
               />
             </div>

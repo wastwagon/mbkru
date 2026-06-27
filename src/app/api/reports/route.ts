@@ -8,6 +8,7 @@ import { allocateTrackingCode } from "@/lib/server/allocate-tracking-code";
 import { signReportAttachmentScope } from "@/lib/server/report-upload-token";
 import { allowPublicFormRequest } from "@/lib/server/rate-limit";
 import { requireTurnstileIfConfigured } from "@/lib/server/verify-turnstile";
+import { assertMpPerformanceSubmitAllowed } from "@/lib/server/member-ghana-card";
 import { prisma } from "@/lib/db/prisma";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { roundApproximateCoord } from "@/lib/geo/round-approximate-coord";
@@ -60,6 +61,12 @@ export async function POST(request: Request) {
       }
       parliamentMemberId = rosterMp.id;
       parliamentMemberSlug = rosterMp.slug;
+
+      const mpGate = await assertMpPerformanceSubmitAllowed(member.memberId, rosterMp.id);
+      if (!mpGate.ok) {
+        return NextResponse.json({ error: mpGate.message, code: mpGate.code }, { status: mpGate.status });
+      }
+
       if (rosterMp.constituencyId) {
         const c = await prisma.constituency.findUnique({
           where: { id: rosterMp.constituencyId },

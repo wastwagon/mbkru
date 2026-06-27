@@ -27,6 +27,9 @@ export async function GET() {
       phone: true,
       regionId: true,
       createdAt: true,
+      ghanaCardVerificationStatus: true,
+      ghanaCardVerifiedAt: true,
+      ghanaCardLastFour: true,
     },
   });
 

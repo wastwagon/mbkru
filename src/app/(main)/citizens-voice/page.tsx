@@ -30,7 +30,7 @@ const keyBenefits = [
     ),
     title: "Secure Registration",
     description:
-      "Register with email and password today. Stronger identity checks (e.g. Ghana Card reference) may be added as the programme and law allow — your data is used only for civic engagement.",
+      "Register with email and password. MP performance reports require Ghana Card verification on your account (Hubtel / NIA check). Other Voice intakes stay open to signed-in members.",
   },
   {
     icon: (

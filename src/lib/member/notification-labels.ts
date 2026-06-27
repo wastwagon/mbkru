@@ -61,6 +61,16 @@ export function memberNotificationSummary(type: string, payload: unknown): strin
         ? `Someone ${verb} your comment on Voice report ${code}.`
         : `Someone ${verb} your comment on a Voice report discussion.`;
     }
+    case "ghana_card_verified":
+      return "Your Ghana Card is verified — you can submit MP performance reports as a verified constituent.";
+    case "COUNCIL_MP_EVALUATION_SUBMITTED": {
+      const mp = String(p.parliamentMemberName ?? "your MP").trim();
+      const code = String(p.trackingCode ?? "").trim();
+      const community = String(p.communityName ?? "your community").trim();
+      return code
+        ? `Council MP evaluation for ${mp} was signed and sent to staff (${code}) — ${community}.`
+        : `Council MP evaluation for ${mp} was signed and sent to staff — ${community}.`;
+    }
     default:
       return type;
   }
@@ -101,6 +111,13 @@ export function memberNotificationHref(type: string, payload: unknown): string |
     if (typeof rid === "string" && rid.trim()) return `/citizens-voice/discussions/${rid.trim()}`;
     return "/report-card";
   }
+  if (type === "ghana_card_verified") return "/account#ghana-card-verify";
+  if (type === "COUNCIL_MP_EVALUATION_SUBMITTED") {
+    const p = payload as Record<string, unknown>;
+    const slug = typeof p.communitySlug === "string" ? p.communitySlug.trim() : "";
+    if (slug) return `/communities/${slug}/portal#mp-evaluation`;
+    return null;
+  }
   const p = payload as Record<string, unknown>;
   const slug = p.communitySlug;
   if (typeof slug !== "string" || !slug.trim()) return null;
@@ -123,5 +140,7 @@ export function memberNotificationLinkLabel(type: string): string {
   if (type === "citizen_report_discussion_comment" || type === "citizen_report_discussion_reaction") {
     return "Open discussion";
   }
+  if (type === "ghana_card_verified") return "View account";
+  if (type === "COUNCIL_MP_EVALUATION_SUBMITTED") return "Open council workspace";
   return "Open community";
 }

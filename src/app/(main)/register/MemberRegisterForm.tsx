@@ -118,7 +118,11 @@ export function MemberRegisterForm() {
         setError(data.error ?? "Registration failed.");
         return;
       }
-      router.push(postAuthPath);
+      router.push(
+        postAuthPath.includes("?")
+          ? `${postAuthPath}&welcome=1`
+          : `${postAuthPath}?welcome=1`,
+      );
       router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");

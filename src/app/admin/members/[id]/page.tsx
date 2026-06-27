@@ -29,6 +29,12 @@ export default async function AdminMemberDetailPage({ params }: Props) {
       identityVerifiedAt: true,
       identityReviewRequestedAt: true,
       identityReviewRequestMessage: true,
+      ghanaCardVerificationStatus: true,
+      ghanaCardVerifiedAt: true,
+      ghanaCardLastFour: true,
+      ghanaCardLegalSurname: true,
+      ghanaCardLegalForenames: true,
+      ghanaCardHubtelRef: true,
       region: { select: { name: true } },
     },
   });
@@ -121,6 +127,45 @@ export default async function AdminMemberDetailPage({ params }: Props) {
             Save
           </button>
         </form>
+      </section>
+
+      <section className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">Ghana Card (Hubtel)</h2>
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
+          Automated NIA check for MP performance submit gate. Full card number is never stored — hash + last four only.
+        </p>
+        <dl className="mt-4 space-y-2 text-sm">
+          <div>
+            <dt className="text-xs font-medium text-[var(--foreground-secondary)]">Status</dt>
+            <dd>{member.ghanaCardVerificationStatus}</dd>
+          </div>
+          {member.ghanaCardVerifiedAt ? (
+            <div>
+              <dt className="text-xs font-medium text-[var(--foreground-secondary)]">Verified at</dt>
+              <dd>{member.ghanaCardVerifiedAt.toLocaleString("en-GB")}</dd>
+            </div>
+          ) : null}
+          {member.ghanaCardLastFour ? (
+            <div>
+              <dt className="text-xs font-medium text-[var(--foreground-secondary)]">Last four</dt>
+              <dd>{member.ghanaCardLastFour}</dd>
+            </div>
+          ) : null}
+          {member.ghanaCardLegalSurname ? (
+            <div>
+              <dt className="text-xs font-medium text-[var(--foreground-secondary)]">Legal name (NIA)</dt>
+              <dd>
+                {member.ghanaCardLegalForenames} {member.ghanaCardLegalSurname}
+              </dd>
+            </div>
+          ) : null}
+          {member.ghanaCardHubtelRef ? (
+            <div>
+              <dt className="text-xs font-medium text-[var(--foreground-secondary)]">Hubtel reference</dt>
+              <dd className="font-mono text-xs">{member.ghanaCardHubtelRef}</dd>
+            </div>
+          ) : null}
+        </dl>
       </section>
 
       {member.identityVerifiedAt && member.identityVerificationStatus === "VERIFIED" ? (

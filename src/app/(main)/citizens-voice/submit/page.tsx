@@ -6,7 +6,9 @@ import { AccountabilityDisclaimerCallout } from "@/components/legal/Accountabili
 export const dynamic = "force-dynamic";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
+import { getMemberSession } from "@/lib/member/session";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
+import { findDefaultMpForMember } from "@/lib/server/member-default-mp";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 
 export default async function SubmitVoiceReportPage() {
@@ -32,6 +34,9 @@ export default async function SubmitVoiceReportPage() {
     id: m.id,
     label: `${m.name}${m.party ? ` · ${m.party}` : ""}${m.constituency?.name ? ` · ${m.constituency.name}` : ""}`,
   }));
+
+  const session = await getMemberSession();
+  const defaultMp = session ? await findDefaultMpForMember(session.memberId) : null;
 
   return (
     <div>
@@ -59,7 +64,11 @@ export default async function SubmitVoiceReportPage() {
             </Link>
           </p>
           <AccountabilityDisclaimerCallout variant="voiceSubmit" className="mb-8" />
-          <VoiceReportForm regions={regions} mpOptions={mpOptions} />
+          <VoiceReportForm
+            regions={regions}
+            mpOptions={mpOptions}
+            defaultParliamentMemberId={defaultMp?.id ?? null}
+          />
         </div>
       </section>
     </div>

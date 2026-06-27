@@ -20,6 +20,7 @@ export default async function AdminMembersPage() {
       createdAt: true,
       identityVerificationStatus: true,
       identityVerifiedAt: true,
+      ghanaCardVerificationStatus: true,
       region: { select: { name: true } },
     },
   });
@@ -32,7 +33,7 @@ export default async function AdminMembersPage() {
           <>
             <p>Public accounts that use Voice and related tools.</p>
             <p className="mt-2">
-              Identity status is staff-controlled in this console (not Ghana Card upload in this MVP). Showing the latest
+              Identity status is staff-controlled programme review (separate from Ghana Card Hubtel verification). Showing the latest
               200 signups.
             </p>
           </>
@@ -55,6 +56,9 @@ export default async function AdminMembersPage() {
                 <p className="mt-1 text-xs">
                   <span className="rounded-full bg-[var(--section-light)] px-2 py-0.5 font-semibold text-[var(--foreground)]">
                     {m.identityVerificationStatus}
+                  </span>
+                  <span className="ml-2 rounded-full bg-[var(--section-light)] px-2 py-0.5 font-semibold text-[var(--foreground)]">
+                    Ghana Card: {m.ghanaCardVerificationStatus}
                   </span>
                   {m.identityVerifiedAt ? (
                     <span className="ml-2 text-[var(--foreground-secondary)]">

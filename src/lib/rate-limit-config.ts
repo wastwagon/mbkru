@@ -27,3 +27,16 @@ export function parseGeoReverseRateLimitMax(envValue: string | undefined): numbe
   const raw = parsed === 0 || Number.isNaN(parsed) ? 20 : parsed;
   return Math.min(Math.max(raw, 5), 120);
 }
+
+/** Ghana Card verify — stricter per IP (Hubtel cost + abuse prevention). */
+export function parseGhanaCardVerifyRateLimitWindowMs(envValue: string | undefined): number {
+  const parsed = Number(envValue);
+  const raw = parsed === 0 || Number.isNaN(parsed) ? 3_600_000 : parsed;
+  return Math.min(Math.max(raw, 60_000), 86_400_000);
+}
+
+export function parseGhanaCardVerifyRateLimitMax(envValue: string | undefined): number {
+  const parsed = Number(envValue);
+  const raw = parsed === 0 || Number.isNaN(parsed) ? 5 : parsed;
+  return Math.min(Math.max(raw, 1), 30);
+}

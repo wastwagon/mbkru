@@ -7,6 +7,8 @@ import { hasRedisUrl } from "@/lib/env.server";
 import {
   parseGeoReverseRateLimitMax,
   parseGeoReverseRateLimitWindowMs,
+  parseGhanaCardVerifyRateLimitMax,
+  parseGhanaCardVerifyRateLimitWindowMs,
   parseRateLimitMax,
   parseRateLimitWindowMs,
 } from "@/lib/rate-limit-config";
@@ -15,6 +17,12 @@ const WINDOW_MS = parseRateLimitWindowMs(process.env.RATE_LIMIT_WINDOW_MS);
 const MAX_PER_WINDOW = parseRateLimitMax(process.env.RATE_LIMIT_MAX);
 const GEO_WINDOW_MS = parseGeoReverseRateLimitWindowMs(process.env.RATE_LIMIT_GEO_REVERSE_WINDOW_MS);
 const GEO_MAX_PER_WINDOW = parseGeoReverseRateLimitMax(process.env.RATE_LIMIT_GEO_REVERSE_MAX);
+const GHANA_CARD_WINDOW_MS = parseGhanaCardVerifyRateLimitWindowMs(
+  process.env.RATE_LIMIT_GHANA_CARD_VERIFY_WINDOW_MS,
+);
+const GHANA_CARD_MAX_PER_WINDOW = parseGhanaCardVerifyRateLimitMax(
+  process.env.RATE_LIMIT_GHANA_CARD_VERIFY_MAX,
+);
 
 let redis: Redis | null = null;
 
@@ -35,6 +43,7 @@ type Bucket = string;
 
 const memoryBuckets = new Map<string, { count: number; resetAt: number }>();
 const memoryGeoBuckets = new Map<string, { count: number; resetAt: number }>();
+const memoryGhanaCardBuckets = new Map<string, { count: number; resetAt: number }>();
 
 function memoryAllow(key: Bucket): boolean {
   const now = Date.now();
@@ -56,6 +65,18 @@ function memoryAllowGeo(key: Bucket): boolean {
     return true;
   }
   if (cur.count >= GEO_MAX_PER_WINDOW) return false;
+  cur.count += 1;
+  return true;
+}
+
+function memoryAllowGhanaCard(key: Bucket): boolean {
+  const now = Date.now();
+  const cur = memoryGhanaCardBuckets.get(key);
+  if (!cur || now >= cur.resetAt) {
+    memoryGhanaCardBuckets.set(key, { count: 1, resetAt: now + GHANA_CARD_WINDOW_MS });
+    return true;
+  }
+  if (cur.count >= GHANA_CARD_MAX_PER_WINDOW) return false;
   cur.count += 1;
   return true;
 }
@@ -83,6 +104,19 @@ async function redisAllowGeo(key: Bucket): Promise<boolean> {
     return n <= GEO_MAX_PER_WINDOW;
   } catch {
     return memoryAllowGeo(key);
+  }
+}
+
+async function redisAllowGhanaCard(key: Bucket): Promise<boolean> {
+  const client = getRedis();
+  if (!client) return memoryAllowGhanaCard(key);
+  const k = `mbkru:rl:ghcard:${key}`;
+  try {
+    const n = await client.incr(k);
+    if (n === 1) await client.pexpire(k, GHANA_CARD_WINDOW_MS);
+    return n <= GHANA_CARD_MAX_PER_WINDOW;
+  } catch {
+    return memoryAllowGhanaCard(key);
   }
 }
 
@@ -118,4 +152,12 @@ export async function allowGeoReverseRequest(request: Request): Promise<boolean>
   const bucket = `geo-reverse:${ip}`;
   if (hasRedisUrl()) return redisAllowGeo(bucket);
   return memoryAllowGeo(bucket);
+}
+
+/** Hubtel Ghana Card verify — per IP + member id (authenticated). */
+export async function allowGhanaCardVerifyRequest(request: Request, memberId: string): Promise<boolean> {
+  const ip = getClientIp(request);
+  const bucket = `ghana-card-verify:${memberId}:${ip}`;
+  if (hasRedisUrl()) return redisAllowGhanaCard(bucket);
+  return memoryAllowGhanaCard(bucket);
 }
