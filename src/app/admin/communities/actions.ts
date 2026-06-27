@@ -1,18 +1,20 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
 import {
-  bumpThreadRootAfterReplyPublished,
-  notifyThreadAuthorOfPublishedReply,
-} from "@/lib/server/community-thread-reply-notify";
+  approvePendingCommunityMembership,
+  publishPendingCommunityPost,
+  rejectPendingCommunityPost,
+  revalidateCommunityModerationPaths,
+} from "@/lib/server/community-moderation-ops";
+import { provisionCommunitySteward, resendCommunityStewardCredentials } from "@/lib/server/community-steward-provision";
+import { logAdminOperationalAudit } from "@/lib/server/admin-operational-audit";
 import {
-  enqueueCommunityJoinApprovedDelivery,
-  enqueueCommunityPostPublishedDelivery,
-  enqueueCommunityPostRejectedDelivery,
   enqueueCommunityVerificationOutcomeDelivery,
 } from "@/lib/server/community-member-transactional-outbox";
 import { createMemberNotification } from "@/lib/server/member-notifications";
@@ -117,32 +119,13 @@ export async function approveCommunityMembershipAction(formData: FormData): Prom
     .safeParse({ membershipId: formData.get("membershipId"), communityId: formData.get("communityId") });
   if (!m.success) return;
 
-  const row = await prisma.communityMembership.findFirst({
-    where: {
-      id: m.data.membershipId,
-      communityId: m.data.communityId,
-      state: "PENDING_JOIN",
-    },
-    include: { community: { select: { slug: true, name: true } } },
-  });
-  if (!row) return;
-
-  await prisma.communityMembership.update({
-    where: { id: row.id },
-    data: { state: "ACTIVE" },
-  });
-
-  await createMemberNotification(row.memberId, "community_join_approved", {
-    communitySlug: row.community.slug,
-    communityName: row.community.name,
-  });
-
-  await enqueueCommunityJoinApprovedDelivery(row.memberId, row.community.name, row.community.slug);
-  await processNotificationOutboxBatch(12);
+  const result = await approvePendingCommunityMembership(m.data.membershipId, m.data.communityId);
+  if (!result.ok) return;
 
   revalidatePath(`/admin/communities/${m.data.communityId}`);
   revalidatePath("/admin/communities");
-  revalidatePath(`/communities/${row.community.slug}`);
+  revalidatePath(`/communities/${result.communitySlug}`);
+  revalidatePath(`/communities/${result.communitySlug}/manage`);
 }
 
 export async function publishCommunityPostAction(formData: FormData): Promise<void> {
@@ -153,57 +136,14 @@ export async function publishCommunityPostAction(formData: FormData): Promise<vo
     .safeParse({ postId: formData.get("postId"), communityId: formData.get("communityId") });
   if (!p.success) return;
 
-  const post = await prisma.communityPost.findFirst({
-    where: {
-      id: p.data.postId,
-      communityId: p.data.communityId,
-      moderationStatus: "PENDING",
-    },
-    select: {
-      id: true,
-      authorMemberId: true,
-      parentPostId: true,
-      community: { select: { slug: true, name: true } },
-    },
+  const result = await publishPendingCommunityPost(p.data.postId, p.data.communityId, adminId);
+  if (!result.ok) return;
+
+  revalidateCommunityModerationPaths(p.data.communityId, result.communitySlug, {
+    revalidatePath,
+    postId: p.data.postId,
+    parentPostId: result.parentPostId,
   });
-  if (!post) return;
-
-  await prisma.communityPost.update({
-    where: { id: post.id },
-    data: {
-      moderationStatus: "PUBLISHED",
-      moderatedAt: new Date(),
-      moderatedByAdminId: adminId,
-    },
-  });
-
-  await createMemberNotification(post.authorMemberId, "community_post_published", {
-    postId: post.id,
-    communitySlug: post.community.slug,
-  });
-
-  await enqueueCommunityPostPublishedDelivery(post.authorMemberId, post.id, post.community.slug);
-
-  if (post.parentPostId) {
-    await bumpThreadRootAfterReplyPublished(post.parentPostId);
-  }
-  await notifyThreadAuthorOfPublishedReply({
-    replyPostId: post.id,
-    replyAuthorMemberId: post.authorMemberId,
-    communitySlug: post.community.slug,
-    communityName: post.community.name,
-    parentPostId: post.parentPostId,
-  });
-
-  await processNotificationOutboxBatch(15);
-
-  revalidatePath(`/admin/communities/${p.data.communityId}`);
-  revalidatePath("/admin/communities/moderation");
-  revalidatePath(`/communities/${post.community.slug}`);
-  revalidatePath(`/communities/${post.community.slug}/post/${post.id}`);
-  if (post.parentPostId) {
-    revalidatePath(`/communities/${post.community.slug}/post/${post.parentPostId}`);
-  }
 }
 
 export async function rejectCommunityPostAction(formData: FormData): Promise<void> {
@@ -216,48 +156,13 @@ export async function rejectCommunityPostAction(formData: FormData): Promise<voi
     .safeParse({ postId: formData.get("postId"), communityId: formData.get("communityId") });
   if (!p.success) return;
 
-  const post = await prisma.communityPost.findFirst({
-    where: {
-      id: p.data.postId,
-      communityId: p.data.communityId,
-      moderationStatus: "PENDING",
-    },
-    select: {
-      id: true,
-      authorMemberId: true,
-      community: { select: { slug: true } },
-    },
+  const result = await rejectPendingCommunityPost(p.data.postId, p.data.communityId, reason, adminId);
+  if (!result.ok) return;
+
+  revalidateCommunityModerationPaths(p.data.communityId, result.communitySlug, {
+    revalidatePath,
+    postId: p.data.postId,
   });
-  if (!post) return;
-
-  await prisma.communityPost.update({
-    where: { id: post.id },
-    data: {
-      moderationStatus: "REJECTED",
-      moderatedAt: new Date(),
-      moderatedByAdminId: adminId,
-      rejectionReason: reason.length ? reason : null,
-    },
-  });
-
-  await createMemberNotification(post.authorMemberId, "community_post_rejected", {
-    postId: post.id,
-    communitySlug: post.community.slug,
-    reason: reason.length ? reason : null,
-  });
-
-  await enqueueCommunityPostRejectedDelivery(
-    post.authorMemberId,
-    post.id,
-    post.community.slug,
-    reason.length ? reason : null,
-  );
-  await processNotificationOutboxBatch(12);
-
-  revalidatePath(`/admin/communities/${p.data.communityId}`);
-  revalidatePath("/admin/communities/moderation");
-  revalidatePath(`/communities/${post.community.slug}`);
-  revalidatePath(`/communities/${post.community.slug}/post/${post.id}`);
 }
 
 const membershipRoleSchema = z.enum(["MEMBER", "MODERATOR", "QUEEN_MOTHER_VERIFIED"]);
@@ -663,4 +568,108 @@ export async function deleteCommunityForumAdminAction(formData: FormData): Promi
     revalidatePath(`/communities/${c.slug}`);
     revalidatePath(`/communities/${c.slug}/forums`);
   }
+}
+
+const stewardRoleSchema = z.enum(["MODERATOR", "QUEEN_MOTHER_VERIFIED"]);
+
+function stewardRedirect(path: string): never {
+  redirect(path);
+}
+
+export async function provisionCommunityStewardAction(formData: FormData): Promise<void> {
+  const session = await requireAdminSession();
+
+  const parsed = z
+    .object({
+      communityId: cuid,
+      email: z.string().trim().toLowerCase().email().max(320),
+      displayName: z.string().trim().max(120).optional(),
+      role: stewardRoleSchema,
+    })
+    .safeParse({
+      communityId: formData.get("communityId"),
+      email: formData.get("email"),
+      displayName: String(formData.get("displayName") ?? "").trim() || undefined,
+      role: formData.get("role"),
+    });
+
+  const communityId = String(formData.get("communityId") ?? "");
+  const base = `/admin/communities/${communityId}`;
+
+  if (!parsed.success) {
+    stewardRedirect(`${base}?steward=invalid`);
+  }
+
+  const result = await provisionCommunitySteward({
+    communityId: parsed.data.communityId,
+    email: parsed.data.email,
+    displayName: parsed.data.displayName,
+    role: parsed.data.role,
+  });
+
+  if (!result.ok) {
+    stewardRedirect(`${base}?steward=${result.code}`);
+  }
+
+  await logAdminOperationalAudit({
+    adminId: session.adminId,
+    action: "community_steward_provisioned",
+    details: {
+      communityId: parsed.data.communityId,
+      memberId: result.memberId,
+      email: result.email,
+      role: parsed.data.role,
+      createdMember: result.createdMember,
+    },
+  });
+
+  revalidatePath(base);
+  revalidatePath(`/communities/${result.communitySlug}`);
+  revalidatePath(`/communities/${result.communitySlug}/manage`);
+  revalidatePath(`/communities/${result.communitySlug}/portal`);
+
+  stewardRedirect(`${base}?steward=sent`);
+}
+
+export async function resendCommunityStewardCredentialsAction(formData: FormData): Promise<void> {
+  const session = await requireAdminSession();
+
+  const parsed = z
+    .object({
+      communityId: cuid,
+      memberId: cuid,
+    })
+    .safeParse({
+      communityId: formData.get("communityId"),
+      memberId: formData.get("memberId"),
+    });
+
+  const communityId = String(formData.get("communityId") ?? "");
+  const base = `/admin/communities/${communityId}`;
+
+  if (!parsed.success) {
+    stewardRedirect(`${base}?steward=invalid`);
+  }
+
+  const result = await resendCommunityStewardCredentials({
+    communityId: parsed.data.communityId,
+    memberId: parsed.data.memberId,
+  });
+
+  if (!result.ok) {
+    stewardRedirect(`${base}?steward=${result.code}`);
+  }
+
+  await logAdminOperationalAudit({
+    adminId: session.adminId,
+    action: "community_steward_credentials_resent",
+    details: {
+      communityId: parsed.data.communityId,
+      memberId: result.memberId,
+      email: result.email,
+    },
+  });
+
+  revalidatePath(base);
+  stewardRedirect(`${base}?steward=resent`);
 }

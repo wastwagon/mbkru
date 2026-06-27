@@ -292,7 +292,7 @@ export function CommunityMemberPanel({
 
       {!authRequired && membership?.state === "PENDING_JOIN" ? (
         <p className="mt-3 text-sm text-[var(--foreground-secondary)]">
-          Your join request is pending admin approval.
+          Your join request is pending approval from community leadership or MBKRU staff.
           <Button
             type="button"
             variant="outline"
@@ -315,6 +315,16 @@ export function CommunityMemberPanel({
               : ""}
             .
           </p>
+          {canAnnounce ? (
+            <p className="text-sm">
+              <Link
+                href={`/communities/${encodeURIComponent(communitySlug)}/manage`}
+                className={`${primaryLinkClass} font-semibold`}
+              >
+                Open community management →
+              </Link>
+            </p>
+          ) : null}
           <Button type="button" variant="outline" size="sm" disabled={busy} onClick={() => void onLeave()}>
             Leave community
           </Button>

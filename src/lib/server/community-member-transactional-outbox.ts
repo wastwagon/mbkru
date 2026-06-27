@@ -166,7 +166,7 @@ export async function enqueueCommunityPostReportModeratorDelivery(args: {
     `A member reported a post in "${args.communityName}".\n\n` +
     `Reason (category): ${args.reason}\n\n` +
     `Open the thread: ${base}${path}\n\n` +
-    `Use Admin → Communities → Moderation for the full queue.\n`;
+    `Community management: ${base}/communities/${encodeURIComponent(args.communitySlug)}/manage\n`;
   const smsBody = `MBKRU: Post reported in ${args.communityName}. ${base}${path}`.slice(0, 300);
   for (const memberId of args.moderatorMemberIds) {
     await enqueueMemberTransactionalEmail({
@@ -181,6 +181,59 @@ export async function enqueueCommunityPostReportModeratorDelivery(args: {
       tag: "community_post_reported_moderator",
     });
   }
+}
+
+function stewardRoleLabel(role: string): string {
+  if (role === "QUEEN_MOTHER_VERIFIED") return "Queen Mother (verified)";
+  if (role === "MODERATOR") return "Moderator";
+  return role;
+}
+
+/** One-time login credentials for a community steward provisioned by MBKRU admin. */
+export async function enqueueCommunityStewardCredentialsDelivery(args: {
+  memberId: string;
+  communityName: string;
+  communitySlug: string;
+  email: string;
+  password: string;
+  role: string;
+  createdMember: boolean;
+}): Promise<void> {
+  const base = siteOrigin();
+  const loginUrl = `${base}/login`;
+  const portalUrl = `${base}/communities/${encodeURIComponent(args.communitySlug)}/portal`;
+  const manageUrl = `${base}/communities/${encodeURIComponent(args.communitySlug)}/manage`;
+  const roleLabel = stewardRoleLabel(args.role);
+  const subject = `[MBKRU] Your ${roleLabel} access — ${args.communityName}`;
+  const accountLine = args.createdMember
+    ? "A new MBKRU member account was created for you."
+    : "Your existing MBKRU member password was reset for this community.";
+  const text = [
+    `Hello,`,
+    ``,
+    `You have been set up as ${roleLabel} for "${args.communityName}" on MBKRU.`,
+    accountLine,
+    ``,
+    `Sign in: ${loginUrl}`,
+    `Email: ${args.email}`,
+    `Temporary password: ${args.password}`,
+    ``,
+    `Council workspace: ${portalUrl}`,
+    `Community management: ${manageUrl}`,
+    ``,
+    `After signing in, change your password under Account → Password, or use Forgot password on the sign-in page.`,
+    ``,
+    `Please keep these details private.`,
+    ``,
+    `— MBKRU`,
+  ].join("\n");
+
+  await enqueueMemberTransactionalEmail({
+    memberId: args.memberId,
+    subject,
+    text,
+    tag: "community_steward_credentials",
+  });
 }
 
 export async function enqueueCommunityThreadReplyDelivery(

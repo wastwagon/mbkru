@@ -9,6 +9,7 @@ import { TopBar } from "@/components/layout/TopBar";
 import { BackToTop } from "@/components/ui/BackToTop";
 import { MBKRUVoiceChatbot } from "@/components/voice/MBKRUVoiceChatbot";
 import { AccessibilityVoiceTools } from "@/components/accessibility/AccessibilityVoiceTools";
+import { MemberImpersonationBanner } from "@/components/member/MemberImpersonationBanner";
 import { MemberPresenceHeartbeat } from "@/components/member/MemberPresenceHeartbeat";
 import { PwaInstallBanner } from "@/components/pwa/PwaInstallBanner";
 import { PwaServiceWorkerRegister } from "@/components/pwa/PwaServiceWorkerRegister";
@@ -29,6 +30,7 @@ export default async function MainLayout({
         Skip to main content
       </a>
       <SiteTrustNotice />
+      <MemberImpersonationBanner />
       <AdminConstructionPreviewBar />
       <div className="sticky top-0 z-50">
         <div className="relative z-[60]">

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AccountChangePasswordForm } from "@/components/account/AccountChangePasswordForm";
 import { AccountPwaInstallCard } from "@/components/account/AccountPwaInstallCard";
 import { AccountHomeRegionBanner } from "@/components/account/AccountHomeRegionBanner";
 import { AccountHomeLocationForm } from "@/components/account/AccountHomeLocationForm";
@@ -202,6 +203,13 @@ export default async function AccountPage() {
         initialRegionId={member?.regionId ?? null}
         initialConstituencyId={member?.constituencyId ?? null}
       />
+
+      <section className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--section-light)]/50 p-4 sm:p-5">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
+          Password
+        </h2>
+        <AccountChangePasswordForm />
+      </section>
 
       <div className="mt-8 lg:hidden">
         <AccountPwaInstallCard />

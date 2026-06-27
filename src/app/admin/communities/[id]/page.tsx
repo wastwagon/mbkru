@@ -5,8 +5,10 @@ import {
   approveCommunityMembershipAction,
   createCommunityForumAdminAction,
   deleteCommunityForumAdminAction,
+  provisionCommunityStewardAction,
   publishCommunityPostAction,
   rejectCommunityPostAction,
+  resendCommunityStewardCredentialsAction,
   setCommunityMembershipRoleAction,
   setCommunityMembershipStateAction,
   updateCommunityForumAdminAction,
@@ -20,11 +22,15 @@ import { prisma } from "@/lib/db/prisma";
 import { listCommunityForums } from "@/lib/server/community-forums-public";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
-type Props = { params: Promise<{ id: string }> };
+type Props = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ steward?: string }>;
+};
 
-export default async function AdminCommunityDetailPage({ params }: Props) {
+export default async function AdminCommunityDetailPage({ params, searchParams }: Props) {
   await requireAdminSession();
   const { id } = await params;
+  const sp = (await searchParams) ?? {};
 
   const community = await prisma.community.findUnique({
     where: { id },
@@ -139,8 +145,89 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
           <Link href={`/communities/${community.slug}`} className={primaryLinkClass}>
             View live community page →
           </Link>
+          <span className="mx-2 text-[var(--foreground-secondary)]">·</span>
+          <Link href={`/communities/${community.slug}/manage`} className={primaryLinkClass}>
+            Community manage (leadership) →
+          </Link>
         </p>
       ) : null}
+
+      {sp.steward === "sent" ? (
+        <p className="mt-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900" role="status">
+          Steward account provisioned. Login details were emailed when <code className="text-xs">RESEND_API_KEY</code> is
+          configured; otherwise check server logs / notification outbox.
+        </p>
+      ) : null}
+      {sp.steward === "resent" ? (
+        <p className="mt-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900" role="status">
+          New temporary password emailed to the steward.
+        </p>
+      ) : null}
+      {sp.steward === "not_steward" ? (
+        <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950" role="alert">
+          Resend is only available for Queen Mother or Moderator roles.
+        </p>
+      ) : null}
+      {sp.steward === "invalid" ? (
+        <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
+          Check the steward form and try again.
+        </p>
+      ) : null}
+
+      <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-5">
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">Provision Queen Mother / moderator login</h2>
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
+          Creates or resets a member account, assigns the community role, and emails temporary login details plus links to
+          the council workspace and manage dashboard.
+        </p>
+        <form action={provisionCommunityStewardAction} className="mt-4 grid max-w-xl gap-3">
+          <input type="hidden" name="communityId" value={community.id} />
+          <div>
+            <label htmlFor="steward-email" className="block text-xs font-medium">
+              Email
+            </label>
+            <input
+              id="steward-email"
+              name="email"
+              type="email"
+              required
+              maxLength={320}
+              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label htmlFor="steward-name" className="block text-xs font-medium">
+              Display name <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
+            </label>
+            <input
+              id="steward-name"
+              name="displayName"
+              maxLength={120}
+              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label htmlFor="steward-role" className="block text-xs font-medium">
+              Role
+            </label>
+            <select
+              id="steward-role"
+              name="role"
+              defaultValue="QUEEN_MOTHER_VERIFIED"
+              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            >
+              <option value="QUEEN_MOTHER_VERIFIED">Queen Mother (verified)</option>
+              <option value="MODERATOR">Moderator</option>
+            </select>
+          </div>
+          <button
+            type="submit"
+            className="w-fit rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
+          >
+            Create account &amp; send email
+          </button>
+        </form>
+      </section>
 
       <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Forums</h2>
@@ -392,6 +479,28 @@ export default async function AdminCommunityDetailPage({ params }: Props) {
                   <span className="ml-2 text-xs text-[var(--foreground-secondary)]">{m.member.email}</span>
                 </p>
                 <p className="mt-1 text-xs text-[var(--foreground-secondary)]">Current role: {m.role}</p>
+                <p className="mt-3 flex flex-wrap gap-3 text-sm">
+                  <a
+                    href={`/api/admin/members/${encodeURIComponent(m.memberId)}/impersonate?communityId=${encodeURIComponent(community.id)}&next=${encodeURIComponent(`/communities/${community.slug}/manage`)}`}
+                    className={primaryLinkClass}
+                  >
+                    Login as (support)
+                  </a>
+                  {m.role === "MODERATOR" || m.role === "QUEEN_MOTHER_VERIFIED" ? (
+                    <>
+                      <Link href={`/communities/${community.slug}/manage`} className={primaryLinkClass}>
+                        Open manage dashboard →
+                      </Link>
+                      <form action={resendCommunityStewardCredentialsAction} className="inline">
+                        <input type="hidden" name="communityId" value={community.id} />
+                        <input type="hidden" name="memberId" value={m.memberId} />
+                        <button type="submit" className={`${primaryLinkClass} font-semibold`}>
+                          Resend login email
+                        </button>
+                      </form>
+                    </>
+                  ) : null}
+                </p>
                 <form action={setCommunityMembershipRoleAction} className="mt-3 flex flex-wrap items-end gap-2">
                   <input type="hidden" name="membershipId" value={m.id} />
                   <input type="hidden" name="communityId" value={community.id} />

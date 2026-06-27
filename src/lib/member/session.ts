@@ -21,16 +21,27 @@ export function memberCookieName(): string {
   return MEMBER_SESSION_COOKIE;
 }
 
+export type MemberSession = {
+  memberId: string;
+  email: string;
+  impersonatedByAdminId?: string;
+};
+
 export async function createMemberSessionToken(
   memberId: string,
   email: string,
+  options?: { impersonatedByAdminId?: string },
 ): Promise<string> {
   const jti = crypto.randomUUID();
-  const token = await new SignJWT({
+  const claims: Record<string, string> = {
     role: "member",
     jti,
     email,
-  })
+  };
+  const impersonator = options?.impersonatedByAdminId?.trim();
+  if (impersonator) claims.impersonatedByAdminId = impersonator;
+
+  const token = await new SignJWT(claims)
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(memberId)
     .setIssuedAt()
@@ -64,7 +75,7 @@ function memberSessionTokenFromCookieHeader(cookieHeader: string | null): string
  */
 export async function getMemberSessionFromRequest(
   request: Request,
-): Promise<{ memberId: string; email: string } | null> {
+): Promise<MemberSession | null> {
   try {
     const token = memberSessionTokenFromCookieHeader(request.headers.get("cookie"));
     if (!token) return null;
@@ -74,25 +85,24 @@ export async function getMemberSessionFromRequest(
   }
 }
 
-export async function verifyMemberSessionToken(token: string): Promise<{
-  memberId: string;
-  email: string;
-} | null> {
+export async function verifyMemberSessionToken(token: string): Promise<MemberSession | null> {
   try {
     const { payload } = await jwtVerify(token, requireKey());
     if (payload.role !== "member") return null;
     const memberId = payload.sub;
     const email = typeof payload.email === "string" ? payload.email : "";
     const jti = typeof payload.jti === "string" ? payload.jti : "";
+    const impersonatedByAdminId =
+      typeof payload.impersonatedByAdminId === "string" ? payload.impersonatedByAdminId : undefined;
     if (!memberId || !email || !jti) return null;
     if (!(await isMemberJtiActive(jti))) return null;
-    return { memberId, email };
+    return impersonatedByAdminId ? { memberId, email, impersonatedByAdminId } : { memberId, email };
   } catch {
     return null;
   }
 }
 
-export async function getMemberSession(): Promise<{ memberId: string; email: string } | null> {
+export async function getMemberSession(): Promise<MemberSession | null> {
   try {
     const token = (await cookies()).get(MEMBER_SESSION_COOKIE)?.value;
     if (!token) return null;

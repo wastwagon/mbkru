@@ -1,23 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("server-only", () => ({}));
+
 const revalidatePath = vi.hoisted(() => vi.fn());
 
 vi.mock("next/cache", () => ({
   revalidatePath,
-}));
-
-const createMemberNotification = vi.hoisted(() => vi.fn());
-
-vi.mock("@/lib/server/member-notifications", () => ({
-  createMemberNotification,
-}));
-
-const notifyThreadAuthorOfPublishedReply = vi.hoisted(() => vi.fn());
-const bumpThreadRootAfterReplyPublished = vi.hoisted(() => vi.fn());
-
-vi.mock("@/lib/server/community-thread-reply-notify", () => ({
-  notifyThreadAuthorOfPublishedReply,
-  bumpThreadRootAfterReplyPublished,
 }));
 
 const requireAdminSession = vi.hoisted(() => vi.fn());
@@ -26,12 +14,33 @@ vi.mock("@/lib/admin/require-session", () => ({
   requireAdminSession,
 }));
 
+const publishPendingCommunityPost = vi.hoisted(() => vi.fn());
+const rejectPendingCommunityPost = vi.hoisted(() => vi.fn());
+const revalidateCommunityModerationPaths = vi.hoisted(() => vi.fn());
+
+vi.mock("@/lib/server/community-moderation-ops", () => ({
+  approvePendingCommunityMembership: vi.fn(),
+  publishPendingCommunityPost,
+  rejectPendingCommunityPost,
+  revalidateCommunityModerationPaths,
+  setCommunityMembershipBannedState: vi.fn(),
+  updateCommunityPostReportStatus: vi.fn(),
+}));
+
+vi.mock("@/lib/server/community-steward-provision", () => ({
+  provisionCommunitySteward: vi.fn(),
+}));
+
+vi.mock("@/lib/server/admin-operational-audit", () => ({
+  logAdminOperationalAudit: vi.fn(),
+}));
+
+vi.mock("next/navigation", () => ({
+  redirect: vi.fn(),
+}));
+
 const { prisma } = vi.hoisted(() => {
   const prisma = {
-    communityPost: {
-      findFirst: vi.fn(),
-      update: vi.fn(),
-    },
     communityMembership: {
       findFirst: vi.fn(),
       update: vi.fn(),
@@ -45,27 +54,6 @@ const { prisma } = vi.hoisted(() => {
 
 vi.mock("@/lib/db/prisma", () => ({
   prisma,
-}));
-
-const enqueueCommunityJoinApprovedDelivery = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
-const enqueueCommunityPostPublishedDelivery = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
-const enqueueCommunityPostRejectedDelivery = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
-const enqueueCommunityVerificationOutcomeDelivery = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
-
-vi.mock("@/lib/server/community-member-transactional-outbox", () => ({
-  enqueueCommunityJoinApprovedDelivery,
-  enqueueCommunityPostPublishedDelivery,
-  enqueueCommunityPostRejectedDelivery,
-  enqueueCommunityVerificationOutcomeDelivery,
-}));
-
-const processNotificationOutboxBatch = vi.hoisted(() =>
-  vi.fn().mockResolvedValue({ processed: 0, sent: 0, failed: 0 }),
-);
-
-vi.mock("@/lib/server/notification-outbox", () => ({
-  enqueueNotificationJob: vi.fn().mockResolvedValue(undefined),
-  processNotificationOutboxBatch,
 }));
 
 import {
@@ -93,109 +81,42 @@ describe("admin communities actions", () => {
   });
 
   describe("publishCommunityPostAction", () => {
-    it("publishes pending post and notifies author", async () => {
-      prisma.communityPost.findFirst.mockResolvedValue({
-        id: POST,
-        authorMemberId: MEM,
+    it("publishes pending post via moderation ops", async () => {
+      publishPendingCommunityPost.mockResolvedValue({
+        ok: true,
+        communitySlug: "east-area",
         parentPostId: null,
-        community: { slug: "east-area", name: "East Area" },
       });
-      prisma.communityPost.update.mockResolvedValue({});
 
       await publishCommunityPostAction(fd({ postId: POST, communityId: COMM }));
 
-      expect(prisma.communityPost.update).toHaveBeenCalledWith({
-        where: { id: POST },
-        data: {
-          moderationStatus: "PUBLISHED",
-          moderatedAt: expect.any(Date),
-          moderatedByAdminId: ADMIN,
-        },
-      });
-      expect(createMemberNotification).toHaveBeenCalledWith(MEM, "community_post_published", {
+      expect(publishPendingCommunityPost).toHaveBeenCalledWith(POST, COMM, ADMIN);
+      expect(revalidateCommunityModerationPaths).toHaveBeenCalledWith(COMM, "east-area", {
+        revalidatePath,
         postId: POST,
-        communitySlug: "east-area",
-      });
-      expect(revalidatePath).toHaveBeenCalledWith(`/admin/communities/${COMM}`);
-      expect(revalidatePath).toHaveBeenCalledWith("/admin/communities/moderation");
-      expect(revalidatePath).toHaveBeenCalledWith("/communities/east-area");
-      expect(revalidatePath).toHaveBeenCalledWith(`/communities/east-area/post/${POST}`);
-      expect(notifyThreadAuthorOfPublishedReply).toHaveBeenCalledWith({
-        replyPostId: POST,
-        replyAuthorMemberId: MEM,
-        communitySlug: "east-area",
-        communityName: "East Area",
         parentPostId: null,
       });
-      expect(enqueueCommunityPostPublishedDelivery).toHaveBeenCalledWith(MEM, POST, "east-area");
-      expect(processNotificationOutboxBatch).toHaveBeenCalled();
-      expect(bumpThreadRootAfterReplyPublished).not.toHaveBeenCalled();
     });
 
-    it("publishes pending reply and bumps root thread activity", async () => {
-      const ROOT = "cjld2cjxh0000qzrmn831i7re";
-      prisma.communityPost.findFirst.mockResolvedValue({
-        id: POST,
-        authorMemberId: MEM,
-        parentPostId: ROOT,
-        community: { slug: "east-area", name: "East Area" },
-      });
-      prisma.communityPost.update.mockResolvedValue({});
+    it("no-ops when moderation ops returns false", async () => {
+      publishPendingCommunityPost.mockResolvedValue({ ok: false });
 
       await publishCommunityPostAction(fd({ postId: POST, communityId: COMM }));
 
-      expect(bumpThreadRootAfterReplyPublished).toHaveBeenCalledWith(ROOT);
-      expect(notifyThreadAuthorOfPublishedReply).toHaveBeenCalledWith({
-        replyPostId: POST,
-        replyAuthorMemberId: MEM,
-        communitySlug: "east-area",
-        communityName: "East Area",
-        parentPostId: ROOT,
-      });
-      expect(enqueueCommunityPostPublishedDelivery).toHaveBeenCalledWith(MEM, POST, "east-area");
-      expect(processNotificationOutboxBatch).toHaveBeenCalled();
-    });
-
-    it("no-ops when post is missing", async () => {
-      prisma.communityPost.findFirst.mockResolvedValue(null);
-
-      await publishCommunityPostAction(fd({ postId: POST, communityId: COMM }));
-
-      expect(prisma.communityPost.update).not.toHaveBeenCalled();
-      expect(createMemberNotification).not.toHaveBeenCalled();
-      expect(notifyThreadAuthorOfPublishedReply).not.toHaveBeenCalled();
-      expect(bumpThreadRootAfterReplyPublished).not.toHaveBeenCalled();
+      expect(revalidateCommunityModerationPaths).not.toHaveBeenCalled();
     });
   });
 
   describe("rejectCommunityPostAction", () => {
-    it("rejects with reason and notifies", async () => {
-      prisma.communityPost.findFirst.mockResolvedValue({
-        id: POST,
-        authorMemberId: MEM,
-        community: { slug: "east-area" },
-      });
+    it("rejects via moderation ops", async () => {
+      rejectPendingCommunityPost.mockResolvedValue({ ok: true, communitySlug: "east-area" });
 
       await rejectCommunityPostAction(
         fd({ postId: POST, communityId: COMM, reason: "Off-topic" }),
       );
 
-      expect(prisma.communityPost.update).toHaveBeenCalledWith({
-        where: { id: POST },
-        data: {
-          moderationStatus: "REJECTED",
-          moderatedAt: expect.any(Date),
-          moderatedByAdminId: ADMIN,
-          rejectionReason: "Off-topic",
-        },
-      });
-      expect(createMemberNotification).toHaveBeenCalledWith(MEM, "community_post_rejected", {
-        postId: POST,
-        communitySlug: "east-area",
-        reason: "Off-topic",
-      });
-      expect(enqueueCommunityPostRejectedDelivery).toHaveBeenCalledWith(MEM, POST, "east-area", "Off-topic");
-      expect(processNotificationOutboxBatch).toHaveBeenCalled();
+      expect(rejectPendingCommunityPost).toHaveBeenCalledWith(POST, COMM, "Off-topic", ADMIN);
+      expect(revalidateCommunityModerationPaths).toHaveBeenCalled();
     });
   });
 
