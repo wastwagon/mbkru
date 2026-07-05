@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 const defaultPort = Number(process.env.PLAYWRIGHT_PORT ?? "1101");
 const baseURL =
   process.env.PLAYWRIGHT_BASE_URL ||
-  `http://127.0.0.1:${Number.isFinite(defaultPort) ? defaultPort : 1101}`;
+  `http://localhost:${Number.isFinite(defaultPort) ? defaultPort : 1101}`;
 
 async function fetchWithoutFollowingRedirects(path: string): Promise<Response> {
   return fetch(new URL(path, baseURL), { redirect: "manual" });

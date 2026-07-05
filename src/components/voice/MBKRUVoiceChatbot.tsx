@@ -4,7 +4,7 @@ import Link from "next/link";
 import { type ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import "@/lib/client/web-speech-recognition";
-import { MBKRU_CLOSE_A11Y_PANEL_EVENT, MBKRU_CLOSE_VOICE_CHAT_EVENT, MBKRU_VOICE_OPEN_CHANGE_EVENT, MBKRU_VOICE_OPEN_EVENT, openVoiceChat as dispatchOpenVoiceChat } from "@/lib/a11y-voice-dispatch";
+import { MBKRU_CLOSE_A11Y_PANEL_EVENT, MBKRU_CLOSE_VOICE_CHAT_EVENT, MBKRU_VOICE_OPEN_CHANGE_EVENT, MBKRU_VOICE_OPEN_EVENT, consumePendingVoiceChatOpen } from "@/lib/a11y-voice-dispatch";
 import { splitTextForSpeechSynthesis } from "@/lib/client/speech-synthesis-chunks";
 import { getMbkruVoiceFallbackReply } from "@/lib/mbkru-voice-faq";
 import { trackUiEvent } from "@/lib/client/analytics-events";
@@ -95,6 +95,9 @@ export function MBKRUVoiceChatbot() {
       setIsOpen(true);
     };
     window.addEventListener(MBKRU_VOICE_OPEN_EVENT, handler);
+    if (consumePendingVoiceChatOpen()) {
+      handler();
+    }
     return () => window.removeEventListener(MBKRU_VOICE_OPEN_EVENT, handler);
   }, []);
   const recognitionCtor: SpeechRecognitionCtor | null =
@@ -282,7 +285,8 @@ export function MBKRUVoiceChatbot() {
   }, []);
 
   function openVoiceChatPanel() {
-    dispatchOpenVoiceChat();
+    window.dispatchEvent(new Event(MBKRU_CLOSE_A11Y_PANEL_EVENT));
+    setIsOpen(true);
   }
 
   function speakAssistantReply(text: string) {

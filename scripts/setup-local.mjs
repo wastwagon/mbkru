@@ -26,6 +26,22 @@ function randomSecret() {
   return crypto.randomBytes(40).toString("base64url");
 }
 
+/** Enable local testing without Hubtel, Twilio, or Resend credentials. */
+function ensureLocalDevMocks(content) {
+  const block = [
+    "",
+    "# --- Local dev mocks (setup-local.mjs — not for production) ---",
+    "HUBTEL_GHANA_CARD_MOCK=1",
+    "SMS_PROVIDER=log",
+    `CRON_SECRET=${randomSecret()}`,
+  ];
+  let out = content.replace(/\r\n/g, "\n");
+  if (!/^HUBTEL_GHANA_CARD_MOCK=/m.test(out)) out += `${block[0]}${block[1]}\n${block[2]}\n`;
+  if (!/^SMS_PROVIDER=/m.test(out)) out += `${block[3]}\n`;
+  if (!/^CRON_SECRET=/m.test(out)) out += `${block[4]}\n`;
+  return out.endsWith("\n") ? out : `${out}\n`;
+}
+
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
@@ -60,10 +76,17 @@ async function main() {
       content +=
         "\n# Auto-added by setup-local.mjs\nSEED_ACCOUNTABILITY_DEMO=1\nSEED_COMMUNITIES_DEMO=1\nSEED_ENGAGEMENT_DEMOS=1\nSEED_VOICE_DEMO=1\nSEED_MEMBER_DEMO=1\n";
     }
+    content = ensureLocalDevMocks(content);
     fs.writeFileSync(envPath, content, "utf8");
-    console.log("Created .env (generated ADMIN_SESSION_SECRET, MEMBER_SESSION_SECRET; dev admin password set).\n");
+    console.log("Created .env (generated secrets, dev admin password, local API mocks).\n");
   } else {
     console.log("Using existing .env (delete it to regenerate from .env.example).\n");
+    let content = fs.readFileSync(envPath, "utf8");
+    const patched = ensureLocalDevMocks(content);
+    if (patched !== content) {
+      fs.writeFileSync(envPath, patched, "utf8");
+      console.log("Added missing local dev mock flags to .env (Hubtel mock, SMS log, CRON_SECRET).\n");
+    }
   }
 
   /** Docker publishes Postgres on 55432 by default; host :5432 is often a different local install. */
@@ -90,7 +113,12 @@ async function main() {
   try {
     run("docker compose up -d postgres redis");
   } catch {
-    console.error("\nDocker Compose failed. Install Docker Desktop and try again, or start Postgres yourself on DATABASE_URL.\n");
+    console.error(`
+Docker Compose failed. Start Docker Desktop, then run: npm run setup:local
+
+Or point DATABASE_URL in .env at a local Postgres instance and run:
+  npx prisma migrate deploy && npx prisma db seed
+`);
     process.exit(1);
   }
 
@@ -139,6 +167,9 @@ async function main() {
 
   Pilot members (/login):       pilot.member@mbkru.local / PilotMember!change-me-2026
                                 pilot.two@mbkru.local     / same password
+
+  Ghana Card (local mock):      GHA-000000000-0 + any legal name on /account
+  Verify everything:            npm run verify:local
 
   Docker DB (host):             postgresql://mbkru:mbkru_dev@localhost:55432/mbkru  (override with POSTGRES_HOST_PORT)
   Stop services:                docker compose stop postgres redis

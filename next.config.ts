@@ -40,6 +40,8 @@ if (isHttpsCanonical) {
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Playwright E2E uses 127.0.0.1; allow dev HMR/assets from that host (Next.js 16 default blocks it).
+  allowedDevOrigins: ["127.0.0.1", "localhost"],
   // Native PDF parser — keep out of the server bundle graph for reliable tracing.
   serverExternalPackages: ["pdf-parse"],
   // Pin tracing to this app directory (avoids picking a parent-folder lockfile as root).
