@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { CitizenReportKind, CitizenReportStatus, Prisma } from "@prisma/client";
+import { mergeCitizenReportWhere } from "@/lib/reports/training-data";
 
 export { VOICE_SUBMISSION_KIND_FILTERS } from "@/lib/reports/voice-submission-kind-filters";
 import { unstable_cache } from "next/cache";
@@ -485,14 +486,12 @@ export async function getVoiceSubmissionsBrowseEntries(opts: {
   const q = opts.q?.trim() ?? "";
   const regionId = opts.regionId?.trim() || null;
 
-  const where: Prisma.CitizenReportWhereInput = {
+  const where = mergeCitizenReportWhere({
     status: { not: "ARCHIVED" },
-  };
-  if (regionId) where.regionId = regionId;
-  if (opts.kind != null) where.kind = opts.kind;
-  if (q.length > 0) {
-    where.title = { contains: q, mode: "insensitive" };
-  }
+    ...(regionId ? { regionId } : {}),
+    ...(opts.kind != null ? { kind: opts.kind } : {}),
+    ...(q.length > 0 ? { title: { contains: q, mode: "insensitive" } } : {}),
+  });
 
   const [raw, totalFiltered] = await Promise.all([
     prisma.citizenReport.findMany({

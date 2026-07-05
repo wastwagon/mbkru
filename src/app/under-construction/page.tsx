@@ -13,10 +13,10 @@ export const metadata: Metadata = {
 
 export default async function UnderConstructionPage() {
   const config = await getPublicSiteConfig();
-  const headline = config.constructionHeadline?.trim() || "We're preparing something important";
+  const headline = config.constructionHeadline?.trim() || "We're preparing the MBKRU Advocates platform";
   const body =
     config.constructionBody?.trim() ||
-    "MBKRU Advocates is updating the public site. Please check back soon — or contact us if you need to reach the team.";
+    "The public site is temporarily unavailable while we complete editorial review, data verification, and launch checks. Programme content remains in our systems — only admins with a login can preview the full site. Contact us if you need to reach the team before launch.";
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-b from-[var(--section-light-tertiary)] via-white to-[var(--section-light)]">
@@ -49,7 +49,7 @@ export default async function UnderConstructionPage() {
               href="/admin/login"
               className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[var(--border)] bg-white px-6 py-2.5 text-sm font-semibold text-[var(--foreground)] transition hover:bg-[var(--section-light)]"
             >
-              Staff sign in
+              Admin sign in
             </Link>
           </div>
         </div>

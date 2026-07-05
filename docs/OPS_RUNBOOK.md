@@ -2,7 +2,24 @@
 
 Short checklist for production Docker / Coolify hosts. Complements `README.md` and `docker-entrypoint.sh`.
 
-**Related:** [`PHASE_TASKS.md`](./PHASE_TASKS.md) (phase backlog) · [`SAFE_IMPLEMENTATION_PHASES.md`](./SAFE_IMPLEMENTATION_PHASES.md) (phased rollout + `npm run verify:release-gates`) · [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md) (MP roster import) · [`PARTNER_API.md`](./PARTNER_API.md) (embed JSON draft) · [`OBSERVABILITY.md`](./OBSERVABILITY.md) · [`SECURITY_CHECKLIST.md`](./SECURITY_CHECKLIST.md)
+**Related:** [`PHASE_TASKS.md`](./PHASE_TASKS.md) (phase backlog) · [`SAFE_IMPLEMENTATION_PHASES.md`](./SAFE_IMPLEMENTATION_PHASES.md) (phased rollout + `npm run verify:release-gates`) · [`MEMBER_FINDINGS_REMEDIATION_PHASES.md`](./MEMBER_FINDINGS_REMEDIATION_PHASES.md) (pre-launch gate + launch checklist) · [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md) (MP roster import) · [`PARTNER_API.md`](./PARTNER_API.md) (embed JSON draft) · [`OBSERVABILITY.md`](./OBSERVABILITY.md) · [`SECURITY_CHECKLIST.md`](./SECURITY_CHECKLIST.md)
+
+---
+
+## Pre-launch: public under-construction gate (mbkru.org)
+
+Use while editorial, legal, and data work continues **without deleting programme content**.
+
+| Step | Command / action |
+|------|------------------|
+| Enable (DB) | `npm run ops:construction:on` (requires `DATABASE_URL`) |
+| Enable (env) | `PUBLIC_UNDER_CONSTRUCTION=1` on production deploy — forces gate even if DB is off |
+| Status | `npm run ops:construction:status` |
+| Admin preview | `/admin/login` → then open `/` in the same browser |
+| Holding page copy | `/admin/settings` → Public site visibility |
+| Launch | `npm run ops:construction:off` + unset env — only after [`MEMBER_FINDINGS_REMEDIATION_PHASES.md`](./MEMBER_FINDINGS_REMEDIATION_PHASES.md) R5 |
+
+**Public exceptions while gated:** `/under-construction`, `/contact`, `/api/health`, `/admin/*`. Members and guests do **not** bypass the gate.
 
 ---
 

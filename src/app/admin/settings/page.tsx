@@ -1,4 +1,5 @@
 import { DatabaseMaintenancePanel } from "@/app/admin/settings/DatabaseMaintenancePanel";
+import { LaunchReadinessPanel } from "@/app/admin/settings/LaunchReadinessPanel";
 import { PetitionPendingCleanupPanel } from "@/app/admin/settings/PetitionPendingCleanupPanel";
 import { SiteVisibilityPanel } from "@/app/admin/settings/SiteVisibilityPanel";
 import { requireAdminSession } from "@/lib/admin/require-session";
@@ -20,6 +21,8 @@ export default async function AdminSettingsPage() {
         {" · "}
         Region reference data: <a className="underline text-[var(--primary)]" href="/admin/regions">Regions</a>
       </p>
+
+      <LaunchReadinessPanel />
 
       <SiteVisibilityPanel />
 

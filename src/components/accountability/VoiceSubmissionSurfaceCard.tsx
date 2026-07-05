@@ -4,6 +4,10 @@ import { VoiceSubmissionPrimaryAction } from "@/components/accountability/VoiceS
 import { formatMediumDate } from "@/lib/format-submission-datetime";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { reportKindLabel, reportStatusLabel } from "@/lib/report-status-text";
+import {
+  excludeTrainingDataFromPublicSurfaces,
+  isTrainingCitizenReport,
+} from "@/lib/reports/training-data";
 import { kindBadgeClass } from "@/lib/voice-submission-card-shared";
 import {
   formatCompactEngagementSummary,
@@ -67,17 +71,27 @@ export function VoiceSubmissionSurfaceCard({
     discussionReactionTotals,
   );
   const trackHref = voiceTrackHref(trackingCode);
+  const showTrainingBadge =
+    !excludeTrainingDataFromPublicSurfaces() &&
+    isTrainingCitizenReport({ trackingCode, title });
 
   return (
     <article
       aria-labelledby={titleId}
       className="flex h-full min-h-0 w-full flex-col rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition-shadow hover:border-[var(--primary)]/30 sm:p-5"
     >
-      <span
-        className={`inline-flex max-w-full self-start rounded-full border px-2.5 py-0.5 text-[11px] font-semibold leading-tight ${kindBadgeClass(kind)}`}
-      >
-        {reportKindLabel(kind)}
-      </span>
+      <div className="flex flex-wrap items-center gap-2">
+        <span
+          className={`inline-flex max-w-full rounded-full border px-2.5 py-0.5 text-[11px] font-semibold leading-tight ${kindBadgeClass(kind)}`}
+        >
+          {reportKindLabel(kind)}
+        </span>
+        {showTrainingBadge ? (
+          <span className="inline-flex rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[11px] font-semibold leading-tight text-amber-900">
+            Training data
+          </span>
+        ) : null}
+      </div>
 
       <TitleTag
         id={titleId}

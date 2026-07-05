@@ -5,6 +5,12 @@ import {
   type CitizenReportAnalytics,
 } from "@/lib/citizen-report-analytics-shared";
 import { prisma } from "@/lib/db/prisma";
+import type { Prisma } from "@prisma/client";
+
+import {
+  excludeTrainingDataFromPublicSurfaces,
+  mergeCitizenReportWhere,
+} from "@/lib/reports/training-data";
 
 export type { CitizenReportAnalytics } from "@/lib/citizen-report-analytics-shared";
 export {
@@ -31,6 +37,10 @@ function sortPlaybookGroups(
     .sort((a, b) => b.count - a.count);
 }
 
+function analyticsWhere(extra: Prisma.CitizenReportWhereInput = {}): Prisma.CitizenReportWhereInput {
+  return mergeCitizenReportWhere(extra);
+}
+
 /** Aggregate, non-identifying stats for dashboards and annual reporting. */
 export async function getCitizenReportAnalytics(monthsParam?: number): Promise<CitizenReportAnalytics> {
   const windowMonths = clampMonths(monthsParam);
@@ -38,6 +48,7 @@ export async function getCitizenReportAnalytics(monthsParam?: number): Promise<C
   since.setUTCMonth(since.getUTCMonth() - windowMonths);
   since.setUTCDate(1);
   since.setUTCHours(0, 0, 0, 0);
+  const excludeTraining = excludeTrainingDataFromPublicSurfaces();
 
   const [
     totalAll,
@@ -56,63 +67,79 @@ export async function getCitizenReportAnalytics(monthsParam?: number): Promise<C
     regionGroups,
     monthRows,
   ] = await Promise.all([
-    prisma.citizenReport.count(),
-    prisma.citizenReport.count({ where: { createdAt: { gte: since } } }),
+    prisma.citizenReport.count({ where: analyticsWhere() }),
+    prisma.citizenReport.count({ where: analyticsWhere({ createdAt: { gte: since } }) }),
     prisma.citizenReport.groupBy({
       by: ["kind"],
+      where: analyticsWhere(),
       _count: { _all: true },
     }),
     prisma.citizenReport.groupBy({
       by: ["status"],
+      where: analyticsWhere(),
       _count: { _all: true },
     }),
     prisma.citizenReport.groupBy({
       by: ["kind"],
-      where: { createdAt: { gte: since } },
+      where: analyticsWhere({ createdAt: { gte: since } }),
       _count: { _all: true },
     }),
     prisma.citizenReport.groupBy({
       by: ["status"],
-      where: { createdAt: { gte: since } },
+      where: analyticsWhere({ createdAt: { gte: since } }),
       _count: { _all: true },
     }),
     prisma.citizenReport.count({
-      where: { attachments: { some: {} } },
+      where: analyticsWhere({ attachments: { some: {} } }),
     }),
     prisma.citizenReport.count({
-      where: {
+      where: analyticsWhere({
         slaDueAt: { lt: new Date() },
         status: { in: ["RECEIVED", "UNDER_REVIEW"] },
-      },
+      }),
     }),
     prisma.citizenReport.groupBy({
       by: ["operationsPlaybookKey"],
+      where: analyticsWhere(),
       _count: { _all: true },
     }),
     prisma.citizenReport.groupBy({
       by: ["operationsPlaybookKey"],
-      where: { createdAt: { gte: since } },
+      where: analyticsWhere({ createdAt: { gte: since } }),
       _count: { _all: true },
     }),
-    prisma.citizenReport.count({ where: { publicCauseSlug: { not: null } } }),
+    prisma.citizenReport.count({ where: analyticsWhere({ publicCauseSlug: { not: null } }) }),
     prisma.citizenReport.count({
-      where: { publicCauseSlug: { not: null }, publicCauseClosed: false },
+      where: analyticsWhere({ publicCauseSlug: { not: null }, publicCauseClosed: false }),
     }),
     prisma.citizenReport.count({
-      where: { publicCauseSlug: { not: null }, publicCauseClosed: true },
+      where: analyticsWhere({ publicCauseSlug: { not: null }, publicCauseClosed: true }),
     }),
     prisma.citizenReport.groupBy({
       by: ["regionId"],
-      where: { regionId: { not: null } },
+      where: analyticsWhere({ regionId: { not: null } }),
       _count: { _all: true },
     }),
-    prisma.$queryRaw<Array<{ month: Date; c: bigint }>>`
-      SELECT date_trunc('month', "createdAt") AS month, COUNT(*)::bigint AS c
-      FROM "CitizenReport"
-      WHERE "createdAt" >= ${since}
-      GROUP BY 1
-      ORDER BY 1 ASC
-    `,
+    excludeTraining
+      ? prisma.$queryRaw<Array<{ month: Date; c: bigint }>>`
+          SELECT date_trunc('month', "createdAt") AS month, COUNT(*)::bigint AS c
+          FROM "CitizenReport"
+          WHERE "createdAt" >= ${since}
+            AND NOT (
+              "trackingCode" LIKE 'MBKRU-DEMO-%'
+              OR "trackingCode" LIKE 'MBKRU-SEED-%'
+              OR "title" ILIKE '%testing phase%'
+            )
+          GROUP BY 1
+          ORDER BY 1 ASC
+        `
+      : prisma.$queryRaw<Array<{ month: Date; c: bigint }>>`
+          SELECT date_trunc('month', "createdAt") AS month, COUNT(*)::bigint AS c
+          FROM "CitizenReport"
+          WHERE "createdAt" >= ${since}
+          GROUP BY 1
+          ORDER BY 1 ASC
+        `,
   ]);
 
   const byKind: Record<string, number> = {};

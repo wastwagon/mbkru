@@ -121,7 +121,7 @@ export function OperationalPillarsRegionsSection({ showPillars = true, id = "key
                         <span>{pillar.title}</span>
                         {pillar.letter === "D" && parliamentLive ? (
                           <span className="rounded-full bg-emerald-400/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-200">
-                            Live data
+                            Platform live
                           </span>
                         ) : null}
                       </h3>

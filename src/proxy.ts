@@ -6,6 +6,7 @@ import { jwtVerify } from "jose";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+import { isPublicUnderConstructionEnvOverride } from "@/lib/construction-gate-env";
 import { getSessionSecretKey } from "@/lib/admin/jwt-config";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import {
@@ -26,8 +27,7 @@ function privateSurfaceHeaders(res: NextResponse) {
 }
 
 function envConstructionOverride(): boolean {
-  const raw = process.env.PUBLIC_UNDER_CONSTRUCTION?.trim().toLowerCase();
-  return raw === "1" || raw === "true" || raw === "yes" || raw === "on";
+  return isPublicUnderConstructionEnvOverride();
 }
 
 async function hasValidAdminSession(request: NextRequest): Promise<boolean> {

@@ -21,8 +21,14 @@ export async function AdminConstructionPreviewBar() {
       <span className="mx-2 text-amber-800/70" aria-hidden>
         ·
       </span>
-      <Link href="/admin/settings" className="font-semibold underline underline-offset-2">
-        Change in Settings
+      <Link href="/admin/settings#launch-readiness" className="font-semibold underline underline-offset-2">
+        Launch readiness
+      </Link>
+      <span className="mx-2 text-amber-800/70" aria-hidden>
+        ·
+      </span>
+      <Link href="/admin/settings#site-visibility" className="font-semibold underline underline-offset-2">
+        Site visibility
       </Link>
     </div>
   );

@@ -22,6 +22,7 @@ import {
 } from "@/lib/reports/accountability-pages";
 import { publicReportCardCycleTitle } from "@/lib/report-card-public-label";
 import { getCachedPublishedReportCardCycles } from "@/lib/server/accountability-cache";
+import { mergeCitizenReportWhere } from "@/lib/reports/training-data";
 import { getProgrammeTownHallEvents } from "@/lib/server/town-hall-events";
 
 function empty(): HomeAtAGlanceData {
@@ -64,13 +65,13 @@ async function loadPetitions(): Promise<HomePetitionTeaser[] | null> {
 async function loadPublicCauses(): Promise<HomePublicCauseTeaser[] | null> {
   try {
     const rows = await prisma.citizenReport.findMany({
-      where: {
+      where: mergeCitizenReportWhere({
         publicCauseOpenedAt: { not: null },
         publicCauseClosed: false,
         publicCauseSlug: { not: null },
         publicCauseTitle: { not: null },
         publicCauseSummary: { not: null },
-      },
+      }),
       orderBy: { publicCauseSupports: { _count: "desc" } },
       take: 4,
       select: {
@@ -166,7 +167,7 @@ async function loadReportCard(): Promise<HomeReportCardTeaser | null> {
 
 async function loadVoiceTotals(): Promise<HomeVoiceTeaser | null> {
   try {
-    const totalReports = await prisma.citizenReport.count();
+    const totalReports = await prisma.citizenReport.count({ where: mergeCitizenReportWhere({}) });
     return { totalReports };
   } catch (e) {
     if (isRecoverablePrismaSchemaError(e)) return null;

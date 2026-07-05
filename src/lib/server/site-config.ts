@@ -3,6 +3,7 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 import { revalidateTag } from "next/cache";
 
+import { isPublicUnderConstructionEnvOverride } from "@/lib/construction-gate-env";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import {
   DEFAULT_PUBLIC_SITE_CONFIG,
@@ -13,8 +14,7 @@ import {
 const SITE_CONFIG_ID = "default";
 
 function envConstructionOverride(): boolean {
-  const raw = process.env.PUBLIC_UNDER_CONSTRUCTION?.trim().toLowerCase();
-  return raw === "1" || raw === "true" || raw === "yes" || raw === "on";
+  return isPublicUnderConstructionEnvOverride();
 }
 
 async function loadSiteConfigFromDb(): Promise<PublicSiteConfig> {

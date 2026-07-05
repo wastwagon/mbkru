@@ -81,15 +81,18 @@ export function SiteVisibilityPanel() {
   }
 
   return (
-    <div className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm sm:p-8">
+    <div
+      id="site-visibility"
+      className="mt-8 scroll-mt-24 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm sm:p-8"
+    >
       <h2 className="font-display text-lg font-bold text-[var(--foreground)]">Public site visibility</h2>
       <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
         When enabled, visitors see an under-construction page. <strong className="text-[var(--foreground)]">Only signed-in admins</strong>{" "}
-        can browse the full public site (preview mode). Members, community portal users, and guests stay gated — use{" "}
-        <a href="/admin/login" className="font-medium text-[var(--primary)] underline">
-          staff sign in
+        can browse the full public site (preview mode). Members and guests stay gated. Track blockers in{" "}
+        <a href="#launch-readiness" className="font-medium text-[var(--primary)] underline">
+          Launch readiness
         </a>{" "}
-        then open the homepage in the same browser.
+        above.
       </p>
 
       <label className="mt-6 flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--section-light)]/40 p-4">

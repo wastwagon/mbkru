@@ -2,6 +2,8 @@
 
 **Purpose:** Ship remaining programme work **without mixing risky layers** (demo data vs production claims, legal vs engineering, bulk import vs editorial). This doc is the **operational companion** to [`PHASE_TASKS.md`](./PHASE_TASKS.md) and [`PHASE_GAPS_CLOSURE_QUEUE.md`](./PHASE_GAPS_CLOSURE_QUEUE.md).
 
+**July 2026 live-site review (member findings):** [`MEMBER_FINDINGS_REMEDIATION_PHASES.md`](./MEMBER_FINDINGS_REMEDIATION_PHASES.md) — phased R0–R5 closure with stop lines.
+
 **Automated slice (run locally or in CI):** `npm run verify:release-gates` — Prisma validate, `tsc --noEmit`, Vitest. It does **not** cover backups, counsel review, or data truth.
 
 **UI/UX (copy, duplication, navigation clarity):** [`SAFE_UI_UX_PHASES.md`](./SAFE_UI_UX_PHASES.md) — phased, reversible; Phase 1 is copy-only in config + small components.
@@ -71,5 +73,6 @@
 
 | Date | Note |
 |------|------|
+| 2026-07 | Link to member-findings remediation phases (R0–R5) |
 | 2026-05 | Phase 4+: baseline vs extensions aligned with `PHASE_TASKS` |
 | 2026-04 | Initial safe phased rollout doc + `npm run verify:release-gates` |
