@@ -23,8 +23,14 @@ import {
   isCivicPetitionsAndPublicCausesEnabled,
   isReportCardPublicEnabled,
 } from "@/lib/reports/accountability-pages";
+import { ReportCardBrowseTabs } from "@/components/accountability/ReportCardBrowseTabs";
 import { ReportCardVoiceFiltersForm } from "@/components/accountability/ReportCardVoiceFiltersForm";
 import { VOICE_SUBMISSION_KIND_FILTERS } from "@/lib/reports/voice-submission-kind-filters";
+import {
+  parseReportCardBrowseTab,
+  reportCardIndexHref,
+  showReportCardBrowseTabs,
+} from "@/lib/report-card-browse-query";
 import {
   getCachedPublishedReportCardCycles,
   getReportCardBrowseEntries,
@@ -43,31 +49,6 @@ export const metadata: Metadata = {
     "Browse MBKRU Voice submissions and published People's Report Card programme scores — filter by region or search, track reports, and read public threads when staff publish them.",
 };
 
-type ReportCardIndexQuery = {
-  year?: number;
-  region?: string;
-  q?: string;
-  page?: number;
-  vq?: string;
-  vregion?: string;
-  vpage?: number;
-  vkind?: string;
-};
-
-function reportCardIndexHref(opts: ReportCardIndexQuery) {
-  const sp = new URLSearchParams();
-  if (opts.year != null) sp.set("year", String(opts.year));
-  if (opts.region?.trim()) sp.set("region", opts.region.trim());
-  if (opts.q?.trim()) sp.set("q", opts.q.trim());
-  if (opts.page != null && opts.page > 1) sp.set("page", String(opts.page));
-  if (opts.vq?.trim()) sp.set("vq", opts.vq.trim());
-  if (opts.vregion?.trim()) sp.set("vregion", opts.vregion.trim());
-  if (opts.vpage != null && opts.vpage > 1) sp.set("vpage", String(opts.vpage));
-  if (opts.vkind?.trim()) sp.set("vkind", opts.vkind.trim());
-  const qs = sp.toString();
-  return qs ? `/report-card?${qs}` : "/report-card";
-}
-
 export default async function ReportCardIndexPage({
   searchParams,
 }: {
@@ -80,6 +61,7 @@ export default async function ReportCardIndexPage({
     vregion?: string;
     vpage?: string;
     vkind?: string;
+    tab?: string;
   }>;
 }) {
   if (!isDatabaseConfigured()) notFound();
@@ -127,6 +109,10 @@ export default async function ReportCardIndexPage({
     ? (normalizedVkind as CitizenReportKind)
     : null;
 
+  const activeTab = parseReportCardBrowseTab(sp.tab, { voiceOn, showScores });
+  const browseTabs = showReportCardBrowseTabs({ voiceOn, showScores, hasCycles });
+  const tabQuery = browseTabs ? activeTab : undefined;
+
   const voiceBrowse = voiceOn
     ? await getVoiceSubmissionsBrowseEntries({
         page: vPage,
@@ -148,6 +134,7 @@ export default async function ReportCardIndexPage({
         vregion: selectedVRegionId || undefined,
         vpage: vTotalPages,
         vkind: voiceKindFilter ?? undefined,
+        tab: tabQuery,
       }),
     );
   }
@@ -174,6 +161,7 @@ export default async function ReportCardIndexPage({
         vregion: selectedVRegionId || undefined,
         vpage: vPage > 1 ? vPage : undefined,
         vkind: voiceKindFilter ?? undefined,
+        tab: tabQuery,
       }),
     );
   }
@@ -183,7 +171,9 @@ export default async function ReportCardIndexPage({
   const cycleMeta = hasCycles ? cycles.find((c) => c.year === selectedYear) : undefined;
 
   const headerDescription =
-    voiceOn && showScores
+    browseTabs
+      ? "Choose Voice submissions or programme scores — each tab has its own filters. Summaries are not court or electoral findings."
+      : voiceOn && showScores
       ? "Browse MBKRU Voice submissions first (titles and public threads when published). Below that, open official programme scores by cycle where MBKRU has published them — summaries are not court or electoral findings."
       : voiceOn && !showScores
         ? "Browse MBKRU Voice submissions — titles and staff-approved public summaries when a thread is opened. Full narrative text stays with staff and the submitter unless published as a cause."
@@ -282,8 +272,38 @@ export default async function ReportCardIndexPage({
             .
           </p>
 
+          {browseTabs ? (
+            <ReportCardBrowseTabs
+              active={activeTab}
+              voiceCount={voiceBrowse.totalFiltered}
+              scoresCount={browse.totalFiltered}
+              voiceHref={reportCardIndexHref({
+                year: hasCycles ? selectedYear : undefined,
+                region: selectedRegionId || undefined,
+                q: qRaw.trim() || undefined,
+                page: page > 1 ? page : undefined,
+                vq: vqRaw.trim() || undefined,
+                vregion: selectedVRegionId || undefined,
+                vpage: vPage > 1 ? vPage : undefined,
+                vkind: voiceKindFilter ?? undefined,
+                tab: "voice",
+              })}
+              scoresHref={reportCardIndexHref({
+                year: selectedYear,
+                region: selectedRegionId || undefined,
+                q: qRaw.trim() || undefined,
+                page: page > 1 ? page : undefined,
+                vq: vqRaw.trim() || undefined,
+                vregion: selectedVRegionId || undefined,
+                vpage: vPage > 1 ? vPage : undefined,
+                vkind: voiceKindFilter ?? undefined,
+                tab: "scores",
+              })}
+            />
+          ) : null}
+
           {/* Voice submissions — primary grid */}
-          {voiceOn ? (
+          {voiceOn && activeTab === "voice" ? (
             <>
               <AccountabilityDisclaimerCallout variant="voiceSubmissions" className="mx-auto mt-10 max-w-5xl" />
               <div
@@ -299,6 +319,7 @@ export default async function ReportCardIndexPage({
                     selectedRegionId,
                     qRaw,
                     safePage,
+                    activeTab: tabQuery,
                   }}
                   voice={{
                     vregion: selectedVRegionId,
@@ -310,6 +331,7 @@ export default async function ReportCardIndexPage({
                     region: selectedRegionId || undefined,
                     q: qRaw.trim() || undefined,
                     page: page > 1 ? page : undefined,
+                    tab: tabQuery ?? "voice",
                   })}
                 />
                 <p className="mt-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
@@ -374,6 +396,7 @@ export default async function ReportCardIndexPage({
                             vregion: selectedVRegionId || undefined,
                             vpage: safeVPage - 1,
                             vkind: voiceKindFilter ?? undefined,
+                            tab: tabQuery ?? "voice",
                           })}
                           className={`${primaryNavLinkClass} font-semibold`}
                           prefetch={false}
@@ -394,6 +417,7 @@ export default async function ReportCardIndexPage({
                             vregion: selectedVRegionId || undefined,
                             vpage: safeVPage + 1,
                             vkind: voiceKindFilter ?? undefined,
+                            tab: tabQuery ?? "voice",
                           })}
                           className={`${primaryNavLinkClass} font-semibold`}
                           prefetch={false}
@@ -411,7 +435,7 @@ export default async function ReportCardIndexPage({
           ) : null}
 
           {/* Official programme scores */}
-          {showScores && hasCycles ? (
+          {showScores && hasCycles && activeTab === "scores" ? (
             <>
               <AccountabilityDisclaimerCallout variant="reportCardScores" className="mx-auto mt-14 max-w-5xl" />
               <div
@@ -423,6 +447,7 @@ export default async function ReportCardIndexPage({
                 </p>
                 <form method="get" action="/report-card#browse-scores" className="mt-4 grid gap-4 lg:grid-cols-12 lg:items-end">
                   <input type="hidden" name="page" value="1" />
+                  <input type="hidden" name="tab" value="scores" />
                   <input type="hidden" name="vq" value={vqRaw} />
                   <input type="hidden" name="vregion" value={selectedVRegionId} />
                   <input type="hidden" name="vpage" value={String(safeVPage)} />
@@ -487,6 +512,7 @@ export default async function ReportCardIndexPage({
                         vregion: selectedVRegionId || undefined,
                         vpage: vPage > 1 ? vPage : undefined,
                         vkind: voiceKindFilter ?? undefined,
+                        tab: tabQuery ?? "scores",
                       })}
                       className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[var(--border)] px-3 py-2.5 text-sm font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--section-light)] sm:flex-1 ${focusRingSmClass}`}
                     >
@@ -559,6 +585,7 @@ export default async function ReportCardIndexPage({
                             vregion: selectedVRegionId || undefined,
                             vpage: vPage > 1 ? vPage : undefined,
                             vkind: voiceKindFilter ?? undefined,
+                            tab: tabQuery ?? "scores",
                           })}
                           className={`${primaryNavLinkClass} font-semibold`}
                           prefetch={false}
@@ -579,6 +606,7 @@ export default async function ReportCardIndexPage({
                             vregion: selectedVRegionId || undefined,
                             vpage: vPage > 1 ? vPage : undefined,
                             vkind: voiceKindFilter ?? undefined,
+                            tab: tabQuery ?? "scores",
                           })}
                           className={`${primaryNavLinkClass} font-semibold`}
                           prefetch={false}

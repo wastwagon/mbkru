@@ -6,6 +6,10 @@ import {
   excludeTrainingDataFromPublicSurfaces,
   trainingCitizenReportsInDbWhere,
 } from "@/lib/reports/training-data";
+import {
+  excludeIncompleteCitationsFromPublicPromotedSurfaces,
+  incompleteCatalogueCommitmentsInDbWhere,
+} from "@/lib/promises/incomplete-citations";
 import { getHubtelGhanaCardConfig } from "@/lib/server/hubtel-ghana-card-config";
 import { getPublicSiteConfig } from "@/lib/server/site-config";
 
@@ -24,7 +28,9 @@ export type LaunchReadinessInput = {
   underConstructionEnvOverride: boolean;
   trainingReports: number;
   publishedPendingScores: number;
+  incompleteCatalogueCommitments: number;
   filterActive: boolean;
+  citationFilterActive: boolean;
   hubtelProductionReady: boolean | null;
   isProduction: boolean;
 };
@@ -92,6 +98,21 @@ export function evaluateLaunchReadiness(input: LaunchReadinessInput): Omit<Launc
     href: "/admin/report-card",
   });
 
+  checks.push({
+    id: "catalogue-citations",
+    label: "Incomplete manifesto catalogue citations",
+    status: input.incompleteCatalogueCommitments === 0 ? "ok" : "warn",
+    detail:
+      input.incompleteCatalogueCommitments === 0
+        ? "All catalogue seed rows have page refs and citation dates."
+        : `${input.incompleteCatalogueCommitments} catalogue row(s) missing page ref or citation date. ${
+            input.citationFilterActive
+              ? "Hidden from homepage preview by filter; complete in admin before launch."
+              : "Complete editorial sign-off in admin before promoting commitments."
+          }`,
+    href: "/admin/parliament",
+  });
+
   if (input.isProduction) {
     checks.push({
       id: "hubtel",
@@ -151,7 +172,9 @@ export async function getLaunchReadiness(): Promise<LaunchReadiness> {
       underConstructionEnvOverride: isPublicUnderConstructionEnvOverride(),
       trainingReports: 0,
       publishedPendingScores: 0,
+      incompleteCatalogueCommitments: 0,
       filterActive: excludeTrainingDataFromPublicSurfaces(),
+      citationFilterActive: excludeIncompleteCitationsFromPublicPromotedSurfaces(),
       hubtelProductionReady: null,
       isProduction,
     });
@@ -175,8 +198,9 @@ export async function getLaunchReadiness(): Promise<LaunchReadiness> {
   const config = await getPublicSiteConfig();
   const envOverride = isPublicUnderConstructionEnvOverride();
 
-  const [trainingReports, publishedCycleRows] = await Promise.all([
+  const [trainingReports, incompleteCatalogueCommitments, publishedCycleRows] = await Promise.all([
     prisma.citizenReport.count({ where: trainingCitizenReportsInDbWhere() }),
+    prisma.campaignPromise.count({ where: incompleteCatalogueCommitmentsInDbWhere() }),
     prisma.reportCardCycle.findMany({
       where: { publishedAt: { not: null } },
       select: { id: true, _count: { select: { entries: true } } },
@@ -205,7 +229,9 @@ export async function getLaunchReadiness(): Promise<LaunchReadiness> {
     underConstructionEnvOverride: envOverride,
     trainingReports,
     publishedPendingScores,
+    incompleteCatalogueCommitments,
     filterActive: excludeTrainingDataFromPublicSurfaces(),
+    citationFilterActive: excludeIncompleteCitationsFromPublicPromotedSurfaces(),
     hubtelProductionReady,
     isProduction,
   });

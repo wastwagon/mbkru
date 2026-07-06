@@ -57,6 +57,7 @@ export function VoiceSubmissionBrowseCard({ row }: Props) {
       discussionReactionTotals={row.discussionReactionTotals}
       legacyCauseSlug={row.publicCauseSlug}
       staffSummaryPending={Boolean(row.publicCauseSlug && !row.publicCauseSummary)}
+      attachmentCount={row.attachmentCount}
     />
   );
 }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { isCivicPetitionsAndPublicCausesEnabled } from "@/lib/reports/accountability-pages";
+import { mergeCitizenReportWhere } from "@/lib/reports/training-data";
 
 export const dynamic = "force-dynamic";
 
@@ -14,11 +15,11 @@ export async function GET(request: Request) {
   const take = Math.min(40, Math.max(1, Number.parseInt(url.searchParams.get("take") ?? "20", 10) || 20));
   const skip = Math.max(0, Number.parseInt(url.searchParams.get("skip") ?? "0", 10) || 0);
 
-  const where = {
+  const where = mergeCitizenReportWhere({
     publicCauseOpenedAt: { not: null },
     publicCauseClosed: false,
     publicCauseSlug: { not: null },
-  } as const;
+  });
 
   const [rows, total] = await Promise.all([
     prisma.citizenReport.findMany({

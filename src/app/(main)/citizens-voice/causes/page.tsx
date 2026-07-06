@@ -7,6 +7,7 @@ import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { reportKindLabel } from "@/lib/report-status-text";
 import { isCivicPetitionsAndPublicCausesEnabled } from "@/lib/reports/accountability-pages";
+import { mergeCitizenReportWhere } from "@/lib/reports/training-data";
 
 import type { CitizenReportKind } from "@prisma/client";
 
@@ -22,11 +23,11 @@ export default async function PublicCausesIndexPage() {
   if (!isCivicPetitionsAndPublicCausesEnabled() || !isDatabaseConfigured()) notFound();
 
   const causes = await prisma.citizenReport.findMany({
-    where: {
+    where: mergeCitizenReportWhere({
       publicCauseOpenedAt: { not: null },
       publicCauseClosed: false,
       publicCauseSlug: { not: null },
-    },
+    }),
     orderBy: { publicCauseOpenedAt: "desc" },
     take: 40,
     include: {

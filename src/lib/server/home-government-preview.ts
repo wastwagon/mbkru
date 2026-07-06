@@ -6,6 +6,7 @@ import { parsePromisesApiFilters } from "@/lib/promises-api-filters";
 import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
 import type { GovernmentCommitmentsHomePreview } from "@/lib/home-government-preview-types";
 import type { PublicPromiseApiRow } from "@/lib/public-promise-api-row";
+import { filterPublicPromiseRowsForPromotedSurfaces } from "@/lib/promises/incomplete-citations";
 import {
   getCachedPromiseTrackerStats,
   getCachedPromisesApiRows,
@@ -30,7 +31,7 @@ export async function getGovernmentCommitmentsHomePreview(): Promise<GovernmentC
       getCachedPromisesApiRows(filters),
       getCachedTrackerConstituencies(),
     ]);
-    const initialRows = apiRows as PublicPromiseApiRow[];
+    const initialRows = filterPublicPromiseRowsForPromotedSurfaces(apiRows as PublicPromiseApiRow[]);
     return { stats, initialRows, trackerConstituencies };
   } catch (e) {
     if (isRecoverablePrismaSchemaError(e)) return null;

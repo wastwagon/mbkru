@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { RegionCommunitiesSpotlight } from "@/components/regions/RegionCommunitiesSpotlight";
 import { RegionDetailContent } from "@/components/regions/RegionDetailContent";
 import { RegionReportCardsSection } from "@/components/regions/RegionReportCardsSection";
+import { RegionVoiceActivitySection } from "@/components/regions/RegionVoiceActivitySection";
 import { RegionModalEngagementLinks } from "@/components/ui/RegionModalEngagementLinks";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
@@ -120,6 +121,8 @@ export default async function RegionHubPage({ params, searchParams }: Props) {
           searchParams={searchParams}
         />
       ) : null}
+
+      {dbRegion ? <RegionVoiceActivitySection regionSlug={slug} regionName={staticRegion.name} /> : null}
 
       {dbRegion && !reportBrowseEnabled ? (
         <section className="section-spacing pb-16">

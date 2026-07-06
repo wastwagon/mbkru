@@ -85,6 +85,7 @@ npm run ops:construction:off
 | R1a.1 | Public browse/stats exclude training rows in **production** when gate opens (`src/lib/reports/training-data.ts`) | Shipped |
 | R1a.2 | Local dev still shows training rows unless `EXCLUDE_TRAINING_DATA_FROM_PUBLIC=1` | Shipped |
 | R1a.3 | Pillar badge “Live data” → “Platform live” | Shipped |
+| R1a.4 | Training filter on public causes browse + API | Shipped |
 
 ### R1b — Ops (**optional** before launch; not required while gate is on)
 
@@ -106,7 +107,7 @@ npm run ops:construction:off
 | R2.1 | **Unpublish** 2026 Report Card cycle OR keep with banner “Pilot — scores pending review” | Editorial + admin `/admin/report-card` |
 | R2.2 | Do not publish cycles until methodology + evidence sign-off recorded | Programme |
 | R2.3 | Hide or complete commitment rows with “Page ref pending” / “Citation date not set” on **promoted** views | Editorial |
-| R2.4 | Optional engineering: filter incomplete catalogue rows from homepage teaser when `EXCLUDE_INCOMPLETE_CITATIONS_FROM_PUBLIC=1` | Engineering (later) |
+| R2.4 | Filter incomplete catalogue rows from homepage teaser (`src/lib/promises/incomplete-citations.ts`; production default) | Shipped |
 
 **Stop:** No MP score marketing until R2.1–R2.2 complete.
 
@@ -130,11 +131,11 @@ Reversible product work — see [`SAFE_UI_UX_PHASES.md`](./SAFE_UI_UX_PHASES.md)
 
 | # | Item | Risk |
 |---|------|------|
-| R4.1 | Split Report Card: Voice tab vs Scores tab (reduce filter overload) | Low |
-| R4.2 | “Has attachment” on public report cards | Low |
-| R4.3 | Regional heat map on `/regions/[slug]` (reuse `/transparency` component) | Low |
-| R4.4 | Charts on `/transparency` for kind/status (not only text lists) | Low |
-| R4.5 | Training badge on cards when `INCLUDE_TRAINING_DATA_ON_PUBLIC=1` | Low |
+| R4.1 | Split Report Card: Voice tab vs Scores tab (reduce filter overload) | Shipped |
+| R4.2 | “Has attachment” on public report cards | Shipped |
+| R4.3 | Regional heat map on `/regions/[slug]` (reuse `/transparency` component) | Shipped |
+| R4.4 | Charts on `/transparency` for kind/status (not only text lists) | Shipped |
+| R4.5 | Training badge on cards when `INCLUDE_TRAINING_DATA_ON_PUBLIC=1` | Shipped |
 | R4.6 | Sign-in policy: keep members-only vs anonymous + Turnstile | **Product decision** |
 | R4.7 | Brand palette alignment (Ghana red/gold/green prominence) | Design review |
 
@@ -179,3 +180,5 @@ All must be true:
 | 2026-07 | R0 = under-construction gate (preserve content); ops:construction:* scripts |
 | 2026-07 | Initial doc + Phase R1a training-data filter + optional archive script |
 | 2026-07 | Launch readiness panel, construction-gate env helper, final polish |
+| 2026-07 | Incomplete citation filter, public-causes training filter, attachment badge, verify:local |
+| 2026-07 | Report Card browse tabs, regional heat map on region hubs |

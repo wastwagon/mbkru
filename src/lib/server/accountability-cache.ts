@@ -465,6 +465,7 @@ export type VoiceSubmissionBrowseRow = {
   publicCommentCount: number;
   /** Sum of discussion comment reactions (LIKE / THANK / INSIGHT) on this report’s thread. */
   discussionReactionTotals: { LIKE: number; THANK: number; INSIGHT: number };
+  attachmentCount: number;
 };
 
 function memberSubmitterLabel(m: { displayName: string | null; email: string } | null): string | null {
@@ -515,6 +516,7 @@ export async function getVoiceSubmissionsBrowseEntries(opts: {
         publicCauseSlug: true,
         publicCauseTitle: true,
         publicCauseSummary: true,
+        _count: { select: { attachments: true } },
       },
     }),
     prisma.citizenReport.count({ where }),
@@ -547,6 +549,7 @@ export async function getVoiceSubmissionsBrowseEntries(opts: {
       publicSupportCount: engagement.publicSupportCount,
       publicCommentCount: engagement.publicCommentCount,
       discussionReactionTotals: engagement.discussionReactionTotals,
+      attachmentCount: r._count.attachments,
     };
   });
 

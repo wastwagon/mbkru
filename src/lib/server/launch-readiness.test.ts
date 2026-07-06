@@ -9,7 +9,9 @@ const baseInput = {
   underConstructionEnvOverride: false,
   trainingReports: 0,
   publishedPendingScores: 0,
+  incompleteCatalogueCommitments: 0,
   filterActive: true,
+  citationFilterActive: true,
   hubtelProductionReady: false,
   isProduction: true,
 };

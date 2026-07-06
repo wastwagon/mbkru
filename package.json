@@ -15,6 +15,7 @@
     "test:e2e:smoke": "playwright test tests/e2e/smoke.spec.ts",
     "test:e2e:dashboards": "playwright test tests/e2e/dashboards.spec.ts",
     "verify:release-gates": "node scripts/verify-release-gates.mjs",
+    "verify:local": "node scripts/verify-local-dev.mjs",
     "ops:backup": "node scripts/ops-backup-postgres.mjs",
     "ops:archive-training-reports": "node scripts/ops-archive-training-reports.mjs",
     "ops:construction:on": "node scripts/ops-site-visibility.mjs on",

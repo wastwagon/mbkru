@@ -13,9 +13,11 @@ type RegionCount = { regionName: string; regionSlug: string; count: number };
 
 type Props = {
   regions: RegionCount[];
+  /** Emphasise one region (e.g. on `/regions/[slug]`). */
+  highlightSlug?: string;
 };
 
-export function GhanaRegionsReportHeatMap({ regions }: Props) {
+export function GhanaRegionsReportHeatMap({ regions, highlightSlug }: Props) {
   const router = useRouter();
   const [hover, setHover] = useState<{ name: string; count: number; slug: string } | null>(null);
 
@@ -56,6 +58,7 @@ export function GhanaRegionsReportHeatMap({ regions }: Props) {
             const fill = heatFillColor(intensity, count > 0);
             const slug = row?.regionSlug || ghanaRegionSlugFromDisplayName(name);
             const isHover = hover?.name === name;
+            const isHighlight = Boolean(highlightSlug && slug === highlightSlug);
 
             return (
               <path
@@ -63,8 +66,10 @@ export function GhanaRegionsReportHeatMap({ regions }: Props) {
                 data-region={name}
                 d={d}
                 fill={fill}
-                stroke={isHover ? "rgb(13, 118, 110)" : "rgba(15, 23, 42, 0.32)"}
-                strokeWidth={isHover ? 1.6 : 0.85}
+                stroke={
+                  isHighlight ? "rgb(180, 83, 9)" : isHover ? "rgb(13, 118, 110)" : "rgba(15, 23, 42, 0.32)"
+                }
+                strokeWidth={isHighlight ? 2.2 : isHover ? 1.6 : 0.85}
                 className={slug ? "cursor-pointer transition-[fill,stroke-width] duration-150" : ""}
                 onMouseEnter={() => setHover({ name, count, slug: slug ?? "" })}
                 onMouseLeave={() => setHover(null)}

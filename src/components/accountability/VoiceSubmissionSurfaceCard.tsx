@@ -36,6 +36,7 @@ export type VoiceSubmissionSurfaceCardProps = {
   discussionReactionTotals: VoiceDiscussionReactionTotals;
   legacyCauseSlug?: string | null;
   staffSummaryPending?: boolean;
+  attachmentCount?: number;
 };
 
 const secondaryText = "text-[var(--foreground-secondary)]";
@@ -60,6 +61,7 @@ export function VoiceSubmissionSurfaceCard({
   discussionReactionTotals,
   legacyCauseSlug = null,
   staffSummaryPending = false,
+  attachmentCount = 0,
 }: VoiceSubmissionSurfaceCardProps) {
   const TitleTag = titleHeadingLevel;
   const titleId = `voice-surface-title-${id}`;
@@ -108,6 +110,12 @@ export function VoiceSubmissionSurfaceCard({
         <Link href={trackHref} className={`tabular-nums ${primaryLinkClass}`}>
           {trackingCode}
         </Link>
+        {attachmentCount > 0 ? (
+          <>
+            {" · "}
+            <span className="font-medium text-[var(--foreground)]">Has attachment</span>
+          </>
+        ) : null}
         {formatDiscussionStatusSuffix(discussionEnabled)}
       </p>
 

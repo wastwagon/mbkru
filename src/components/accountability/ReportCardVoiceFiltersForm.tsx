@@ -9,6 +9,7 @@ import { reportKindLabel } from "@/lib/report-status-text";
 import type { CitizenReportKind } from "@prisma/client";
 
 import { VOICE_SUBMISSION_KIND_FILTERS } from "@/lib/reports/voice-submission-kind-filters";
+import type { ReportCardBrowseTab } from "@/lib/report-card-browse-query";
 
 export type ReportCardVoiceFiltersPreserve = {
   hasCycles: boolean;
@@ -16,6 +17,7 @@ export type ReportCardVoiceFiltersPreserve = {
   selectedRegionId: string;
   qRaw: string;
   safePage: number;
+  activeTab?: ReportCardBrowseTab;
 };
 
 export type ReportCardVoiceFiltersValues = {
@@ -38,6 +40,7 @@ function buildReportCardVoiceQuery(preserve: ReportCardVoiceFiltersPreserve, voi
   if (voice.vregion.trim()) p.set("vregion", voice.vregion.trim());
   if (voice.vkind.trim()) p.set("vkind", voice.vkind.trim());
   if (voice.vq.trim()) p.set("vq", voice.vq.trim());
+  if (preserve.activeTab === "voice") p.set("tab", "voice");
 
   return p.toString();
 }
