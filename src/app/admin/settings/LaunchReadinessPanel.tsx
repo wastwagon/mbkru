@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { PreLaunchModeCallout } from "@/components/admin/PreLaunchModeCallout";
 import { getLaunchReadiness, type LaunchCheckStatus } from "@/lib/server/launch-readiness";
 
 const STATUS_META: Record<
@@ -63,6 +64,8 @@ export async function LaunchReadinessPanel() {
           {summary}
         </span>
       </div>
+
+      {readiness.underConstruction ? <PreLaunchModeCallout /> : null}
 
       <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
         July 2026 member-review blockers. Keep the under-construction gate on until this panel is clear,

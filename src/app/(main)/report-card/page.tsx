@@ -24,6 +24,7 @@ import {
   isReportCardPublicEnabled,
 } from "@/lib/reports/accountability-pages";
 import { ReportCardBrowseTabs } from "@/components/accountability/ReportCardBrowseTabs";
+import { ReportCardPilotBanner } from "@/components/accountability/ReportCardPilotBanner";
 import { ReportCardVoiceFiltersForm } from "@/components/accountability/ReportCardVoiceFiltersForm";
 import { VOICE_SUBMISSION_KIND_FILTERS } from "@/lib/reports/voice-submission-kind-filters";
 import {
@@ -33,6 +34,7 @@ import {
 } from "@/lib/report-card-browse-query";
 import {
   getCachedPublishedReportCardCycles,
+  getCachedPublishedReportCardYearStats,
   getReportCardBrowseEntries,
   getVoiceSubmissionsBrowseEntries,
   REPORT_CARD_INDEX_PAGE_SIZE,
@@ -169,6 +171,10 @@ export default async function ReportCardIndexPage({
   const safePage = Math.min(browse.page, totalPages);
   const safeVPage = Math.min(voiceBrowse.page, vTotalPages);
   const cycleMeta = hasCycles ? cycles.find((c) => c.year === selectedYear) : undefined;
+  const cycleStats =
+    hasCycles && showScores && activeTab === "scores"
+      ? await getCachedPublishedReportCardYearStats(selectedYear)
+      : null;
 
   const headerDescription =
     browseTabs
@@ -438,6 +444,15 @@ export default async function ReportCardIndexPage({
           {showScores && hasCycles && activeTab === "scores" ? (
             <>
               <AccountabilityDisclaimerCallout variant="reportCardScores" className="mx-auto mt-14 max-w-5xl" />
+              {cycleStats ? (
+                <div className="mx-auto mt-6 max-w-5xl">
+                  <ReportCardPilotBanner
+                    cycleYear={selectedYear}
+                    totalEntries={cycleStats.totalEntries}
+                    scoredCount={cycleStats.scoredCount}
+                  />
+                </div>
+              ) : null}
               <div
                 id="browse-scores"
                 className="mx-auto mt-6 max-w-5xl rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6"

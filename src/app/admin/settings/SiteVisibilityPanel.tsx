@@ -3,6 +3,10 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
+import {
+  DEFAULT_CONSTRUCTION_BODY,
+  DEFAULT_CONSTRUCTION_HEADLINE,
+} from "@/lib/construction-gate-copy";
 import type { PublicSiteConfig } from "@/lib/site-config-types";
 
 type ApiResponse = {
@@ -127,7 +131,7 @@ export function SiteVisibilityPanel() {
               setSaved(false);
               setConfig({ ...config, constructionHeadline: e.target.value || null });
             }}
-            placeholder="We're preparing something important"
+            placeholder={DEFAULT_CONSTRUCTION_HEADLINE}
             className="w-full rounded-xl border border-[var(--border)] px-3 py-2.5 text-sm"
           />
         </div>
@@ -144,7 +148,7 @@ export function SiteVisibilityPanel() {
               setSaved(false);
               setConfig({ ...config, constructionBody: e.target.value || null });
             }}
-            placeholder="Short note for visitors…"
+            placeholder={DEFAULT_CONSTRUCTION_BODY}
             className="w-full rounded-xl border border-[var(--border)] px-3 py-2.5 text-sm"
           />
         </div>

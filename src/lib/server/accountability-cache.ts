@@ -23,6 +23,7 @@ import { prisma } from "@/lib/db/prisma";
 import { bodyPreviewLine, emptyVoiceDiscussionReactionTotals } from "@/lib/voice-submission-display";
 import { loadVoiceSubmissionEngagementByReportIds } from "@/lib/server/voice-submission-engagement";
 import { getPromiseCatalogueApiFields } from "@/lib/promise-catalogue-display";
+import { filterPublicPromiseRowsForPromotedSurfaces } from "@/lib/promises/incomplete-citations";
 import { publicReportCardCycleTitle } from "@/lib/report-card-public-label";
 import { REPORT_CARD_HEADLINE_WEIGHTS } from "@/lib/report-card-headline";
 import { coerceCachedDate } from "@/lib/coerce-cached-date";
@@ -594,7 +595,7 @@ async function loadPromisesApiRows(filters: PromisesApiFilters) {
     },
   });
 
-  return items.map((p) => {
+  const rows = items.map((p) => {
     const cat = getPromiseCatalogueApiFields(p.verificationNotes);
     return {
     id: p.id,
@@ -638,6 +639,8 @@ async function loadPromisesApiRows(filters: PromisesApiFilters) {
       : null,
   };
   });
+
+  return filterPublicPromiseRowsForPromotedSurfaces(rows);
 }
 
 /** JSON-safe rows for GET /api/promises (serializable for cache). */

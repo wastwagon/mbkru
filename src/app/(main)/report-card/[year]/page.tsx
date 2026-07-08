@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 
 import { MetricsDisplay } from "@/components/accountability/MetricsDisplay";
+import { ReportCardPilotBanner } from "@/components/accountability/ReportCardPilotBanner";
 import { ReportCardTripleLedger } from "@/components/accountability/ReportCardTripleLedger";
 import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -121,6 +122,13 @@ export default async function ReportCardYearPage({
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <AccountabilityDisclaimerCallout variant="reportCardCycle" className="mt-0" />
+          <div className="mt-6">
+            <ReportCardPilotBanner
+              cycleYear={meta.year}
+              totalEntries={stats.totalEntries}
+              scoredCount={stats.scoredCount}
+            />
+          </div>
           <p className="mt-6 text-sm text-[var(--foreground-secondary)]">
             <Link href="/report-card" className={primaryNavLinkClass}>
               ← All cycles

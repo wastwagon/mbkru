@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import type { CitizenReportKind } from "@prisma/client";
 
 import { ReportCardBrowseCard } from "@/components/accountability/ReportCardBrowseCard";
+import { ReportCardBrowseTabs } from "@/components/accountability/ReportCardBrowseTabs";
 import { VoiceSubmissionBrowseCard } from "@/components/accountability/VoiceSubmissionBrowseCard";
 import { ReportCardVoiceFiltersForm } from "@/components/accountability/ReportCardVoiceFiltersForm";
 import {
@@ -15,6 +16,11 @@ import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { publicReportCardCycleTitle } from "@/lib/report-card-public-label";
 import { regionalReportCardIndexHref } from "@/lib/regional-report-card-hrefs";
+import {
+  parseReportCardBrowseTab,
+  reportCardBrowseHref,
+  showReportCardBrowseTabs,
+} from "@/lib/report-card-browse-query";
 import {
   isCivicPetitionsAndPublicCausesEnabled,
   isReportCardPublicEnabled,
@@ -45,6 +51,7 @@ export async function RegionReportCardsSection({
     vq?: string;
     vpage?: string;
     vkind?: string;
+    tab?: string;
   }>;
 }) {
   if (!isDatabaseConfigured()) return null;
@@ -145,6 +152,10 @@ export async function RegionReportCardsSection({
   const safeVPage = Math.min(voiceBrowse.page, vTotalPages);
   const cycleMeta = hasCycles ? cycles.find((c) => c.year === selectedYear) : undefined;
 
+  const activeTab = parseReportCardBrowseTab(sp.tab, { voiceOn, showScores });
+  const browseTabs = showReportCardBrowseTabs({ voiceOn, showScores, hasCycles });
+  const tabQuery = browseTabs ? activeTab : undefined;
+
   const browseBase = `/regions/${regionSlug}`;
 
   return (
@@ -204,7 +215,37 @@ export async function RegionReportCardsSection({
           </p>
         ) : null}
 
-        {voiceOn ? (
+        {browseTabs ? (
+          <ReportCardBrowseTabs
+            active={activeTab}
+            voiceCount={voiceBrowse.totalFiltered}
+            scoresCount={browse.totalFiltered}
+            voiceHref={reportCardBrowseHref(browseBase, {
+              year: hasCycles ? selectedYear : undefined,
+              region: selectedRegionId,
+              q: qRaw.trim() || undefined,
+              page: page > 1 ? page : undefined,
+              vq: vqRaw.trim() || undefined,
+              vregion: selectedVRegionId,
+              vpage: vPage > 1 ? vPage : undefined,
+              vkind: voiceKindFilter ?? undefined,
+              tab: "voice",
+            })}
+            scoresHref={reportCardBrowseHref(browseBase, {
+              year: selectedYear,
+              region: selectedRegionId,
+              q: qRaw.trim() || undefined,
+              page: page > 1 ? page : undefined,
+              vq: vqRaw.trim() || undefined,
+              vregion: selectedVRegionId,
+              vpage: vPage > 1 ? vPage : undefined,
+              vkind: voiceKindFilter ?? undefined,
+              tab: "scores",
+            })}
+          />
+        ) : null}
+
+        {voiceOn && activeTab === "voice" ? (
           <>
             <div
               id="browse-voice"
@@ -221,6 +262,7 @@ export async function RegionReportCardsSection({
                   selectedRegionId,
                   qRaw,
                   safePage,
+                  activeTab: tabQuery,
                 }}
                 voice={{
                   vregion: selectedVRegionId,
@@ -329,7 +371,7 @@ export async function RegionReportCardsSection({
           </>
         ) : null}
 
-        {showScores && hasCycles ? (
+        {showScores && hasCycles && activeTab === "scores" ? (
           <>
             <div
               id="browse-scores"
@@ -344,6 +386,7 @@ export async function RegionReportCardsSection({
                 className="mt-4 grid gap-4 lg:grid-cols-12 lg:items-end"
               >
                 <input type="hidden" name="page" value="1" />
+                <input type="hidden" name="tab" value="scores" />
                 <input type="hidden" name="vq" value={vqRaw} />
                 <input type="hidden" name="vregion" value={selectedVRegionId} />
                 <input type="hidden" name="vpage" value={String(safeVPage)} />

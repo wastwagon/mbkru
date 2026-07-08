@@ -19,6 +19,15 @@
 | **Counsel / editorial** | Phase R3–R4 in parallel (admin preview) |
 | **Comms** | Site is “coming soon” until **Launch (R5)** |
 
+### Pre-launch operating model (July 2026)
+
+While **Public site under construction** is checked in `/admin/settings`:
+
+- **Public visitors and members** → holding page only (`/under-construction`, `/contact` still work).
+- **Signed-in admins** → full site preview (amber bar on public pages).
+- **Training/demo content** stays in the database; production filters hide it from public surfaces when the gate opens.
+- **Launch day** → clear Launch readiness checklist, then uncheck the construction box (or `npm run ops:construction:off`).
+
 Each phase has **stop lines** — do not open the public site until **R5**.
 
 ---
@@ -104,9 +113,9 @@ npm run ops:construction:off
 
 | # | Action | Owner |
 |---|--------|-------|
-| R2.1 | **Unpublish** 2026 Report Card cycle OR keep with banner “Pilot — scores pending review” | Editorial + admin `/admin/report-card` |
+| R2.1 | **Unpublish** 2026 Report Card cycle OR keep with banner “Pilot — scores pending review” | Editorial + admin; **pilot banner shipped** on `/report-card` |
 | R2.2 | Do not publish cycles until methodology + evidence sign-off recorded | Programme |
-| R2.3 | Hide or complete commitment rows with “Page ref pending” / “Citation date not set” on **promoted** views | Editorial |
+| R2.3 | Hide or complete commitment rows with “Page ref pending” / “Citation date not set” on **promoted** views | Editorial; **public catalogue API filtered in production** |
 | R2.4 | Filter incomplete catalogue rows from homepage teaser (`src/lib/promises/incomplete-citations.ts`; production default) | Shipped |
 
 **Stop:** No MP score marketing until R2.1–R2.2 complete.
@@ -182,3 +191,4 @@ All must be true:
 | 2026-07 | Launch readiness panel, construction-gate env helper, final polish |
 | 2026-07 | Incomplete citation filter, public-causes training filter, attachment badge, verify:local |
 | 2026-07 | Report Card browse tabs, regional heat map on region hubs |
+| 2026-07 | Pre-launch callout, pilot banner, catalogue browse filter, construction copy defaults |

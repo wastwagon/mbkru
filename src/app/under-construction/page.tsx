@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 import { Logo } from "@/components/ui/Logo";
+import { constructionBodyOrDefault, constructionHeadlineOrDefault } from "@/lib/construction-gate-copy";
 import { getPublicSiteConfig } from "@/lib/server/site-config";
 import { heroContent } from "@/lib/site-content";
 
@@ -13,10 +14,8 @@ export const metadata: Metadata = {
 
 export default async function UnderConstructionPage() {
   const config = await getPublicSiteConfig();
-  const headline = config.constructionHeadline?.trim() || "We're preparing the MBKRU Advocates platform";
-  const body =
-    config.constructionBody?.trim() ||
-    "The public site is temporarily unavailable while we complete editorial review, data verification, and launch checks. Programme content remains in our systems — only admins with a login can preview the full site. Contact us if you need to reach the team before launch.";
+  const headline = constructionHeadlineOrDefault(config.constructionHeadline);
+  const body = constructionBodyOrDefault(config.constructionBody);
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-b from-[var(--section-light-tertiary)] via-white to-[var(--section-light)]">
