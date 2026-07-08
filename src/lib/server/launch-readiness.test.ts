@@ -14,6 +14,8 @@ const baseInput = {
   citationFilterActive: true,
   hubtelProductionReady: false,
   isProduction: true,
+  legalReviewSignedOff: false,
+  backupDrillComplete: false,
 };
 
 describe("evaluateLaunchReadiness", () => {

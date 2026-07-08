@@ -10,12 +10,19 @@
  * See docs/MEMBER_FINDINGS_REMEDIATION_PHASES.md and docs/OPS_RUNBOOK.md.
  */
 import { PrismaClient } from "@prisma/client";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const constructionCopy = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "../src/lib/construction-gate-copy.json"), "utf8"),
+);
 
 const SITE_CONFIG_ID = "default";
 
-const DEFAULT_HEADLINE = "We're preparing the MBKRU Advocates platform";
-const DEFAULT_BODY =
-  "The public site is temporarily unavailable while we complete editorial review, data verification, and launch checks. Programme content remains in our systems — only staff with an admin login can preview the full site. Contact us if you need to reach the team before launch.";
+const DEFAULT_HEADLINE = constructionCopy.headline;
+const DEFAULT_BODY = constructionCopy.body;
 
 function usage() {
   console.log(`Usage:

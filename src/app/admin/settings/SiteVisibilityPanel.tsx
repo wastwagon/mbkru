@@ -118,6 +118,25 @@ export function SiteVisibilityPanel() {
       </label>
 
       <div className="mt-5 space-y-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => {
+              setSaved(false);
+              setConfig({
+                ...config,
+                constructionHeadline: DEFAULT_CONSTRUCTION_HEADLINE,
+                constructionBody: DEFAULT_CONSTRUCTION_BODY,
+              });
+            }}
+          >
+            Use recommended copy
+          </Button>
+          <span className="text-xs text-[var(--foreground-secondary)]">
+            Fills headline and message with launch-ready defaults (same as ops:construction:on).
+          </span>
+        </div>
         <div>
           <label htmlFor="construction-headline" className="mb-1.5 block text-xs font-semibold text-[var(--foreground-secondary)]">
             Headline (optional)

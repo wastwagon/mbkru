@@ -4,6 +4,7 @@ import type { CitizenReportKind } from "@prisma/client";
 
 import { ReportCardBrowseCard } from "@/components/accountability/ReportCardBrowseCard";
 import { ReportCardBrowseTabs } from "@/components/accountability/ReportCardBrowseTabs";
+import { ReportCardPilotBanner } from "@/components/accountability/ReportCardPilotBanner";
 import { VoiceSubmissionBrowseCard } from "@/components/accountability/VoiceSubmissionBrowseCard";
 import { ReportCardVoiceFiltersForm } from "@/components/accountability/ReportCardVoiceFiltersForm";
 import {
@@ -29,6 +30,7 @@ import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 import { VOICE_SUBMISSION_KIND_FILTERS } from "@/lib/reports/voice-submission-kind-filters";
 import {
   getCachedPublishedReportCardCycles,
+  getCachedPublishedReportCardYearStats,
   getReportCardBrowseEntries,
   getVoiceSubmissionsBrowseEntries,
   REPORT_CARD_INDEX_PAGE_SIZE,
@@ -151,6 +153,8 @@ export async function RegionReportCardsSection({
   const safePage = Math.min(browse.page, totalPages);
   const safeVPage = Math.min(voiceBrowse.page, vTotalPages);
   const cycleMeta = hasCycles ? cycles.find((c) => c.year === selectedYear) : undefined;
+  const cycleStats =
+    hasCycles && showScores ? await getCachedPublishedReportCardYearStats(selectedYear) : null;
 
   const activeTab = parseReportCardBrowseTab(sp.tab, { voiceOn, showScores });
   const browseTabs = showReportCardBrowseTabs({ voiceOn, showScores, hasCycles });
@@ -373,6 +377,15 @@ export async function RegionReportCardsSection({
 
         {showScores && hasCycles && activeTab === "scores" ? (
           <>
+            {cycleStats ? (
+              <div className="mx-auto mt-10 max-w-5xl">
+                <ReportCardPilotBanner
+                  cycleYear={selectedYear}
+                  totalEntries={cycleStats.totalEntries}
+                  scoredCount={cycleStats.scoredCount}
+                />
+              </div>
+            ) : null}
             <div
               id="browse-scores"
               className="mx-auto mt-14 max-w-5xl rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6"

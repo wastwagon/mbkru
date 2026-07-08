@@ -33,6 +33,8 @@ export type LaunchReadinessInput = {
   citationFilterActive: boolean;
   hubtelProductionReady: boolean | null;
   isProduction: boolean;
+  legalReviewSignedOff: boolean;
+  backupDrillComplete: boolean;
 };
 
 export type LaunchReadiness = {
@@ -134,15 +136,19 @@ export function evaluateLaunchReadiness(input: LaunchReadinessInput): Omit<Launc
   checks.push({
     id: "legal-review",
     label: "Legal review (Privacy / Terms / Voice)",
-    status: "manual",
-    detail: "Record counsel sign-off before external accountability claims.",
+    status: input.legalReviewSignedOff ? "ok" : "manual",
+    detail: input.legalReviewSignedOff
+      ? "Counsel sign-off recorded (LAUNCH_LEGAL_REVIEW_SIGNED_OFF=1)."
+      : "Record counsel sign-off, then set LAUNCH_LEGAL_REVIEW_SIGNED_OFF=1 on production deploy.",
   });
 
   checks.push({
     id: "backups",
     label: "Backup + restore drill",
-    status: "manual",
-    detail: "Run npm run ops:backup and ops:restore-verify; confirm admin login works on scratch DB.",
+    status: input.backupDrillComplete ? "ok" : "manual",
+    detail: input.backupDrillComplete
+      ? "Backup restore drill recorded (LAUNCH_BACKUP_DRILL_COMPLETE=1)."
+      : "Run npm run ops:backup and ops:restore-verify; then set LAUNCH_BACKUP_DRILL_COMPLETE=1.",
   });
 
   const blockerCount = checks.filter((c) => c.status === "blocker").length;
@@ -177,6 +183,8 @@ export async function getLaunchReadiness(): Promise<LaunchReadiness> {
       citationFilterActive: excludeIncompleteCitationsFromPublicPromotedSurfaces(),
       hubtelProductionReady: null,
       isProduction,
+      legalReviewSignedOff: process.env.LAUNCH_LEGAL_REVIEW_SIGNED_OFF === "1",
+      backupDrillComplete: process.env.LAUNCH_BACKUP_DRILL_COMPLETE === "1",
     });
     return {
       generatedAt,
@@ -234,6 +242,8 @@ export async function getLaunchReadiness(): Promise<LaunchReadiness> {
     citationFilterActive: excludeIncompleteCitationsFromPublicPromotedSurfaces(),
     hubtelProductionReady,
     isProduction,
+    legalReviewSignedOff: process.env.LAUNCH_LEGAL_REVIEW_SIGNED_OFF === "1",
+    backupDrillComplete: process.env.LAUNCH_BACKUP_DRILL_COMPLETE === "1",
   });
 
   return { generatedAt, ...evaluated };

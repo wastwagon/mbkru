@@ -1,8 +1,9 @@
-/** Default holding-page copy — keep in sync with `scripts/ops-site-visibility.mjs`. */
-export const DEFAULT_CONSTRUCTION_HEADLINE = "We're preparing the MBKRU Advocates platform";
+import copy from "@/lib/construction-gate-copy.json";
 
-export const DEFAULT_CONSTRUCTION_BODY =
-  "The public site is temporarily unavailable while we complete editorial review, data verification, and launch checks. Programme content remains in our systems — only admins with a login can preview the full site. Contact us if you need to reach the team before launch.";
+/** Default holding-page copy — shared with `scripts/ops-site-visibility.mjs`. */
+export const DEFAULT_CONSTRUCTION_HEADLINE = copy.headline;
+
+export const DEFAULT_CONSTRUCTION_BODY = copy.body;
 
 export function constructionHeadlineOrDefault(raw: string | null | undefined): string {
   return raw?.trim() || DEFAULT_CONSTRUCTION_HEADLINE;

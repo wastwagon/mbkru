@@ -113,6 +113,11 @@ export async function LaunchReadinessPanel() {
         <p className="font-semibold text-[var(--foreground)]">Launch sequence</p>
         <ol className="mt-2 list-decimal space-y-1 pl-4">
           <li>Resolve blockers above (editorial, legal, Hubtel, backups).</li>
+          <li>
+            Record manual sign-offs on production:{" "}
+            <code className="rounded bg-white px-1">LAUNCH_LEGAL_REVIEW_SIGNED_OFF=1</code>,{" "}
+            <code className="rounded bg-white px-1">LAUNCH_BACKUP_DRILL_COMPLETE=1</code>
+          </li>
           <li>Optional: <code className="rounded bg-white px-1">npm run ops:archive-training-reports -- --apply</code></li>
           <li>
             Turn off the gate in{" "}

@@ -16,7 +16,8 @@ Use while editorial, legal, and data work continues **without deleting programme
 | Enable (env) | `PUBLIC_UNDER_CONSTRUCTION=1` on production deploy — forces gate even if DB is off |
 | Status | `npm run ops:construction:status` |
 | Admin preview | `/admin/login` → then open `/` in the same browser |
-| Holding page copy | `/admin/settings` → Public site visibility |
+| Holding page copy | `/admin/settings` → Public site visibility → **Use recommended copy** (or `npm run ops:construction:on`, which applies the same defaults from `src/lib/construction-gate-copy.json`) |
+| Manual sign-offs | After legal review and backup drill, set `LAUNCH_LEGAL_REVIEW_SIGNED_OFF=1` and `LAUNCH_BACKUP_DRILL_COMPLETE=1` on production — see `/admin/settings` → Launch readiness |
 | Launch | `npm run ops:construction:off` + unset env — only after [`MEMBER_FINDINGS_REMEDIATION_PHASES.md`](./MEMBER_FINDINGS_REMEDIATION_PHASES.md) R5 |
 
 **Public exceptions while gated:** `/under-construction`, `/contact`, `/api/health`, `/admin/*`. Members and guests do **not** bypass the gate.
