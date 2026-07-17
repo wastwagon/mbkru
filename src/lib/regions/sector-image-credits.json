@@ -1,0 +1,138 @@
+{
+  "agriculture": {
+    "file": "/images/sectors/agriculture.jpg",
+    "commonsTitle": "File:Ghana Maize Farm.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ghana_Maize_Farm.jpg",
+    "author": "Fanti Salms",
+    "license": "CC BY-SA 4.0",
+    "bytes": 2521317
+  },
+  "cocoa": {
+    "file": "/images/sectors/cocoa.jpg",
+    "commonsTitle": "File:20151118-OSEC-UNK-2929 (23822775342).jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:20151118-OSEC-UNK-2929_(23822775342).jpg",
+    "author": "USDAgov",
+    "license": "Public domain",
+    "bytes": 531780
+  },
+  "shea": {
+    "file": "/images/sectors/shea.jpg",
+    "commonsTitle": "File:USAID in Ghana Shea Butter Processing (41538472252).jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:USAID_in_Ghana_Shea_Butter_Processing_(41538472252).jpg",
+    "author": "USAID in Africa",
+    "license": "Public domain",
+    "bytes": 594606
+  },
+  "livestock": {
+    "file": "/images/sectors/livestock.jpg",
+    "commonsTitle": "File:A Herd of Cattle Grazing in Northern Ghana.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_Herd_of_Cattle_Grazing_in_Northern_Ghana.jpg",
+    "author": "Sheihu Salawatia",
+    "license": "CC BY-SA 4.0",
+    "bytes": 343171
+  },
+  "mining": {
+    "file": "/images/sectors/mining.jpg",
+    "commonsTitle": "File:Land disturbances at ASGM site at Talensi District, Upper East Region, Ghana.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Land_disturbances_at_ASGM_site_at_Talensi_District,_Upper_East_Region,_Ghana.jpg",
+    "author": "Mozhgon Rajaee, Samuel Obiri, Allyson Green, Rachel Long, Samuel J. Cobbina, Vincent Nartey, David Buck, Edward Antwi, Niladri Basu",
+    "license": "CC BY 4.0",
+    "bytes": 1220703
+  },
+  "fishing": {
+    "file": "/images/sectors/fishing.jpg",
+    "commonsTitle": "File:Man Paints Fishing Boat - The Blood - Elmina - Ghana (4721667690).jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Man_Paints_Fishing_Boat_-_The_Blood_-_Elmina_-_Ghana_(4721667690).jpg",
+    "author": "Adam Jones from Kelowna, BC, Canada",
+    "license": "CC BY-SA 2.0",
+    "bytes": 756354
+  },
+  "tourism": {
+    "file": "/images/sectors/tourism.jpg",
+    "commonsTitle": "File:Cape Coast Castle, Cape Coast, Ghana.JPG",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cape_Coast_Castle,_Cape_Coast,_Ghana.JPG",
+    "author": "Rjruiziii",
+    "license": "CC BY-SA 3.0",
+    "bytes": 616120
+  },
+  "oil-gas": {
+    "file": "/images/sectors/oil-gas.jpg",
+    "commonsTitle": "File:Oil platform P-51 (Brazil).jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Oil_platform_P-51_(Brazil).jpg",
+    "author": "Divulgação Petrobras / ABr",
+    "license": "CC BY 3.0 br",
+    "bytes": 440166
+  },
+  "timber": {
+    "file": "/images/sectors/timber.jpg",
+    "commonsTitle": "File:Cut timber and the \"pick-up\" vehicle for stacking the logs - geograph.org.uk - 7976335.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cut_timber_and_the_%22pick-up%22_vehicle_for_stacking_the_logs_-_geograph.org.uk_-_7976335.jpg",
+    "author": "Julian Paren",
+    "license": "CC BY-SA 2.0",
+    "bytes": 1104560
+  },
+  "commerce": {
+    "file": "/images/sectors/commerce.jpg",
+    "commonsTitle": "File:Makola Market Entrance, Accra, Ghana.JPG",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Makola_Market_Entrance,_Accra,_Ghana.JPG",
+    "author": "Benggriff",
+    "license": "CC BY-SA 3.0",
+    "bytes": 593896
+  },
+  "manufacturing": {
+    "file": "/images/sectors/manufacturing.jpg",
+    "commonsTitle": "File:ABL Workers.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:ABL_Workers.jpg",
+    "author": "Fquasie",
+    "license": "CC BY-SA 4.0",
+    "bytes": 631954
+  },
+  "services": {
+    "file": "/images/sectors/services.jpg",
+    "commonsTitle": "File:Accra Skyline - Ghana.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Accra_Skyline_-_Ghana.jpg",
+    "author": "Synth85",
+    "license": "CC BY-SA 4.0",
+    "bytes": 270128
+  },
+  "finance": {
+    "file": "/images/sectors/finance.jpg",
+    "commonsTitle": "File:Ghana Commerical Bank in Accra.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ghana_Commerical_Bank_in_Accra.jpg",
+    "author": "Elegant Machines",
+    "license": "CC BY-SA 2.0",
+    "bytes": 181150
+  },
+  "government": {
+    "file": "/images/sectors/government.jpg",
+    "commonsTitle": "File:Accra International Conference Centre over-looking Parliament house - panoramio.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Accra_International_Conference_Centre_over-looking_Parliament_house_-_panoramio.jpg",
+    "author": "Simon Ontoyin",
+    "license": "CC BY-SA 3.0",
+    "bytes": 498394
+  },
+  "transport": {
+    "file": "/images/sectors/transport.jpg",
+    "commonsTitle": "File:Madina Market and Trotro Station.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Madina_Market_and_Trotro_Station.jpg",
+    "author": "Samson Craig McArthur Sik",
+    "license": "CC BY-SA 4.0",
+    "bytes": 773601
+  },
+  "crafts": {
+    "file": "/images/sectors/crafts.jpg",
+    "commonsTitle": "File:Weaving of smock material (Kente) in Northern Ghana 01.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Weaving_of_smock_material_(Kente)_in_Northern_Ghana_01.jpg",
+    "author": "Sir Amugi",
+    "license": "CC BY-SA 4.0",
+    "bytes": 1437708
+  },
+  "volta-basin": {
+    "file": "/images/sectors/volta-basin.jpg",
+    "commonsTitle": "File:Dodi Island Pier.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Dodi_Island_Pier.jpg",
+    "author": "Hiroo Yamagata",
+    "license": "CC BY-SA 2.0",
+    "bytes": 573511
+  }
+}

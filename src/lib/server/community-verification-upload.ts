@@ -85,6 +85,7 @@ export async function createMediaRecordsFromVerificationFiles(files: File[]): Pr
         storagePath,
         mimeType: file.type,
         alt: null,
+        visibility: "PRIVATE",
       },
     });
     ids.push(record.id);

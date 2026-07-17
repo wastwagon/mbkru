@@ -16,7 +16,11 @@ export async function GET() {
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const items = await prisma.media.findMany({ orderBy: { createdAt: "desc" } });
+  // Library surface: public assets only — verification evidence stays out of pickers.
+  const items = await prisma.media.findMany({
+    where: { visibility: "PUBLIC" },
+    orderBy: { createdAt: "desc" },
+  });
   return NextResponse.json(items);
 }
 

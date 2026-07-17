@@ -1,7 +1,10 @@
+import Link from "next/link";
+
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { prisma } from "@/lib/db/prisma";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 import { createRegionAction, updateRegionAction } from "./actions";
 
@@ -125,7 +128,10 @@ export default async function AdminRegionsPage() {
                       className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
                     />
                   </div>
-                  <div className="sm:col-span-2 flex flex-wrap justify-end gap-2">
+                  <div className="sm:col-span-2 flex flex-wrap items-center justify-end gap-3">
+                    <Link href={`/admin/regions/${r.id}/gallery`} className={`text-sm font-medium ${primaryLinkClass}`}>
+                      Sector gallery →
+                    </Link>
                     <button
                       type="submit"
                       className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-2 text-sm font-medium hover:bg-[var(--muted)]"

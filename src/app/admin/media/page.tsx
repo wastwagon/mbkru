@@ -10,7 +10,10 @@ import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminMediaPage() {
   await requireAdminSession();
-  const items = await prisma.media.findMany({ orderBy: { createdAt: "desc" } });
+  const items = await prisma.media.findMany({
+    where: { visibility: "PUBLIC" },
+    orderBy: { createdAt: "desc" },
+  });
 
   return (
     <AdminPageContainer>

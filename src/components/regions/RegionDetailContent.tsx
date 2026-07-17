@@ -1,4 +1,6 @@
 import type { RegionData } from "@/components/regions/region-types";
+import { RegionSectorGallery } from "@/components/regions/RegionSectorGallery";
+import type { RegionGalleryImage } from "@/lib/regions/sector-images";
 
 const PILLAR_LABELS: Record<string, string> = {
   A: "Digital Platform",
@@ -15,7 +17,13 @@ function formatPopulation(n: number) {
 }
 
 /** Facts + MBKRU engagement block — shared by regional hub pages (no modal chrome). */
-export function RegionDetailContent({ region }: { region: RegionData }) {
+export function RegionDetailContent({
+  region,
+  sectorGallery = [],
+}: {
+  region: RegionData;
+  sectorGallery?: RegionGalleryImage[];
+}) {
   return (
     <div className="space-y-5">
       <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm sm:p-6">
@@ -63,6 +71,8 @@ export function RegionDetailContent({ region }: { region: RegionData }) {
           ) : null}
         </dl>
       </div>
+
+      <RegionSectorGallery regionName={region.name} images={sectorGallery} />
 
       <div className="rounded-2xl border border-[var(--primary)]/20 bg-gradient-to-br from-[var(--primary)]/8 to-white p-5 shadow-sm sm:p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">MBKRU engagement in {region.name}</h2>

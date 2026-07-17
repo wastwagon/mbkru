@@ -5,6 +5,9 @@ import { PostEditor } from "../PostEditor";
 
 export default async function NewPostPage() {
   await requireAdminSession();
-  const media = await prisma.media.findMany({ orderBy: { createdAt: "desc" } });
+  const media = await prisma.media.findMany({
+    where: { visibility: "PUBLIC" },
+    orderBy: { createdAt: "desc" },
+  });
   return <PostEditor post={null} media={media} />;
 }

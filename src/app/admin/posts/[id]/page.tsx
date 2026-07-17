@@ -15,6 +15,9 @@ export default async function EditPostPage({ params }: Props) {
     include: { featuredMedia: true },
   });
   if (!post) notFound();
-  const media = await prisma.media.findMany({ orderBy: { createdAt: "desc" } });
+  const media = await prisma.media.findMany({
+    where: { visibility: "PUBLIC" },
+    orderBy: { createdAt: "desc" },
+  });
   return <PostEditor post={post} media={media} />;
 }

@@ -24,6 +24,12 @@ model Admin {
 }
 
 /// Reusable images for posts (and future resources).
+/// PUBLIC = library assets for public content; PRIVATE = verification evidence etc. (never selectable for public surfaces).
+enum MediaVisibility {
+  PUBLIC
+  PRIVATE
+}
+
 model Media {
   id          String      @id @default(cuid())
   filename    String
@@ -32,9 +38,28 @@ model Media {
   alt         String?
   width       Int?
   height      Int?
+  visibility  MediaVisibility @default(PUBLIC)
   createdAt   DateTime    @default(now())
   posts       Post[]
   communityCovers Community[] @relation("CommunityCover")
+  regionSectorImages RegionSectorImage[]
+}
+
+/// CMS-managed photo in a region's "Key sectors" gallery — overrides bundled defaults when present.
+model RegionSectorImage {
+  id          String   @id @default(cuid())
+  regionId    String
+  region      Region   @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  mediaId     String
+  media       Media    @relation(fields: [mediaId], references: [id])
+  sectorLabel String   @db.VarChar(80)
+  alt         String   @db.VarChar(300)
+  credit      String?  @db.VarChar(200)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([regionId, sortOrder])
 }
 
 model Post {
@@ -243,6 +268,7 @@ model Region {
   communities    Community[]
   townHallEvents TownHallEvent[]
   petitions      Petition[]
+  sectorImages   RegionSectorImage[]
 }
 
 /// Physical programme rows (town halls / forums / constituency debates). Seeded from roadmap + regional plan; operators replace with confirmed dates.

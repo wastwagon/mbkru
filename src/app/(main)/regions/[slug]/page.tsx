@@ -10,6 +10,7 @@ import { RegionModalEngagementLinks } from "@/components/ui/RegionModalEngagemen
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { ghanaRegionSlugFromDisplayName } from "@/lib/geo/ghana-region-slug";
+import { defaultSectorGallery, type RegionGalleryImage } from "@/lib/regions/sector-images";
 import { isReportCardPublicEnabled } from "@/lib/reports/accountability-pages";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
@@ -60,6 +61,29 @@ export default async function RegionHubPage({ params, searchParams }: Props) {
       })
     : null;
 
+  // CMS gallery overrides bundled sector defaults when admins have added photos.
+  let sectorGallery: RegionGalleryImage[] = defaultSectorGallery(staticRegion.name, staticRegion.keySectors);
+  if (dbRegion) {
+    const cmsImages = await prisma.regionSectorImage.findMany({
+      where: { regionId: dbRegion.id },
+      orderBy: { sortOrder: "asc" },
+      select: {
+        sectorLabel: true,
+        alt: true,
+        credit: true,
+        media: { select: { storagePath: true } },
+      },
+    });
+    if (cmsImages.length > 0) {
+      sectorGallery = cmsImages.map((img) => ({
+        src: img.media.storagePath,
+        alt: img.alt,
+        label: img.sectorLabel,
+        credit: img.credit ?? undefined,
+      }));
+    }
+  }
+
   const reportBrowseEnabled = isReportCardPublicEnabled() || isCitizensVoiceEnabled();
 
   return (
@@ -101,7 +125,7 @@ export default async function RegionHubPage({ params, searchParams }: Props) {
             </Link>
           </p>
           <div className="mt-8">
-            <RegionDetailContent region={staticRegion} />
+            <RegionDetailContent region={staticRegion} sectorGallery={sectorGallery} />
           </div>
         </div>
       </section>
