@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 import { isPublicUnderConstructionEnvOverride } from "@/lib/construction-gate-env";
+import { gateFallbackOnProbeFailure } from "@/lib/construction-gate-fallback";
 import { getSessionSecretKey } from "@/lib/admin/jwt-config";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import {
@@ -20,6 +21,21 @@ const ADMIN_COOKIE = "mbkru_admin";
 
 const GATE_CACHE_MS = 5000;
 let gateCache: { at: number; underConstruction: boolean } | null = null;
+/** Last successful probe result — reused when a later probe fails (stale beats a guess). */
+let lastKnownGate: boolean | null = null;
+
+/**
+ * In self-hosted production (standalone `node server.js`) probe the gate over loopback:
+ * fetching the public hostname from inside the container can hairpin through the reverse
+ * proxy and time out, which previously made the gate silently fail open.
+ */
+function gateProbeUrl(request: NextRequest): URL {
+  const port = process.env.PORT;
+  if (process.env.NODE_ENV === "production" && port) {
+    return new URL(`http://127.0.0.1:${port}/api/site-gate`);
+  }
+  return new URL("/api/site-gate", request.url);
+}
 
 function privateSurfaceHeaders(res: NextResponse) {
   res.headers.set("X-Robots-Tag", "noindex, nofollow");
@@ -52,22 +68,25 @@ async function fetchUnderConstructionFlag(request: NextRequest): Promise<boolean
   }
 
   try {
-    const url = new URL("/api/site-gate", request.url);
-    const res = await fetch(url, {
+    const res = await fetch(gateProbeUrl(request), {
       signal: AbortSignal.timeout(2000),
       headers: { "x-mbkru-proxy": "1" },
     });
-    if (!res.ok) {
-      gateCache = { at: now, underConstruction: false };
-      return false;
-    }
+    if (!res.ok) throw new Error(`site-gate probe HTTP ${res.status}`);
     const body = (await res.json()) as { underConstruction?: boolean };
     const underConstruction = Boolean(body.underConstruction);
     gateCache = { at: now, underConstruction };
+    lastKnownGate = underConstruction;
     return underConstruction;
-  } catch {
-    gateCache = { at: now, underConstruction: false };
-    return false;
+  } catch (err) {
+    // Never silently expose a gated site: reuse the last known value, else fail closed in prod.
+    const fallback = gateFallbackOnProbeFailure(
+      lastKnownGate,
+      process.env.NODE_ENV === "production",
+    );
+    console.error(`[construction-gate] probe failed — using fallback ${fallback}:`, err);
+    gateCache = { at: now, underConstruction: fallback };
+    return fallback;
   }
 }
 

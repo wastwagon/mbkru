@@ -22,6 +22,8 @@ Use while editorial, legal, and data work continues **without deleting programme
 
 **Public exceptions while gated:** `/under-construction`, `/contact`, `/api/health`, `/admin/*`. Members and guests do **not** bypass the gate.
 
+**Fail-safe:** the proxy probes `/api/site-gate` over loopback (`127.0.0.1:$PORT`) in production. If the probe fails it reuses the last known value, else **fails closed** (shows the holding page) — a broken probe can no longer silently expose a gated site. Belt-and-braces: keep `PUBLIC_UNDER_CONSTRUCTION=1` set on production until launch day.
+
 ---
 
 ## Quarterly / pre-release verification
