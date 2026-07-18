@@ -143,20 +143,31 @@ export default async function NewsPage() {
               <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {remaining.map((article) => (
                   <li key={article.id}>
-                    <Link
+                      <Link
                       href={article.href}
-                      className="group flex h-full flex-col rounded-xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-sm)] transition hover:border-[var(--primary)]/25"
+                      className="group flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-white shadow-[var(--shadow-sm)] transition hover:border-[var(--primary)]/25"
                     >
-                      <span className="text-xs font-medium text-[var(--foreground-secondary)]">{article.dateLabel}</span>
-                      <h3 className="mt-2 font-display text-base font-semibold text-[var(--foreground)] group-hover:text-[var(--primary)]">
-                        {article.title}
-                      </h3>
-                      {article.excerpt ? (
-                        <p className="mt-2 line-clamp-3 flex-1 text-sm text-[var(--foreground-secondary)]">
-                          {article.excerpt}
-                        </p>
-                      ) : null}
-                      <span className="mt-4 text-sm font-semibold text-[var(--primary)]">Read story →</span>
+                      <div className="relative aspect-[16/10] w-full overflow-hidden bg-[var(--section-light)]">
+                        <Image
+                          src={article.image}
+                          alt={article.title}
+                          fill
+                          className="object-cover transition-transform duration-300 group-hover:scale-105"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        />
+                      </div>
+                      <div className="flex flex-1 flex-col p-5">
+                        <span className="text-xs font-medium text-[var(--foreground-secondary)]">{article.dateLabel}</span>
+                        <h3 className="mt-2 font-display text-base font-semibold text-[var(--foreground)] group-hover:text-[var(--primary)]">
+                          {article.title}
+                        </h3>
+                        {article.excerpt ? (
+                          <p className="mt-2 line-clamp-3 flex-1 text-sm text-[var(--foreground-secondary)]">
+                            {article.excerpt}
+                          </p>
+                        ) : null}
+                        <span className="mt-4 text-sm font-semibold text-[var(--primary)]">Read story →</span>
+                      </div>
                     </Link>
                   </li>
                 ))}

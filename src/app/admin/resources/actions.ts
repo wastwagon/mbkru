@@ -10,6 +10,7 @@ import { revalidatePath } from "next/cache";
 import { randomSlugSuffix, slugifyTitleSegment } from "@/lib/civic/slug";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { assertPublicImageMedia } from "@/lib/server/public-media";
 import { MalwareScanError, scanUploadedFileOrThrow } from "@/lib/server/upload-malware-scan";
 
 const MAX_BYTES = 25 * 1024 * 1024;
@@ -73,6 +74,10 @@ export async function createResourceDocumentAction(formData: FormData): Promise<
   const sortOrderRaw = Number.parseInt(String(formData.get("sortOrder") ?? "0"), 10);
   const sortOrder = Number.isFinite(sortOrderRaw) ? Math.min(999_999, Math.max(0, sortOrderRaw)) : 0;
 
+  const coverMediaIdRaw = String(formData.get("coverMediaId") ?? "").trim();
+  const coverMediaId = coverMediaIdRaw.length > 0 ? coverMediaIdRaw : null;
+  if (coverMediaId && !(await assertPublicImageMedia(coverMediaId))) return;
+
   const file = formData.get("file");
   if (!title || title.length < 2 || !(file instanceof File) || file.size === 0) return;
   if (file.size > MAX_BYTES) return;
@@ -115,6 +120,7 @@ export async function createResourceDocumentAction(formData: FormData): Promise<
         originalFilename: file.name.slice(0, 280),
         mimeType: file.type.slice(0, 120),
         fileSize: file.size,
+        coverMediaId,
         publishedAt,
         sortOrder,
       },
@@ -134,6 +140,31 @@ export async function createResourceDocumentAction(formData: FormData): Promise<
   if (publishedAt) {
     revalidatePath(`/resources/${slug}`);
   }
+}
+
+export async function updateResourceCoverAction(formData: FormData): Promise<void> {
+  await requireAdminSession();
+  const id = String(formData.get("id") ?? "").trim();
+  if (!id) return;
+
+  const coverMediaIdRaw = String(formData.get("coverMediaId") ?? "").trim();
+  const coverMediaId = coverMediaIdRaw.length > 0 ? coverMediaIdRaw : null;
+  if (coverMediaId && !(await assertPublicImageMedia(coverMediaId))) return;
+
+  const existing = await prisma.resourceDocument.findUnique({
+    where: { id },
+    select: { slug: true },
+  });
+  if (!existing) return;
+
+  await prisma.resourceDocument.update({
+    where: { id },
+    data: { coverMediaId },
+  });
+
+  revalidatePath("/admin/resources");
+  revalidatePath("/resources", "layout");
+  revalidatePath(`/resources/${existing.slug}`);
 }
 
 export async function publishResourceDocumentAction(formData: FormData): Promise<void> {

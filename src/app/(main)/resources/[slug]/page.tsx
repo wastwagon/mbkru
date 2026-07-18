@@ -61,6 +61,8 @@ export default async function ResourceDocumentDetailPage({ params }: Props) {
           doc.summary ??
           `${resourceCategoryLabel(doc.category)} · ${doc.originalFilename}${sizeLabel ? ` · ${sizeLabel}` : ""}`
         }
+        heroImage={doc.coverMedia?.storagePath}
+        heroImageAlt={doc.coverMedia ? (doc.coverMedia.alt ?? doc.title) : undefined}
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">

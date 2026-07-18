@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 
 import { PageHeader } from "@/components/ui/PageHeader";
+import { ProcessFlowDiagram, DATA_PROVENANCE_STEPS } from "@/components/ui/ProcessFlowDiagram";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 
 export const metadata: Metadata = {
@@ -220,6 +221,7 @@ export default function DataSourcesPage() {
             responsible for editorial accuracy — always confirm against official institutions before legal or high-stakes
             communications.
           </p>
+          <ProcessFlowDiagram title="How data reaches the public site" steps={DATA_PROVENANCE_STEPS} />
           <ul className="space-y-8">
             {sources.map((s) => (
               <li key={s.heading} className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">

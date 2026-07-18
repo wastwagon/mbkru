@@ -47,6 +47,8 @@ model Media {
   partners    Partner[] @relation("PartnerLogo")
   leadershipProfiles LeadershipProfile[] @relation("LeadershipPortrait")
   queenMotherPortraits CommunityMembership[] @relation("QueenMotherPortrait")
+  resourceCovers ResourceDocument[] @relation("ResourceCover")
+  regionHeaders Region[] @relation("RegionHeader")
 }
 
 /// CMS-managed photo in a region's "Key sectors" gallery — overrides bundled defaults when present.
@@ -98,6 +100,8 @@ model ResourceDocument {
   originalFilename String                   @db.VarChar(280)
   mimeType         String                   @db.VarChar(120)
   fileSize         Int?
+  coverMediaId     String?
+  coverMedia       Media?                   @relation("ResourceCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
   publishedAt      DateTime?
   sortOrder        Int                      @default(0)
   createdAt        DateTime                 @default(now())
@@ -285,6 +289,8 @@ model Region {
   name           String
   slug           String          @unique
   sortOrder      Int             @default(0)
+  headerMediaId  String?
+  headerMedia    Media?          @relation("RegionHeader", fields: [headerMediaId], references: [id], onDelete: SetNull)
   members        Member[]
   reports        CitizenReport[]
   constituencies Constituency[]

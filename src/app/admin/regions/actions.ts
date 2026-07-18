@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { assertPublicImageMedia } from "@/lib/server/public-media";
 
 const cuid = z.string().cuid();
 
@@ -57,6 +58,42 @@ export async function createRegionAction(formData: FormData): Promise<void> {
   revalidatePath("/admin/regions");
   revalidatePath("/admin/town-halls");
   revalidatePath("/admin/communities");
+}
+
+const updateHeaderMediaSchema = z.object({
+  regionId: cuid,
+  headerMediaId: z.preprocess(
+    (v) => (typeof v === "string" && v.trim().length ? v.trim() : null),
+    z.string().cuid().nullable(),
+  ),
+});
+
+export async function updateRegionHeaderMediaAction(formData: FormData): Promise<void> {
+  await requireAdminSession();
+
+  const parsed = updateHeaderMediaSchema.safeParse({
+    regionId: formData.get("regionId"),
+    headerMediaId: formData.get("headerMediaId"),
+  });
+  if (!parsed.success) return;
+
+  const region = await prisma.region.findUnique({
+    where: { id: parsed.data.regionId },
+    select: { id: true, slug: true },
+  });
+  if (!region) return;
+
+  if (parsed.data.headerMediaId && !(await assertPublicImageMedia(parsed.data.headerMediaId))) return;
+
+  await prisma.region.update({
+    where: { id: region.id },
+    data: { headerMediaId: parsed.data.headerMediaId },
+  });
+
+  revalidatePath("/admin/regions");
+  revalidatePath(`/admin/regions/${region.id}/gallery`);
+  revalidatePath("/regions");
+  revalidatePath(`/regions/${region.slug}`);
 }
 
 export async function updateRegionAction(formData: FormData): Promise<void> {

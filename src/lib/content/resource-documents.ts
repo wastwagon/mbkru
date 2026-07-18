@@ -18,12 +18,22 @@ function isRecoverableResourceReadError(err: unknown): boolean {
   return false;
 }
 
-export async function getPublishedResourceDocuments(): Promise<ResourceDocument[]> {
+/** Published document with its optional public cover image. */
+export type PublicResourceDocument = ResourceDocument & {
+  coverMedia: { storagePath: string; alt: string | null } | null;
+};
+
+const coverMediaInclude = {
+  coverMedia: { select: { storagePath: true, alt: true } },
+} as const;
+
+export async function getPublishedResourceDocuments(): Promise<PublicResourceDocument[]> {
   if (!isDatabaseConfigured()) return [];
   try {
     return await prisma.resourceDocument.findMany({
       where: { publishedAt: { not: null } },
       orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }],
+      include: coverMediaInclude,
     });
   } catch (e) {
     if (isRecoverableResourceReadError(e)) return [];
@@ -33,7 +43,7 @@ export async function getPublishedResourceDocuments(): Promise<ResourceDocument[
 
 export async function getPublishedResourceDocumentBySlug(
   slug: string,
-): Promise<ResourceDocument | null> {
+): Promise<PublicResourceDocument | null> {
   if (!isDatabaseConfigured()) return null;
   const key = slug.trim();
   if (!key) return null;
@@ -43,6 +53,7 @@ export async function getPublishedResourceDocumentBySlug(
         publishedAt: { not: null },
         slug: { equals: key, mode: "insensitive" },
       },
+      include: coverMediaInclude,
     });
   } catch (e) {
     if (isRecoverableResourceReadError(e)) return null;

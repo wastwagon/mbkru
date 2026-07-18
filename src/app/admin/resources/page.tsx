@@ -1,11 +1,14 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import {
   createResourceDocumentAction,
   publishResourceDocumentAction,
   unpublishResourceDocumentAction,
+  updateResourceCoverAction,
 } from "@/app/admin/resources/actions";
 import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
+import { AdminMediaField } from "@/components/admin/AdminMediaField";
 import { DeleteResourceDocumentForm } from "@/components/admin/DeleteResourceDocumentForm";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -24,6 +27,9 @@ export default async function AdminResourcesPage() {
 
   const docs = await prisma.resourceDocument.findMany({
     orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+    include: {
+      coverMedia: { select: { id: true, storagePath: true, filename: true, alt: true } },
+    },
   });
 
   return (
@@ -125,6 +131,11 @@ export default async function AdminResourcesPage() {
               className="mt-1 block w-full text-sm text-[var(--foreground-secondary)] file:mr-4 file:rounded-lg file:border-0 file:bg-[var(--primary)] file:px-4 file:py-2 file:font-semibold file:text-white"
             />
           </div>
+          <AdminMediaField
+            name="coverMediaId"
+            label="Cover image (optional)"
+            help="Shown on the public Resources list and document page."
+          />
           <label className="flex items-center gap-2 text-sm text-[var(--foreground)]">
             <input type="checkbox" name="publishNow" className="rounded border-[var(--border)]" />
             Publish immediately
@@ -150,18 +161,50 @@ export default async function AdminResourcesPage() {
               key={d.id}
               className="flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-white p-4 sm:flex-row sm:items-center sm:justify-between"
             >
-              <div className="min-w-0">
-                <p className="font-medium text-[var(--foreground)]">{d.title}</p>
-                <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
-                  {resourceCategoryLabel(d.category)} · slug:{" "}
-                  <span className="font-mono">{d.slug}</span>
-                  {d.publishedAt ? (
-                    <span className="text-emerald-700"> · published</span>
-                  ) : (
-                    <span> · draft</span>
-                  )}
-                </p>
-                <p className="mt-1 truncate text-xs text-[var(--foreground-secondary)]">{d.originalFilename}</p>
+              <div className="flex min-w-0 items-start gap-3">
+                {d.coverMedia ? (
+                  <span className="relative block h-12 w-16 shrink-0 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--section-light)]">
+                    <Image
+                      src={d.coverMedia.storagePath}
+                      alt={d.coverMedia.alt || d.coverMedia.filename}
+                      fill
+                      className="object-cover"
+                      sizes="64px"
+                    />
+                  </span>
+                ) : null}
+                <div className="min-w-0">
+                  <p className="font-medium text-[var(--foreground)]">{d.title}</p>
+                  <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
+                    {resourceCategoryLabel(d.category)} · slug:{" "}
+                    <span className="font-mono">{d.slug}</span>
+                    {d.publishedAt ? (
+                      <span className="text-emerald-700"> · published</span>
+                    ) : (
+                      <span> · draft</span>
+                    )}
+                  </p>
+                  <p className="mt-1 truncate text-xs text-[var(--foreground-secondary)]">{d.originalFilename}</p>
+                  <details className="mt-2">
+                    <summary className="cursor-pointer text-xs font-semibold text-[var(--primary)]">
+                      {d.coverMedia ? "Edit cover image" : "Add cover image"}
+                    </summary>
+                    <form action={updateResourceCoverAction} className="mt-2 space-y-3">
+                      <input type="hidden" name="id" value={d.id} />
+                      <AdminMediaField
+                        name="coverMediaId"
+                        label="Cover image"
+                        initial={d.coverMedia}
+                      />
+                      <button
+                        type="submit"
+                        className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-2 text-sm font-medium hover:bg-[var(--muted)]"
+                      >
+                        Save cover
+                      </button>
+                    </form>
+                  </details>
+                </div>
               </div>
               <div className="flex flex-wrap gap-2">
                 {d.publishedAt ? (

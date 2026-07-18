@@ -90,9 +90,13 @@ export default async function PetitionsIndexPage({ searchParams }: IndexProps) {
             <ul className="mt-8 space-y-3">
               {petitions.map((p) => {
                 const href = `/petitions/${encodeURIComponent(p.slug)}`;
+                const sigCount = p._count.signatures;
+                const goal = p.targetSignatures;
+                const pct =
+                  goal != null && goal > 0 ? Math.min(100, Math.round((sigCount / goal) * 100)) : null;
                 const metaParts = [
                   petitionTopicLabel(p.topic),
-                  `${p._count.signatures.toLocaleString()} signature${p._count.signatures === 1 ? "" : "s"}`,
+                  `${sigCount.toLocaleString()} signature${sigCount === 1 ? "" : "s"}`,
                   p.region?.name,
                 ].filter(Boolean);
 
@@ -113,6 +117,26 @@ export default async function PetitionsIndexPage({ searchParams }: IndexProps) {
                             </p>
                           ) : null}
                           <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{metaParts.join(" · ")}</p>
+                          {pct != null && goal != null ? (
+                            <div className="mt-3">
+                              <div
+                                className="h-2 overflow-hidden rounded-full bg-[var(--section-light)]"
+                                role="progressbar"
+                                aria-valuenow={pct}
+                                aria-valuemin={0}
+                                aria-valuemax={100}
+                                aria-label={`${pct}% of signature goal`}
+                              >
+                                <div
+                                  className="h-full bg-[var(--primary)] transition-all"
+                                  style={{ width: `${pct}%` }}
+                                />
+                              </div>
+                              <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
+                                {pct}% of goal ({goal.toLocaleString()})
+                              </p>
+                            </div>
+                          ) : null}
                           <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
                             <Link
                               href={href}

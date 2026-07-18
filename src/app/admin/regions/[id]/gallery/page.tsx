@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { updateRegionHeaderMediaAction } from "@/app/admin/regions/actions";
+import { AdminMediaField } from "@/components/admin/AdminMediaField";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { requireAdminSession } from "@/lib/admin/require-session";
@@ -18,7 +20,12 @@ export default async function AdminRegionGalleryPage({ params }: { params: Promi
 
   const region = await prisma.region.findUnique({
     where: { id },
-    select: { id: true, name: true, slug: true },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      headerMedia: { select: { id: true, storagePath: true, filename: true, alt: true } },
+    },
   });
   if (!region) notFound();
 
@@ -56,6 +63,23 @@ export default async function AdminRegionGalleryPage({ params }: { params: Promi
           View public page
         </Link>
       </p>
+
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-5">
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">Region header photo</h2>
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
+          Shown at the top of the public {region.name} page, next to the title. Leave empty for the plain header.
+        </p>
+        <form action={updateRegionHeaderMediaAction} className="mt-4 space-y-3">
+          <input type="hidden" name="regionId" value={region.id} />
+          <AdminMediaField name="headerMediaId" label="Header photo" initial={region.headerMedia} />
+          <button
+            type="submit"
+            className="rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
+          >
+            Save header photo
+          </button>
+        </form>
+      </section>
 
       <div className="mt-8">
         <RegionGalleryManager

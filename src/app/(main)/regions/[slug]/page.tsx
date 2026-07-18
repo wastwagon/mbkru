@@ -57,7 +57,11 @@ export default async function RegionHubPage({ params, searchParams }: Props) {
     isDatabaseConfigured() ?
       await prisma.region.findUnique({
         where: { slug },
-        select: { id: true, name: true },
+        select: {
+          id: true,
+          name: true,
+          headerMedia: { select: { storagePath: true, alt: true } },
+        },
       })
     : null;
 
@@ -91,6 +95,10 @@ export default async function RegionHubPage({ params, searchParams }: Props) {
       <PageHeader
         title={staticRegion.name}
         description={`Regional capital ${staticRegion.capital}. Explore MBKRU engagement plans, connect with others in this region, and browse People&apos;s Report Card items scoped here.`}
+        heroImage={dbRegion?.headerMedia?.storagePath}
+        heroImageAlt={
+          dbRegion?.headerMedia ? (dbRegion.headerMedia.alt ?? `${staticRegion.name} region`) : undefined
+        }
       />
 
       <section className="section-spacing section-full bg-[var(--section-light)] pb-10">

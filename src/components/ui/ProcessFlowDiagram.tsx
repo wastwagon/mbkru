@@ -108,3 +108,18 @@ export const SITUATIONAL_ALERT_FLOW_STEPS: Step[] = [
     detail: "Use your tracking code to follow status updates on the site.",
   },
 ];
+
+export const DATA_PROVENANCE_STEPS: Step[] = [
+  {
+    title: "Official source",
+    detail: "Parliament, EC, Wikipedia (CC BY-SA), or a cited government/PDF release.",
+  },
+  {
+    title: "Editorial review",
+    detail: "MBKRU staff match labels, attach citations, and keep starter data marked honestly.",
+  },
+  {
+    title: "Public dataset",
+    detail: "Published on the site with this Data sources page so anyone can verify the trail.",
+  },
+];

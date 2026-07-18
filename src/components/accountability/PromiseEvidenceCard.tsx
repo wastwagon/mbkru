@@ -115,6 +115,24 @@ export function PromiseEvidenceCard({
         className={`flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 rounded-sm p-5 ${focusRingSmClass} [&::-webkit-details-marker]:hidden`}
       >
         <div className="min-w-0 flex-1 text-left">
+          <div className="flex flex-wrap items-start gap-3">
+            {href ? (
+              <span
+                className="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--primary)]/25 bg-[var(--primary)]/8 text-[var(--primary)]"
+                aria-hidden
+                title="Cited source available"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.75}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+              </span>
+            ) : null}
+            <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">{title}</h2>
             {policySector ? (
@@ -173,6 +191,8 @@ export function PromiseEvidenceCard({
               ) : null}
             </div>
           ) : null}
+            </div>
+          </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusBadgeClass(status)}`}>

@@ -19,6 +19,26 @@ export const metadata: Metadata = {
 
 const ctaClass = `inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition ${focusRingSmClass}`;
 
+function DiasporaJourneyIcon({ kind }: { kind: "id" | "passport" | "nationality" }) {
+  const path =
+    kind === "id"
+      ? "M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"
+      : kind === "passport"
+        ? "M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.08 1.15c.533-1.25.95-2.585 1.24-3.991M7.5 14.25a6.75 6.75 0 0010.5 0"
+        : "M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0h.5a2.5 2.5 0 002.5-2.5V3.935M21 12a9 9 0 11-18 0 9 9 0 0118 0z";
+
+  return (
+    <span
+      className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[var(--primary)]/25 bg-[var(--primary)]/8 text-[var(--primary)]"
+      aria-hidden
+    >
+      <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d={path} />
+      </svg>
+    </span>
+  );
+}
+
 const official = {
   nia: { label: "National Identification Authority (Ghana Card)", href: "https://www.nia.gov.gh/" },
   gis: { label: "Ghana Immigration Service", href: "https://www.gis.gov.gh/" },
@@ -62,6 +82,7 @@ export default function DiasporaPage() {
   const journeys = [
     {
       title: "Ghana Card (NIA)",
+      icon: "id" as const,
       summary:
         "The national ID underpins many services. Requirements and locations change—use NIA for eligibility, foreign missions, and registration steps.",
       steps: [
@@ -73,6 +94,7 @@ export default function DiasporaPage() {
     },
     {
       title: "Passport & travel documents",
+      icon: "passport" as const,
       summary:
         "Passport applications and renewals are handled through official immigration and foreign-affairs channels. Processing times and forms change—always use current portals.",
       steps: [
@@ -85,6 +107,7 @@ export default function DiasporaPage() {
     },
     {
       title: "Nationality, citizenship & dual status",
+      icon: "nationality" as const,
       summary: "Rules depend on your situation, parentage, and when you obtained other nationalities. MBKRU does not provide legal advice.",
       steps: [
         "Read high-level guidance on official sites, then consult a qualified professional for your case.",
@@ -262,8 +285,13 @@ export default function DiasporaPage() {
                 key={j.title}
                 className="rounded-2xl border border-[var(--border)] bg-[var(--section-light)]/50 p-6 sm:p-8"
               >
-                <h3 className="font-display text-xl font-bold text-[var(--foreground)]">{j.title}</h3>
-                <p className="mt-2 text-[15px] leading-relaxed text-[var(--foreground-secondary)]">{j.summary}</p>
+                <div className="flex flex-wrap items-start gap-3">
+                  <DiasporaJourneyIcon kind={j.icon} />
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-display text-xl font-bold text-[var(--foreground)]">{j.title}</h3>
+                    <p className="mt-2 text-[15px] leading-relaxed text-[var(--foreground-secondary)]">{j.summary}</p>
+                  </div>
+                </div>
                 <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-[var(--foreground-secondary)] sm:text-[15px]">
                   {j.steps.map((s) => (
                     <li key={s} className="leading-relaxed">

@@ -130,7 +130,7 @@ export default async function AdminRegionsPage() {
                   </div>
                   <div className="sm:col-span-2 flex flex-wrap items-center justify-end gap-3">
                     <Link href={`/admin/regions/${r.id}/gallery`} className={`text-sm font-medium ${primaryLinkClass}`}>
-                      Sector gallery →
+                      Header photo &amp; sector gallery →
                     </Link>
                     <button
                       type="submit"

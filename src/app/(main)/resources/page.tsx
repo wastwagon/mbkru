@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import type { ResourceDocument } from "@prisma/client";
 
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -10,6 +9,7 @@ import {
   formatResourceFileSize,
   getPublishedResourceDocuments,
   resourceCategoryLabel,
+  type PublicResourceDocument,
 } from "@/lib/content/resource-documents";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import {
@@ -55,9 +55,9 @@ const documentCategories = [
   },
 ];
 
-function groupByCategory(docs: ResourceDocument[]): Record<string, ResourceDocument[]> {
+function groupByCategory(docs: PublicResourceDocument[]): Record<string, PublicResourceDocument[]> {
   const order = ["REPORTS", "POLICY_BRIEFS", "RESEARCH", "OTHER"] as const;
-  const map: Record<string, ResourceDocument[]> = {};
+  const map: Record<string, PublicResourceDocument[]> = {};
   for (const k of order) map[k] = [];
   for (const d of docs) {
     const key = d.category;
@@ -130,17 +130,30 @@ export default async function ResourcesPage() {
                       <ul className="mt-4 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-white">
                         {rows.map((d) => (
                           <li key={d.id} className="flex flex-col gap-2 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-                            <div className="min-w-0">
-                              <Link href={`/resources/${d.slug}`} className={resourceTitleLinkClass}>
-                                {d.title}
-                              </Link>
-                              {d.summary ? (
-                                <p className="mt-1 text-sm leading-relaxed text-[var(--foreground-secondary)]">{d.summary}</p>
+                            <div className="flex min-w-0 items-start gap-4">
+                              {d.coverMedia ? (
+                                <span className="relative block h-16 w-24 shrink-0 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--section-light)]">
+                                  <Image
+                                    src={d.coverMedia.storagePath}
+                                    alt={d.coverMedia.alt ?? d.title}
+                                    fill
+                                    className="object-cover"
+                                    sizes="96px"
+                                  />
+                                </span>
                               ) : null}
-                              <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
-                                {d.originalFilename}
-                                {d.fileSize ? ` · ${formatResourceFileSize(d.fileSize)}` : ""}
-                              </p>
+                              <div className="min-w-0">
+                                <Link href={`/resources/${d.slug}`} className={resourceTitleLinkClass}>
+                                  {d.title}
+                                </Link>
+                                {d.summary ? (
+                                  <p className="mt-1 text-sm leading-relaxed text-[var(--foreground-secondary)]">{d.summary}</p>
+                                ) : null}
+                                <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
+                                  {d.originalFilename}
+                                  {d.fileSize ? ` · ${formatResourceFileSize(d.fileSize)}` : ""}
+                                </p>
+                              </div>
                             </div>
                             <a
                               href={d.filePath}
