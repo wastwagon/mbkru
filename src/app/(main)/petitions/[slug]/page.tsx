@@ -4,13 +4,17 @@ import type { Metadata } from "next";
 
 import { PetitionSignPanel } from "@/components/civic/PetitionSignPanel";
 import { ShareTopicButton } from "@/components/civic/ShareTopicButton";
+import { TopicPictogram } from "@/components/civic/TopicPictogram";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { getMemberSession } from "@/lib/member/session";
+import { petitionTopicLabel } from "@/lib/petition-topics";
 import { isCivicPetitionsAndPublicCausesEnabled } from "@/lib/reports/accountability-pages";
 import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
 import { primaryNavLinkClass, prosePrimaryAnchorClass } from "@/lib/primary-link-styles";
 import { isPetitionGuestEmailVerificationEnabled } from "@/lib/server/petition-guest-verification";
+
+import type { PetitionTopic } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -94,12 +98,16 @@ export default async function PetitionDetailPage({ params, searchParams }: Props
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="text-sm text-[var(--foreground-secondary)]">
+          <p className="flex flex-wrap items-center gap-2 text-sm text-[var(--foreground-secondary)]">
             <Link href="/petitions" className={primaryNavLinkClass}>
               ← All petitions
             </Link>
+            <TopicPictogram variant={p.topic as PetitionTopic} className="h-8 w-8" />
+            <span className="rounded-full border border-[var(--border)] bg-[var(--section-light)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+              {petitionTopicLabel(p.topic)}
+            </span>
             {p.status === "CLOSED" ? (
-              <span className="ml-3 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900">
+              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900">
                 Closed to new signatures
               </span>
             ) : null}

@@ -19,6 +19,8 @@ import { requireAdminSession } from "@/lib/admin/require-session";
 import { adminQueueActionDangerClass } from "@/lib/admin/admin-ui-classes";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { CommunityCoverEditor } from "@/components/admin/CommunityCoverEditor";
+import { QueenMotherPortraitEditor } from "@/components/admin/QueenMotherPortraitEditor";
 import { prisma } from "@/lib/db/prisma";
 import { loadMpOptionsForCommunityRegion } from "@/lib/server/council-mp-evaluation";
 import { listCommunityForums } from "@/lib/server/community-forums-public";
@@ -38,6 +40,7 @@ export default async function AdminCommunityDetailPage({ params, searchParams }:
     where: { id },
     include: {
       region: { select: { name: true } },
+      coverMedia: { select: { id: true, storagePath: true, filename: true, alt: true } },
       defaultParliamentMember: { select: { id: true, name: true } },
       memberships: {
         where: { state: "PENDING_JOIN" },
@@ -76,7 +79,10 @@ export default async function AdminCommunityDetailPage({ params, searchParams }:
   const activeMembers = await prisma.communityMembership.findMany({
     where: { communityId: id, state: "ACTIVE" },
     orderBy: { createdAt: "asc" },
-    include: { member: { select: { email: true, displayName: true } } },
+    include: {
+      member: { select: { email: true, displayName: true } },
+      portraitMedia: { select: { id: true, storagePath: true, filename: true, alt: true } },
+    },
   });
   const bannedMembers = await prisma.communityMembership.findMany({
     where: { communityId: id, state: "BANNED" },
@@ -144,6 +150,8 @@ export default async function AdminCommunityDetailPage({ params, searchParams }:
           </div>
         ) : null}
       </dl>
+
+      <CommunityCoverEditor communityId={community.id} initialCover={community.coverMedia} />
 
       <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Default MP for council evaluation</h2>
@@ -570,6 +578,14 @@ export default async function AdminCommunityDetailPage({ params, searchParams }:
                     Update role
                   </button>
                 </form>
+                {m.role === "QUEEN_MOTHER_VERIFIED" ? (
+                  <QueenMotherPortraitEditor
+                    membershipId={m.id}
+                    communityId={community.id}
+                    memberLabel={m.member.displayName ?? m.member.email}
+                    initial={m.portraitMedia}
+                  />
+                ) : null}
                 <form action={setCommunityMembershipStateAction} className="mt-3 flex flex-wrap items-end gap-2">
                   <input type="hidden" name="membershipId" value={m.id} />
                   <input type="hidden" name="communityId" value={community.id} />

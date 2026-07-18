@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { MpPortrait } from "@/components/accountability/MpPortrait";
 import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import type { ReportCardBrowseRow } from "@/lib/server/accountability-cache";
 
@@ -8,6 +9,13 @@ function excerptFromNarrative(raw: string | null, max = 200): string | null {
   const t = raw.trim().replace(/\s+/g, " ");
   if (t.length <= max) return t;
   return `${t.slice(0, max).trimEnd()}…`;
+}
+
+function scoreBandLabel(score: number): string {
+  if (score >= 80) return "Strong";
+  if (score >= 60) return "Solid";
+  if (score >= 40) return "Mixed";
+  return "Weak";
 }
 
 type Props = {
@@ -27,21 +35,28 @@ export function ReportCardBrowseCard({ year, row }: Props) {
   return (
     <article className="flex h-full flex-col rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <h2 className="text-base font-semibold leading-snug text-[var(--foreground)] sm:text-lg">
-            <Link href={reportHref} className="hover:text-[var(--primary)]" prefetch={false}>
-              {m.name}
-            </Link>
-          </h2>
-          <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
-            {m.role}
-            {m.party ? ` · ${m.party}` : ""}
-          </p>
-          <p className="mt-2 text-xs text-[var(--foreground-secondary)]">{place}</p>
+        <div className="flex min-w-0 flex-1 items-start gap-3">
+          <MpPortrait name={m.name} portraitPath={m.portraitPath} size="md" />
+          <div className="min-w-0">
+            <h2 className="text-base font-semibold leading-snug text-[var(--foreground)] sm:text-lg">
+              <Link href={reportHref} className="hover:text-[var(--primary)]" prefetch={false}>
+                {m.name}
+              </Link>
+            </h2>
+            <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
+              {m.role}
+              {m.party ? ` · ${m.party}` : ""}
+            </p>
+            <p className="mt-2 text-xs text-[var(--foreground-secondary)]">{place}</p>
+          </div>
         </div>
         {row.overallScore != null ? (
-          <span className="shrink-0 rounded-full border border-[var(--accent-gold)]/35 bg-[var(--accent-gold-light)] px-3 py-1 text-sm font-semibold tabular-nums text-[var(--accent-gold)]">
+          <span
+            className="shrink-0 rounded-full border border-[var(--accent-gold)]/35 bg-[var(--accent-gold-light)] px-3 py-1 text-sm font-semibold tabular-nums text-[var(--accent-gold)]"
+            title={`Band: ${scoreBandLabel(row.overallScore)}`}
+          >
             {row.overallScore}
+            <span className="sr-only"> ({scoreBandLabel(row.overallScore)})</span>
           </span>
         ) : (
           <span className="shrink-0 rounded-full bg-[var(--section-light-alt)] px-3 py-1 text-[11px] font-semibold text-[var(--foreground-secondary)]">

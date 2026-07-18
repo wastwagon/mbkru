@@ -43,6 +43,10 @@ model Media {
   posts       Post[]
   communityCovers Community[] @relation("CommunityCover")
   regionSectorImages RegionSectorImage[]
+  townHallEvents TownHallEvent[] @relation("TownHallFeaturedMedia")
+  partners    Partner[] @relation("PartnerLogo")
+  leadershipProfiles LeadershipProfile[] @relation("LeadershipPortrait")
+  queenMotherPortraits CommunityMembership[] @relation("QueenMotherPortrait")
 }
 
 /// CMS-managed photo in a region's "Key sectors" gallery — overrides bundled defaults when present.
@@ -222,6 +226,25 @@ enum PetitionStatus {
   ARCHIVED
 }
 
+enum PetitionTopic {
+  GOVERNANCE
+  INFRASTRUCTURE
+  HEALTH
+  EDUCATION
+  ENVIRONMENT
+  SECURITY
+  ECONOMY
+  OTHER
+}
+
+enum PartnerCategory {
+  GOVERNMENT
+  CIVIL_SOCIETY
+  DEVELOPMENT
+  FOUNDATION
+  OTHER
+}
+
 enum PublicCauseCommentStatus {
   VISIBLE
   HIDDEN
@@ -302,6 +325,8 @@ model TownHallEvent {
   status           TownHallEventStatus  @default(TBC)
   infoUrl          String?              @db.Text
   sourceCitation   String?              @db.Text
+  featuredMediaId  String?
+  featuredMedia    Media?               @relation("TownHallFeaturedMedia", fields: [featuredMediaId], references: [id], onDelete: SetNull)
   sortOrder        Int                  @default(0)
   createdAt        DateTime             @default(now())
   updatedAt        DateTime             @updatedAt
@@ -543,6 +568,7 @@ model Petition {
   title            String         @db.VarChar(280)
   summary          String?        @db.VarChar(500)
   body             String         @db.Text
+  topic            PetitionTopic  @default(OTHER)
   targetSignatures Int?
   regionId         String?
   region           Region?        @relation(fields: [regionId], references: [id], onDelete: SetNull)
@@ -556,6 +582,7 @@ model Petition {
 
   @@index([status, createdAt])
   @@index([authorMemberId])
+  @@index([topic, status])
 }
 
 /// Guest signature not counted until email confirmation (see PETITION_VERIFY_GUEST_SIGNATURES).
@@ -820,6 +847,9 @@ model CommunityMembership {
   member      Member                   @relation(fields: [memberId], references: [id], onDelete: Cascade)
   role        CommunityMembershipRole  @default(MEMBER)
   state       CommunityMembershipState @default(ACTIVE)
+  /// Public portrait for verified Queen Mothers only — cleared if role changes.
+  portraitMediaId String?
+  portraitMedia   Media?               @relation("QueenMotherPortrait", fields: [portraitMediaId], references: [id], onDelete: SetNull)
   banReason   String?                  @db.Text
   bannedAt    DateTime?
   createdAt   DateTime                 @default(now())
@@ -998,4 +1028,53 @@ model SiteConfig {
   updatedAt               DateTime @updatedAt
   updatedByAdminId        String?
   updatedByAdmin          Admin?   @relation(fields: [updatedByAdminId], references: [id], onDelete: SetNull)
+}
+
+/// Confirmed institutional partners — logos only when published (no stand-ins).
+model Partner {
+  id          String          @id @default(cuid())
+  name        String          @db.VarChar(200)
+  slug        String          @unique @db.VarChar(140)
+  category    PartnerCategory @default(OTHER)
+  websiteUrl  String?         @db.VarChar(500)
+  summary     String?         @db.VarChar(600)
+  logoMediaId String?
+  logoMedia   Media?          @relation("PartnerLogo", fields: [logoMediaId], references: [id], onDelete: SetNull)
+  sortOrder   Int             @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([publishedAt, sortOrder])
+  @@index([category, sortOrder])
+}
+
+/// Confirmed leadership roster entries for /about (portraits optional).
+model LeadershipProfile {
+  id              String    @id @default(cuid())
+  name            String    @db.VarChar(200)
+  roleTitle       String    @db.VarChar(200)
+  bio             String?   @db.Text
+  portraitMediaId String?
+  portraitMedia   Media?    @relation("LeadershipPortrait", fields: [portraitMediaId], references: [id], onDelete: SetNull)
+  sortOrder       Int       @default(0)
+  publishedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([publishedAt, sortOrder])
+}
+
+/// Confirmed advisory quotes / endorsements for /about (no sample attributions).
+model Endorsement {
+  id              String    @id @default(cuid())
+  quote           String    @db.VarChar(800)
+  attributionName String    @db.VarChar(200)
+  attributionRole String?   @db.VarChar(200)
+  sortOrder       Int       @default(0)
+  publishedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([publishedAt, sortOrder])
 }

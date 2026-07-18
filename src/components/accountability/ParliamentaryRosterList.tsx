@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
+import { MpPortrait } from "@/components/accountability/MpPortrait";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
 
 export type ParliamentaryRosterRow = {
@@ -14,6 +15,7 @@ export type ParliamentaryRosterRow = {
   constituencyName: string | null;
   promiseCount: number;
   mpVoiceReportCount: number;
+  portraitPath?: string | null;
 };
 
 type Props = {
@@ -81,19 +83,22 @@ export function ParliamentaryRosterList({ rows, showPromises }: Props) {
               <li key={m.slug}>
                 <article className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
                   <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div className="min-w-0 flex-1">
-                      <h3 className="text-base font-semibold text-[var(--foreground)]">
-                        {showPromises ? (
-                          <Link href={sheetHref} className="hover:text-[var(--primary)]" prefetch={false}>
-                            {m.name}
-                          </Link>
-                        ) : (
-                          m.name
-                        )}
-                      </h3>
-                      {metaParts.length > 0 ? (
-                        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{metaParts.join(" · ")}</p>
-                      ) : null}
+                    <div className="flex min-w-0 flex-1 items-start gap-3">
+                      <MpPortrait name={m.name} portraitPath={m.portraitPath} size="md" />
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-base font-semibold text-[var(--foreground)]">
+                          {showPromises ? (
+                            <Link href={sheetHref} className="hover:text-[var(--primary)]" prefetch={false}>
+                              {m.name}
+                            </Link>
+                          ) : (
+                            m.name
+                          )}
+                        </h3>
+                        {metaParts.length > 0 ? (
+                          <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{metaParts.join(" · ")}</p>
+                        ) : null}
+                      </div>
                     </div>
                     <div className="shrink-0 text-right text-xs text-[var(--foreground-secondary)]">
                       <p className="tabular-nums">

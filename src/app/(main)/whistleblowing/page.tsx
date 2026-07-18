@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/ui/PageHeader";
+import { ProcessFlowDiagram, LEGAL_ROUTING_STEPS } from "@/components/ui/ProcessFlowDiagram";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { isWhistleblowerGuidancePageEnabled } from "@/lib/reports/accountability-pages";
 
@@ -25,6 +26,7 @@ export default function WhistleblowingPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <ProcessFlowDiagram className="mb-8" title="Choose the right path first" steps={LEGAL_ROUTING_STEPS} />
           <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-[var(--foreground)]">MBKRU Voice</h2>
             <p className="mt-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">

@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { AboutPlatformLinks } from "@/components/about/AboutPlatformLinks";
+import { TopicPictogram } from "@/components/civic/TopicPictogram";
 import { OperationalPillarsRegionsSection } from "@/components/operational-pillars/OperationalPillarsRegionsSection";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ACCOUNTABILITY_CATALOGUE_ROUTES } from "@/config/accountability-catalogue-destinations";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
+import { getPublishedEndorsements, getPublishedLeadershipProfiles } from "@/lib/content/partners-cms";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { images, mbkruStrategicContent, heroContent } from "@/lib/site-content";
 
@@ -73,6 +75,10 @@ const stats = [
 export default async function AboutPage() {
   const phase = getServerPlatformPhase();
   const parliamentLive = platformFeatures.parliamentTrackerData(phase);
+  const [leadership, endorsements] = await Promise.all([
+    getPublishedLeadershipProfiles(),
+    getPublishedEndorsements(),
+  ]);
 
   return (
     <div>
@@ -390,9 +396,43 @@ export default async function AboutPage() {
               profiles.
             </p>
           </div>
-          <div className="mt-8 rounded-2xl border border-dashed border-[var(--border)] bg-white/80 px-6 py-12 text-center text-sm text-[var(--foreground-secondary)]">
-            No leadership listings published yet.
-          </div>
+          {leadership.length > 0 ? (
+            <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+              {leadership.map((profile) => (
+                <li
+                  key={profile.id}
+                  className="rounded-2xl border border-[var(--border)] bg-white p-5 text-left shadow-[var(--shadow-card)]"
+                >
+                  {profile.portraitMedia ? (
+                    <span className="relative block aspect-square w-24 overflow-hidden rounded-xl">
+                      <Image
+                        src={profile.portraitMedia.storagePath}
+                        alt={profile.portraitMedia.alt || `Portrait of ${profile.name}`}
+                        fill
+                        className="object-cover"
+                        sizes="96px"
+                      />
+                    </span>
+                  ) : null}
+                  <p className={`font-display text-lg font-bold text-[var(--foreground)] ${profile.portraitMedia ? "mt-3" : ""}`}>
+                    {profile.name}
+                  </p>
+                  <p className="mt-0.5 text-sm font-medium text-[var(--primary)]">{profile.roleTitle}</p>
+                  {profile.bio ? (
+                    <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">{profile.bio}</p>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="mt-8 rounded-2xl border border-dashed border-[var(--border)] bg-white/80 px-6 py-12 text-center">
+              <TopicPictogram variant="leadership" className="mx-auto h-14 w-14" />
+              <p className="mt-4 text-sm text-[var(--foreground-secondary)]">No leadership listings published yet.</p>
+              <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
+                Portrait slots open when names and roles are confirmed — no stand-in photos.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -407,6 +447,34 @@ export default async function AboutPage() {
               show sample quotations or unverified attributions.
             </p>
           </div>
+          {endorsements.length > 0 ? (
+            <ul className="mt-8 space-y-4">
+              {endorsements.map((endorsement) => (
+                <li
+                  key={endorsement.id}
+                  className="rounded-2xl border border-[var(--border)] bg-white p-6 text-left shadow-[var(--shadow-card)]"
+                >
+                  <blockquote className="text-base italic leading-relaxed text-[var(--foreground)]">
+                    &ldquo;{endorsement.quote}&rdquo;
+                  </blockquote>
+                  <p className="mt-3 text-sm font-semibold text-[var(--foreground)]">
+                    {endorsement.attributionName}
+                    {endorsement.attributionRole ? (
+                      <span className="font-normal text-[var(--foreground-secondary)]">
+                        {" "}
+                        — {endorsement.attributionRole}
+                      </span>
+                    ) : null}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="mt-8 rounded-2xl border border-dashed border-[var(--border)] bg-white px-6 py-10 text-center">
+              <TopicPictogram variant="endorsement" className="mx-auto h-14 w-14" />
+              <p className="mt-4 text-sm text-[var(--foreground-secondary)]">No endorsements published yet.</p>
+            </div>
+          )}
         </div>
       </section>
 

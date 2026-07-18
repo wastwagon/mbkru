@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 
 import { MetricsDisplay } from "@/components/accountability/MetricsDisplay";
+import { MpPortrait } from "@/components/accountability/MpPortrait";
 import { ReportCardPilotBanner } from "@/components/accountability/ReportCardPilotBanner";
 import { ReportCardTripleLedger } from "@/components/accountability/ReportCardTripleLedger";
 import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
@@ -295,15 +296,18 @@ export default async function ReportCardYearPage({
                   key={e.id}
                   className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm"
                 >
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <div>
-                      <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">
-                        {e.member.name}
-                      </h2>
-                      <p className="text-xs text-[var(--foreground-secondary)]">
-                        {e.member.role}
-                        {e.member.party ? ` · ${e.member.party}` : ""}
-                      </p>
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="flex min-w-0 items-start gap-3">
+                      <MpPortrait name={e.member.name} portraitPath={e.member.portraitPath} size="md" />
+                      <div className="min-w-0">
+                        <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">
+                          {e.member.name}
+                        </h2>
+                        <p className="text-xs text-[var(--foreground-secondary)]">
+                          {e.member.role}
+                          {e.member.party ? ` · ${e.member.party}` : ""}
+                        </p>
+                      </div>
                     </div>
                     {!methodologyDepth ? (
                       e.overallScore != null ? (

@@ -19,6 +19,7 @@ export async function getProgrammeTownHallEvents(options?: ProgrammeQuery) {
     include: {
       region: { select: { name: true, slug: true } },
       constituency: { select: { name: true, slug: true } },
+      featuredMedia: { select: { storagePath: true, alt: true } },
     },
   });
 }

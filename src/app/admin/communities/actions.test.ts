@@ -47,6 +47,10 @@ const { prisma } = vi.hoisted(() => {
     },
     community: {
       findUnique: vi.fn(),
+      update: vi.fn(),
+    },
+    media: {
+      findUnique: vi.fn(),
     },
   };
   return { prisma };
@@ -60,12 +64,14 @@ import {
   publishCommunityPostAction,
   rejectCommunityPostAction,
   setCommunityMembershipStateAction,
+  updateCommunityCoverAction,
 } from "./actions";
 
 const COMM = "cjld2cjxh0000qzrmn831i7ra";
 const POST = "cjld2cjxh0000qzrmn831i7rb";
 const MEM = "cjld2cjxh0000qzrmn831i7rc";
 const ADMIN = "cjld2cjxh0000qzrmn831i7rd";
+const MEDIA = "cjld2cjxh0000qzrmn831i7re";
 
 function fd(entries: Record<string, string>): FormData {
   const f = new FormData();
@@ -158,6 +164,63 @@ describe("admin communities actions", () => {
           bannedAt: null,
         },
       });
+    });
+  });
+
+  describe("updateCommunityCoverAction", () => {
+    it("assigns a public image cover and revalidates paths", async () => {
+      prisma.community.findUnique.mockResolvedValue({
+        id: COMM,
+        slug: "east-area",
+        region: { slug: "ashanti" },
+      });
+      prisma.media.findUnique.mockResolvedValue({
+        visibility: "PUBLIC",
+        mimeType: "image/jpeg",
+      });
+
+      await updateCommunityCoverAction(fd({ communityId: COMM, coverMediaId: MEDIA }));
+
+      expect(prisma.community.update).toHaveBeenCalledWith({
+        where: { id: COMM },
+        data: { coverMediaId: MEDIA },
+      });
+      expect(revalidatePath).toHaveBeenCalledWith(`/admin/communities/${COMM}`);
+      expect(revalidatePath).toHaveBeenCalledWith("/communities");
+      expect(revalidatePath).toHaveBeenCalledWith("/communities/east-area");
+      expect(revalidatePath).toHaveBeenCalledWith("/regions/ashanti");
+    });
+
+    it("clears cover when coverMediaId is empty", async () => {
+      prisma.community.findUnique.mockResolvedValue({
+        id: COMM,
+        slug: "east-area",
+        region: null,
+      });
+
+      await updateCommunityCoverAction(fd({ communityId: COMM, coverMediaId: "" }));
+
+      expect(prisma.media.findUnique).not.toHaveBeenCalled();
+      expect(prisma.community.update).toHaveBeenCalledWith({
+        where: { id: COMM },
+        data: { coverMediaId: null },
+      });
+    });
+
+    it("rejects private or non-image media", async () => {
+      prisma.community.findUnique.mockResolvedValue({
+        id: COMM,
+        slug: "east-area",
+        region: null,
+      });
+      prisma.media.findUnique.mockResolvedValue({
+        visibility: "PRIVATE",
+        mimeType: "image/jpeg",
+      });
+
+      await updateCommunityCoverAction(fd({ communityId: COMM, coverMediaId: MEDIA }));
+
+      expect(prisma.community.update).not.toHaveBeenCalled();
     });
   });
 });

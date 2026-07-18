@@ -41,6 +41,8 @@
     "data:members-csv": "node scripts/json-members-to-mbkru-csv.mjs",
     "data:merge-csv": "tsx scripts/merge-data-csv.ts",
     "data:pull-mps": "tsx scripts/pull-mps-from-ghanamps.ts",
+    "data:fetch-mp-portraits": "node scripts/fetch-mp-portraits.mjs --apply",
+    "data:fetch-mp-portraits:dry": "node scripts/fetch-mp-portraits.mjs",
     "data:pull-constituencies": "tsx scripts/fetch-constituencies-from-wikipedia.ts",
     "data:refresh-constituencies-seed": "npm run data:pull-constituencies && node scripts/csv-to-constituencies-seed-json.mjs",
     "data:refresh-members-seed": "node scripts/refresh-parliament-members-seed.mjs",

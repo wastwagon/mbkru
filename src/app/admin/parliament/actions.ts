@@ -1,5 +1,9 @@
 "use server";
 
+import { mkdir, writeFile } from "fs/promises";
+import path from "path";
+import { randomUUID } from "crypto";
+
 import { revalidatePath, revalidateTag } from "next/cache";
 import { Prisma, PromiseStatus } from "@prisma/client";
 import { z } from "zod";
@@ -12,6 +16,62 @@ import {
   PROMISES_INDEX_TAG,
   promisesMemberTag,
 } from "@/lib/server/accountability-cache";
+import { MalwareScanError, scanUploadedFileOrThrow } from "@/lib/server/upload-malware-scan";
+
+const PORTRAIT_MAX_BYTES = 8 * 1024 * 1024;
+const PORTRAIT_MIME = new Set(["image/jpeg", "image/png", "image/webp"]);
+
+/** Admin upload / replace for an MP headshot (cached under /uploads/mps/). */
+export async function updateParliamentMemberPortraitAction(formData: FormData): Promise<void> {
+  await requireAdminSession();
+
+  const memberId = typeof formData.get("memberId") === "string" ? String(formData.get("memberId")).trim() : "";
+  if (!memberId) return;
+
+  const clear = formData.get("clear") === "1";
+  const member = await prisma.parliamentMember.findUnique({
+    where: { id: memberId },
+    select: { id: true, slug: true },
+  });
+  if (!member) return;
+
+  if (clear) {
+    await prisma.parliamentMember.update({
+      where: { id: member.id },
+      data: { portraitPath: null },
+    });
+  } else {
+    const file = formData.get("file");
+    if (!(file instanceof File) || file.size === 0) return;
+    if (file.size > PORTRAIT_MAX_BYTES) return;
+    if (!PORTRAIT_MIME.has(file.type)) return;
+
+    const ext = file.type === "image/png" ? ".png" : file.type === "image/webp" ? ".webp" : ".jpg";
+    const filename = `${randomUUID()}${ext}`;
+    const uploadDir = path.join(process.cwd(), "public", "uploads", "mps");
+    await mkdir(uploadDir, { recursive: true });
+    const buffer = Buffer.from(await file.arrayBuffer());
+    try {
+      await scanUploadedFileOrThrow(buffer, "mp-portrait");
+    } catch (err) {
+      if (err instanceof MalwareScanError) return;
+      throw err;
+    }
+    await writeFile(path.join(uploadDir, filename), buffer);
+    await prisma.parliamentMember.update({
+      where: { id: member.id },
+      data: { portraitPath: `/uploads/mps/${filename}` },
+    });
+  }
+
+  revalidatePath(`/admin/parliament/${member.id}`);
+  revalidatePath(`/promises/${member.slug}`);
+  revalidatePath("/promises");
+  revalidatePath("/parliament-tracker");
+  revalidateTag(MPS_ROSTER_TAG, "max");
+  revalidateTag(PROMISES_INDEX_TAG, "max");
+  revalidateTag(promisesMemberTag(member.slug), "max");
+}
 
 const createPromiseSchema = z.object({
   memberId: z.string().cuid(),

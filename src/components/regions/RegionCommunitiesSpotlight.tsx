@@ -8,7 +8,7 @@ import {
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { isCommunitiesBrowseEnabled } from "@/lib/reports/accountability-pages";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
-import { countVerifiedQueenMothersByCommunityIds } from "@/lib/server/communities-verified";
+import { countVerifiedQueenMothersByCommunityIds, listQueenMotherPortraitPreviewsByCommunityIds } from "@/lib/server/communities-verified";
 
 type Props = { regionSlug: string; regionName: string };
 
@@ -36,6 +36,7 @@ export async function RegionCommunitiesSpotlight({ regionSlug, regionName }: Pro
       joinPolicy: true,
       visibility: true,
       region: { select: { name: true, slug: true } },
+      coverMedia: { select: { storagePath: true, alt: true } },
       _count: { select: { memberships: true } },
     },
     take: 6,
@@ -51,6 +52,7 @@ export async function RegionCommunitiesSpotlight({ regionSlug, regionName }: Pro
   });
 
   const verifiedById = await countVerifiedQueenMothersByCommunityIds(communities.map((c) => c.id));
+  const portraitsById = await listQueenMotherPortraitPreviewsByCommunityIds(communities.map((c) => c.id));
   const verifiedTotal = [...verifiedById.values()].reduce((n, v) => n + v, 0);
 
   return (
@@ -78,6 +80,8 @@ export async function RegionCommunitiesSpotlight({ regionSlug, regionName }: Pro
               joinPolicy={c.joinPolicy}
               memberCount={c._count.memberships}
               verifiedQueenMotherCount={verifiedById.get(c.id) ?? 0}
+              queenMotherPortraits={portraitsById.get(c.id) ?? []}
+              cover={c.coverMedia}
             />
           </li>
         ))}

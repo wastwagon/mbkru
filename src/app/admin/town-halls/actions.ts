@@ -6,12 +6,18 @@ import { z } from "zod";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { prisma } from "@/lib/db/prisma";
+import { assertPublicImageMedia } from "@/lib/server/public-media";
 
 const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 const statusEnum = z.enum(["TBC", "SCHEDULED", "COMPLETED", "CANCELLED"]);
 
 const programmeKindEnum = z.enum(["TOWN_HALL", "REGIONAL_FORUM", "CONSTITUENCY_DEBATE"]);
+
+const optionalMediaId = z.preprocess(
+  (v) => (typeof v === "string" && v.trim().length ? v.trim() : null),
+  z.string().cuid().nullable(),
+);
 
 function parseOptionalDate(raw: FormDataEntryValue | null): Date | null {
   const s = String(raw ?? "").trim();
@@ -39,6 +45,7 @@ const createSchema = z.object({
     (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
     z.string().cuid().optional(),
   ),
+  featuredMediaId: optionalMediaId,
 });
 
 async function resolveProgrammeRegionId(
@@ -74,6 +81,7 @@ export async function createTownHallEventAction(formData: FormData): Promise<voi
     regionId: String(formData.get("regionId") ?? "").trim(),
     kind: formData.get("kind"),
     constituencyId: String(formData.get("constituencyId") ?? "").trim(),
+    featuredMediaId: formData.get("featuredMediaId"),
   });
   if (!parsed.success) return;
 
@@ -82,6 +90,8 @@ export async function createTownHallEventAction(formData: FormData): Promise<voi
   const infoUrl = parsed.data.infoUrl ?? null;
   const startsAt = parseOptionalDate(formData.get("startsAt"));
   const endsAt = parseOptionalDate(formData.get("endsAt"));
+  const featuredMediaId = parsed.data.featuredMediaId;
+  if (featuredMediaId && !(await assertPublicImageMedia(featuredMediaId))) return;
 
   try {
     await prisma.townHallEvent.create({
@@ -100,6 +110,7 @@ export async function createTownHallEventAction(formData: FormData): Promise<voi
         constituencyId,
         startsAt,
         endsAt,
+        featuredMediaId,
       },
     });
   } catch {
@@ -135,6 +146,7 @@ export async function updateTownHallEventAction(formData: FormData): Promise<voi
     regionId: String(formData.get("regionId") ?? "").trim(),
     kind: formData.get("kind"),
     constituencyId: String(formData.get("constituencyId") ?? "").trim(),
+    featuredMediaId: formData.get("featuredMediaId"),
   });
   if (!parsed.success) return;
 
@@ -143,6 +155,8 @@ export async function updateTownHallEventAction(formData: FormData): Promise<voi
   const infoUrl = parsed.data.infoUrl ?? null;
   const startsAt = parseOptionalDate(formData.get("startsAt"));
   const endsAt = parseOptionalDate(formData.get("endsAt"));
+  const featuredMediaId = parsed.data.featuredMediaId;
+  if (featuredMediaId && !(await assertPublicImageMedia(featuredMediaId))) return;
 
   const existing = await prisma.townHallEvent.findUnique({
     where: { id: parsed.data.id },
@@ -172,6 +186,7 @@ export async function updateTownHallEventAction(formData: FormData): Promise<voi
       constituencyId,
       startsAt,
       endsAt,
+      featuredMediaId,
     },
   });
 

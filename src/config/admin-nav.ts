@@ -21,6 +21,11 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
       { href: "/admin/media", label: "Image library", description: "Upload once and reuse images in content." },
       { href: "/admin/resources", label: "Resource library", description: "Manage public documents and downloads." },
       { href: "/admin/manifestos", label: "Manifesto registry", description: "Source and manage manifesto records." },
+      {
+        href: "/admin/partners",
+        label: "Partners & leadership",
+        description: "Manage partner logos, leadership roster, and endorsements.",
+      },
     ],
   },
   {

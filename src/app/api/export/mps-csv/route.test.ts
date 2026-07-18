@@ -63,6 +63,7 @@ describe("GET /api/export/mps-csv", () => {
         constituencyName: "Sample North",
         promiseCount: 2,
         mpVoiceReportCount: 1,
+        portraitPath: null,
       },
     ]);
     const res = await GET(new Request("https://example.com/api/export/mps-csv"));

@@ -89,6 +89,7 @@ export default async function PromisesIndexPage() {
                       party={m.party}
                       constituencyName={m.constituency?.name ?? null}
                       promiseCount={m._count.promises}
+                      portraitPath={m.portraitPath}
                     />
                   </li>
                 ))}

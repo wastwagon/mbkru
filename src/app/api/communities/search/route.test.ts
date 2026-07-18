@@ -83,6 +83,7 @@ describe("GET /api/communities/search", () => {
           description: "desc",
           region: null,
           memberCount: 3,
+          cover: null,
         },
       ],
       posts: [

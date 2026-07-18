@@ -18,6 +18,7 @@ export type CommunitySearchHit = {
   description: string | null;
   region: { name: string; slug: string } | null;
   memberCount: number;
+  cover: { storagePath: string; alt: string | null } | null;
 };
 
 export type CommunityPostSearchHit = {
@@ -126,6 +127,7 @@ export async function searchCommunitiesAndPosts(
             id: true,
             _count: { select: { memberships: true } },
             region: { select: { name: true, slug: true } },
+            coverMedia: { select: { storagePath: true, alt: true } },
           },
         })
       : [];
@@ -144,6 +146,9 @@ export async function searchCommunitiesAndPosts(
       description: vis === "MEMBERS_ONLY" ? null : row.description,
       region: extra?.region ? { name: extra.region.name, slug: extra.region.slug } : null,
       memberCount: extra?._count.memberships ?? 0,
+      cover: extra?.coverMedia
+        ? { storagePath: extra.coverMedia.storagePath, alt: extra.coverMedia.alt }
+        : null,
     };
   });
 

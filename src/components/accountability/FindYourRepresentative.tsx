@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
+import { MpPortrait } from "@/components/accountability/MpPortrait";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 
 export type RepresentativeSearchRow = {
@@ -12,6 +13,7 @@ export type RepresentativeSearchRow = {
   party: string | null;
   constituencyName: string | null;
   promiseCount: number;
+  portraitPath?: string | null;
 };
 
 type Props = {
@@ -126,11 +128,14 @@ export function FindYourRepresentative({
                         href={href}
                         className={`flex flex-wrap items-center justify-between gap-2 px-4 py-3 transition-colors hover:bg-[var(--section-light)] ${focusRingSmClass}`}
                       >
-                        <div className="min-w-0">
-                          <span className="font-semibold text-[var(--foreground)]">{row.name}</span>
-                          {meta ? (
-                            <span className="mt-0.5 block truncate text-xs text-[var(--foreground-secondary)]">{meta}</span>
-                          ) : null}
+                        <div className="flex min-w-0 items-center gap-3">
+                          <MpPortrait name={row.name} portraitPath={row.portraitPath} size="sm" />
+                          <div className="min-w-0">
+                            <span className="font-semibold text-[var(--foreground)]">{row.name}</span>
+                            {meta ? (
+                              <span className="mt-0.5 block truncate text-xs text-[var(--foreground-secondary)]">{meta}</span>
+                            ) : null}
+                          </div>
                         </div>
                         {showPromises && row.promiseCount > 0 ? (
                           <span className="shrink-0 rounded-full bg-[var(--primary)]/10 px-2.5 py-0.5 text-xs font-semibold tabular-nums text-[var(--primary)]">

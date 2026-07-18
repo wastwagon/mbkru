@@ -127,6 +127,7 @@ export async function loadPromisesMemberSheetPublic(slug: string) {
     slug: true,
     role: true,
     party: true,
+    portraitPath: true,
     constituency: true,
   } as const;
 

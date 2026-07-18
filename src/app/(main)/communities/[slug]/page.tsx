@@ -1,9 +1,11 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { CommunityMemberPanel } from "@/components/communities/CommunityMemberPanel";
 import { CommunityQueenMotherBadge } from "@/components/communities/CommunityQueenMotherBadge";
+import { CommunityQueenMotherRoster } from "@/components/communities/CommunityQueenMotherRoster";
 import { CommunityThreadCard } from "@/components/communities/CommunityThreadCard";
 import { CommunityOnlinePresence } from "@/components/member/CommunityOnlinePresence";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -18,7 +20,10 @@ import {
   canReadCommunityPosts,
   findMembership,
 } from "@/lib/server/communities-access";
-import { countVerifiedQueenMothersForCommunity } from "@/lib/server/communities-verified";
+import {
+  countVerifiedQueenMothersForCommunity,
+  listVerifiedQueenMothersForCommunity,
+} from "@/lib/server/communities-verified";
 import { listCommunityForums } from "@/lib/server/community-forums-public";
 import { listCommunityPostsVisibleToViewer } from "@/lib/server/community-posts-public";
 import { isCommunitySlug } from "@/lib/validation/communities";
@@ -49,13 +54,17 @@ export default async function CommunityDetailPage({ params }: Props) {
     where: { slug, status: "ACTIVE" },
     include: {
       region: { select: { name: true, slug: true } },
+      coverMedia: { select: { storagePath: true, alt: true } },
       _count: { select: { memberships: true } },
     },
   });
 
   if (!c) notFound();
 
-  const verifiedQueenMotherCount = await countVerifiedQueenMothersForCommunity(c.id);
+  const [verifiedQueenMotherCount, queenMotherProfiles] = await Promise.all([
+    countVerifiedQueenMothersForCommunity(c.id),
+    listVerifiedQueenMothersForCommunity(c.id),
+  ]);
 
   const session = await getMemberSession();
   const membership = session ? await findMembership(c.id, session.memberId) : null;
@@ -85,6 +94,18 @@ export default async function CommunityDetailPage({ params }: Props) {
               ← All communities
             </Link>
           </p>
+          {c.coverMedia ? (
+            <div className="relative mt-6 aspect-[21/9] overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--section-light)] shadow-sm">
+              <Image
+                src={c.coverMedia.storagePath}
+                alt={c.coverMedia.alt || `${c.name} cover`}
+                fill
+                className="object-cover"
+                sizes="(max-width: 896px) 100vw, 896px"
+                priority
+              />
+            </div>
+          ) : null}
           <div className="mt-6 rounded-2xl border border-[var(--accent-gold)]/30 bg-gradient-to-br from-[var(--accent-gold-light)] to-white px-5 py-4 text-sm leading-relaxed text-[var(--foreground-secondary)]">
             <p>
               <span className="font-semibold text-[var(--foreground)]">Queen Mothers &amp; council workspace</span> —
@@ -128,6 +149,9 @@ export default async function CommunityDetailPage({ params }: Props) {
               </div>
             ) : null}
           </dl>
+
+          <CommunityQueenMotherRoster profiles={queenMotherProfiles} />
+
           {c.region ? (
             <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
               More traditional spaces in {c.region.name}:{" "}

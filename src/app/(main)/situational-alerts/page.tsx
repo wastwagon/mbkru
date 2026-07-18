@@ -5,6 +5,7 @@ import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
 import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { ProcessFlowDiagram, SITUATIONAL_ALERT_FLOW_STEPS } from "@/components/ui/ProcessFlowDiagram";
 import { images } from "@/lib/site-content";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 import { isSituationalAlertsIntakeEnabled } from "@/lib/reports/situational-alerts-gate";
@@ -137,6 +138,9 @@ export default async function SituationalAlertsPage() {
               Submit a time-sensitive local alert for our team to review. You will get a tracking code; we do not
               publish raw submissions. Use MBKRU Voice for general civic reports.
             </p>
+            <div className="mx-auto mt-8 max-w-4xl text-left [&_figure]:border-white/20 [&_figure]:bg-white/95 [&_figcaption]:text-[var(--foreground)] [&_li]:border-[var(--primary)]/25 [&_p]:text-[var(--foreground-secondary)] [&_p.font-semibold]:text-[var(--foreground)]">
+              <ProcessFlowDiagram title="Alert path" steps={SITUATIONAL_ALERT_FLOW_STEPS} />
+            </div>
             <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
               <Link
                 href="/situational-alerts/submit"

@@ -14,7 +14,7 @@ import {
 } from "@/lib/communities-browse-shared";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { searchCommunitiesAndPosts } from "@/lib/server/communities-search";
-import { countVerifiedQueenMothersByCommunityIds, countVerifiedQueenMothersByCommunitySlugs } from "@/lib/server/communities-verified";
+import { countVerifiedQueenMothersByCommunityIds, countVerifiedQueenMothersByCommunitySlugs, listQueenMotherPortraitPreviewsByCommunityIds } from "@/lib/server/communities-verified";
 import { isCommunitiesBrowseEnabled } from "@/lib/reports/accountability-pages";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { normalizeCommunitySearchQuery } from "@/lib/validation/communities";
@@ -106,6 +106,7 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
             joinPolicy: true,
             visibility: true,
             region: { select: { name: true, slug: true } },
+            coverMedia: { select: { storagePath: true, alt: true } },
             _count: { select: { memberships: true } },
           },
         });
@@ -126,6 +127,26 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
     searchResult && searchResult.communities.length > 0
       ? await countVerifiedQueenMothersByCommunitySlugs(searchResult.communities.map((c) => c.slug))
       : new Map<string, number>();
+
+  const searchCommunityIds =
+    searchResult && searchResult.communities.length > 0
+      ? (
+          await prisma.community.findMany({
+            where: { slug: { in: searchResult.communities.map((c) => c.slug) } },
+            select: { id: true, slug: true },
+          })
+        )
+      : [];
+
+  const portraitCommunityIds = [
+    ...(communities?.map((c) => c.id) ?? []),
+    ...searchCommunityIds.map((c) => c.id),
+  ];
+  const portraitsById =
+    portraitCommunityIds.length > 0
+      ? await listQueenMotherPortraitPreviewsByCommunityIds([...new Set(portraitCommunityIds)])
+      : new Map();
+  const searchIdBySlug = new Map(searchCommunityIds.map((c) => [c.slug, c.id]));
 
   return (
     <div>
@@ -184,6 +205,10 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
                           description={c.description}
                           memberCount={c.memberCount}
                           verifiedQueenMotherCount={verifiedCountsBySlug.get(c.slug) ?? 0}
+                          queenMotherPortraits={
+                            portraitsById.get(searchIdBySlug.get(c.slug) ?? "") ?? []
+                          }
+                          cover={c.cover}
                         />
                       </li>
                     ))}
@@ -239,6 +264,8 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
                       description={c.description}
                       memberCount={c._count.memberships}
                       verifiedQueenMotherCount={verifiedCountsById.get(c.id) ?? 0}
+                      queenMotherPortraits={portraitsById.get(c.id) ?? []}
+                      cover={c.coverMedia}
                     />
                   </li>
                 ))}

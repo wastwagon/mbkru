@@ -2,11 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+import { ProgrammeEventCard, ProgrammeEventsEmptyState } from "@/components/programme/ProgrammeEventCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { isTownHallDirectoryPageEnabled } from "@/lib/reports/accountability-pages";
-import { programmeEventKindLabel } from "@/lib/programme-event-labels";
 import { getProgrammeTownHallEvents } from "@/lib/server/town-hall-events";
 
 export const dynamic = "force-dynamic";
@@ -16,19 +16,6 @@ export const metadata: Metadata = {
   description:
     "MBKRU town halls and regional listening forums — programme calendar with citations. Confirmed dates are announced on News.",
 };
-
-function statusLabel(status: string) {
-  switch (status) {
-    case "TBC":
-      return "To be confirmed";
-    case "SCHEDULED":
-      return "Scheduled";
-    case "COMPLETED":
-      return "Completed";
-    default:
-      return status;
-  }
-}
 
 export default async function TownHallsPage() {
   if (!isTownHallDirectoryPageEnabled()) notFound();
@@ -63,59 +50,26 @@ export default async function TownHallsPage() {
           </p>
 
           {events.length === 0 ? (
-            <p className="rounded-2xl border border-[var(--border)] bg-white p-6 text-sm text-[var(--foreground-secondary)] shadow-sm">
-              No programme rows in the database yet. Run <code className="rounded bg-[var(--section-light)] px-1">npx prisma migrate deploy</code>{" "}
-              and <code className="rounded bg-[var(--section-light)] px-1">npx prisma db seed</code> (unless{" "}
-              <code className="rounded bg-[var(--section-light)] px-1">SEED_TOWN_HALL_PROGRAMME=0</code>), or check{" "}
-              <code className="rounded bg-[var(--section-light)] px-1">prisma/data/TOWN_HALL_SEED_SOURCES.txt</code>.
-            </p>
+            <ProgrammeEventsEmptyState message="No town halls or regional forums are listed yet. Confirmed dates and venues will appear here and on News." />
           ) : (
             <ul className="space-y-4">
               {events.map((ev) => (
-                <li
-                  key={ev.id}
-                  className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-card)] sm:p-6"
-                >
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <p className="font-display text-lg font-semibold text-[var(--foreground)]">{ev.title}</p>
-                      <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
-                        {programmeEventKindLabel(ev.kind)}
-                        {ev.constituency?.name ? ` · ${ev.constituency.name}` : ""}
-                        {ev.programmeQuarter ? ` · ${ev.programmeQuarter}` : ""}
-                        {" · "}
-                        {ev.region?.name ?? "National / multi-region"}
-                        {" · "}
-                        <span className="font-medium text-[var(--foreground)]">{statusLabel(ev.status)}</span>
-                      </p>
-                    </div>
-                  </div>
-                  {ev.summary ? <p className="mt-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">{ev.summary}</p> : null}
-                  {ev.startsAt ? (
-                    <p className="mt-3 text-xs text-[var(--foreground-secondary)]">
-                      Window: {new Date(ev.startsAt).toLocaleString("en-GB")}
-                      {ev.endsAt ? ` – ${new Date(ev.endsAt).toLocaleString("en-GB")}` : null}
-                    </p>
-                  ) : null}
-                  {ev.venueLine ? (
-                    <p className="mt-2 text-sm text-[var(--foreground)]">
-                      <span className="font-medium">Venue: </span>
-                      {ev.venueLine}
-                    </p>
-                  ) : null}
-                  {ev.infoUrl ? (
-                    <p className="mt-2 text-sm">
-                      <a href={ev.infoUrl} className={primaryNavLinkClass} rel="noopener noreferrer">
-                        More information
-                      </a>
-                    </p>
-                  ) : null}
-                  {ev.sourceCitation ? (
-                    <p className="mt-4 border-t border-[var(--border)] pt-3 text-[11px] leading-relaxed text-[var(--foreground-secondary)]">
-                      <span className="font-semibold text-[var(--foreground)]">Reference: </span>
-                      {ev.sourceCitation}
-                    </p>
-                  ) : null}
+                <li key={ev.id}>
+                  <ProgrammeEventCard
+                    title={ev.title}
+                    kind={ev.kind}
+                    status={ev.status}
+                    summary={ev.summary}
+                    programmeQuarter={ev.programmeQuarter}
+                    startsAt={ev.startsAt}
+                    endsAt={ev.endsAt}
+                    venueLine={ev.venueLine}
+                    infoUrl={ev.infoUrl}
+                    sourceCitation={ev.sourceCitation}
+                    regionName={ev.region?.name ?? null}
+                    constituencyName={ev.constituency?.name ?? null}
+                    featuredImage={ev.featuredMedia}
+                  />
                 </li>
               ))}
             </ul>
@@ -123,13 +77,12 @@ export default async function TownHallsPage() {
 
           <p className="text-sm text-[var(--foreground-secondary)]">
             <Link href="/news" className={primaryNavLinkClass}>
-              News &amp; Updates
-            </Link>{" "}
-            for dated announcements, and{" "}
+              News &amp; announcements
+            </Link>
+            {" · "}
             <Link href="/contact" className={primaryNavLinkClass}>
               Contact
-            </Link>{" "}
-            to co-host a regional session.
+            </Link>
           </p>
         </div>
       </section>

@@ -280,6 +280,28 @@ export function HomeParticipateHub({ data, showLiveHighlights = true, showLiveTo
 
         {showLiveTools ? <HomeLiveToolsPills /> : null}
 
+        {!phase1 ? (
+          <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-5" aria-label="Main ways to participate">
+            {[
+              { href: "/citizens-voice/submit", label: "Submit evidence", hint: "File a Voice report" },
+              { href: "/track-report", label: "Track a report", hint: "Use your tracking code" },
+              { href: "/town-halls", label: "Town halls", hint: "In-person engagement" },
+              { href: "/promises", label: "Commitments", hint: "Pledges with sources" },
+              { href: "/communities", label: "Communities", hint: "Traditional-area spaces" },
+            ].map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className="block h-full rounded-2xl border border-[var(--primary)]/25 bg-[var(--primary)]/[0.06] px-4 py-3 transition hover:border-[var(--primary)]/50"
+                >
+                  <span className="block text-sm font-semibold text-[var(--foreground)]">{item.label}</span>
+                  <span className="mt-0.5 block text-xs text-[var(--foreground-secondary)]">{item.hint}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+
         <div className="mt-10 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:mt-12 lg:grid-cols-3 xl:grid-cols-4">
           {actions.map((a, i) => (
             <motion.div

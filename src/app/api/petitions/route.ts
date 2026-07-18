@@ -30,6 +30,7 @@ export async function GET(request: Request) {
         slug: true,
         title: true,
         summary: true,
+        topic: true,
         targetSignatures: true,
         createdAt: true,
         region: { select: { name: true, slug: true } },
@@ -45,6 +46,7 @@ export async function GET(request: Request) {
       slug: p.slug,
       title: p.title,
       summary: p.summary,
+      topic: p.topic,
       targetSignatures: p.targetSignatures,
       createdAt: p.createdAt.toISOString(),
       regionName: p.region?.name ?? null,
@@ -88,7 +90,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid input", details: parsed.error.flatten() }, { status: 400 });
   }
 
-  const { title, summary, body, targetSignatures, regionId } = parsed.data;
+  const { title, summary, body, topic, targetSignatures, regionId } = parsed.data;
 
   if (regionId) {
     const r = await prisma.region.findUnique({ where: { id: regionId }, select: { id: true } });
@@ -108,6 +110,7 @@ export async function POST(request: Request) {
       title,
       summary: summary?.trim() || null,
       body,
+      topic,
       targetSignatures: targetSignatures ?? null,
       regionId: regionId ?? null,
       authorMemberId: session.memberId,

@@ -52,6 +52,8 @@ export default async function AdminTownHallsPage() {
     constituencyId: "",
     startsAt: "",
     endsAt: "",
+    featuredMediaId: "",
+    featuredMedia: null,
   };
 
   return (

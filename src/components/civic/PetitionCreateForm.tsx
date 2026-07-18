@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { mobileFormFieldClass } from "@/lib/mobile-ui-classes";
+import { PETITION_TOPICS, petitionTopicLabel, type PetitionTopicValue } from "@/lib/petition-topics";
 
 type Region = { id: string; name: string };
 
@@ -12,6 +13,7 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
   const [body, setBody] = useState("");
+  const [topic, setTopic] = useState<PetitionTopicValue>("OTHER");
   const [targetSignatures, setTargetSignatures] = useState("");
   const [regionId, setRegionId] = useState("");
   const [busy, setBusy] = useState(false);
@@ -33,6 +35,7 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
           title: title.trim(),
           summary: summary.trim() || null,
           body: body.trim(),
+          topic,
           targetSignatures: ts ? Number.parseInt(ts, 10) : null,
           regionId: regionId || null,
         }),
@@ -102,6 +105,24 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
+          <label htmlFor="pt-topic" className="block text-sm font-medium text-[var(--foreground)]">
+            Topic
+          </label>
+          <select
+            id="pt-topic"
+            value={topic}
+            onChange={(e) => setTopic(e.target.value as PetitionTopicValue)}
+            className={`${fieldClass} cursor-pointer`}
+            required
+          >
+            {PETITION_TOPICS.map((t) => (
+              <option key={t} value={t}>
+                {petitionTopicLabel(t)}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
           <label htmlFor="pt-goal" className="block text-sm font-medium text-[var(--foreground)]">
             Signature goal (optional)
           </label>
@@ -116,7 +137,7 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
             placeholder="e.g. 500"
           />
         </div>
-        <div>
+        <div className="sm:col-span-2">
           <label htmlFor="pt-region" className="block text-sm font-medium text-[var(--foreground)]">
             Region (optional)
           </label>

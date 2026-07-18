@@ -4,12 +4,14 @@ import type { Metadata } from "next";
 
 import { PublicCauseEngagement } from "@/components/civic/PublicCauseEngagement";
 import { ShareTopicButton } from "@/components/civic/ShareTopicButton";
+import { TopicPictogram } from "@/components/civic/TopicPictogram";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { getMemberSession } from "@/lib/member/session";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { reportKindLabel } from "@/lib/report-status-text";
 import { isCivicPetitionsAndPublicCausesEnabled } from "@/lib/reports/accountability-pages";
+import { kindBadgeClass } from "@/lib/voice-submission-card-shared";
 
 import type { CitizenReportKind } from "@prisma/client";
 
@@ -92,15 +94,19 @@ export default async function PublicCauseDetailPage({ params }: Props) {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="text-sm text-[var(--foreground-secondary)]">
+          <p className="flex flex-wrap items-center gap-2 text-sm text-[var(--foreground-secondary)]">
             <Link href="/citizens-voice/causes" className={primaryNavLinkClass}>
               ← All causes
             </Link>
-            {" · "}
-            <span>{reportKindLabel(report.kind as CitizenReportKind)}</span>
-            {report.region?.name ? ` · ${report.region.name}` : ""}
+            <TopicPictogram variant={report.kind as CitizenReportKind} className="h-8 w-8" />
+            <span
+              className={`rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${kindBadgeClass(report.kind as CitizenReportKind)}`}
+            >
+              {reportKindLabel(report.kind as CitizenReportKind)}
+            </span>
+            {report.region?.name ? <span>· {report.region.name}</span> : null}
             {report.publicCauseClosed ? (
-              <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900">
+              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900">
                 Closed
               </span>
             ) : null}

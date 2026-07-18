@@ -18,7 +18,11 @@ export default async function AdminTownHallEditPage({ params }: Props) {
   const [ev, regions, constituencyRows] = await Promise.all([
     prisma.townHallEvent.findUnique({
       where: { id },
-      include: { region: { select: { name: true } }, constituency: { select: { name: true } } },
+      include: {
+        region: { select: { name: true } },
+        constituency: { select: { name: true } },
+        featuredMedia: { select: { id: true, storagePath: true, filename: true, alt: true } },
+      },
     }),
     prisma.region.findMany({ orderBy: { sortOrder: "asc" }, select: { id: true, name: true } }),
     prisma.constituency.findMany({
@@ -51,6 +55,8 @@ export default async function AdminTownHallEditPage({ params }: Props) {
     constituencyId: ev.constituencyId ?? "",
     startsAt: formatLocalDateTimeInput(ev.startsAt),
     endsAt: formatLocalDateTimeInput(ev.endsAt),
+    featuredMediaId: ev.featuredMediaId ?? "",
+    featuredMedia: ev.featuredMedia,
   };
 
   return (

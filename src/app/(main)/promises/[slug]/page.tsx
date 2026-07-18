@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+import { MpPortrait } from "@/components/accountability/MpPortrait";
 import { PromiseEvidenceCard } from "@/components/accountability/PromiseEvidenceCard";
 import { MpPerformanceIntakeList } from "@/components/accountability/MpPerformanceIntakeList";
 import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
@@ -61,6 +62,16 @@ export default async function PromisesByMemberPage({ params }: Props) {
           </p>
 
           <AccountabilityDisclaimerCallout variant="promiseCatalogue" className="mt-4" />
+
+          <div className="mt-6 flex items-center gap-4 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-5">
+            <MpPortrait name={member.name} portraitPath={member.portraitPath} size="lg" />
+            <div className="min-w-0">
+              <p className="font-display text-lg font-bold text-[var(--foreground)]">{member.name}</p>
+              <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
+                {[member.role, member.party, member.constituency?.name].filter(Boolean).join(" · ")}
+              </p>
+            </div>
+          </div>
 
           <p className="mt-4 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
             MP commitment sheet — verified catalogue rows below, plus Citizen Voice intakes filed by residents. Not a legal

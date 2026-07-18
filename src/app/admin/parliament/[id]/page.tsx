@@ -6,7 +6,9 @@ import {
   updateCampaignPromiseEvidenceAction,
   updateCampaignPromiseStatusAction,
   updateParliamentMemberFairnessMetadataAction,
+  updateParliamentMemberPortraitAction,
 } from "@/app/admin/parliament/actions";
+import { MpPortrait } from "@/components/accountability/MpPortrait";
 import {
   accountabilityCatalogueNavMedium,
   accountabilityProse,
@@ -102,6 +104,54 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
             <dd className="inline">{member.constituency.name}</dd>
           </div>
         ) : null}
+      </dl>
+
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-5">
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">Portrait</h2>
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
+          Official parliament.gh photos are imported by{" "}
+          <code className="rounded bg-[var(--section-light)] px-1">npm run data:fetch-mp-portraits</code>. Upload a
+          replacement JPEG/PNG/WebP (max 8MB) when the match is missing or wrong.
+        </p>
+        <div className="mt-4 flex flex-wrap items-center gap-4">
+          <MpPortrait name={member.name} portraitPath={member.portraitPath} size="lg" />
+          <form action={updateParliamentMemberPortraitAction} className="flex flex-wrap items-end gap-2">
+            <input type="hidden" name="memberId" value={member.id} />
+            <div>
+              <label htmlFor="portrait-file" className="block text-xs font-medium">
+                Replace image
+              </label>
+              <input
+                id="portrait-file"
+                name="file"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                required
+                className="mt-1 block text-sm"
+              />
+            </div>
+            <button type="submit" className={adminQueueActionClass}>
+              Upload
+            </button>
+          </form>
+          {member.portraitPath ? (
+            <form action={updateParliamentMemberPortraitAction}>
+              <input type="hidden" name="memberId" value={member.id} />
+              <input type="hidden" name="clear" value="1" />
+              <button type="submit" className={adminSecondaryButtonClass}>
+                Clear to placeholder
+              </button>
+            </form>
+          ) : null}
+        </div>
+        {member.portraitPath ? (
+          <p className="mt-2 break-all font-mono text-[10px] text-[var(--foreground-secondary)]">{member.portraitPath}</p>
+        ) : (
+          <p className="mt-2 text-xs text-[var(--foreground-secondary)]">No portrait yet — initials placeholder on public pages.</p>
+        )}
+      </section>
+
+      <dl className="mt-4 grid gap-1 text-sm text-[var(--foreground-secondary)]">
         <div>
           <dt className="inline font-medium text-[var(--foreground)]">Active: </dt>
           <dd className="inline">{member.active ? "Yes" : "No"}</dd>

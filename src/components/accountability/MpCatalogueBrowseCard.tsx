@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { MpPortrait } from "@/components/accountability/MpPortrait";
 import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
   party: string | null;
   constituencyName: string | null;
   promiseCount: number;
+  portraitPath?: string | null;
 };
 
 export function MpCatalogueBrowseCard({
@@ -18,6 +20,7 @@ export function MpCatalogueBrowseCard({
   party,
   constituencyName,
   promiseCount,
+  portraitPath,
 }: Props) {
   const sheetHref = `/promises/${encodeURIComponent(slug)}`;
   const metaParts = [role, party, constituencyName].filter(Boolean);
@@ -25,15 +28,18 @@ export function MpCatalogueBrowseCard({
   return (
     <article className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <h2 className="text-base font-semibold leading-snug text-[var(--foreground)] sm:text-lg">
-            <Link href={sheetHref} className="hover:text-[var(--primary)]" prefetch={false}>
-              {name}
-            </Link>
-          </h2>
-          {metaParts.length > 0 ? (
-            <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{metaParts.join(" · ")}</p>
-          ) : null}
+        <div className="flex min-w-0 flex-1 items-start gap-3">
+          <MpPortrait name={name} portraitPath={portraitPath} size="md" />
+          <div className="min-w-0 flex-1">
+            <h2 className="text-base font-semibold leading-snug text-[var(--foreground)] sm:text-lg">
+              <Link href={sheetHref} className="hover:text-[var(--primary)]" prefetch={false}>
+                {name}
+              </Link>
+            </h2>
+            {metaParts.length > 0 ? (
+              <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{metaParts.join(" · ")}</p>
+            ) : null}
+          </div>
         </div>
         <span className="shrink-0 rounded-full border border-[var(--accent-gold)]/35 bg-[var(--accent-gold-light)] px-3 py-1 text-sm font-semibold tabular-nums text-[var(--accent-gold)]">
           {promiseCount}

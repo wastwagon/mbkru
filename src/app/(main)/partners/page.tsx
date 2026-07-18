@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { getPublishedPartners, partnerCategoryLabel } from "@/lib/content/partners-cms";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { images } from "@/lib/site-content";
 
@@ -12,7 +13,9 @@ export const metadata: Metadata = {
     "Development partners, corporate supporters, and foundations backing MBKRU's mission for citizen accountability and poverty eradication in Ghana.",
 };
 
-export default function PartnersPage() {
+export default async function PartnersPage() {
+  const partners = await getPublishedPartners();
+
   return (
     <div>
       <PageHeader
@@ -60,9 +63,74 @@ export default function PartnersPage() {
             <p className="mt-2 text-[var(--foreground-secondary)]">
               Confirmed partners and logos will be listed here. We do not display stand-in or unconfirmed organisation names.
             </p>
-            <div className="mt-6 rounded-2xl border border-dashed border-[var(--border)] bg-white px-6 py-14 text-center text-sm text-[var(--foreground-secondary)]">
-              No partner listings published yet.
-            </div>
+            {partners.length > 0 ? (
+              <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+                {partners.map((partner) => (
+                  <li
+                    key={partner.id}
+                    className="rounded-2xl border border-[var(--border)] bg-white px-5 py-6 text-center"
+                  >
+                    {partner.logoMedia ? (
+                      <span className="relative mx-auto block h-20 w-full max-w-[180px]">
+                        <Image
+                          src={partner.logoMedia.storagePath}
+                          alt={partner.logoMedia.alt || `${partner.name} logo`}
+                          fill
+                          className="object-contain"
+                          sizes="180px"
+                        />
+                      </span>
+                    ) : (
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">
+                        {partnerCategoryLabel(partner.category)}
+                      </p>
+                    )}
+                    <p className="mt-3 text-sm font-semibold text-[var(--foreground)]">
+                      {partner.websiteUrl ? (
+                        <a
+                          href={partner.websiteUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:text-[var(--primary)]"
+                        >
+                          {partner.name}
+                        </a>
+                      ) : (
+                        partner.name
+                      )}
+                    </p>
+                    {partner.summary ? (
+                      <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{partner.summary}</p>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <>
+                <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+                  {[
+                    { label: "Government of Ghana", detail: "Governance & citizen engagement partners" },
+                    { label: "Civil society", detail: "Accountability and rights organisations" },
+                    { label: "Development partners", detail: "Bilateral and multilateral programmes" },
+                    { label: "Foundations", detail: "Democratic accountability funders" },
+                  ].map((slot) => (
+                    <li
+                      key={slot.label}
+                      className="rounded-2xl border border-dashed border-[var(--border)] bg-white px-5 py-6 text-center"
+                    >
+                      <p className="text-sm font-semibold text-[var(--foreground)]">{slot.label}</p>
+                      <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{slot.detail}</p>
+                      <p className="mt-3 text-[11px] font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">
+                        Logo slot reserved
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-4 text-center text-sm text-[var(--foreground-secondary)]">
+                  No partner listings published yet.
+                </p>
+              </>
+            )}
           </div>
 
           <div className="mt-12 rounded-xl border-2 border-[var(--primary)]/20 bg-[var(--muted)] p-6 sm:p-8">

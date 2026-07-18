@@ -67,6 +67,7 @@ describe("GET /api/mps", () => {
         constituencyName: null,
         promiseCount: 0,
         mpVoiceReportCount: 0,
+        portraitPath: null,
       },
     ]);
     const res = await GET(new Request("https://example.com/api/mps"));

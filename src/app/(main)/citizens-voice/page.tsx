@@ -5,6 +5,7 @@ import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
 import { VoiceOpenChatCTA } from "@/components/voice/VoiceOpenChatCTA";
 import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { ProcessFlowDiagram, VOICE_REPORT_LIFECYCLE_STEPS } from "@/components/ui/ProcessFlowDiagram";
 import { pageHeaderPresets } from "@/lib/page-header-presets";
 import { Card } from "@/components/ui/Card";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
@@ -80,6 +81,11 @@ export default async function CitizensVoicePage() {
       <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <AccountabilityDisclaimerCallout variant="voiceSubmit" className="mb-6" />
+          <ProcessFlowDiagram
+            className="mb-8"
+            title="How a Voice report moves"
+            steps={VOICE_REPORT_LIFECYCLE_STEPS}
+          />
           <div className="mb-4 lg:hidden">
             <VoiceOpenChatCTA />
           </div>

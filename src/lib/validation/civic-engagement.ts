@@ -16,6 +16,18 @@ export const petitionCreateBodySchema = z.object({
   title: z.string().trim().min(8, "Title is too short").max(280),
   summary: z.string().trim().max(500).optional().nullable(),
   body: z.string().trim().min(40, "Please add more detail").max(50_000),
+  topic: z
+    .enum([
+      "GOVERNANCE",
+      "INFRASTRUCTURE",
+      "HEALTH",
+      "EDUCATION",
+      "ENVIRONMENT",
+      "SECURITY",
+      "ECONOMY",
+      "OTHER",
+    ])
+    .default("OTHER"),
   targetSignatures: z.number().int().min(10).max(10_000_000).optional().nullable(),
   regionId: z
     .string()

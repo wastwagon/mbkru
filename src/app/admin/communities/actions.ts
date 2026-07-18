@@ -19,6 +19,7 @@ import {
 } from "@/lib/server/community-member-transactional-outbox";
 import { createMemberNotification } from "@/lib/server/member-notifications";
 import { processNotificationOutboxBatch } from "@/lib/server/notification-outbox";
+import { assertPublicImageMedia } from "@/lib/server/public-media";
 import {
   communityForumCreateSchema,
   forumSlugFromName,
@@ -190,7 +191,10 @@ export async function setCommunityMembershipRoleAction(formData: FormData): Prom
       communityId: parsed.data.communityId,
       state: "ACTIVE",
     },
-    data: { role: parsed.data.role },
+    data: {
+      role: parsed.data.role,
+      ...(parsed.data.role !== "QUEEN_MOTHER_VERIFIED" ? { portraitMediaId: null } : {}),
+    },
   });
 
   const c = await prisma.community.findUnique({
@@ -198,7 +202,53 @@ export async function setCommunityMembershipRoleAction(formData: FormData): Prom
     select: { slug: true },
   });
   revalidatePath(`/admin/communities/${parsed.data.communityId}`);
-  if (c) revalidatePath(`/communities/${c.slug}`);
+  if (c) {
+    revalidatePath(`/communities/${c.slug}`);
+    revalidatePath("/communities");
+  }
+}
+
+const queenMotherPortraitSchema = z.object({
+  membershipId: cuid,
+  communityId: cuid,
+  portraitMediaId: z.preprocess(
+    (v) => (typeof v === "string" && v.trim().length ? v.trim() : null),
+    z.string().cuid().nullable(),
+  ),
+});
+
+export async function updateQueenMotherPortraitAction(formData: FormData): Promise<void> {
+  await requireAdminSession();
+  const parsed = queenMotherPortraitSchema.safeParse({
+    membershipId: formData.get("membershipId"),
+    communityId: formData.get("communityId"),
+    portraitMediaId: formData.get("portraitMediaId"),
+  });
+  if (!parsed.success) return;
+
+  const membership = await prisma.communityMembership.findFirst({
+    where: {
+      id: parsed.data.membershipId,
+      communityId: parsed.data.communityId,
+      state: "ACTIVE",
+      role: "QUEEN_MOTHER_VERIFIED",
+    },
+    select: { id: true, community: { select: { slug: true } } },
+  });
+  if (!membership) return;
+
+  if (parsed.data.portraitMediaId && !(await assertPublicImageMedia(parsed.data.portraitMediaId))) {
+    return;
+  }
+
+  await prisma.communityMembership.update({
+    where: { id: membership.id },
+    data: { portraitMediaId: parsed.data.portraitMediaId },
+  });
+
+  revalidatePath(`/admin/communities/${parsed.data.communityId}`);
+  revalidatePath(`/communities/${membership.community.slug}`);
+  revalidatePath("/communities");
 }
 
 export async function setCommunityMembershipStateAction(formData: FormData): Promise<void> {
@@ -711,4 +761,45 @@ export async function updateCommunityDefaultParliamentMemberAction(formData: For
 
   revalidatePath(`/admin/communities/${community.id}`);
   revalidatePath(`/communities/${community.slug}/portal`);
+}
+
+const updateCommunityCoverSchema = z.object({
+  communityId: cuid,
+  coverMediaId: z.preprocess(
+    (v) => (typeof v === "string" && v.trim().length ? v.trim() : null),
+    z.string().cuid().nullable(),
+  ),
+});
+
+async function assertPublicCoverImage(mediaId: string): Promise<boolean> {
+  return assertPublicImageMedia(mediaId);
+}
+
+export async function updateCommunityCoverAction(formData: FormData): Promise<void> {
+  await requireAdminSession();
+  const parsed = updateCommunityCoverSchema.safeParse({
+    communityId: formData.get("communityId"),
+    coverMediaId: formData.get("coverMediaId"),
+  });
+  if (!parsed.success) return;
+
+  const community = await prisma.community.findUnique({
+    where: { id: parsed.data.communityId },
+    select: { id: true, slug: true, region: { select: { slug: true } } },
+  });
+  if (!community) return;
+
+  if (parsed.data.coverMediaId && !(await assertPublicCoverImage(parsed.data.coverMediaId))) return;
+
+  await prisma.community.update({
+    where: { id: community.id },
+    data: { coverMediaId: parsed.data.coverMediaId },
+  });
+
+  revalidatePath(`/admin/communities/${community.id}`);
+  revalidatePath("/communities");
+  revalidatePath(`/communities/${community.slug}`);
+  if (community.region?.slug) {
+    revalidatePath(`/regions/${community.region.slug}`);
+  }
 }

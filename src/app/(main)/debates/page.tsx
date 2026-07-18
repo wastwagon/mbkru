@@ -2,11 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+import { ProgrammeEventCard, ProgrammeEventsEmptyState } from "@/components/programme/ProgrammeEventCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { isTownHallDirectoryPageEnabled } from "@/lib/reports/accountability-pages";
-import { programmeEventKindLabel } from "@/lib/programme-event-labels";
 import { getProgrammeTownHallEvents } from "@/lib/server/town-hall-events";
 
 export const dynamic = "force-dynamic";
@@ -16,19 +16,6 @@ export const metadata: Metadata = {
   description:
     "MBKRU programme planning for pre-election constituency debates — working toward nationwide coverage before Ghana 2028.",
 };
-
-function statusLabel(status: string) {
-  switch (status) {
-    case "TBC":
-      return "To be confirmed";
-    case "SCHEDULED":
-      return "Scheduled";
-    case "COMPLETED":
-      return "Completed";
-    default:
-      return status;
-  }
-}
 
 export default async function ConstituencyDebatesPage() {
   if (!isTownHallDirectoryPageEnabled()) notFound();
@@ -53,8 +40,7 @@ export default async function ConstituencyDebatesPage() {
             <Link href="/town-halls" className={primaryNavLinkClass}>
               Town halls &amp; forums
             </Link>
-            . Citations:{" "}
-            <code className="rounded bg-white px-1 text-xs shadow-sm">prisma/data/TOWN_HALL_SEED_SOURCES.txt</code> and{" "}
+            . Citations: see{" "}
             <Link href="/data-sources" className={primaryNavLinkClass}>
               Data sources
             </Link>
@@ -62,35 +48,26 @@ export default async function ConstituencyDebatesPage() {
           </p>
 
           {events.length === 0 ? (
-            <p className="rounded-2xl border border-[var(--border)] bg-white p-6 text-sm text-[var(--foreground-secondary)] shadow-sm">
-              No constituency debate rows yet. Run migrations and seed (after constituencies load), or add rows in{" "}
-              <strong className="text-[var(--foreground)]">Admin → Town halls &amp; forums</strong> with programme type{" "}
-              <em>Constituency debate</em>.
-            </p>
+            <ProgrammeEventsEmptyState message="No constituency debates are listed yet. Confirmed schedules will appear here when partners and the electoral framework are ready." />
           ) : (
             <ul className="space-y-4">
               {events.map((ev) => (
-                <li
-                  key={ev.id}
-                  className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-card)] sm:p-6"
-                >
-                  <p className="font-display text-lg font-semibold text-[var(--foreground)]">{ev.title}</p>
-                  <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
-                    {programmeEventKindLabel(ev.kind)}
-                    {ev.constituency?.name ? ` · ${ev.constituency.name}` : ""}
-                    {ev.programmeQuarter ? ` · ${ev.programmeQuarter}` : ""}
-                    {" · "}
-                    {ev.region?.name ?? "—"}
-                    {" · "}
-                    <span className="font-medium text-[var(--foreground)]">{statusLabel(ev.status)}</span>
-                  </p>
-                  {ev.summary ? <p className="mt-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">{ev.summary}</p> : null}
-                  {ev.sourceCitation ? (
-                    <p className="mt-4 border-t border-[var(--border)] pt-3 text-[11px] leading-relaxed text-[var(--foreground-secondary)]">
-                      <span className="font-semibold text-[var(--foreground)]">Reference: </span>
-                      {ev.sourceCitation}
-                    </p>
-                  ) : null}
+                <li key={ev.id}>
+                  <ProgrammeEventCard
+                    title={ev.title}
+                    kind={ev.kind}
+                    status={ev.status}
+                    summary={ev.summary}
+                    programmeQuarter={ev.programmeQuarter}
+                    startsAt={ev.startsAt}
+                    endsAt={ev.endsAt}
+                    venueLine={ev.venueLine}
+                    infoUrl={ev.infoUrl}
+                    sourceCitation={ev.sourceCitation}
+                    regionName={ev.region?.name ?? null}
+                    constituencyName={ev.constituency?.name ?? null}
+                    featuredImage={ev.featuredMedia}
+                  />
                 </li>
               ))}
             </ul>

@@ -1,5 +1,6 @@
 import type { ProgrammeEventKind, TownHallEventStatus } from "@prisma/client";
 
+import { AdminMediaField } from "@/components/admin/AdminMediaField";
 import { programmeEventKindLabel } from "@/lib/programme-event-labels";
 
 const input = "mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm";
@@ -21,6 +22,8 @@ export type TownHallFormDefaults = {
   constituencyId: string;
   startsAt: string;
   endsAt: string;
+  featuredMediaId: string;
+  featuredMedia: { id: string; storagePath: string; filename: string; alt: string | null } | null;
 };
 
 const STATUSES: TownHallEventStatus[] = ["TBC", "SCHEDULED", "COMPLETED", "CANCELLED"];
@@ -194,6 +197,12 @@ export function TownHallFormFields({
           className={input}
         />
       </div>
+      <AdminMediaField
+        name="featuredMediaId"
+        label="Featured photo (optional)"
+        help="Documentary image for the public town-hall / debate listing. Public library images only."
+        initial={defaults.featuredMedia}
+      />
     </>
   );
 }

@@ -58,7 +58,7 @@ export async function getCachedPromisesIndexMembers() {
         },
       });
     },
-    ["promises-index-v1"],
+    ["promises-index-v2"],
     { tags: [PROMISES_INDEX_TAG], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
 }
@@ -75,6 +75,7 @@ export async function getCachedMpsPublicRoster() {
           name: true,
           role: true,
           party: true,
+          portraitPath: true,
           constituency: { select: { name: true } },
           _count: {
             select: {
@@ -94,12 +95,13 @@ export async function getCachedMpsPublicRoster() {
         name: m.name,
         role: m.role,
         party: m.party,
+        portraitPath: m.portraitPath,
         constituencyName: m.constituency?.name ?? null,
         promiseCount: m._count.promises,
         mpVoiceReportCount: m._count.citizenReports,
       }));
     },
-    ["api-mps-v2"],
+    ["api-mps-v3"],
     {
       /** Include catalogue tag so per-MP promise counts refresh when commitments change (not only roster imports). */
       tags: [MPS_ROSTER_TAG, PROMISES_INDEX_TAG],
@@ -266,6 +268,7 @@ export type PublishedReportCardEntryRow = Prisma.ScorecardEntryGetPayload<{
         slug: true;
         role: true;
         party: true;
+        portraitPath: true;
         _count: { select: { promises: true } };
       };
     };
@@ -312,6 +315,7 @@ export async function getCachedPublishedReportCardEntriesPage(
                 slug: true,
                 role: true,
                 party: true,
+                portraitPath: true,
                 _count: { select: { promises: true } },
               },
             },
@@ -322,7 +326,7 @@ export async function getCachedPublishedReportCardEntriesPage(
 
       return { entries, totalFiltered, page: safePage };
     },
-    ["report-card-entries-v4", String(year), String(safePage), mpKey],
+    ["report-card-entries-v5", String(year), String(safePage), mpKey],
     { tags: [REPORT_CARD_INDEX_TAG, reportCardYearTag(year)], revalidate: ACCOUNTABILITY_PUBLIC_S_MAXAGE_SEC },
   )();
 }
@@ -342,6 +346,7 @@ export type ReportCardBrowseRow = {
     slug: string;
     party: string | null;
     role: string;
+    portraitPath: string | null;
     constituency: {
       name: string;
       region: { name: string; slug: string };
@@ -401,6 +406,7 @@ export async function getReportCardBrowseEntries(opts: {
             slug: true,
             party: true,
             role: true,
+            portraitPath: true,
             constituency: {
               select: {
                 name: true,
@@ -426,6 +432,7 @@ export async function getReportCardBrowseEntries(opts: {
       slug: r.member.slug,
       party: r.member.party,
       role: r.member.role,
+      portraitPath: r.member.portraitPath,
       constituency: r.member.constituency
         ? {
             name: r.member.constituency.name,

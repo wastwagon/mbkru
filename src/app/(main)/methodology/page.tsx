@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { ProcessFlowDiagram, METHODOLOGY_EVIDENCE_STEPS } from "@/components/ui/ProcessFlowDiagram";
 import { pageHeaderPresets } from "@/lib/page-header-presets";
 import {
   ACCOUNTABILITY_CATALOGUE_ROUTES,
@@ -46,6 +47,11 @@ export default async function MethodologyPage() {
             How MBKRU documents pledges, scores, and citizen voice — independent civic monitoring, not a government
             channel or legal finding.
           </p>
+          <ProcessFlowDiagram
+            className="mt-8"
+            title="From source document to public accountability"
+            steps={METHODOLOGY_EVIDENCE_STEPS}
+          />
           {showPromises || showReportCard ? (
             <p className="mt-6 flex flex-wrap gap-x-4 gap-y-1 text-sm text-[var(--foreground-secondary)]">
               {showPromises ? (
