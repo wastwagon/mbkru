@@ -4,10 +4,10 @@ import type { MemberGhanaCardVerificationStatus } from "@prisma/client";
 import { useState } from "react";
 
 import { FormTurnstile, isTurnstileWidgetEnabled } from "@/components/forms/FormTurnstile";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
 import { ghanaCardStatusDescription, ghanaCardStatusLabel } from "@/lib/ghana-card-labels";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
-
-const inputClass = `mt-1 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
 
 type Props = {
   status: MemberGhanaCardVerificationStatus;
@@ -85,11 +85,8 @@ export function AccountGhanaCardVerifyForm({ status, verifiedAt, lastFour, hubte
               Enter the details exactly as on your Ghana Card. We verify via Hubtel against NIA records and store only a
               secure hash — not your full card number.
             </p>
-            <div>
-              <label htmlFor="ghana-card-number" className="block text-xs font-medium text-[var(--foreground)]">
-                Ghana Card number
-              </label>
-              <input
+            <FormField label="Ghana Card number" htmlFor="ghana-card-number">
+              <Input
                 id="ghana-card-number"
                 required
                 autoComplete="off"
@@ -97,49 +94,36 @@ export function AccountGhanaCardVerifyForm({ status, verifiedAt, lastFour, hubte
                 placeholder="GHA-123456789-0"
                 value={ghanaCardNumber}
                 onChange={(e) => setGhanaCardNumber(e.target.value)}
-                className={inputClass}
               />
-            </div>
+            </FormField>
             <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label htmlFor="ghana-card-surname" className="block text-xs font-medium text-[var(--foreground)]">
-                  Surname (legal)
-                </label>
-                <input
+              <FormField label="Surname (legal)" htmlFor="ghana-card-surname">
+                <Input
                   id="ghana-card-surname"
                   required
                   autoComplete="family-name"
                   value={surname}
                   onChange={(e) => setSurname(e.target.value)}
-                  className={inputClass}
                 />
-              </div>
-              <div>
-                <label htmlFor="ghana-card-forenames" className="block text-xs font-medium text-[var(--foreground)]">
-                  Forenames (legal)
-                </label>
-                <input
+              </FormField>
+              <FormField label="Forenames (legal)" htmlFor="ghana-card-forenames">
+                <Input
                   id="ghana-card-forenames"
                   required
                   autoComplete="given-name"
                   value={forenames}
                   onChange={(e) => setForenames(e.target.value)}
-                  className={inputClass}
                 />
-              </div>
+              </FormField>
             </div>
-            <div>
-              <label htmlFor="ghana-card-dob" className="block text-xs font-medium text-[var(--foreground)]">
-                Date of birth <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
-              </label>
-              <input
+            <FormField label="Date of birth" htmlFor="ghana-card-dob" optional>
+              <Input
                 id="ghana-card-dob"
                 type="date"
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
-                className={inputClass}
               />
-            </div>
+            </FormField>
             {isTurnstileWidgetEnabled ? (
               <FormTurnstile onTokenChange={setTurnstileToken} action="ghana-card-verify" />
             ) : null}

@@ -4,11 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { safePostAuthRedirectPath } from "@/lib/member/safe-post-auth-redirect";
-import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
-
-const inputClass = `mt-1 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 export function MemberLoginForm() {
   const router = useRouter();
@@ -52,40 +52,32 @@ export function MemberLoginForm() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      <div>
-        <label htmlFor="login-email" className="block text-sm font-medium text-[var(--foreground)]">
-          Email
-        </label>
-        <input
+      <FormField label="Email" htmlFor="login-email">
+        <Input
           id="login-email"
           type="email"
           autoComplete="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className={inputClass}
         />
-      </div>
-      <div>
-        <label htmlFor="login-password" className="block text-sm font-medium text-[var(--foreground)]">
-          Password
-        </label>
+      </FormField>
+      <FormField label="Password" htmlFor="login-password">
         <PasswordInput
           id="login-password"
           autoComplete="current-password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className={inputClass}
         />
-      </div>
+      </FormField>
       {error ? (
         <p className="text-sm text-red-600" role="alert">
           {error}
         </p>
       ) : null}
-      <Button type="submit" disabled={loading} className="w-full justify-center sm:w-auto">
-        {loading ? "Signing in…" : "Sign in"}
+      <Button type="submit" loading={loading} loadingLabel="Signing in…" className="w-full justify-center sm:w-auto">
+        Sign in
       </Button>
       <p className="text-sm text-[var(--foreground-secondary)]">
         No account?{" "}

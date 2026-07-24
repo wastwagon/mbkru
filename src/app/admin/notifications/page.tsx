@@ -6,12 +6,12 @@ import {
 import { requireAdminSession } from "@/lib/admin/require-session";
 import {
   adminNumberInputClass,
-  adminPrimaryButtonClass,
   adminQueueActionWarningOutlineClass,
 } from "@/lib/admin/admin-ui-classes";
 import { AdminMetricCard } from "@/components/admin/AdminMetricCard";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { Button } from "@/components/ui/Button";
 import { prisma } from "@/lib/db/prisma";
 
 type Props = {
@@ -101,12 +101,9 @@ export default async function AdminNotificationsPage({ searchParams }: Props) {
           className={adminNumberInputClass}
         />
         <span className="text-sm text-[var(--foreground-secondary)]">jobs now</span>
-        <button
-          type="submit"
-          className={adminPrimaryButtonClass}
-        >
+        <Button type="submit" density="admin">
           Run processor
-        </button>
+        </Button>
       </form>
 
       <section className="mt-8">

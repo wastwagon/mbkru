@@ -3,7 +3,7 @@
 import type { TurnstileInstance } from "@marsidev/react-turnstile";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { focusRingSmClass } from "@/lib/primary-link-styles";
+import { Input } from "@/components/ui/Input";
 
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
@@ -44,22 +44,24 @@ export function EarlyAccessForm() {
         className="flex justify-start"
       />
       <div className="flex flex-col gap-4 sm:flex-row">
-        <input
+        <Input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Your email address"
           required
           disabled={status === "loading"}
-          className={`min-h-[48px] w-full flex-1 touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3.5 text-[var(--foreground)] transition-shadow duration-200 placeholder:text-[var(--foreground-secondary)] focus-visible:border-[var(--primary)]/35 sm:min-w-0 ${focusRingSmClass}`}
+          className="!mt-0 min-h-[48px] flex-1 py-3.5 sm:min-w-0"
           aria-label="Email for early access"
         />
         <Button
           type="submit"
-          disabled={status === "loading" || (isTurnstileWidgetEnabled && !turnstileToken)}
+          loading={status === "loading"}
+          loadingLabel="Registering…"
+          disabled={isTurnstileWidgetEnabled && !turnstileToken}
           className="w-full justify-center sm:w-auto"
         >
-          {status === "loading" ? "Registering…" : "Register for Early Access"}
+          Register for Early Access
         </Button>
       </div>
       {status === "success" && (

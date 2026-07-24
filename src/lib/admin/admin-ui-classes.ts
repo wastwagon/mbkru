@@ -3,6 +3,8 @@
  */
 
 import { focusRingSmClass } from "@/lib/primary-link-styles";
+import { buttonClass } from "@/lib/ui/button-styles";
+import { fieldControlClass } from "@/lib/ui/field-styles";
 
 /** Uppercase label above metrics or form sections */
 export const adminKickerClass =
@@ -32,14 +34,14 @@ export const adminListPanelClass =
 export const adminTablePanelClass =
   "admin-table-panel overflow-x-auto rounded-2xl border border-[var(--border)] bg-white sm:overflow-x-auto";
 
-/** 16px admin form controls — prevents iOS zoom. */
-export const adminFormFieldClass = `mt-1 w-full touch-manipulation rounded-lg border border-[var(--border)] bg-white px-3 py-2.5 text-base text-[var(--foreground)] ${focusRingSmClass}`;
+/** 16px admin form controls — prevents iOS zoom. Prefer `<Input density="admin" />` for new code. */
+export const adminFormFieldClass = fieldControlClass({ density: "admin" });
 
-/** Primary admin action button (forms, queues). */
-export const adminPrimaryButtonClass = `inline-flex min-h-11 touch-manipulation items-center justify-center rounded-lg bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] active:scale-[0.99] motion-reduce:active:scale-100 ${focusRingSmClass}`;
+/** Primary admin action button (forms, queues). Prefer `<Button density="admin" />` for new code. */
+export const adminPrimaryButtonClass = buttonClass({ variant: "primary", density: "admin" });
 
-/** Secondary / outline admin button. */
-export const adminSecondaryButtonClass = `inline-flex min-h-11 touch-manipulation items-center justify-center rounded-lg border border-[var(--border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--section-light)] active:scale-[0.99] motion-reduce:active:scale-100 ${focusRingSmClass}`;
+/** Secondary / outline admin button. Prefer `<Button variant="surface" density="admin" />`. */
+export const adminSecondaryButtonClass = buttonClass({ variant: "surface", density: "admin" });
 
 /** Filter / tab chips in admin lists. */
 export function adminFilterChipClass(active: boolean) {

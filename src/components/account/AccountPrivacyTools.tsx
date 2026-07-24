@@ -1,27 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import { focusRingSmClass, prosePrimaryAnchorClass } from "@/lib/primary-link-styles";
-import { mobileFormFieldClass } from "@/lib/mobile-ui-classes";
-import { useBodyScrollLock } from "@/lib/use-body-scroll-lock";
+import { Button } from "@/components/ui/Button";
+import { ConfirmDialog } from "@/components/ui/Dialog";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { prosePrimaryAnchorClass } from "@/lib/primary-link-styles";
 
 export function AccountPrivacyTools({ accountEmail }: { accountEmail: string }) {
   const [busy, setBusy] = useState<"export" | "delete" | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [confirmEmail, setConfirmEmail] = useState("");
   const [message, setMessage] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
-
-  useEffect(() => {
-    if (!deleteOpen) return;
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setDeleteOpen(false);
-    }
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [deleteOpen]);
-
-  useBodyScrollLock(deleteOpen);
 
   async function downloadExport() {
     setMessage(null);
@@ -74,8 +65,6 @@ export function AccountPrivacyTools({ accountEmail }: { accountEmail: string }) 
     }
   }
 
-  const btnClass = `min-h-11 touch-manipulation rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors active:scale-[0.99] motion-reduce:active:scale-100 ${focusRingSmClass}`;
-
   return (
     <section className="mt-10" aria-labelledby="privacy-data-heading">
       <h2 id="privacy-data-heading" className="font-display text-lg font-semibold text-[var(--foreground)]">
@@ -104,85 +93,57 @@ export function AccountPrivacyTools({ accountEmail }: { accountEmail: string }) 
       ) : null}
 
       <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-        <button
+        <Button
           type="button"
           onClick={() => void downloadExport()}
           disabled={busy !== null}
-          className={`${btnClass} bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] disabled:opacity-60`}
+          loading={busy === "export"}
+          loadingLabel="Preparing…"
         >
-          {busy === "export" ? "Preparing…" : "Download data export (JSON)"}
-        </button>
-        <button
+          Download data export (JSON)
+        </Button>
+        <Button
           type="button"
+          variant="destructive"
           onClick={() => {
             setDeleteOpen(true);
             setConfirmEmail("");
             setMessage(null);
           }}
           disabled={busy !== null}
-          className={`${btnClass} border border-red-200 bg-white text-red-800 hover:bg-red-50 disabled:opacity-60`}
         >
           Delete account…
-        </button>
+        </Button>
       </div>
 
-      {deleteOpen ? (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="delete-account-title"
-          onClick={() => setDeleteOpen(false)}
-        >
-          <div
-            className="max-h-[min(90dvh,calc(100dvh-env(safe-area-inset-bottom)))] w-full max-w-md overflow-y-auto overscroll-contain rounded-t-2xl border border-[var(--border)] bg-white p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-xl sm:rounded-2xl sm:p-6"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-[var(--border)] sm:hidden" aria-hidden />
-            <h3 id="delete-account-title" className="font-display text-lg font-bold text-[var(--foreground)]">
-              Delete your account?
-            </h3>
-            <p className="mt-2 text-sm text-[var(--foreground-secondary)]">
-              This removes your member profile, community posts you authored, and related activity. Voice reports you filed
-              stay in the system with your identity unlinked where our retention rules require. You cannot delete your
-              account if you created petitions — contact support in that case.
-            </p>
-            <p className="mt-3 text-xs font-medium text-[var(--foreground)]">
-              Signed in as <span className="break-all">{accountEmail}</span>
-            </p>
-            <label htmlFor="confirm-delete-email" className="mt-4 block text-sm font-semibold text-[var(--foreground)]">
-              Type your email to confirm
-            </label>
-            <input
-              id="confirm-delete-email"
-              type="email"
-              autoComplete="email"
-              value={confirmEmail}
-              onChange={(e) => setConfirmEmail(e.target.value)}
-              className={mobileFormFieldClass.replace(/^mt-1 /, "mt-2 ")}
-              placeholder={accountEmail}
-            />
-            <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-              <button
-                type="button"
-                className={`${btnClass} border border-[var(--border)] bg-white text-[var(--foreground)] hover:bg-[var(--section-light)]`}
-                onClick={() => setDeleteOpen(false)}
-                disabled={busy !== null}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className={`${btnClass} bg-red-700 text-white hover:bg-red-800 disabled:opacity-60`}
-                onClick={() => void submitDelete()}
-                disabled={busy !== null || confirmEmail.trim().toLowerCase() !== accountEmail.trim().toLowerCase()}
-              >
-                {busy === "delete" ? "Deleting…" : "Permanently delete"}
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <ConfirmDialog
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        onConfirm={() => void submitDelete()}
+        title="Delete your account?"
+        titleId="delete-account-title"
+        description="This removes your member profile, community posts you authored, and related activity. Voice reports you filed stay in the system with your identity unlinked where our retention rules require. You cannot delete your account if you created petitions — contact support in that case."
+        confirmLabel="Permanently delete"
+        cancelLabel="Cancel"
+        destructive
+        busy={busy === "delete"}
+        busyLabel="Deleting…"
+        confirmDisabled={confirmEmail.trim().toLowerCase() !== accountEmail.trim().toLowerCase()}
+      >
+        <p className="mt-3 text-xs font-medium text-[var(--foreground)]">
+          Signed in as <span className="break-all">{accountEmail}</span>
+        </p>
+        <FormField label="Type your email to confirm" htmlFor="confirm-delete-email" className="mt-4">
+          <Input
+            id="confirm-delete-email"
+            type="email"
+            autoComplete="email"
+            value={confirmEmail}
+            onChange={(e) => setConfirmEmail(e.target.value)}
+            placeholder={accountEmail}
+          />
+        </FormField>
+      </ConfirmDialog>
     </section>
   );
 }

@@ -3,7 +3,7 @@
 import type { TurnstileInstance } from "@marsidev/react-turnstile";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { focusRingSmClass } from "@/lib/primary-link-styles";
+import { Input } from "@/components/ui/Input";
 
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
@@ -48,23 +48,25 @@ export function NewsletterForm() {
         className="flex justify-start"
       />
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-3">
-        <input
+        <Input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your email"
           required
           disabled={status === "loading"}
-          className={`min-h-[56px] w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-5 py-4 text-[var(--foreground)] shadow-[var(--shadow-card)] transition-shadow duration-200 placeholder:text-[var(--foreground-secondary)]/70 focus-visible:border-[var(--primary)]/35 sm:min-h-[60px] sm:py-5 sm:w-80 sm:max-w-md ${focusRingSmClass}`}
+          className="!mt-0 min-h-[56px] px-5 py-4 shadow-[var(--shadow-card)] sm:min-h-[60px] sm:w-80 sm:max-w-md sm:py-5"
           aria-label="Email address"
         />
         <Button
           type="submit"
           variant="primary"
-          disabled={status === "loading" || (isTurnstileWidgetEnabled && !turnstileToken)}
+          loading={status === "loading"}
+          loadingLabel="Joining…"
+          disabled={isTurnstileWidgetEnabled && !turnstileToken}
           className="min-h-[56px] w-full justify-center rounded-xl font-semibold sm:min-h-[60px] sm:w-auto sm:shrink-0"
         >
-          {status === "loading" ? "Joining…" : "Get updates"}
+          Get updates
         </Button>
       </div>
       {status === "success" && (

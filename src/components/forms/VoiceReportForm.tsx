@@ -14,6 +14,7 @@ import { roundApproximateCoord } from "@/lib/geo/round-approximate-coord";
 import { openAccessibilityTools } from "@/lib/a11y-voice-dispatch";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 import { mobileInlineActionClass, mobileInlineActionDangerClass } from "@/lib/mobile-ui-classes";
+import { fieldControlClass, selectControlClass } from "@/lib/ui/field-styles";
 import { findVoiceLanguage } from "@/lib/voice-languages";
 import {
   enqueueReportDraft,
@@ -60,7 +61,8 @@ const ALL_KIND_VALUES = [
 
 export type VoiceReportKindValue = (typeof ALL_KIND_VALUES)[number];
 
-const inputClass = `mt-1 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
+const inputClass = fieldControlClass();
+const selectClass = selectControlClass();
 
 type LocalDraftResult = "saved" | "not_saved" | "storage_full";
 
@@ -836,7 +838,7 @@ export function VoiceReportForm({
             id="kind"
             value={kindOptions.some((v) => v === kind) ? kind : kindOptions[0]}
             onChange={(e) => setKind(e.target.value)}
-            className={`${inputClass} cursor-pointer`}
+            className={`${selectClass} cursor-pointer`}
           >
             {kindOptions.map((value) => (
               <option key={value} value={value}>
@@ -910,7 +912,7 @@ export function VoiceReportForm({
             required
             value={parliamentMemberId}
             onChange={(e) => setParliamentMemberId(e.target.value)}
-            className={`${inputClass} cursor-pointer`}
+            className={`${selectClass} cursor-pointer`}
           >
             <option value="">{str.mpPlaceholder}</option>
             {mpOptions.map((m) => (
@@ -1053,7 +1055,7 @@ export function VoiceReportForm({
           disabled
           required
           value={regionId}
-          className={`${inputClass} cursor-not-allowed opacity-90`}
+          className={`${selectClass} cursor-not-allowed opacity-90`}
           aria-readonly="true"
         >
           <option value="">

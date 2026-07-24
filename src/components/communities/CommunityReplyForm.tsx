@@ -4,7 +4,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/Button";
-import { focusRingSmClass } from "@/lib/primary-link-styles";
+import { FormField } from "@/components/ui/FormField";
+import { Select } from "@/components/ui/Select";
+import { Textarea } from "@/components/ui/Textarea";
 
 type Props = {
   communitySlug: string;
@@ -45,31 +47,29 @@ export function CommunityReplyForm({ communitySlug, rootPostId }: Props) {
   return (
     <form onSubmit={(e) => void onSubmit(e)} className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
       <h3 className="text-sm font-semibold text-[var(--foreground)]">Add reply</h3>
-      <label htmlFor="reply-kind" className="mt-3 block text-xs font-medium text-[var(--foreground)]">
-        Kind
-      </label>
-      <select
-        id="reply-kind"
-        value={kind}
-        onChange={(e) => setKind(e.target.value as "GENERAL" | "CONCERN")}
-        className={`mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm sm:max-w-xs ${focusRingSmClass}`}
-      >
-        <option value="GENERAL">General</option>
-        <option value="CONCERN">Concern</option>
-      </select>
-      <label htmlFor="reply-body" className="mt-3 block text-xs font-medium text-[var(--foreground)]">
-        Message
-      </label>
-      <textarea
-        id="reply-body"
-        value={body}
-        onChange={(e) => setBody(e.target.value)}
-        rows={4}
-        maxLength={20000}
-        required
-        className={`mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm ${focusRingSmClass}`}
-      />
-      <Button type="submit" variant="primary" size="sm" className="mt-3" disabled={busy}>
+      <FormField label="Kind" htmlFor="reply-kind" className="mt-3">
+        <Select
+          id="reply-kind"
+          value={kind}
+          onChange={(e) => setKind(e.target.value as "GENERAL" | "CONCERN")}
+          className="text-sm sm:max-w-xs"
+        >
+          <option value="GENERAL">General</option>
+          <option value="CONCERN">Concern</option>
+        </Select>
+      </FormField>
+      <FormField label="Message" htmlFor="reply-body" className="mt-3">
+        <Textarea
+          id="reply-body"
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          rows={4}
+          maxLength={20000}
+          required
+          className="min-h-[6rem] text-sm"
+        />
+      </FormField>
+      <Button type="submit" variant="primary" size="sm" className="mt-3" loading={busy} loadingLabel="Posting…">
         Post reply
       </Button>
       {message ? <p className="mt-2 text-sm text-red-600">{message}</p> : null}

@@ -3,7 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { mobileFormFieldClass } from "@/lib/mobile-ui-classes";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Textarea } from "@/components/ui/Textarea";
 import { PETITION_TOPICS, petitionTopicLabel, type PetitionTopicValue } from "@/lib/petition-topics";
 
 type Region = { id: string; name: string };
@@ -18,8 +21,6 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
   const [regionId, setRegionId] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const fieldClass = mobileFormFieldClass;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -58,61 +59,47 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
           {error}
         </p>
       ) : null}
-      <div>
-        <label htmlFor="pt-title" className="block text-sm font-medium text-[var(--foreground)]">
-          Title
-        </label>
-        <input
+      <FormField label="Title" htmlFor="pt-title">
+        <Input
           id="pt-title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
           maxLength={280}
-          className={fieldClass}
           placeholder="Short headline for your petition"
         />
-      </div>
-      <div>
-        <label htmlFor="pt-summary" className="block text-sm font-medium text-[var(--foreground)]">
-          Summary (optional)
-        </label>
-        <input
+      </FormField>
+      <FormField label="Summary" htmlFor="pt-summary" optional>
+        <Input
           id="pt-summary"
           value={summary}
           onChange={(e) => setSummary(e.target.value)}
           maxLength={500}
-          className={fieldClass}
           placeholder="One line for listings"
         />
-      </div>
-      <div>
-        <label htmlFor="pt-body" className="block text-sm font-medium text-[var(--foreground)]">
-          Full text
-        </label>
-        <textarea
+      </FormField>
+      <FormField
+        label="Full text"
+        htmlFor="pt-body"
+        hint="MBKRU is independent; petitions express citizen concern, not a government or court filing."
+      >
+        <Textarea
           id="pt-body"
           value={body}
           onChange={(e) => setBody(e.target.value)}
           required
           rows={10}
           maxLength={50_000}
-          className={`${fieldClass} min-h-[200px] resize-y`}
+          className="min-h-[200px]"
           placeholder="Context, asks, and what success looks like. Be factual and respectful."
         />
-        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
-          MBKRU is independent; petitions express citizen concern, not a government or court filing.
-        </p>
-      </div>
+      </FormField>
       <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="pt-topic" className="block text-sm font-medium text-[var(--foreground)]">
-            Topic
-          </label>
-          <select
+        <FormField label="Topic" htmlFor="pt-topic">
+          <Select
             id="pt-topic"
             value={topic}
             onChange={(e) => setTopic(e.target.value as PetitionTopicValue)}
-            className={`${fieldClass} cursor-pointer`}
             required
           >
             {PETITION_TOPICS.map((t) => (
@@ -120,44 +107,32 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
                 {petitionTopicLabel(t)}
               </option>
             ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="pt-goal" className="block text-sm font-medium text-[var(--foreground)]">
-            Signature goal (optional)
-          </label>
-          <input
+          </Select>
+        </FormField>
+        <FormField label="Signature goal" htmlFor="pt-goal" optional>
+          <Input
             id="pt-goal"
             type="number"
             min={10}
             max={10_000_000}
             value={targetSignatures}
             onChange={(e) => setTargetSignatures(e.target.value)}
-            className={fieldClass}
             placeholder="e.g. 500"
           />
-        </div>
-        <div className="sm:col-span-2">
-          <label htmlFor="pt-region" className="block text-sm font-medium text-[var(--foreground)]">
-            Region (optional)
-          </label>
-          <select
-            id="pt-region"
-            value={regionId}
-            onChange={(e) => setRegionId(e.target.value)}
-            className={`${fieldClass} cursor-pointer`}
-          >
+        </FormField>
+        <FormField label="Region" htmlFor="pt-region" optional className="sm:col-span-2">
+          <Select id="pt-region" value={regionId} onChange={(e) => setRegionId(e.target.value)}>
             <option value="">All / national</option>
             {regions.map((r) => (
               <option key={r.id} value={r.id}>
                 {r.name}
               </option>
             ))}
-          </select>
-        </div>
+          </Select>
+        </FormField>
       </div>
-      <Button type="submit" disabled={busy} className="w-full min-w-0 justify-center sm:w-auto">
-        {busy ? "Publishing…" : "Publish petition"}
+      <Button type="submit" loading={busy} loadingLabel="Publishing…" className="w-full min-w-0 justify-center sm:w-auto">
+        Publish petition
       </Button>
     </form>
   );

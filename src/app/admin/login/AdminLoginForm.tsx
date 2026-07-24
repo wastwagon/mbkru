@@ -3,6 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 
 export function AdminLoginForm({ configError }: { configError: boolean }) {
@@ -44,41 +47,29 @@ export function AdminLoginForm({ configError }: { configError: boolean }) {
         <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">MBKRU Admin</h1>
         <p className="mt-2 text-sm text-[var(--foreground-secondary)]">Sign in to manage posts and media.</p>
         <form onSubmit={onSubmit} className="mt-8 space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-[var(--foreground)]">
-              Email
-            </label>
-            <input
+          <FormField label="Email" htmlFor="email">
+            <Input
               id="email"
               type="email"
               autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-4 py-3 text-[var(--foreground)]"
               required
             />
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-[var(--foreground)]">
-              Password
-            </label>
+          </FormField>
+          <FormField label="Password" htmlFor="password">
             <PasswordInput
               id="password"
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-4 py-3 text-[var(--foreground)]"
               required
             />
-          </div>
+          </FormField>
           {message ? <p className="text-sm text-red-600">{message}</p> : null}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-xl bg-[var(--primary)] py-3 font-semibold text-white disabled:opacity-60"
-          >
-            {loading ? "Signing in…" : "Sign in"}
-          </button>
+          <Button type="submit" loading={loading} loadingLabel="Signing in…" className="w-full justify-center">
+            Sign in
+          </Button>
         </form>
       </div>
     </div>

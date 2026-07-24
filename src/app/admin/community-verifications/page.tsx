@@ -4,8 +4,10 @@ import { reviewCommunityVerificationAction } from "@/app/admin/communities/actio
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { Textarea } from "@/components/ui/Textarea";
 import { prisma } from "@/lib/db/prisma";
-import { adminFormFieldClass, adminPrimaryButtonClass, adminSecondaryButtonClass } from "@/lib/admin/admin-ui-classes";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { isPrivateStoragePath } from "@/lib/server/private-upload-storage";
 
@@ -141,43 +143,23 @@ export default async function AdminCommunityVerificationsPage() {
                   <form action={reviewCommunityVerificationAction} className="rounded-lg border border-[var(--border)] p-3">
                     <input type="hidden" name="requestId" value={r.id} />
                     <input type="hidden" name="status" value="APPROVED" />
-                    <label htmlFor={`approve-notes-${r.id}`} className="block text-xs font-medium text-[var(--foreground)]">
-                      Reviewer notes (optional)
-                    </label>
-                    <textarea
-                      id={`approve-notes-${r.id}`}
-                      name="notes"
-                      maxLength={2000}
-                      rows={2}
-                      className={adminFormFieldClass.replace(/^mt-1 /, "mt-1 ")}
-                    />
-                    <button
-                      type="submit"
-                      className={adminPrimaryButtonClass}
-                    >
+                    <FormField label="Reviewer notes (optional)" htmlFor={`approve-notes-${r.id}`}>
+                      <Textarea id={`approve-notes-${r.id}`} name="notes" maxLength={2000} rows={2} density="admin" />
+                    </FormField>
+                    <Button type="submit" density="admin" className="mt-2">
                       Approve & verify role
-                    </button>
+                    </Button>
                   </form>
 
                   <form action={reviewCommunityVerificationAction} className="rounded-lg border border-[var(--border)] p-3">
                     <input type="hidden" name="requestId" value={r.id} />
                     <input type="hidden" name="status" value="REJECTED" />
-                    <label htmlFor={`reject-notes-${r.id}`} className="block text-xs font-medium text-[var(--foreground)]">
-                      Rejection reason
-                    </label>
-                    <textarea
-                      id={`reject-notes-${r.id}`}
-                      name="notes"
-                      maxLength={2000}
-                      rows={2}
-                      className={adminFormFieldClass.replace(/^mt-1 /, "mt-1 ")}
-                    />
-                    <button
-                      type="submit"
-                      className={`mt-2 ${adminSecondaryButtonClass}`}
-                    >
+                    <FormField label="Rejection reason" htmlFor={`reject-notes-${r.id}`}>
+                      <Textarea id={`reject-notes-${r.id}`} name="notes" maxLength={2000} rows={2} density="admin" />
+                    </FormField>
+                    <Button type="submit" variant="surface" density="admin" className="mt-2">
                       Reject request
-                    </button>
+                    </Button>
                   </form>
                 </div>
               </li>

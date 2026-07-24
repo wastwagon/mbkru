@@ -1,12 +1,10 @@
-import {
-  adminFormFieldClass,
-  adminInlineSelectClass,
-  adminPrimaryButtonClass,
-  adminSecondaryButtonClass,
-} from "@/lib/admin/admin-ui-classes";
+import { adminInlineSelectClass } from "@/lib/admin/admin-ui-classes";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
 import { prisma } from "@/lib/db/prisma";
 
 import {
@@ -91,25 +89,11 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
       <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Add operator</h2>
         <form action={createAdminOperatorAction} className="mt-4 grid max-w-xl gap-3">
-          <div>
-            <label htmlFor="email" className="block text-xs font-medium">
-              Email
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="off"
-              required
-              maxLength={320}
-              className={adminFormFieldClass}
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-xs font-medium">
-              Password
-            </label>
-            <input
+          <FormField label="Email" htmlFor="email">
+            <Input id="email" name="email" type="email" autoComplete="off" required maxLength={320} density="admin" />
+          </FormField>
+          <FormField label="Password" htmlFor="password">
+            <Input
               id="password"
               name="password"
               type="password"
@@ -117,14 +101,11 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
               required
               minLength={12}
               maxLength={200}
-              className={adminFormFieldClass}
+              density="admin"
             />
-          </div>
-          <div>
-            <label htmlFor="passwordConfirm" className="block text-xs font-medium">
-              Confirm password
-            </label>
-            <input
+          </FormField>
+          <FormField label="Confirm password" htmlFor="passwordConfirm">
+            <Input
               id="passwordConfirm"
               name="passwordConfirm"
               type="password"
@@ -132,39 +113,30 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
               required
               minLength={12}
               maxLength={200}
-              className={adminFormFieldClass}
+              density="admin"
             />
-          </div>
-          <button
-            type="submit"
-            className={adminPrimaryButtonClass}
-          >
+          </FormField>
+          <Button type="submit" density="admin">
             Create operator
-          </button>
+          </Button>
         </form>
       </section>
 
       <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Change your password</h2>
         <form action={changeOwnAdminPasswordAction} className="mt-4 grid max-w-xl gap-3">
-          <div>
-            <label htmlFor="currentPassword" className="block text-xs font-medium">
-              Current password
-            </label>
-            <input
+          <FormField label="Current password" htmlFor="currentPassword">
+            <Input
               id="currentPassword"
               name="currentPassword"
               type="password"
               autoComplete="current-password"
               required
-              className={adminFormFieldClass}
+              density="admin"
             />
-          </div>
-          <div>
-            <label htmlFor="ownNew" className="block text-xs font-medium">
-              New password
-            </label>
-            <input
+          </FormField>
+          <FormField label="New password" htmlFor="ownNew">
+            <Input
               id="ownNew"
               name="password"
               type="password"
@@ -172,14 +144,11 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
               required
               minLength={12}
               maxLength={200}
-              className={adminFormFieldClass}
+              density="admin"
             />
-          </div>
-          <div>
-            <label htmlFor="ownConfirm" className="block text-xs font-medium">
-              Confirm new password
-            </label>
-            <input
+          </FormField>
+          <FormField label="Confirm new password" htmlFor="ownConfirm">
+            <Input
               id="ownConfirm"
               name="passwordConfirm"
               type="password"
@@ -187,15 +156,12 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
               required
               minLength={12}
               maxLength={200}
-              className={adminFormFieldClass}
+              density="admin"
             />
-          </div>
-          <button
-            type="submit"
-            className={adminSecondaryButtonClass}
-          >
+          </FormField>
+          <Button type="submit" variant="surface" density="admin">
             Update my password
-          </button>
+          </Button>
         </form>
       </section>
 
@@ -220,20 +186,17 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
                   <option value="1">Active</option>
                   <option value="0">Disabled</option>
                 </select>
-                <button type="submit" className={adminSecondaryButtonClass}>
+                <Button type="submit" variant="surface" density="admin">
                   Save access
-                </button>
+                </Button>
               </form>
 
               <details className="mt-4">
                 <summary className="cursor-pointer text-sm font-medium text-[var(--primary)]">Reset password (another operator)</summary>
                 <form action={setAdminOperatorPasswordAction} className="mt-3 grid max-w-xl gap-2 border-t border-[var(--border)] pt-3">
                   <input type="hidden" name="adminId" value={a.id} />
-                  <div>
-                    <label className="block text-xs font-medium" htmlFor={`pw-${a.id}`}>
-                      New password
-                    </label>
-                    <input
+                  <FormField label="New password" htmlFor={`pw-${a.id}`}>
+                    <Input
                       id={`pw-${a.id}`}
                       name="password"
                       type="password"
@@ -241,14 +204,11 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
                       minLength={12}
                       maxLength={200}
                       required
-                      className={adminFormFieldClass}
+                      density="admin"
                     />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium" htmlFor={`pwc-${a.id}`}>
-                      Confirm
-                    </label>
-                    <input
+                  </FormField>
+                  <FormField label="Confirm" htmlFor={`pwc-${a.id}`}>
+                    <Input
                       id={`pwc-${a.id}`}
                       name="passwordConfirm"
                       type="password"
@@ -256,12 +216,12 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
                       minLength={12}
                       maxLength={200}
                       required
-                      className={adminFormFieldClass}
+                      density="admin"
                     />
-                  </div>
-                  <button type="submit" className={adminPrimaryButtonClass}>
+                  </FormField>
+                  <Button type="submit" density="admin">
                     Apply new password
-                  </button>
+                  </Button>
                 </form>
               </details>
             </li>

@@ -2,77 +2,91 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { type ButtonHTMLAttributes } from "react";
+import { type ButtonHTMLAttributes, type ReactNode } from "react";
 
-import { focusRingSmClass } from "@/lib/primary-link-styles";
+import {
+  buttonClass,
+  type ButtonDensity,
+  type ButtonSize,
+  type ButtonVariant,
+} from "@/lib/ui/button-styles";
 
-const baseStyles = `inline-flex touch-manipulation items-center justify-center gap-2 font-semibold transition-all duration-[400ms] ease-in-out disabled:opacity-50 disabled:pointer-events-none ${focusRingSmClass}`;
+function Spinner({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <span
+      className={`inline-block animate-spin rounded-full border-2 border-current border-t-transparent ${className}`}
+      aria-hidden
+    />
+  );
+}
 
-const variants = {
-  primary:
-    "bg-[var(--primary)] text-[var(--primary-foreground)] shadow-md hover:bg-[var(--primary-dark)] hover:shadow-lg active:scale-[0.98]",
-  secondary:
-    "bg-[var(--secondary)] text-white hover:bg-[var(--primary)] active:scale-[0.98]",
-  outline:
-    "border-2 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white active:scale-[0.98]",
-  ghost: "text-[var(--primary)] hover:bg-[var(--muted)]",
-  pill: "rounded-full bg-[var(--primary)] text-[var(--primary-foreground)] shadow-md hover:bg-[var(--primary-dark)] hover:shadow-lg active:scale-[0.98]",
-};
-
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: keyof typeof variants;
-  size?: "sm" | "md" | "lg";
+export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  density?: ButtonDensity;
+  /** Shows a spinner and disables the control. */
+  loading?: boolean;
+  loadingLabel?: ReactNode;
   asChild?: boolean;
   href?: string;
-};
-
-const sizeStyles = {
-  sm: "min-h-11 h-11 rounded-lg px-4 text-sm",
-  md: "h-11 rounded-xl px-6 text-base",
-  lg: "h-12 rounded-xl px-8 text-base",
-};
-
-const pillSizeStyles = {
-  sm: "min-h-11 h-11 rounded-full px-5 text-sm",
-  md: "h-12 rounded-full px-6 py-3 text-base",
-  lg: "h-14 rounded-full px-8 py-4 text-base",
 };
 
 export function Button({
   variant = "primary",
   size = "md",
+  density = "public",
+  loading = false,
+  loadingLabel,
   className = "",
   asChild,
   href,
   children,
+  disabled,
   ...props
 }: ButtonProps) {
-  const sizeClass = variant === "pill" ? pillSizeStyles[size] : sizeStyles[size];
-  const classes = `${baseStyles} ${variants[variant]} ${sizeClass} ${className}`;
+  const classes = buttonClass({ variant, size, density, className });
   const submitWrapClass = /\bw-full\b/.test(className)
     ? "flex w-full min-w-0 sm:inline-flex sm:w-auto"
     : "inline-flex";
+  const isDisabled = Boolean(disabled || loading);
+  const content = loading ? (
+    <>
+      <Spinner />
+      {loadingLabel ?? children}
+    </>
+  ) : (
+    children
+  );
 
   if (asChild && href) {
     return (
-      <Link href={href} className={classes}>
-        {children}
+      <Link href={href} className={classes} aria-disabled={isDisabled || undefined}>
+        {content}
       </Link>
     );
   }
 
   if (href) {
     return (
-      <Link href={href} className={classes}>
-        {children}
+      <Link href={href} className={`${classes}${isDisabled ? " pointer-events-none opacity-50" : ""}`}>
+        {content}
       </Link>
     );
   }
 
   return (
-    <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className={submitWrapClass}>
-      <button className={classes} {...(props as ButtonHTMLAttributes<HTMLButtonElement>)}>
-        {children}
+    <motion.div
+      whileHover={isDisabled ? undefined : { scale: 1.01 }}
+      whileTap={isDisabled ? undefined : { scale: 0.99 }}
+      className={submitWrapClass}
+    >
+      <button
+        className={classes}
+        disabled={isDisabled}
+        aria-busy={loading || undefined}
+        {...(props as ButtonHTMLAttributes<HTMLButtonElement>)}
+      >
+        {content}
       </button>
     </motion.div>
   );

@@ -6,8 +6,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Textarea } from "@/components/ui/Textarea";
 import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
-import { focusRingSmClass } from "@/lib/primary-link-styles";
 
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
@@ -20,12 +23,6 @@ const contactSchema = z.object({
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
-
-const inputBase =
-  `mt-1 block w-full touch-manipulation rounded-xl border bg-white px-4 py-3.5 text-[var(--foreground)] transition-all duration-200 placeholder:text-[var(--foreground-secondary)]/70 focus-visible:border-[var(--primary)]/35 ${focusRingSmClass} disabled:opacity-60 disabled:cursor-not-allowed`;
-
-const inputError = "border-red-400 focus-visible:border-red-400 focus-visible:outline-red-400/80";
-const inputNormal = "border-[var(--border)] hover:border-[var(--primary)]/30";
 
 export function ContactForm() {
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
@@ -77,92 +74,48 @@ export function ContactForm() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="mt-6 space-y-5"
-      noValidate
-    >
-      <div>
-        <label htmlFor="enquiryType" className="block text-sm font-medium text-[var(--foreground)]">
-          Enquiry type
-        </label>
-        <select
-          id="enquiryType"
-          {...register("enquiryType")}
-          className={`${inputBase} ${errors.enquiryType ? inputError : inputNormal} cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2024%2024%22%20stroke%3D%22%236b7280%22%3E%3Cpath%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%222%22%20d%3D%22M19%209l-7%207-7-7%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem] bg-[right_0.75rem_center] bg-no-repeat pr-10`}
-          aria-invalid={!!errors.enquiryType}
-        >
+    <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-5" noValidate>
+      <FormField label="Enquiry type" htmlFor="enquiryType" error={errors.enquiryType?.message}>
+        <Select id="enquiryType" {...register("enquiryType")} invalid={!!errors.enquiryType}>
           <option value="">Select enquiry type</option>
           <option value="general">General enquiry</option>
           <option value="partnership">Partnership</option>
           <option value="press">Press & media</option>
           <option value="citizen-voice">Citizen voice / complaint</option>
           <option value="other">Other</option>
-        </select>
-        {errors.enquiryType && (
-          <p className="mt-1 text-sm text-red-600" role="alert">
-            {errors.enquiryType.message}
-          </p>
-        )}
-      </div>
+        </Select>
+      </FormField>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-[var(--foreground)]">
-            Name
-          </label>
-          <input
+        <FormField label="Name" htmlFor="name" error={errors.name?.message}>
+          <Input
             id="name"
             type="text"
             placeholder="Your full name"
             {...register("name")}
-            className={`${inputBase} ${errors.name ? inputError : inputNormal}`}
-            aria-invalid={!!errors.name}
+            invalid={!!errors.name}
           />
-          {errors.name && (
-            <p className="mt-1 text-sm text-red-600" role="alert">
-              {errors.name.message}
-            </p>
-          )}
-        </div>
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-[var(--foreground)]">
-            Email
-          </label>
-          <input
+        </FormField>
+        <FormField label="Email" htmlFor="email" error={errors.email?.message}>
+          <Input
             id="email"
             type="email"
             placeholder="you@example.com"
             {...register("email")}
-            className={`${inputBase} ${errors.email ? inputError : inputNormal}`}
-            aria-invalid={!!errors.email}
+            invalid={!!errors.email}
           />
-          {errors.email && (
-            <p className="mt-1 text-sm text-red-600" role="alert">
-              {errors.email.message}
-            </p>
-          )}
-        </div>
+        </FormField>
       </div>
 
-      <div>
-        <label htmlFor="subject" className="block text-sm font-medium text-[var(--foreground)]">
-          Subject
-        </label>
-        <input
+      <FormField label="Subject" htmlFor="subject" error={errors.subject?.message}>
+        <Input
           id="subject"
           type="text"
           placeholder="Brief subject of your message"
           {...register("subject")}
-          className={`${inputBase} ${errors.subject ? inputError : inputNormal}`}
-          aria-invalid={!!errors.subject}
+          invalid={!!errors.subject}
         />
-        {errors.subject && (
-          <p className="mt-1 text-sm text-red-600" role="alert">
-            {errors.subject.message}
-          </p>
-        )}
-      </div>
+      </FormField>
 
       <div>
         <div className="flex items-center justify-between">
@@ -175,19 +128,19 @@ export function ContactForm() {
             {messageLength}/{minMessageLength} min
           </span>
         </div>
-        <textarea
+        <Textarea
           id="message"
           rows={5}
           placeholder="Tell us how we can help. Include relevant details for faster response."
           {...register("message")}
-          className={`${inputBase} resize-y min-h-[120px] ${errors.message ? inputError : inputNormal}`}
-          aria-invalid={!!errors.message}
+          invalid={!!errors.message}
+          className="min-h-[120px]"
         />
-        {errors.message && (
+        {errors.message ? (
           <p className="mt-1 text-sm text-red-600" role="alert">
             {errors.message.message}
           </p>
-        )}
+        ) : null}
       </div>
 
       <FormTurnstile

@@ -22,7 +22,8 @@ import {
 import { parsePromisesApiFilters, promisesFiltersNarrowCatalogue } from "@/lib/promises-api-filters";
 import type { PromiseTrackerStats } from "@/lib/promise-tracker-public-types";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
-import { mobileFilterChipClass, mobileFormFieldClass } from "@/lib/mobile-ui-classes";
+import { mobileFilterChipClass } from "@/lib/mobile-ui-classes";
+import { fieldControlClass, selectControlClass } from "@/lib/ui/field-styles";
 import type { PublicPromiseApiRow } from "@/lib/public-promise-api-row";
 import type { TrackerConstituencyOption } from "@/lib/tracker-constituency-public-types";
 
@@ -71,9 +72,9 @@ const MANIFESTO_CYCLE = "2024";
 
 const filterLabelClass = "mb-1.5 block text-xs font-semibold text-[var(--foreground-secondary)] sm:text-sm";
 
-const filterControlClass = `${mobileFormFieldClass.replace(/^mt-1 /, "mt-0 ")}`;
+const filterControlClass = `${fieldControlClass({ density: "compact" }).replace(/^mt-1 /, "mt-0 ")}`;
 
-const filterSelectClass = `${filterControlClass} cursor-pointer`;
+const filterSelectClass = `${selectControlClass({ density: "compact" }).replace(/^mt-1 /, "mt-0 ")}`;
 
 const clearFiltersLinkClass = mobileFilterChipClass;
 

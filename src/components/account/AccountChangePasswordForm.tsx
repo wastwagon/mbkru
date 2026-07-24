@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
 import { PasswordInput } from "@/components/ui/PasswordInput";
-import { focusRingSmClass } from "@/lib/primary-link-styles";
-
-const inputClass = `mt-1 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
 
 export function AccountChangePasswordForm() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -51,45 +50,33 @@ export function AccountChangePasswordForm() {
       <p className="text-xs text-[var(--foreground-secondary)]">
         Use at least 8 characters. If you received a temporary password from MBKRU, set a new one here.
       </p>
-      <div>
-        <label htmlFor="current-password" className="block text-xs font-medium text-[var(--foreground)]">
-          Current password
-        </label>
+      <FormField label="Current password" htmlFor="current-password">
         <PasswordInput
           id="current-password"
           autoComplete="current-password"
           required
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.target.value)}
-          className={inputClass}
         />
-      </div>
-      <div>
-        <label htmlFor="new-password" className="block text-xs font-medium text-[var(--foreground)]">
-          New password
-        </label>
+      </FormField>
+      <FormField label="New password" htmlFor="new-password">
         <PasswordInput
           id="new-password"
           autoComplete="new-password"
           required
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
-          className={inputClass}
         />
-      </div>
-      <div>
-        <label htmlFor="confirm-password" className="block text-xs font-medium text-[var(--foreground)]">
-          Confirm new password
-        </label>
+      </FormField>
+      <FormField label="Confirm new password" htmlFor="confirm-password">
         <PasswordInput
           id="confirm-password"
           autoComplete="new-password"
           required
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
-          className={inputClass}
         />
-      </div>
+      </FormField>
       {error ? (
         <p className="text-sm text-red-600" role="alert">
           {error}
@@ -100,13 +87,9 @@ export function AccountChangePasswordForm() {
           Password updated.
         </p>
       ) : null}
-      <button
-        type="submit"
-        disabled={loading}
-        className={`min-h-11 touch-manipulation rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] ${focusRingSmClass}`}
-      >
-        {loading ? "Saving…" : "Update password"}
-      </button>
+      <Button type="submit" loading={loading} loadingLabel="Saving…">
+        Update password
+      </Button>
     </form>
   );
 }

@@ -6,9 +6,11 @@ import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
 import { AdminTablePanel } from "@/components/admin/AdminTablePanel";
 import { AdminTd } from "@/components/admin/AdminTd";
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
-import { mobileFormFieldClass } from "@/lib/mobile-ui-classes";
 import { listMbkruVoiceAnalyticsEventRows } from "@/lib/server/mbkru-voice-analytics";
 
 type Props = {
@@ -58,25 +60,20 @@ export default async function AdminMbkruVoiceAnalyticsEventsPage({ searchParams 
       ) : (
         <>
           <form className="mt-6 flex flex-wrap items-end gap-3 rounded-xl border border-[var(--border)] bg-white p-4">
-            <div>
-              <label htmlFor="q" className="block text-xs font-medium text-[var(--foreground-secondary)]">
-                Filter name contains
-              </label>
-              <input
+            <FormField label="Filter name contains" htmlFor="q">
+              <Input
                 id="q"
                 name="q"
                 type="search"
                 defaultValue={q}
                 maxLength={120}
-                className={`${mobileFormFieldClass} w-full min-w-0 sm:w-48`}
+                density="compact"
+                className="w-full min-w-0 sm:w-48"
               />
-            </div>
-            <button
-              type="submit"
-              className="inline-flex min-h-11 touch-manipulation items-center rounded-lg bg-[var(--primary)] px-4 py-2 text-base font-semibold text-white hover:bg-[var(--primary-dark)] sm:text-sm"
-            >
+            </FormField>
+            <Button type="submit" density="admin">
               Apply
-            </button>
+            </Button>
           </form>
 
           <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-[var(--foreground-secondary)]">

@@ -1,14 +1,11 @@
-import Link from "next/link";
-
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
 import { prisma } from "@/lib/db/prisma";
-import {
-  adminFormFieldClass,
-  adminPrimaryButtonClass,
-  adminSecondaryButtonClass,
-} from "@/lib/admin/admin-ui-classes";
 
 type Props = {
   searchParams?: Promise<{
@@ -67,63 +64,44 @@ export default async function AdminOperationalAuditPage({ searchParams }: Props)
       />
 
       <form className="mt-2 grid gap-3 rounded-xl border border-[var(--border)] bg-white p-4 md:grid-cols-4">
-        <div>
-          <label htmlFor="hours" className="block text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">
-            Window (hours)
-          </label>
-          <input
+        <FormField label="Window (hours)" htmlFor="hours">
+          <Input
             id="hours"
             name="hours"
             type="number"
             min={1}
             max={24 * 30}
             defaultValue={hours}
-            className={adminFormFieldClass}
+            density="admin"
           />
-        </div>
-        <div>
-          <label htmlFor="action" className="block text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">
-            Action
-          </label>
-          <select
-            id="action"
-            name="action"
-            defaultValue={selectedAction}
-            className={`${adminFormFieldClass} cursor-pointer`}
-          >
+        </FormField>
+        <FormField label="Action" htmlFor="action">
+          <Select id="action" name="action" defaultValue={selectedAction} density="admin">
             <option value="">All</option>
             {actions.map((a) => (
               <option key={a.action} value={a.action}>
                 {a.action}
               </option>
             ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="adminId" className="block text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">
-            Admin
-          </label>
-          <select
-            id="adminId"
-            name="adminId"
-            defaultValue={selectedAdminId}
-            className={`${adminFormFieldClass} cursor-pointer`}
-          >
+          </Select>
+        </FormField>
+        <FormField label="Admin" htmlFor="adminId">
+          <Select id="adminId" name="adminId" defaultValue={selectedAdminId} density="admin">
             <option value="">All</option>
             {admins.map((a) => (
               <option key={a.id} value={a.id}>
                 {a.email}
               </option>
             ))}
-          </select>
-        </div>
+          </Select>
+        </FormField>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
-          <button type="submit" className={adminPrimaryButtonClass}>
+          <Button type="submit" density="admin">
             Apply
-          </button>
-          <Link href="/admin/operational-audit" className={adminSecondaryButtonClass}>
+          </Button>
+          <Button href="/admin/operational-audit" variant="surface" density="admin">
             Reset
-          </Link>
+          </Button>
         </div>
       </form>
 

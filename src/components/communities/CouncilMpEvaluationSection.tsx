@@ -5,6 +5,7 @@ import {
   upsertCouncilMpEvaluationDraftAction,
 } from "@/app/(main)/communities/[slug]/portal/actions";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
+import { fieldControlClass, selectControlClass } from "@/lib/ui/field-styles";
 
 type MpOption = { id: string; label: string };
 
@@ -27,7 +28,8 @@ type Props = {
   evaluations: EvaluationRow[];
 };
 
-const inputClass = `mt-1 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-2.5 text-sm text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
+const inputClass = `${fieldControlClass()} text-sm`;
+const selectClass = `${selectControlClass()} text-sm`;
 
 export function CouncilMpEvaluationSection({
   communitySlug,
@@ -73,7 +75,7 @@ export function CouncilMpEvaluationSection({
             id="council-mp"
             name="parliamentMemberId"
             required
-            className={`${inputClass} cursor-pointer`}
+            className={`${selectClass} cursor-pointer`}
             defaultValue={
               defaultParliamentMemberId &&
               mpOptions.some((m) => m.id === defaultParliamentMemberId)

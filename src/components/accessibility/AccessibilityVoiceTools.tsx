@@ -12,7 +12,8 @@ import {
 import { trackUiEvent } from "@/lib/client/analytics-events";
 import type { SpeechRecognitionCtor, SpeechRecognitionEventLike, SpeechRecognitionLike } from "@/lib/client/web-speech-recognition";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
-import { mobileFormFieldClass, mobileIconButtonClass, mobileOverlayTopClass } from "@/lib/mobile-ui-classes";
+import { mobileIconButtonClass, mobileOverlayTopClass } from "@/lib/mobile-ui-classes";
+import { selectControlClass } from "@/lib/ui/field-styles";
 import { useBodyScrollLock } from "@/lib/use-body-scroll-lock";
 import { splitTextForSpeechSynthesis } from "@/lib/client/speech-synthesis-chunks";
 import {
@@ -635,7 +636,7 @@ export function AccessibilityVoiceTools() {
               id="accessibility-language-select"
               value={preferences.languageId}
               onChange={(event) => updateLanguage(event.target.value as VoicePreferences["languageId"])}
-              className={`h-11 ${mobileFormFieldClass.replace("mt-1 ", "")}`}
+              className={`h-11 ${selectControlClass({ density: "compact" }).replace("mt-1 ", "")}`}
             >
               {voiceLanguageOptions.map((option) => (
                 <option key={option.id} value={option.id}>

@@ -4,10 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
 import { safePostAuthRedirectPath } from "@/lib/member/safe-post-auth-redirect";
-import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
-
-const inputClass = `mt-1 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 type RegionRow = { id: string; name: string; slug: string };
 type ConstituencyRow = { id: string; name: string; slug: string };
@@ -133,29 +134,26 @@ export function MemberRegisterForm() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      <div>
-        <label htmlFor="reg-name" className="block text-sm font-medium text-[var(--foreground)]">
-          Display name <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
-        </label>
-        <input
+      <FormField label="Display name" htmlFor="reg-name" optional>
+        <Input
           id="reg-name"
           type="text"
           autoComplete="name"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
-          className={inputClass}
         />
-      </div>
-      <div>
-        <label htmlFor="reg-region" className="block text-sm font-medium text-[var(--foreground)]">
-          Region of residence <span className="text-red-600">*</span>
-        </label>
-        <select
+      </FormField>
+      <FormField
+        label="Region of residence"
+        htmlFor="reg-region"
+        required
+        hint={`Used for regional chat, "who's online", and local Report Card filters. You can change this later in your account.`}
+      >
+        <Select
           id="reg-region"
           required
           value={regionId}
           onChange={(e) => setRegionId(e.target.value)}
-          className={inputClass}
           disabled={loadingRegions || regions.length === 0}
         >
           <option value="">{loadingRegions ? "Loading regions…" : "Select your region"}</option>
@@ -164,21 +162,13 @@ export function MemberRegisterForm() {
               {r.name}
             </option>
           ))}
-        </select>
-        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
-          Used for regional chat, &quot;who&apos;s online&quot;, and local Report Card filters. You can change this later in
-          your account.
-        </p>
-      </div>
-      <div>
-        <label htmlFor="reg-constituency" className="block text-sm font-medium text-[var(--foreground)]">
-          Constituency <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
-        </label>
-        <select
+        </Select>
+      </FormField>
+      <FormField label="Constituency" htmlFor="reg-constituency" optional>
+        <Select
           id="reg-constituency"
           value={constituencyId}
           onChange={(e) => setConstituencyId(e.target.value)}
-          className={inputClass}
           disabled={!regionId || loadingConst || constituencies.length === 0}
         >
           <option value="">
@@ -195,58 +185,51 @@ export function MemberRegisterForm() {
               {c.name}
             </option>
           ))}
-        </select>
-      </div>
-      <div>
-        <label htmlFor="reg-email" className="block text-sm font-medium text-[var(--foreground)]">
-          Email
-        </label>
-        <input
+        </Select>
+      </FormField>
+      <FormField label="Email" htmlFor="reg-email">
+        <Input
           id="reg-email"
           type="email"
           autoComplete="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className={inputClass}
         />
-      </div>
-      <div>
-        <label htmlFor="reg-password" className="block text-sm font-medium text-[var(--foreground)]">
-          Password
-        </label>
-        <input
+      </FormField>
+      <FormField label="Password" htmlFor="reg-password" hint="At least 8 characters.">
+        <Input
           id="reg-password"
           type="password"
           autoComplete="new-password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className={inputClass}
         />
-        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">At least 8 characters.</p>
-      </div>
-      <div>
-        <label htmlFor="reg-confirm" className="block text-sm font-medium text-[var(--foreground)]">
-          Confirm password
-        </label>
-        <input
+      </FormField>
+      <FormField label="Confirm password" htmlFor="reg-confirm">
+        <Input
           id="reg-confirm"
           type="password"
           autoComplete="new-password"
           required
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
-          className={inputClass}
         />
-      </div>
+      </FormField>
       {error ? (
         <p className="text-sm text-red-600" role="alert">
           {error}
         </p>
       ) : null}
-      <Button type="submit" disabled={loading || loadingRegions} className="w-full justify-center sm:w-auto">
-        {loading ? "Creating account…" : "Create account"}
+      <Button
+        type="submit"
+        loading={loading}
+        loadingLabel="Creating account…"
+        disabled={loadingRegions}
+        className="w-full justify-center sm:w-auto"
+      >
+        Create account
       </Button>
       <p className="text-sm text-[var(--foreground-secondary)]">
         Already registered?{" "}

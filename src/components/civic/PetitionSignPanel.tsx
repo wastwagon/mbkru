@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { FormTurnstile, isTurnstileWidgetEnabled } from "@/components/forms/FormTurnstile";
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { mobileInlineActionSuccessClass } from "@/lib/mobile-ui-classes";
 
@@ -184,32 +187,26 @@ export function PetitionSignPanel({
 
       {!(me && viewerSigned) ? (
         <form onSubmit={onSign} className="mt-6 space-y-4">
-          <div>
-            <label htmlFor="sig-name" className="block text-xs font-medium text-[var(--foreground)]">
-              Name (optional public display)
-            </label>
-            <input
+          <FormField label="Name (optional public display)" htmlFor="sig-name">
+            <Input
               id="sig-name"
               value={signerName}
               onChange={(e) => setSignerName(e.target.value)}
               maxLength={120}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+              className="text-sm"
             />
-          </div>
-          <div>
-            <label htmlFor="sig-email" className="block text-xs font-medium text-[var(--foreground)]">
-              Email
-            </label>
-            <input
+          </FormField>
+          <FormField label="Email" htmlFor="sig-email">
+            <Input
               id="sig-email"
               type="email"
               required
               value={signerEmail}
               onChange={(e) => setSignerEmail(e.target.value)}
               readOnly={Boolean(me)}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm read-only:bg-[var(--section-light)]/80"
+              className={`text-sm ${me ? "read-only:bg-[var(--section-light)]/80" : ""}`}
             />
-          </div>
+          </FormField>
           <label className="flex items-start gap-2 text-sm text-[var(--foreground)]">
             <input
               type="checkbox"
@@ -231,13 +228,15 @@ export function PetitionSignPanel({
           {!me && isTurnstileWidgetEnabled ? (
             <FormTurnstile action="petition-sign" onTokenChange={setTurnstileToken} />
           ) : null}
-          <button
+          <Button
             type="submit"
-            disabled={busy || (!me && isTurnstileWidgetEnabled && !turnstileToken)}
-            className="w-full rounded-xl bg-[var(--primary)] py-2.5 text-sm font-semibold text-white hover:bg-[var(--primary-dark)] disabled:opacity-50"
+            loading={busy}
+            loadingLabel="Signing…"
+            disabled={!me && isTurnstileWidgetEnabled && !turnstileToken}
+            className="w-full justify-center"
           >
-            {busy ? "Signing…" : "Sign petition"}
-          </button>
+            Sign petition
+          </Button>
         </form>
       ) : null}
     </div>

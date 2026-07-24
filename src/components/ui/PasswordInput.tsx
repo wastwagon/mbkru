@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type InputHTMLAttributes } from "react";
 
 import { focusRingSmClass } from "@/lib/primary-link-styles";
+import { fieldControlClass, type FieldDensity } from "@/lib/ui/field-styles";
 
 function EyeIcon({ className }: { className?: string }) {
   return (
@@ -45,13 +46,12 @@ function EyeSlashIcon({ className }: { className?: string }) {
   );
 }
 
-export type PasswordInputProps = {
+export type PasswordInputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & {
   id: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  autoComplete?: string;
-  required?: boolean;
-  className?: string;
+  density?: FieldDensity;
+  invalid?: boolean;
 };
 
 export function PasswordInput({
@@ -60,7 +60,10 @@ export function PasswordInput({
   onChange,
   autoComplete = "current-password",
   required,
+  density = "public",
+  invalid = false,
   className = "",
+  ...props
 }: PasswordInputProps) {
   const [visible, setVisible] = useState(false);
 
@@ -73,7 +76,9 @@ export function PasswordInput({
         value={value}
         onChange={onChange}
         required={required}
-        className={`${className} pr-12`}
+        aria-invalid={invalid || undefined}
+        className={`${fieldControlClass({ density, invalid })} pr-12 ${className}`.trim()}
+        {...props}
       />
       <button
         type="button"

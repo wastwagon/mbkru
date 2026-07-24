@@ -15,13 +15,15 @@ import {
 } from "@/config/accountability-catalogue-destinations";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import {
-  adminFormFieldClass,
   adminInlineSelectClass,
   adminQueueActionClass,
-  adminSecondaryButtonClass,
 } from "@/lib/admin/admin-ui-classes";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Textarea } from "@/components/ui/Textarea";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { POLICY_SECTOR_LABELS, POLICY_SECTOR_VALUES } from "@/lib/promise-policy-sectors";
@@ -138,9 +140,9 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
             <form action={updateParliamentMemberPortraitAction}>
               <input type="hidden" name="memberId" value={member.id} />
               <input type="hidden" name="clear" value="1" />
-              <button type="submit" className={adminSecondaryButtonClass}>
+              <Button type="submit" variant="surface" density="admin">
                 Clear to placeholder
-              </button>
+              </Button>
             </form>
           ) : null}
         </div>
@@ -474,25 +476,23 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                         </option>
                       ))}
                     </select>
-                    <button
-                      type="submit"
-                      className={adminSecondaryButtonClass}
-                    >
+                    <Button type="submit" variant="surface" density="admin">
                       Update status
-                    </button>
+                    </Button>
                   </div>
                   <div>
                     <label htmlFor={`blocked-${p.id}`} className="block text-[11px] font-medium text-[var(--foreground)]">
                       Blocked reason <span className="font-normal text-[var(--foreground-secondary)]">(public when status is Blocked)</span>
                     </label>
-                    <textarea
+                    <Textarea
                       id={`blocked-${p.id}`}
                       name="blockedReason"
                       rows={2}
                       maxLength={2000}
                       defaultValue={p.blockedReason ?? ""}
                       placeholder="e.g. Awaiting court determination — pledge on hold."
-                      className={`${adminFormFieldClass} max-w-xl`}
+                      density="admin"
+                      className="max-w-xl"
                     />
                   </div>
                 </form>
@@ -504,51 +504,51 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                     <label htmlFor={`src-label-${p.id}`} className="block text-[11px] font-medium text-[var(--foreground)]">
                       Source label
                     </label>
-                    <input
+                    <Input
                       id={`src-label-${p.id}`}
                       name="sourceLabel"
                       required
                       maxLength={200}
                       defaultValue={p.sourceLabel}
-                      className={adminFormFieldClass}
+                      density="admin"
                     />
                   </div>
                   <div>
                     <label htmlFor={`src-url-${p.id}`} className="block text-[11px] font-medium text-[var(--foreground)]">
                       Primary source URL
                     </label>
-                    <input
+                    <Input
                       id={`src-url-${p.id}`}
                       name="sourceUrl"
                       type="url"
                       defaultValue={p.sourceUrl ?? ""}
                       placeholder="https://…"
                       maxLength={2000}
-                      className={adminFormFieldClass}
+                      density="admin"
                     />
                   </div>
                   <div>
                     <label htmlFor={`ver-${p.id}`} className="block text-[11px] font-medium text-[var(--foreground)]">
                       Verification & impact notes
                     </label>
-                    <textarea
+                    <Textarea
                       id={`ver-${p.id}`}
                       name="verificationNotes"
                       rows={3}
                       maxLength={50000}
                       defaultValue={p.verificationNotes ?? ""}
-                      className={adminFormFieldClass}
+                      density="admin"
                     />
                   </div>
                   <div>
                     <label htmlFor={`pol-${p.id}`} className="block text-[11px] font-medium text-[var(--foreground)]">
                       Policy category
                     </label>
-                    <select
+                    <Select
                       id={`pol-${p.id}`}
                       name="policySector"
                       defaultValue={p.policySector ?? ""}
-                      className={adminFormFieldClass}
+                      density="admin"
                     >
                       <option value="">— None —</option>
                       {POLICY_SECTOR_VALUES.map((v) => (
@@ -556,7 +556,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
                           {POLICY_SECTOR_LABELS[v]}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
                   <div className="flex items-center gap-2 pt-1">
                     <input

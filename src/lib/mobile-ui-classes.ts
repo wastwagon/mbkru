@@ -1,7 +1,11 @@
 import { focusRingSmClass } from "@/lib/primary-link-styles";
+import { fieldControlClass } from "@/lib/ui/field-styles";
 
-/** 16px fields — prevents iOS Safari auto-zoom on focus. */
-export const mobileFormFieldClass = `mt-1 w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-base text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
+/**
+ * Compact public fields (filter toolbars, a11y panels).
+ * Prefer `<Input density="compact" />` / `fieldControlClass({ density: "compact" })` for new code.
+ */
+export const mobileFormFieldClass = fieldControlClass({ density: "compact" });
 
 /** Filter / quick-action chips with 44px minimum height. */
 export const mobileFilterChipClass = `inline-flex min-h-11 items-center rounded-full border border-[var(--border)] bg-[var(--section-light)]/50 px-3.5 py-2 text-sm font-medium text-[var(--foreground)] transition hover:bg-[var(--section-light)] touch-manipulation ${focusRingSmClass}`;

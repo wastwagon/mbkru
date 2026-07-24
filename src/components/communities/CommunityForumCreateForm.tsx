@@ -4,7 +4,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/Button";
-import { focusRingSmClass } from "@/lib/primary-link-styles";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
 
 type Props = {
   communitySlug: string;
@@ -62,43 +64,40 @@ export function CommunityForumCreateForm({ communitySlug }: Props) {
         Moderators and verified traditional leaders can add a new discussion space (slug is optional — we generate one
         from the name if empty).
       </p>
-      <label htmlFor="forum-name" className="mt-4 block text-xs font-medium text-[var(--foreground)]">
-        Name
-      </label>
-      <input
-        id="forum-name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-        minLength={2}
-        maxLength={120}
-        className={`mt-1 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm ${focusRingSmClass}`}
-      />
-      <label htmlFor="forum-slug" className="mt-3 block text-xs font-medium text-[var(--foreground)]">
-        Slug (optional)
-      </label>
-      <input
-        id="forum-slug"
-        value={slug}
-        onChange={(e) => setSlug(e.target.value.toLowerCase())}
-        maxLength={60}
-        pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
-        title="Lowercase letters, numbers, and hyphens"
-        placeholder="e.g. youth-programmes"
-        className={`mt-1 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 font-mono text-sm ${focusRingSmClass}`}
-      />
-      <label htmlFor="forum-desc" className="mt-3 block text-xs font-medium text-[var(--foreground)]">
-        Description (optional)
-      </label>
-      <textarea
-        id="forum-desc"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        rows={3}
-        maxLength={5000}
-        className={`mt-1 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm ${focusRingSmClass}`}
-      />
-      <Button type="submit" variant="primary" size="sm" className="mt-4" disabled={busy}>
+      <FormField label="Name" htmlFor="forum-name" className="mt-4">
+        <Input
+          id="forum-name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          minLength={2}
+          maxLength={120}
+          className="text-sm"
+        />
+      </FormField>
+      <FormField label="Slug" htmlFor="forum-slug" optional className="mt-3">
+        <Input
+          id="forum-slug"
+          value={slug}
+          onChange={(e) => setSlug(e.target.value.toLowerCase())}
+          maxLength={60}
+          pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+          title="Lowercase letters, numbers, and hyphens"
+          placeholder="e.g. youth-programmes"
+          className="font-mono text-sm"
+        />
+      </FormField>
+      <FormField label="Description" htmlFor="forum-desc" optional className="mt-3">
+        <Textarea
+          id="forum-desc"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={3}
+          maxLength={5000}
+          className="min-h-[5rem] text-sm"
+        />
+      </FormField>
+      <Button type="submit" variant="primary" size="sm" className="mt-4" loading={busy} loadingLabel="Creating…">
         Create forum
       </Button>
       {message ? <p className="mt-3 text-sm text-red-600">{message}</p> : null}

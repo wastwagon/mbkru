@@ -7,13 +7,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/Button";
 import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
 import { focusRingSmClass, focusRingWithinSmClass } from "@/lib/primary-link-styles";
+import { fieldControlClass } from "@/lib/ui/field-styles";
 import {
   diasporaFeedbackFormSchema,
   type DiasporaFeedbackFormInput,
 } from "@/lib/validation/public-forms";
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
-const inputBase = `mt-1.5 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition-shadow placeholder:text-[var(--foreground-secondary)]/70 hover:border-[var(--primary)]/25 focus-visible:border-[var(--primary)]/35 ${focusRingSmClass} disabled:opacity-60`;
+const inputBase = fieldControlClass();
 
 const labelClass = "block text-sm font-medium text-[var(--foreground)]";
 const sectionTitle = "font-display text-lg font-semibold text-[var(--foreground)]";

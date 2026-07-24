@@ -3,12 +3,12 @@
 import { useEffect, useMemo, useState, useTransition } from "react";
 
 import { updateMemberHomeLocationAction } from "@/app/(main)/account/actions";
+import { FormField } from "@/components/ui/FormField";
+import { Select } from "@/components/ui/Select";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
 
 type RegionRow = { id: string; name: string; slug: string };
 type ConstituencyRow = { id: string; name: string; slug: string };
-
-const selectClass = `mt-1 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
 
 export function AccountHomeLocationForm({
   initialRegionId,
@@ -99,11 +99,8 @@ export function AccountHomeLocationForm({
           });
         }}
       >
-        <div>
-          <label htmlFor="acct-region" className="block text-sm font-medium text-[var(--foreground)]">
-            Region
-          </label>
-          <select
+        <FormField label="Region" htmlFor="acct-region">
+          <Select
             id="acct-region"
             name="regionId"
             required
@@ -112,7 +109,6 @@ export function AccountHomeLocationForm({
               setRegionId(e.target.value);
               setConstituencyId("");
             }}
-            className={selectClass}
             disabled={loadingRegions || regions.length === 0}
           >
             <option value="">{loadingRegions ? "Loading…" : "Select region"}</option>
@@ -121,18 +117,14 @@ export function AccountHomeLocationForm({
                 {r.name}
               </option>
             ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="acct-const" className="block text-sm font-medium text-[var(--foreground)]">
-            Constituency <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
-          </label>
-          <select
+          </Select>
+        </FormField>
+        <FormField label="Constituency" htmlFor="acct-const" optional>
+          <Select
             id="acct-const"
             name="constituencyId"
             value={constituencyId}
             onChange={(e) => setConstituencyId(e.target.value)}
-            className={selectClass}
             disabled={!regionId || loadingConst || constituencies.length === 0}
           >
             <option value="">
@@ -143,8 +135,8 @@ export function AccountHomeLocationForm({
                 {c.name}
               </option>
             ))}
-          </select>
-        </div>
+          </Select>
+        </FormField>
         {message ? (
           <p
             className={`text-sm ${message.kind === "ok" ? "text-emerald-700" : "text-red-600"}`}

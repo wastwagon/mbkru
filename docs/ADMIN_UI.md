@@ -27,6 +27,11 @@ Use `src/lib/admin/admin-page-layout.ts`:
 - `AdminTablePanel`: bordered, scroll-safe table shell
 - `AdminSectionCard`: bordered section shell for grouped analytics/details
 - `AdminEmptyState`: muted empty-state text
+- Prefer shared UI primitives for new controls:
+  - `<Button density="admin" />` / `variant="surface"` (or `adminPrimaryButtonClass` / `adminSecondaryButtonClass`)
+  - `<Input density="admin" />` / `<Textarea density="admin" />` / `<Select density="admin" />` / `<FormField>`
+  - `<Dialog>` / `<ConfirmDialog>` for overlays
+  - Class tokens remain for layout shells, queue action chips, and inline compact selects
 
 ## Shared Class Tokens
 
@@ -39,6 +44,8 @@ From `src/lib/admin/admin-ui-classes.ts`:
 - `adminToolLinkCardClass`
 - `adminListPanelClass`
 - `adminTablePanelClass`
+- `adminPrimaryButtonClass` / `adminSecondaryButtonClass` (backed by `buttonClass()`)
+- `adminFormFieldClass`
 
 ## Copy Guidance
 

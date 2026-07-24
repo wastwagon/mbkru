@@ -4,9 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/Button";
-import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
-
-const inputClass = `mt-1 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
@@ -56,27 +56,23 @@ export function ForgotPasswordForm() {
       <p className="text-sm text-[var(--foreground-secondary)]">
         Enter your member account email. We will send a reset link if the account exists.
       </p>
-      <div>
-        <label htmlFor="forgot-email" className="block text-sm font-medium text-[var(--foreground)]">
-          Email
-        </label>
-        <input
+      <FormField label="Email" htmlFor="forgot-email">
+        <Input
           id="forgot-email"
           type="email"
           autoComplete="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className={inputClass}
         />
-      </div>
+      </FormField>
       {error ? (
         <p className="text-sm text-red-600" role="alert">
           {error}
         </p>
       ) : null}
-      <Button type="submit" disabled={loading} className="w-full justify-center sm:w-auto">
-        {loading ? "Sending…" : "Send reset link"}
+      <Button type="submit" loading={loading} loadingLabel="Sending…" className="w-full justify-center sm:w-auto">
+        Send reset link
       </Button>
       <p className="text-sm text-[var(--foreground-secondary)]">
         <Link href="/login" className={`${primaryLinkClass} font-semibold`}>

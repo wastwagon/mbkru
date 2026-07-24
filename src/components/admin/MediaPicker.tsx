@@ -1,7 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+import { Dialog } from "@/components/ui/Dialog";
+import { Input } from "@/components/ui/Input";
 
 export type PickerMedia = {
   id: string;
@@ -31,7 +34,6 @@ export function MediaPicker({
   const [query, setQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const dialogRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -41,15 +43,6 @@ export function MediaPicker({
       .then((data: PickerMedia[]) => setItems(data.filter((m) => IMAGE_MIME.test(m.mimeType))))
       .catch(() => setError("Could not load the media library."));
   }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
 
   const filtered = useMemo(() => {
     if (!items) return [];
@@ -81,21 +74,16 @@ export function MediaPicker({
     setUploading(false);
   }
 
-  if (!open) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-      aria-label="Choose an image"
+    <Dialog
+      open={open}
+      onClose={onClose}
+      ariaLabel="Choose an image"
+      size="lg"
+      bare
+      panelClassName="max-h-[85vh] sm:max-h-[85vh]"
     >
-      <div
-        ref={dialogRef}
-        className="flex max-h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-3">
           <div className="flex gap-1" role="tablist" aria-label="Image source">
             {(["library", "upload"] as const).map((t) => (
@@ -129,13 +117,13 @@ export function MediaPicker({
 
         {tab === "library" ? (
           <div className="flex min-h-0 flex-1 flex-col p-5">
-            <input
+            <Input
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search by filename or alt text…"
               aria-label="Search media library"
-              className="w-full rounded-xl border border-[var(--border)] px-4 py-2 text-sm"
+              className="!mt-0 text-sm"
             />
             <div className="mt-4 min-h-0 flex-1 overflow-y-auto">
               {items === null ? (
@@ -176,7 +164,7 @@ export function MediaPicker({
             </div>
           </div>
         ) : (
-          <form onSubmit={onUpload} className="space-y-3 p-5">
+          <form onSubmit={onUpload} className="space-y-3 p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
             <p className="text-sm text-[var(--foreground-secondary)]">
               JPEG, PNG, WebP or GIF · max 8MB. The image is saved to the media library and selected.
             </p>
@@ -187,12 +175,7 @@ export function MediaPicker({
               required
               className="block w-full text-sm text-[var(--foreground)]"
             />
-            <input
-              type="text"
-              name="alt"
-              placeholder="Alt text (describe the photo)"
-              className="w-full rounded-xl border border-[var(--border)] px-4 py-2 text-sm"
-            />
+            <Input type="text" name="alt" placeholder="Alt text (describe the photo)" className="!mt-0 text-sm" />
             <button
               type="submit"
               disabled={uploading}
@@ -203,6 +186,6 @@ export function MediaPicker({
           </form>
         )}
       </div>
-    </div>
+    </Dialog>
   );
 }

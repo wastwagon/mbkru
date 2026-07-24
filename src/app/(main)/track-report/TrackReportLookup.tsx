@@ -3,14 +3,11 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
 import { redirectToMemberLogin } from "@/lib/client/member-login-redirect";
-import { focusRingSmClass } from "@/lib/primary-link-styles";
 
 const labelClass = "mb-1.5 block text-xs font-semibold text-[var(--foreground-secondary)] sm:text-sm";
-
-const inputClass =
-  `mt-0 block w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-3 font-mono text-base uppercase tracking-wider text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`;
 
 type AdminReplyPayload = {
   id: string;
@@ -104,11 +101,11 @@ function Inner() {
         <label htmlFor="code" className={labelClass}>
           Tracking code
         </label>
-        <input
+        <Input
           id="code"
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
-          className={inputClass}
+          className="!mt-0 font-mono uppercase tracking-wider"
           placeholder="e.g. ABCD2345EFGH"
           autoComplete="off"
           spellCheck={false}
@@ -175,8 +172,8 @@ function Inner() {
           ) : null}
         </div>
       ) : null}
-      <Button type="submit" disabled={loading} className="min-h-11 w-full justify-center sm:w-auto">
-        {loading ? "Checking…" : "Check status"}
+      <Button type="submit" loading={loading} loadingLabel="Checking…" className="min-h-11 w-full justify-center sm:w-auto">
+        Check status
       </Button>
     </form>
   );

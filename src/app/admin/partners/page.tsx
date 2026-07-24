@@ -31,8 +31,9 @@ import { requireAdminSession } from "@/lib/admin/require-session";
 import { partnerCategoryLabel } from "@/lib/content/partners-cms";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
+import { fieldControlClass } from "@/lib/ui/field-styles";
 
-const inputClass = "mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm";
+const inputClass = `${fieldControlClass({ density: "admin" })} text-sm`;
 const labelClass = "block text-xs font-medium text-[var(--foreground)]";
 const sectionClass = "mt-2 rounded-xl border border-[var(--border)] bg-white p-5";
 const rowClass = "rounded-xl border border-[var(--border)] bg-white p-4";
