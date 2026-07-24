@@ -122,10 +122,19 @@ function StatusDonutWithLegend({
             Status mix
           </p>
           <p className={`mt-1 text-center text-xs ${centerMuted}`}>Fulfilled share of this slice</p>
-          <div className="relative mt-3 h-36 w-36 sm:h-40 sm:w-40">
-            <div className="absolute inset-0 rounded-full shadow-inner ring-1 ring-black/5" style={pieStyle} />
+          <div
+            className="relative mt-3 h-36 w-36 sm:h-40 sm:w-40"
+            role="img"
+            aria-label={
+              t > 0
+                ? `Status mix: ${fulfilledPct}% fulfilled. Fulfilled ${met}, in progress ${inProgress}, broken ${broken}, blocked ${blocked}, tracking or deferred ${tracking}. Total ${t}.`
+                : "Status mix: no commitments in this slice."
+            }
+          >
+            <div className="absolute inset-0 rounded-full shadow-inner ring-1 ring-black/5" style={pieStyle} aria-hidden />
             <div
               className={`absolute inset-[20%] flex flex-col items-center justify-center rounded-full ${holeClass} shadow-inner`}
+              aria-hidden
             >
               <span className={`font-display text-2xl font-bold tabular-nums sm:text-3xl ${centerNum}`}>
                 {t > 0 ? `${fulfilledPct}%` : "—"}

@@ -128,7 +128,15 @@ export default async function AdminPublicCausesPage({ searchParams }: Props) {
       <AdminListPanel className="mt-6">
         {queue.length === 0 ? (
           <li className="p-6">
-            <AdminEmptyState message="Nothing in this view." />
+            <AdminEmptyState
+              message="Nothing in this view."
+              title={view === "all" ? "No public causes yet" : "Nothing in this filter"}
+              action={
+                view === "all"
+                  ? { href: "/admin/reports", label: "Open report queue" }
+                  : { href: "/admin/public-causes", label: "Show all" }
+              }
+            />
           </li>
         ) : (
           queue.map((r) => {

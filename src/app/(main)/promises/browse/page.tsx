@@ -143,11 +143,16 @@ export default async function PromisesBrowsePage({ searchParams }: Props) {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto mt-6 flex flex-wrap justify-center gap-3" role="tablist" aria-label="Catalogue presets">
+          <div
+            className="mx-auto mt-6 flex flex-wrap justify-center gap-3"
+            role="group"
+            aria-label="Catalogue presets"
+          >
             <Link
               href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises}
               className={`${lensPillBase} ${!governmentOnly ? lensActive : lensInactive} ${focusRingSmClass}`}
               prefetch={false}
+              aria-current={!governmentOnly ? "page" : undefined}
             >
               Full catalogue
             </Link>
@@ -155,6 +160,7 @@ export default async function PromisesBrowsePage({ searchParams }: Props) {
               href={ACCOUNTABILITY_CATALOGUE_ROUTES.governmentCommitments}
               className={`${lensPillBase} ${governmentOnly ? lensActive : lensInactive} ${focusRingSmClass}`}
               prefetch={false}
+              aria-current={governmentOnly ? "page" : undefined}
             >
               Government programme lens
             </Link>

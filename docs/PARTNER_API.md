@@ -17,6 +17,7 @@
 | `GET` | `/api/report-card/[year]` | Phase ≥ 2 + `publicReportCard` | Published People’s Report Card cycle (404 if unpublished / missing) |
 | `GET` | `/api/export/mps-csv` | Same gates as `/api/mps` | **CSV** roster (`slug`, `name`, `role`, `party`, `constituency_name`, `promise_count`); UTF-8 BOM for Excel; rate-limited like JSON |
 | `GET` | `/api/export/promises-csv` | Same gates as `/api/promises` | **CSV** promises (full export, no 50-row JSON cap); optional `?memberSlug=`; UTF-8 BOM; separate rate bucket `promises-export-csv` |
+| `GET` | `/api/export/citizen-report-analytics-csv` | Phase ≥ 2 + public Voice statistics | **CSV** aggregate Voice / citizen-report counts (no PII); optional `?months=1–36` (default 12); UTF-8 BOM; rate bucket `citizen-report-analytics-export-csv` |
 
 **Health:** `GET /api/health` includes `accountability.parliamentJson` and `accountability.reportCardJson` flags for build-time capability checks (not a data export).
 

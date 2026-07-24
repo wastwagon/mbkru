@@ -1,16 +1,18 @@
 import Link from "next/link";
 
 import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
-import { AdminTablePanel } from "@/components/admin/AdminTablePanel";
-import { AdminTd } from "@/components/admin/AdminTd";
 import { AdminMetricCard } from "@/components/admin/AdminMetricCard";
-import { AdminSectionCard } from "@/components/admin/AdminSectionCard";
-import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { AdminSectionCard } from "@/components/admin/AdminSectionCard";
+import { AdminTablePanel } from "@/components/admin/AdminTablePanel";
+import { AdminTd } from "@/components/admin/AdminTd";
+import { AdminWindowFilterChips } from "@/components/admin/AdminWindowFilterChips";
+import { StatBarList } from "@/components/viz/StatBarList";
+import { requireAdminSession } from "@/lib/admin/require-session";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
-import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { MBKRU_VOICE_ANALYTICS_TAXONOMY } from "@/lib/mbkru-voice-analytics-taxonomy";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 import {
   getMbkruVoiceAnalyticsSummary,
   parseMbkruVoiceAnalyticsDaysParam,
@@ -53,26 +55,26 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
           Raw events (recent rows)
         </Link>
       </p>
-      <p className="mt-2 text-sm">
-        <span className="text-[var(--foreground-secondary)]">Window:</span>{" "}
-        {[7, 30, 90].map((option, index) => (
-          <span key={option}>
-            {index > 0 ? " · " : null}
-            <Link
-              href={`/admin/analytics/mbkru-voice?days=${option}`}
-              className={option === days ? `font-semibold text-[var(--foreground)] underline ${primaryLinkClass}` : primaryLinkClass}
-            >
-              {option} days
-            </Link>
-          </span>
-        ))}
-      </p>
+      <AdminWindowFilterChips
+        className="mt-4"
+        hrefBase="/admin/analytics/mbkru-voice"
+        param="days"
+        active={days}
+        options={[
+          { value: 7, label: "7 days" },
+          { value: 30, label: "30 days" },
+          { value: 90, label: "90 days" },
+        ]}
+      />
 
       <section className="mt-8 grid gap-4 sm:grid-cols-2">
         <AdminMetricCard
           surface="tile"
           label="GA4 status"
+          hint="Browser events fire when NEXT_PUBLIC_GA_MEASUREMENT_ID is set."
           value={gaEnabled ? "Configured" : "Not configured"}
+          delta={gaEnabled ? "Live" : "Setup"}
+          deltaTone={gaEnabled ? "success" : "warning"}
           subline={
             gaEnabled
               ? "Use Events reports and filters on source/language properties."
@@ -82,7 +84,10 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
         <AdminMetricCard
           surface="tile"
           label="Plausible status"
+          hint="Privacy-friendly custom events when NEXT_PUBLIC_PLAUSIBLE_DOMAIN is set."
           value={plausibleEnabled ? "Configured" : "Not configured"}
+          delta={plausibleEnabled ? "Live" : "Setup"}
+          deltaTone={plausibleEnabled ? "success" : "warning"}
           subline={
             plausibleEnabled
               ? "Use custom events dashboard for MBKRU Voice flows."
@@ -90,7 +95,9 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
           }
         />
         <AdminSectionCard className="rounded-2xl shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">Internal DB analytics</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">
+            Internal DB analytics
+          </p>
           <p className="mt-2 text-sm text-[var(--foreground)]">{dbEnabled ? "Configured" : "Not configured"}</p>
           <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
             {dbEnabled
@@ -117,17 +124,20 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
             surface="tile"
             valueSize="xl"
             label={`Events (${summary.windowDays} days)`}
+            hint="Sum of stored event rows in the selected window."
             value={summary.windowRows.reduce((acc, row) => acc + row.count, 0)}
           />
           <AdminMetricCard
             surface="tile"
             valueSize="xl"
             label="Unique event names"
+            hint="Distinct eventName values seen in the window."
             value={summary.windowRows.length}
           />
           <AdminMetricCard
             surface="tile"
             label={`Top source (${summary.windowDays} days)`}
+            hint="Highest-volume source tag in the window (chatbot, a11y, etc.)."
             value={summary.bySourceWindow[0]?.source ?? "No data"}
           />
         </section>
@@ -151,7 +161,10 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
                 <AdminTd label="Meaning" className="px-4 py-3 align-top text-[var(--foreground)] sm:px-4 sm:py-3">
                   {event.meaning}
                 </AdminTd>
-                <AdminTd label="Why it matters" className="px-4 py-3 align-top text-[var(--foreground-secondary)] sm:px-4 sm:py-3">
+                <AdminTd
+                  label="Why it matters"
+                  className="px-4 py-3 align-top text-[var(--foreground-secondary)] sm:px-4 sm:py-3"
+                >
                   {event.signal}
                 </AdminTd>
               </tr>
@@ -166,42 +179,52 @@ export default async function AdminMbkruVoiceAnalyticsPage({ searchParams }: Pro
             <h2 className="text-sm font-semibold text-[var(--foreground)]">
               Internal DB events (last {summary.windowDays} days)
             </h2>
-            <ul className="mt-3 space-y-2 text-sm">
-              {summary.windowRows.length === 0 ? (
-                <li>
-                  <AdminEmptyState message="No rows yet." />
-                </li>
-              ) : (
-                summary.windowRows.map((row) => (
-                  <li key={`w-${row.eventName}`} className="flex justify-between gap-2">
-                    <code className="text-xs text-[var(--foreground-secondary)]">{row.eventName}</code>
-                    <span className="tabular-nums font-medium text-[var(--foreground)]">{row.count}</span>
-                  </li>
-                ))
-              )}
-            </ul>
+            {summary.windowRows.length === 0 ? (
+              <AdminEmptyState
+                className="mt-4"
+                title="No events in this window"
+                message="Widen the window or confirm the chatbot is posting telemetry."
+                action={{ href: "/admin/analytics/mbkru-voice/events", label: "Inspect raw events" }}
+              />
+            ) : (
+              <StatBarList
+                items={summary.windowRows.map((row) => ({
+                  key: row.eventName,
+                  label: row.eventName,
+                  count: row.count,
+                }))}
+              />
+            )}
           </AdminSectionCard>
           <AdminSectionCard className="rounded-2xl shadow-sm">
             <h2 className="text-sm font-semibold text-[var(--foreground)]">
               Event source split (last {summary.windowDays} days)
             </h2>
-            <ul className="mt-3 space-y-2 text-sm">
-              {summary.bySourceWindow.length === 0 ? (
-                <li>
-                  <AdminEmptyState message="No rows yet." />
-                </li>
-              ) : (
-                summary.bySourceWindow.map((row) => (
-                  <li key={`s-${row.source}`} className="flex justify-between gap-2">
-                    <code className="text-xs text-[var(--foreground-secondary)]">{row.source}</code>
-                    <span className="tabular-nums font-medium text-[var(--foreground)]">{row.count}</span>
-                  </li>
-                ))
-              )}
-            </ul>
+            {summary.bySourceWindow.length === 0 ? (
+              <AdminEmptyState
+                className="mt-4"
+                title="No source split yet"
+                message="Events will appear here once ingestion stores rows with a source tag."
+              />
+            ) : (
+              <StatBarList
+                items={summary.bySourceWindow.map((row) => ({
+                  key: row.source,
+                  label: row.source,
+                  count: row.count,
+                }))}
+                accent="gold"
+              />
+            )}
           </AdminSectionCard>
         </div>
-      ) : null}
+      ) : (
+        <AdminEmptyState
+          className="mt-8"
+          title="Internal analytics unavailable"
+          message="Configure DATABASE_URL to store and chart MBKRU Voice events in-platform."
+        />
+      )}
 
       <p className="mt-4 text-xs text-[var(--foreground-secondary)]">
         Tip: <code className="text-xs">mbkru_voice_reply_received</code> payloads include <code>source</code>,{" "}

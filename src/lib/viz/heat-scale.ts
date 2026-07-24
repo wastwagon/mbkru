@@ -4,6 +4,11 @@ export function normalizeHeatIntensity(value: number, max: number): number {
   return Math.min(1, value / max);
 }
 
+/** Display helper for table / screen-reader intensity (0–100%). */
+export function heatIntensityPercent(value: number, max: number): number {
+  return Math.round(normalizeHeatIntensity(value, max) * 100);
+}
+
 /**
  * Teal intensity scale for regional heat maps — light base at 0, brand primary at 1.
  * Returns CSS color string.
@@ -15,3 +20,12 @@ export function heatFillColor(intensity: number, hasData: boolean): string {
   const light = 78 - intensity * 38;
   return `hsl(${hue}, ${sat}%, ${light}%)`;
 }
+
+/** Discrete legend stops for choropleth keys (no data → high). */
+export const HEAT_LEGEND_STOPS = [
+  { label: "None", color: heatFillColor(0, false) },
+  { label: "Low", color: heatFillColor(0.25, true) },
+  { label: "Mid", color: heatFillColor(0.55, true) },
+  { label: "High", color: heatFillColor(1, true) },
+] as const;
+

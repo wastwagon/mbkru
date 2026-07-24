@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminMetricCard } from "@/components/admin/AdminMetricCard";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
@@ -58,6 +59,7 @@ export default async function AdminPetitionPendingAnalyticsPage() {
           surface="tile"
           valueSize="xl"
           label="Active pending"
+          hint="Guest signature rows waiting for email confirmation (link still valid)."
           value={data.totals.activePending}
           subline="Link not yet expired"
         />
@@ -65,13 +67,17 @@ export default async function AdminPetitionPendingAnalyticsPage() {
           surface="tile"
           valueSize="xl"
           label="Expired pending"
+          hint="Confirmation links past expiry — safe to purge from Settings cleanup."
           value={data.totals.expiredPending}
+          delta={data.totals.expiredPending > 0 ? "Cleanup" : "Clear"}
+          deltaTone={data.totals.expiredPending > 0 ? "warning" : "success"}
           subline="Safe to delete via cron"
         />
         <AdminMetricCard
           surface="tile"
           valueSize="xl"
           label="Verified signatures"
+          hint="Confirmed PetitionSignature rows across all petitions."
           value={data.totals.verifiedSignatures}
           subline="All petitions, all time"
         />
@@ -79,6 +85,7 @@ export default async function AdminPetitionPendingAnalyticsPage() {
           surface="tile"
           valueSize="xl"
           label="New pending (30d)"
+          hint="Pending rows created in the last 30 days (active or expired)."
           value={data.createdCounts.last30d}
           subline="Rows created in rolling window"
         />
@@ -124,8 +131,12 @@ export default async function AdminPetitionPendingAnalyticsPage() {
             <tbody>
               {data.byPetition.length === 0 ? (
                 <tr>
-                  <td className="px-4 py-6 text-[var(--foreground-secondary)]" colSpan={4}>
-                    No pending signature rows.
+                  <td className="px-4 py-6" colSpan={4}>
+                    <AdminEmptyState
+                      title="No pending signature rows"
+                      message="Guest email-verification queue is empty — verified signatures still appear in petition totals."
+                      action={{ href: "/admin/petitions", label: "Open petitions" }}
+                    />
                   </td>
                 </tr>
               ) : (

@@ -56,7 +56,11 @@ export default async function AdminMbkruVoiceAnalyticsEventsPage({ searchParams 
       </p>
 
       {!dbEnabled ? (
-        <p className="mt-8 text-sm text-[var(--foreground-secondary)]">Database not configured.</p>
+        <AdminEmptyState
+          className="mt-8"
+          title="Database not configured"
+          message="Set DATABASE_URL to inspect stored MBKRU Voice event rows."
+        />
       ) : (
         <>
           <form className="mt-6 flex flex-wrap items-end gap-3 rounded-xl border border-[var(--border)] bg-white p-4">
@@ -93,7 +97,20 @@ export default async function AdminMbkruVoiceAnalyticsEventsPage({ searchParams 
           </div>
 
           {!result?.rows?.length ? (
-            <AdminEmptyState className="mt-8" message="No events in view." />
+            <AdminEmptyState
+              className="mt-8"
+              title="No events in view"
+              message={
+                q
+                  ? `Nothing matched “${q}”. Clear the filter or try a shorter event-name fragment.`
+                  : "The outbox has not stored any MBKRU Voice rows yet."
+              }
+              action={
+                q
+                  ? { href: "/admin/analytics/mbkru-voice/events", label: "Clear filter" }
+                  : { href: "/admin/analytics/mbkru-voice", label: "Back to summary" }
+              }
+            />
           ) : (
             <AdminTablePanel className="mt-6 shadow-sm">
               <table className="admin-table-stack min-w-full text-left text-sm">

@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
+import { AdminMetricCard } from "@/components/admin/AdminMetricCard";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -109,23 +111,30 @@ export default async function AdminMpPerformanceSignalsPage() {
         }
       />
 
-      <dl className="mt-6 flex flex-wrap gap-4 text-sm">
-        <div className="rounded-xl border border-[var(--border)] bg-white px-4 py-3">
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
-            Citizen Voice MP
-          </dt>
-          <dd className="mt-1 text-2xl font-semibold tabular-nums text-[var(--foreground)]">{citizenTotal}</dd>
-        </div>
-        <div className="rounded-xl border border-[var(--accent-gold)]/35 bg-[var(--accent-gold-light)]/20 px-4 py-3">
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
-            Council evaluation
-          </dt>
-          <dd className="mt-1 text-2xl font-semibold tabular-nums text-[var(--foreground)]">{councilTotal}</dd>
-        </div>
-      </dl>
+      <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:max-w-xl">
+        <AdminMetricCard
+          surface="tile"
+          valueSize="xl"
+          label="Citizen Voice MP"
+          hint="MP performance intakes submitted through Citizen Voice (not council)."
+          value={citizenTotal}
+        />
+        <AdminMetricCard
+          surface="tile"
+          valueSize="xl"
+          label="Council evaluation"
+          hint="Queen Mother / council corroboration intakes tagged as COUNCIL_EVALUATION."
+          value={councilTotal}
+        />
+      </section>
 
       {rows.length === 0 ? (
-        <p className="mt-8 text-sm text-[var(--foreground-secondary)]">No MP performance reports in the database yet.</p>
+        <AdminEmptyState
+          className="mt-8"
+          title="No MP performance reports yet"
+          message="Intakes appear here once citizens or councils submit MP performance signals."
+          action={{ href: "/admin/reports?kind=MP_PERFORMANCE", label: "Open MP performance queue" }}
+        />
       ) : (
         <AdminTablePanel className="mt-8">
           <table className="admin-table-stack min-w-full text-left text-sm">

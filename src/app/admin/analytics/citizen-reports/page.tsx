@@ -1,20 +1,22 @@
 import Link from "next/link";
 
 import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
-import { AdminListPanel } from "@/components/admin/AdminListPanel";
 import { AdminMetricCard } from "@/components/admin/AdminMetricCard";
 import { AdminSectionCard } from "@/components/admin/AdminSectionCard";
-import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { AdminWindowFilterChips } from "@/components/admin/AdminWindowFilterChips";
+import { GhanaRegionsReportHeatMap } from "@/components/transparency/GhanaRegionsReportHeatMap";
+import { MonthTrendBars } from "@/components/viz/MonthTrendBars";
+import { StatBarList } from "@/components/viz/StatBarList";
+import { StatusDonut } from "@/components/viz/StatusDonut";
+import { requireAdminSession } from "@/lib/admin/require-session";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
-import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 import {
   getCitizenReportAnalytics,
   parseCitizenReportAnalyticsMonthsParam,
 } from "@/lib/server/citizen-report-analytics";
-
-const citizenReportMonthWindowLinkActiveClass = `font-semibold text-[var(--foreground)] underline decoration-2 decoration-[var(--primary)] ${focusRingSmClass}`;
 
 type Props = { searchParams?: Promise<{ months?: string | string[] }> };
 
@@ -53,6 +55,49 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
     ARCHIVED: "Archived",
   };
 
+  const kindWindowItems = Object.entries(data.totals.byKindInWindow)
+    .sort((a, b) => b[1] - a[1])
+    .map(([k, n]) => ({ key: k, label: kindLabels[k] ?? k, count: n }));
+
+  const statusWindowItems = Object.entries(data.totals.byStatusInWindow)
+    .sort((a, b) => b[1] - a[1])
+    .map(([s, n]) => ({ key: s, label: statusLabels[s] ?? s, count: n }));
+
+  const kindAllItems = Object.entries(data.totals.byKind)
+    .sort((a, b) => b[1] - a[1])
+    .map(([k, n]) => ({ key: k, label: kindLabels[k] ?? k, count: n }));
+
+  const statusAllItems = Object.entries(data.totals.byStatus)
+    .sort((a, b) => b[1] - a[1])
+    .map(([s, n]) => ({ key: s, label: statusLabels[s] ?? s, count: n }));
+
+  const playbookAllItems = data.byPlaybookAll.map((row) => ({
+    key: row.key || "__unset__",
+    label: row.key || "(unassigned)",
+    count: row.count,
+  }));
+
+  const playbookWindowItems = data.byPlaybookInWindow.map((row) => ({
+    key: `${row.key || "__unset__"}-w`,
+    label: row.key || "(unassigned)",
+    count: row.count,
+  }));
+
+  const regionItems = data.byRegion.map((r) => ({
+    key: r.regionId,
+    label: r.regionName,
+    count: r.count,
+  }));
+
+  const windowShare =
+    data.totals.all > 0 ? Math.round((data.totals.inWindow / data.totals.all) * 100) : 0;
+  const slaTone =
+    data.totals.slaOpenOverdue > 0
+      ? ("danger" as const)
+      : data.totals.slaOpenOverdue === 0
+        ? ("success" as const)
+        : ("neutral" as const);
+
   return (
     <AdminPageContainer>
       <AdminPageHeader
@@ -69,22 +114,17 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
         }
       />
 
-      <p className="mt-4 text-sm">
-        <span className="text-[var(--foreground-secondary)]">Change window:</span>{" "}
-        {[6, 12, 24].map((m, i) => (
-          <span key={m}>
-            {i > 0 ? " · " : null}
-            <Link
-              href={`/admin/analytics/citizen-reports?months=${m}`}
-              className={
-                data.windowMonths === m ? citizenReportMonthWindowLinkActiveClass : primaryLinkClass
-              }
-            >
-              {m} months
-            </Link>
-          </span>
-        ))}
-      </p>
+      <AdminWindowFilterChips
+        className="mt-4"
+        hrefBase="/admin/analytics/citizen-reports"
+        param="months"
+        active={data.windowMonths}
+        options={[
+          { value: 6, label: "6 months" },
+          { value: 12, label: "12 months" },
+          { value: 24, label: "24 months" },
+        ]}
+      />
 
       <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
         <span>
@@ -118,19 +158,45 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
       </p>
 
       <section className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <AdminMetricCard surface="tile" valueSize="xl" label="All-time total" value={data.totals.all} />
-        <AdminMetricCard surface="tile" valueSize="xl" label="In window" value={data.totals.inWindow} />
+        <AdminMetricCard
+          surface="tile"
+          valueSize="xl"
+          label="All-time total"
+          hint="Every citizen report in the database (training rows may be excluded on public surfaces)."
+          value={data.totals.all}
+          subline="Every tagged report"
+        />
+        <AdminMetricCard
+          surface="tile"
+          valueSize="xl"
+          label="In window"
+          hint={`Reports created since ${new Date(data.windowSince).toLocaleDateString("en-GB")}.`}
+          value={data.totals.inWindow}
+          delta={data.totals.all > 0 ? `${windowShare}% of all` : undefined}
+          deltaTone="info"
+          subline={`Last ${data.windowMonths} months`}
+        />
         <AdminMetricCard
           surface="tile"
           valueSize="xl"
           label="With attachments"
+          hint="All-time reports that include at least one uploaded file."
           value={data.totals.withAttachments}
+          subline="All-time"
         />
         <AdminMetricCard
           surface="tile"
           valueSize="xl"
           label="SLA overdue (open)"
+          hint="Open reports whose slaDueAt is in the past — triage these first."
           value={data.totals.slaOpenOverdue}
+          delta={data.totals.slaOpenOverdue > 0 ? "Needs triage" : "Clear"}
+          deltaTone={slaTone}
+          subline={
+            <Link href="/admin/reports" className={primaryLinkClass}>
+              Open queue
+            </Link>
+          }
         />
       </section>
 
@@ -145,19 +211,25 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
         </p>
         <dl className="mt-4 grid gap-4 sm:grid-cols-3">
           <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">With thread</dt>
+            <dt className="text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">
+              With thread
+            </dt>
             <dd className="mt-1 font-display text-2xl font-bold tabular-nums text-[var(--foreground)]">
               {data.publicCauses.withThread}
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">Live thread</dt>
+            <dt className="text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">
+              Live thread
+            </dt>
             <dd className="mt-1 font-display text-2xl font-bold tabular-nums text-[var(--foreground)]">
               {data.publicCauses.threadLive}
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">Closed thread</dt>
+            <dt className="text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">
+              Closed thread
+            </dt>
             <dd className="mt-1 font-display text-2xl font-bold tabular-nums text-[var(--foreground)]">
               {data.publicCauses.threadClosed}
             </dd>
@@ -165,77 +237,46 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
         </dl>
       </AdminSectionCard>
 
+      <AdminSectionCard className="mt-8">
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">Submission trend</h2>
+        <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
+          Reports received per month in the selected window.
+        </p>
+        {data.byMonth.length === 0 ? (
+          <AdminEmptyState
+            className="mt-4"
+            title="No submissions in window"
+            message="Widen the month window or check the report queue."
+            action={{ href: "/admin/reports", label: "Open report queue" }}
+          />
+        ) : (
+          <MonthTrendBars months={data.byMonth} ariaLabel="Monthly citizen report submissions" />
+        )}
+      </AdminSectionCard>
+
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
         <AdminSectionCard>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">By kind (window)</h2>
-          <ul className="mt-3 space-y-2 text-sm">
-            {Object.keys(data.totals.byKindInWindow).length === 0 ? (
-              <li>
-                <AdminEmptyState message="No rows." />
-              </li>
-            ) : (
-              Object.entries(data.totals.byKindInWindow).map(([k, n]) => (
-                <li key={k} className="flex justify-between gap-2">
-                  <span className="text-[var(--foreground-secondary)]">{kindLabels[k] ?? k}</span>
-                  <span className="tabular-nums font-medium text-[var(--foreground)]">{n}</span>
-                </li>
-              ))
-            )}
-          </ul>
+          <StatBarList items={kindWindowItems} emptyMessage="No rows in window." />
         </AdminSectionCard>
         <AdminSectionCard>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">By status (window)</h2>
-          <ul className="mt-3 space-y-2 text-sm">
-            {Object.keys(data.totals.byStatusInWindow).length === 0 ? (
-              <li>
-                <AdminEmptyState message="No rows." />
-              </li>
-            ) : (
-              Object.entries(data.totals.byStatusInWindow).map(([s, n]) => (
-                <li key={s} className="flex justify-between gap-2">
-                  <span className="text-[var(--foreground-secondary)]">{statusLabels[s] ?? s}</span>
-                  <span className="tabular-nums font-medium text-[var(--foreground)]">{n}</span>
-                </li>
-              ))
-            )}
-          </ul>
+          <StatusDonut items={statusWindowItems} centerCaption="In window" emptyMessage="No rows in window." />
         </AdminSectionCard>
       </div>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
         <AdminSectionCard>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">By kind (all-time)</h2>
-          <ul className="mt-3 space-y-2 text-sm">
-            {Object.keys(data.totals.byKind).length === 0 ? (
-              <li>
-                <AdminEmptyState message="No rows." />
-              </li>
-            ) : (
-              Object.entries(data.totals.byKind).map(([k, n]) => (
-                <li key={k} className="flex justify-between gap-2">
-                  <span className="text-[var(--foreground-secondary)]">{kindLabels[k] ?? k}</span>
-                  <span className="tabular-nums font-medium text-[var(--foreground)]">{n}</span>
-                </li>
-              ))
-            )}
-          </ul>
+          <StatBarList
+            items={kindAllItems}
+            maxCount={Math.max(1, data.totals.all)}
+            emptyMessage="No rows yet."
+          />
         </AdminSectionCard>
         <AdminSectionCard>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">By status (all-time)</h2>
-          <ul className="mt-3 space-y-2 text-sm">
-            {Object.keys(data.totals.byStatus).length === 0 ? (
-              <li>
-                <AdminEmptyState message="No rows." />
-              </li>
-            ) : (
-              Object.entries(data.totals.byStatus).map(([s, n]) => (
-                <li key={s} className="flex justify-between gap-2">
-                  <span className="text-[var(--foreground-secondary)]">{statusLabels[s] ?? s}</span>
-                  <span className="tabular-nums font-medium text-[var(--foreground)]">{n}</span>
-                </li>
-              ))
-            )}
-          </ul>
+          <StatusDonut items={statusAllItems} centerCaption="All time" emptyMessage="No rows yet." />
         </AdminSectionCard>
       </div>
 
@@ -246,74 +287,38 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
             From <code className="rounded bg-[var(--section-light)] px-1 py-0.5 text-[11px]">operationsPlaybookKey</code>{" "}
             on each report.
           </p>
-          <ul className="mt-3 space-y-2 text-sm">
-            {data.byPlaybookAll.length === 0 ? (
-              <li>
-                <AdminEmptyState message="No rows." />
-              </li>
-            ) : (
-              data.byPlaybookAll.map((row) => (
-                <li key={row.key || "__unset__"} className="flex justify-between gap-2">
-                  <span className="font-mono text-xs text-[var(--foreground-secondary)]">
-                    {row.key || "(unassigned)"}
-                  </span>
-                  <span className="tabular-nums font-medium text-[var(--foreground)]">{row.count}</span>
-                </li>
-              ))
-            )}
-          </ul>
+          <StatBarList items={playbookAllItems} emptyMessage="No playbook tags yet." />
         </AdminSectionCard>
         <AdminSectionCard>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">Ops playbook tag (window)</h2>
-          <ul className="mt-3 space-y-2 text-sm">
-            {data.byPlaybookInWindow.length === 0 ? (
-              <li>
-                <AdminEmptyState message="No rows." />
-              </li>
-            ) : (
-              data.byPlaybookInWindow.map((row) => (
-                <li key={`${row.key}-w`} className="flex justify-between gap-2">
-                  <span className="font-mono text-xs text-[var(--foreground-secondary)]">
-                    {row.key || "(unassigned)"}
-                  </span>
-                  <span className="tabular-nums font-medium text-[var(--foreground)]">{row.count}</span>
-                </li>
-              ))
-            )}
-          </ul>
+          <StatBarList items={playbookWindowItems} emptyMessage="No playbook tags in window." />
         </AdminSectionCard>
       </div>
 
-      <section className="mt-10">
-        <h2 className="text-sm font-semibold text-[var(--foreground)]">By region (all-time)</h2>
-        {data.byRegion.length === 0 ? (
-          <AdminEmptyState message="No region tagged reports yet." className="mt-2" />
-        ) : (
-          <AdminListPanel className="mt-3 rounded-xl">
-            {data.byRegion.map((r) => (
-              <li key={r.regionId} className="flex justify-between gap-2 px-4 py-2 text-sm">
-                <span className="text-[var(--foreground)]">{r.regionName}</span>
-                <span className="tabular-nums text-[var(--foreground-secondary)]">{r.count}</span>
-              </li>
-            ))}
-          </AdminListPanel>
-        )}
-      </section>
+      <section className="mt-10 space-y-6">
+        <div>
+          <h2 className="text-sm font-semibold text-[var(--foreground)]">Regional heat map</h2>
+          <p className="mt-1 text-xs text-[var(--foreground-secondary)]">All-time counts by tagged region.</p>
+          {data.byRegion.length === 0 ? (
+            <AdminEmptyState
+              className="mt-3"
+              title="No region-tagged reports"
+              message="Reports need a region tag before they appear on the map."
+              action={{ href: "/admin/reports", label: "Open report queue" }}
+            />
+          ) : (
+            <div className="mt-3">
+              <GhanaRegionsReportHeatMap regions={data.byRegion} />
+            </div>
+          )}
+        </div>
 
-      <section className="mt-10">
-        <h2 className="text-sm font-semibold text-[var(--foreground)]">By month (window)</h2>
-        {data.byMonth.length === 0 ? (
-          <AdminEmptyState message="No reports in this window." className="mt-2" />
-        ) : (
-          <AdminListPanel className="mt-3 rounded-xl">
-            {data.byMonth.map((row) => (
-              <li key={row.yearMonth} className="flex justify-between gap-2 px-4 py-2 text-sm">
-                <span className="font-mono text-[var(--foreground)]">{row.yearMonth}</span>
-                <span className="tabular-nums text-[var(--foreground-secondary)]">{row.count}</span>
-              </li>
-            ))}
-          </AdminListPanel>
-        )}
+        {data.byRegion.length > 0 ? (
+          <AdminSectionCard>
+            <h2 className="text-sm font-semibold text-[var(--foreground)]">Regional ranking</h2>
+            <StatBarList items={regionItems} accent="gold" />
+          </AdminSectionCard>
+        ) : null}
       </section>
     </AdminPageContainer>
   );

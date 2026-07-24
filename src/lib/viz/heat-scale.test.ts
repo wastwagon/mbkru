@@ -1,12 +1,18 @@
 import { describe, expect, it } from "vitest";
 
-import { heatFillColor, normalizeHeatIntensity } from "@/lib/viz/heat-scale";
+import { heatFillColor, heatIntensityPercent, normalizeHeatIntensity } from "@/lib/viz/heat-scale";
 
 describe("heat-scale", () => {
   it("normalizes intensity between 0 and 1", () => {
     expect(normalizeHeatIntensity(0, 10)).toBe(0);
     expect(normalizeHeatIntensity(5, 10)).toBe(0.5);
     expect(normalizeHeatIntensity(15, 10)).toBe(1);
+  });
+
+  it("returns percent intensity for tables", () => {
+    expect(heatIntensityPercent(0, 10)).toBe(0);
+    expect(heatIntensityPercent(5, 10)).toBe(50);
+    expect(heatIntensityPercent(10, 10)).toBe(100);
   });
 
   it("returns muted fill when no data", () => {

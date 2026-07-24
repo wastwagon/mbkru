@@ -95,6 +95,11 @@ export default function PartnerApiPage() {
                 path: "/api/export/promises-csv",
                 purpose: "Full promise export with the same filter semantics as JSON (separate rate bucket).",
               },
+              {
+                path: "/api/export/citizen-report-analytics-csv",
+                purpose:
+                  "Aggregate Voice / citizen-report statistics CSV (no PII). Same gate as /transparency; optional ?months=1–36.",
+              },
             ]}
           />
           <p className="mt-4 text-sm text-[var(--foreground-secondary)]">

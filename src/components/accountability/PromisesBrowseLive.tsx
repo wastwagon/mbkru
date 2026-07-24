@@ -515,7 +515,7 @@ export function PromisesBrowseLive({
           </select>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 pb-1">
+        <div className="flex flex-wrap items-center gap-2 pb-1" aria-live="polite" aria-atomic="true">
           {loading ? (
             <span className="text-xs text-[var(--foreground-secondary)]">Updating…</span>
           ) : (
@@ -558,11 +558,11 @@ export function PromisesBrowseLive({
               </div>
             </div>
           ) : (
-            <p className="mt-6 text-xs text-[var(--foreground-secondary)]">
+            <p className="mt-6 text-xs text-[var(--foreground-secondary)]" aria-live="polite">
               Showing {rows.length} result{rows.length === 1 ? "" : "s"}
               {rows.length >= 75 ? " (max 75 per request — refine search)" : ""}. Full export:{" "}
-              <Link href={csvHref} className={primaryLinkClass}>
-                CSV export
+              <Link href={csvHref} className={primaryLinkClass} download prefetch={false}>
+                Download CSV
               </Link>
               .
             </p>
