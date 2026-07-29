@@ -104,10 +104,14 @@ export function GhanaRegionsReportHeatMap({ regions, highlightSlug }: Props) {
             </p>
           ) : null}
         </div>
-        <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--foreground-secondary)]" aria-hidden>
+        <div
+          className="flex flex-wrap items-center gap-2 text-xs text-[var(--foreground-secondary)]"
+          role="group"
+          aria-label="Heat map intensity legend: none, low, mid, high"
+        >
           {HEAT_LEGEND_STOPS.map((stop) => (
             <span key={stop.label} className="inline-flex items-center gap-1.5">
-              <span className="h-3 w-5 rounded-sm ring-1 ring-black/5" style={{ background: stop.color }} />
+              <span className="h-3 w-5 rounded-sm ring-1 ring-black/5" style={{ background: stop.color }} aria-hidden />
               {stop.label}
             </span>
           ))}

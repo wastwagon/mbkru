@@ -102,6 +102,15 @@ function fillDailySeries(
   return out;
 }
 
+/** Exported for unit tests — fills missing UTC days with zero counts. */
+export function fillAdminHomeDailySeries(
+  since: Date,
+  now: Date,
+  rows: Array<{ day: Date; c: bigint | number }>,
+): AdminHomeDayCount[] {
+  return fillDailySeries(since, now, rows);
+}
+
 function buildAttention(s: Omit<AdminHomeSnapshot, "attention" | "generatedAt">): AdminAttentionItem[] {
   const items: AdminAttentionItem[] = [];
 
@@ -202,6 +211,13 @@ function buildAttention(s: Omit<AdminHomeSnapshot, "attention" | "generatedAt">)
   }
 
   return items.sort((a, b) => a.priority - b.priority || b.count - a.count);
+}
+
+/** Exported for unit tests — priority-sorted attention items. */
+export function buildAdminAttentionItems(
+  s: Omit<AdminHomeSnapshot, "attention" | "generatedAt">,
+): AdminAttentionItem[] {
+  return buildAttention(s);
 }
 
 /** Queue counts, week deltas, and prioritized attention items for `/admin`. */

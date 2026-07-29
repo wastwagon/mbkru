@@ -73,6 +73,11 @@ export default async function AdminHomePage() {
           className="mt-4"
           points={sparkPoints}
           ariaLabel="Citizen reports created per day over the last 14 days"
+          emptyFallback={
+            <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
+              No daily intake series yet — submissions will appear here as reports arrive.
+            </p>
+          }
         />
       </AdminSectionCard>
 

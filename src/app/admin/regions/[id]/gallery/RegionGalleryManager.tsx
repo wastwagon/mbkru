@@ -9,6 +9,7 @@ import {
   removeRegionSectorImageAction,
   updateRegionSectorImageAction,
 } from "@/app/admin/regions/[id]/gallery/actions";
+import { AdminConfirmDeleteForm } from "@/components/admin/AdminConfirmDeleteForm";
 import { MediaPicker, type PickerMedia } from "@/components/admin/MediaPicker";
 
 export type GalleryRow = {
@@ -225,16 +226,14 @@ export function RegionGalleryManager({
                           ↓
                         </button>
                       </form>
-                      <form action={removeRegionSectorImageAction}>
-                        <input type="hidden" name="id" value={row.id} />
-                        <button
-                          type="submit"
-                          aria-label={`Remove ${row.sectorLabel} photo from gallery`}
-                          className="w-full rounded-lg border border-red-200 px-3 py-1 text-sm font-medium text-red-600 hover:bg-red-50"
-                        >
-                          Remove
-                        </button>
-                      </form>
+                      <AdminConfirmDeleteForm
+                        action={removeRegionSectorImageAction}
+                        hiddenFields={{ id: row.id }}
+                        title="Remove gallery photo?"
+                        description={`Remove “${row.sectorLabel}” from this region’s gallery? The media file stays in the library.`}
+                        buttonLabel="Remove"
+                        confirmLabel="Remove"
+                      />
                     </div>
                   </div>
                 </li>

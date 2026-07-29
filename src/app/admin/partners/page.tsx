@@ -23,6 +23,11 @@ import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
 import { AdminMediaField, type AdminMediaFieldValue } from "@/components/admin/AdminMediaField";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Textarea } from "@/components/ui/Textarea";
 import {
   adminQueueActionClass,
   adminQueueActionSuccessPublishClass,
@@ -31,14 +36,9 @@ import { requireAdminSession } from "@/lib/admin/require-session";
 import { partnerCategoryLabel } from "@/lib/content/partners-cms";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
-import { fieldControlClass } from "@/lib/ui/field-styles";
 
-const inputClass = `${fieldControlClass({ density: "admin" })} text-sm`;
-const labelClass = "block text-xs font-medium text-[var(--foreground)]";
 const sectionClass = "mt-2 rounded-xl border border-[var(--border)] bg-white p-5";
 const rowClass = "rounded-xl border border-[var(--border)] bg-white p-4";
-const submitClass =
-  "rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-[var(--primary-foreground)]";
 const editDetailsClass =
   "mt-3 rounded-lg border border-[var(--border)] bg-[var(--section-light)]/60 p-3";
 
@@ -103,94 +103,76 @@ function PartnerFields({
   return (
     <>
       <div className="grid gap-3 sm:grid-cols-2">
-        <div>
-          <label htmlFor={`${idPrefix}-name`} className={labelClass}>
-            Name
-          </label>
-          <input
+        <FormField label="Name" htmlFor={`${idPrefix}-name`}>
+          <Input
             id={`${idPrefix}-name`}
             name="name"
             required
             minLength={2}
             maxLength={200}
             defaultValue={defaults?.name ?? ""}
-            className={inputClass}
+            density="admin"
           />
-        </div>
-        <div>
-          <label htmlFor={`${idPrefix}-slug`} className={labelClass}>
-            Slug (optional)
-          </label>
-          <input
+        </FormField>
+        <FormField label="Slug" htmlFor={`${idPrefix}-slug`} optional>
+          <Input
             id={`${idPrefix}-slug`}
             name="slug"
             maxLength={140}
             placeholder="auto from name if empty"
             defaultValue={defaults?.slug ?? ""}
-            className={inputClass}
+            density="admin"
           />
-        </div>
+        </FormField>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
-        <div>
-          <label htmlFor={`${idPrefix}-category`} className={labelClass}>
-            Category
-          </label>
-          <select
+        <FormField label="Category" htmlFor={`${idPrefix}-category`}>
+          <Select
             id={`${idPrefix}-category`}
             name="category"
             defaultValue={defaults?.category ?? "OTHER"}
-            className={inputClass}
+            density="admin"
           >
             {PARTNER_CATEGORIES.map((c) => (
               <option key={c} value={c}>
                 {partnerCategoryLabel(c)}
               </option>
             ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor={`${idPrefix}-sortOrder`} className={labelClass}>
-            Sort order
-          </label>
-          <input
+          </Select>
+        </FormField>
+        <FormField label="Sort order" htmlFor={`${idPrefix}-sortOrder`}>
+          <Input
             id={`${idPrefix}-sortOrder`}
             name="sortOrder"
             type="number"
             min={0}
             max={999999}
             defaultValue={defaults?.sortOrder ?? 0}
-            className={inputClass}
+            density="admin"
           />
-        </div>
+        </FormField>
       </div>
-      <div>
-        <label htmlFor={`${idPrefix}-websiteUrl`} className={labelClass}>
-          Website URL (optional)
-        </label>
-        <input
+      <FormField label="Website URL" htmlFor={`${idPrefix}-websiteUrl`} optional>
+        <Input
           id={`${idPrefix}-websiteUrl`}
           name="websiteUrl"
           type="url"
           maxLength={500}
           placeholder="https://"
           defaultValue={defaults?.websiteUrl ?? ""}
-          className={inputClass}
+          density="admin"
         />
-      </div>
-      <div>
-        <label htmlFor={`${idPrefix}-summary`} className={labelClass}>
-          Summary (optional)
-        </label>
-        <textarea
+      </FormField>
+      <FormField label="Summary" htmlFor={`${idPrefix}-summary`} optional>
+        <Textarea
           id={`${idPrefix}-summary`}
           name="summary"
           rows={2}
           maxLength={600}
           defaultValue={defaults?.summary ?? ""}
-          className={inputClass}
+          density="admin"
         />
-      </div>
+      </FormField>
       <AdminMediaField
         name="logoMediaId"
         label="Logo (optional)"
@@ -217,25 +199,19 @@ function LeadershipFields({
   return (
     <>
       <div className="grid gap-3 sm:grid-cols-2">
-        <div>
-          <label htmlFor={`${idPrefix}-name`} className={labelClass}>
-            Name
-          </label>
-          <input
+        <FormField label="Name" htmlFor={`${idPrefix}-name`}>
+          <Input
             id={`${idPrefix}-name`}
             name="name"
             required
             minLength={2}
             maxLength={200}
             defaultValue={defaults?.name ?? ""}
-            className={inputClass}
+            density="admin"
           />
-        </div>
-        <div>
-          <label htmlFor={`${idPrefix}-roleTitle`} className={labelClass}>
-            Role title
-          </label>
-          <input
+        </FormField>
+        <FormField label="Role title" htmlFor={`${idPrefix}-roleTitle`}>
+          <Input
             id={`${idPrefix}-roleTitle`}
             name="roleTitle"
             required
@@ -243,37 +219,31 @@ function LeadershipFields({
             maxLength={200}
             placeholder="e.g. National Coordinator"
             defaultValue={defaults?.roleTitle ?? ""}
-            className={inputClass}
+            density="admin"
           />
-        </div>
+        </FormField>
       </div>
-      <div>
-        <label htmlFor={`${idPrefix}-bio`} className={labelClass}>
-          Bio (optional)
-        </label>
-        <textarea
+      <FormField label="Bio" htmlFor={`${idPrefix}-bio`} optional>
+        <Textarea
           id={`${idPrefix}-bio`}
           name="bio"
           rows={3}
           maxLength={10000}
           defaultValue={defaults?.bio ?? ""}
-          className={inputClass}
+          density="admin"
         />
-      </div>
-      <div>
-        <label htmlFor={`${idPrefix}-sortOrder`} className={labelClass}>
-          Sort order
-        </label>
-        <input
+      </FormField>
+      <FormField label="Sort order" htmlFor={`${idPrefix}-sortOrder`}>
+        <Input
           id={`${idPrefix}-sortOrder`}
           name="sortOrder"
           type="number"
           min={0}
           max={999999}
           defaultValue={defaults?.sortOrder ?? 0}
-          className={inputClass}
+          density="admin"
         />
-      </div>
+      </FormField>
       <AdminMediaField
         name="portraitMediaId"
         label="Portrait (optional)"
@@ -298,11 +268,8 @@ function EndorsementFields({
 }) {
   return (
     <>
-      <div>
-        <label htmlFor={`${idPrefix}-quote`} className={labelClass}>
-          Quote
-        </label>
-        <textarea
+      <FormField label="Quote" htmlFor={`${idPrefix}-quote`}>
+        <Textarea
           id={`${idPrefix}-quote`}
           name="quote"
           required
@@ -310,51 +277,42 @@ function EndorsementFields({
           maxLength={800}
           rows={3}
           defaultValue={defaults?.quote ?? ""}
-          className={inputClass}
+          density="admin"
         />
-      </div>
+      </FormField>
       <div className="grid gap-3 sm:grid-cols-2">
-        <div>
-          <label htmlFor={`${idPrefix}-attributionName`} className={labelClass}>
-            Attribution name
-          </label>
-          <input
+        <FormField label="Attribution name" htmlFor={`${idPrefix}-attributionName`}>
+          <Input
             id={`${idPrefix}-attributionName`}
             name="attributionName"
             required
             minLength={2}
             maxLength={200}
             defaultValue={defaults?.attributionName ?? ""}
-            className={inputClass}
+            density="admin"
           />
-        </div>
-        <div>
-          <label htmlFor={`${idPrefix}-attributionRole`} className={labelClass}>
-            Attribution role (optional)
-          </label>
-          <input
+        </FormField>
+        <FormField label="Attribution role" htmlFor={`${idPrefix}-attributionRole`} optional>
+          <Input
             id={`${idPrefix}-attributionRole`}
             name="attributionRole"
             maxLength={200}
             defaultValue={defaults?.attributionRole ?? ""}
-            className={inputClass}
+            density="admin"
           />
-        </div>
+        </FormField>
       </div>
-      <div>
-        <label htmlFor={`${idPrefix}-sortOrder`} className={labelClass}>
-          Sort order
-        </label>
-        <input
+      <FormField label="Sort order" htmlFor={`${idPrefix}-sortOrder`}>
+        <Input
           id={`${idPrefix}-sortOrder`}
           name="sortOrder"
           type="number"
           min={0}
           max={999999}
           defaultValue={defaults?.sortOrder ?? 0}
-          className={inputClass}
+          density="admin"
         />
-      </div>
+      </FormField>
     </>
   );
 }
@@ -410,9 +368,9 @@ export default async function AdminPartnersPage() {
         <form action={createPartnerAction} className="mt-4 space-y-3">
           <PartnerFields idPrefix="partner-new" />
           <PublishNowCheckbox />
-          <button type="submit" className={submitClass}>
+          <Button type="submit" density="admin">
             Save partner
-          </button>
+          </Button>
         </form>
       </section>
 
@@ -472,9 +430,9 @@ export default async function AdminPartnersPage() {
                       logoMedia: toMediaFieldValue(p.logoMedia),
                     }}
                   />
-                  <button type="submit" className={submitClass}>
+                  <Button type="submit" density="admin">
                     Save changes
-                  </button>
+                  </Button>
                 </form>
               </details>
             </li>
@@ -488,9 +446,9 @@ export default async function AdminPartnersPage() {
         <form action={createLeadershipProfileAction} className="mt-4 space-y-3">
           <LeadershipFields idPrefix="leader-new" />
           <PublishNowCheckbox />
-          <button type="submit" className={submitClass}>
+          <Button type="submit" density="admin">
             Save profile
-          </button>
+          </Button>
         </form>
       </section>
 
@@ -548,9 +506,9 @@ export default async function AdminPartnersPage() {
                       portraitMedia: toMediaFieldValue(l.portraitMedia),
                     }}
                   />
-                  <button type="submit" className={submitClass}>
+                  <Button type="submit" density="admin">
                     Save changes
-                  </button>
+                  </Button>
                 </form>
               </details>
             </li>
@@ -564,9 +522,9 @@ export default async function AdminPartnersPage() {
         <form action={createEndorsementAction} className="mt-4 space-y-3">
           <EndorsementFields idPrefix="endorsement-new" />
           <PublishNowCheckbox />
-          <button type="submit" className={submitClass}>
+          <Button type="submit" density="admin">
             Save endorsement
-          </button>
+          </Button>
         </form>
       </section>
 
@@ -623,9 +581,9 @@ export default async function AdminPartnersPage() {
                       sortOrder: e.sortOrder,
                     }}
                   />
-                  <button type="submit" className={submitClass}>
+                  <Button type="submit" density="admin">
                     Save changes
-                  </button>
+                  </Button>
                 </form>
               </details>
             </li>

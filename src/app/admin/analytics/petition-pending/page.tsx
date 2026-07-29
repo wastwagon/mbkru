@@ -91,24 +91,33 @@ export default async function AdminPetitionPendingAnalyticsPage() {
         />
       </section>
 
-      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+      <section className="mt-8">
         <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">
           Pending rows created (rolling)
         </h2>
-        <dl className="mt-4 grid gap-3 sm:grid-cols-3">
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-[var(--foreground-secondary)]">Last 24h</dt>
-            <dd className="mt-1 font-display text-2xl font-bold tabular-nums">{data.createdCounts.last24h}</dd>
-          </div>
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-[var(--foreground-secondary)]">Last 7d</dt>
-            <dd className="mt-1 font-display text-2xl font-bold tabular-nums">{data.createdCounts.last7d}</dd>
-          </div>
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-[var(--foreground-secondary)]">Last 30d</dt>
-            <dd className="mt-1 font-display text-2xl font-bold tabular-nums">{data.createdCounts.last30d}</dd>
-          </div>
-        </dl>
+        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+          <AdminMetricCard
+            surface="tile"
+            valueSize="xl"
+            label="Last 24h"
+            hint="Guest pending signature rows created in the last 24 hours."
+            value={data.createdCounts.last24h}
+          />
+          <AdminMetricCard
+            surface="tile"
+            valueSize="xl"
+            label="Last 7d"
+            hint="Guest pending signature rows created in the last 7 days."
+            value={data.createdCounts.last7d}
+          />
+          <AdminMetricCard
+            surface="tile"
+            valueSize="xl"
+            label="Last 30d"
+            hint="Guest pending signature rows created in the last 30 days."
+            value={data.createdCounts.last30d}
+          />
+        </div>
       </section>
 
       <section className="mt-10">

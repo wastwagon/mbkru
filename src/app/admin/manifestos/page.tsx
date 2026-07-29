@@ -3,8 +3,13 @@ import Link from "next/link";
 import { createManifestoDocumentAction } from "@/app/admin/manifestos/actions";
 import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -30,99 +35,58 @@ export default async function AdminManifestosPage() {
         }
       />
 
-      <section className="mt-2 rounded-xl border border-[var(--border)] bg-white p-5">
+      <section id="add-manifesto" className="mt-2 rounded-xl border border-[var(--border)] bg-white p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Add manifesto</h2>
         <form action={createManifestoDocumentAction} className="mt-4 space-y-3">
-          <div>
-            <label htmlFor="title" className="block text-xs font-medium text-[var(--foreground)]">
-              Title
-            </label>
-            <input
-              id="title"
-              name="title"
-              required
-              minLength={2}
-              maxLength={500}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
-            />
-          </div>
+          <FormField label="Title" htmlFor="title">
+            <Input id="title" name="title" required minLength={2} maxLength={500} density="admin" />
+          </FormField>
           <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label htmlFor="partySlug" className="block text-xs font-medium text-[var(--foreground)]">
-                Party slug
-              </label>
-              <input
+            <FormField label="Party slug" htmlFor="partySlug">
+              <Input
                 id="partySlug"
                 name="partySlug"
                 required
                 maxLength={120}
                 placeholder="e.g. ndc"
-                className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                density="admin"
               />
-            </div>
-            <div>
-              <label htmlFor="electionCycle" className="block text-xs font-medium text-[var(--foreground)]">
-                Election cycle
-              </label>
-              <input
+            </FormField>
+            <FormField label="Election cycle" htmlFor="electionCycle">
+              <Input
                 id="electionCycle"
                 name="electionCycle"
                 required
                 maxLength={32}
                 placeholder="e.g. 2024"
-                className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                density="admin"
               />
-            </div>
+            </FormField>
           </div>
-          <div>
-            <label htmlFor="sourceUrl" className="block text-xs font-medium text-[var(--foreground)]">
-              Source URL
-            </label>
-            <input
-              id="sourceUrl"
-              name="sourceUrl"
-              type="url"
-              required
-              maxLength={4000}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
-            />
-          </div>
-          <div>
-            <label htmlFor="publishedAt" className="block text-xs font-medium text-[var(--foreground)]">
-              Published date <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
-            </label>
-            <input
-              id="publishedAt"
-              name="publishedAt"
-              type="date"
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm sm:max-w-xs"
-            />
-          </div>
-          <div>
-            <label htmlFor="notes" className="block text-xs font-medium text-[var(--foreground)]">
-              Notes <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
-            </label>
-            <textarea
-              id="notes"
-              name="notes"
-              rows={3}
-              maxLength={20000}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
-            />
-          </div>
-          <button
-            type="submit"
-            className="rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
-          >
+          <FormField label="Source URL" htmlFor="sourceUrl">
+            <Input id="sourceUrl" name="sourceUrl" type="url" required maxLength={4000} density="admin" />
+          </FormField>
+          <FormField label="Published date" htmlFor="publishedAt" optional>
+            <Input id="publishedAt" name="publishedAt" type="date" density="admin" className="sm:max-w-xs" />
+          </FormField>
+          <FormField label="Notes" htmlFor="notes" optional>
+            <Textarea id="notes" name="notes" rows={3} maxLength={20000} density="admin" />
+          </FormField>
+          <Button type="submit" density="admin">
             Save manifesto
-          </button>
+          </Button>
         </form>
       </section>
 
       <section className="mt-10">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Registered ({manifestos.length})</h2>
         {manifestos.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--foreground-secondary)]">None yet.</p>
+          <AdminEmptyState
+            className="mt-2"
+            title="No manifestos yet"
+            message="Register a manifesto document using the form above."
+            action={{ href: "#add-manifesto", label: "Add manifesto" }}
+          />
         ) : (
           <ul className="mt-4 space-y-3">
             {manifestos.map((m) => (

@@ -15,11 +15,11 @@ import {
   updateCommunityForumAdminAction,
   updateCommunityPostReportStatusAction,
 } from "@/app/admin/communities/actions";
-import { requireAdminSession } from "@/lib/admin/require-session";
-import { adminQueueActionDangerClass } from "@/lib/admin/admin-ui-classes";
+import { AdminConfirmDeleteForm } from "@/components/admin/AdminConfirmDeleteForm";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { CommunityCoverEditor } from "@/components/admin/CommunityCoverEditor";
+import { requireAdminSession } from "@/lib/admin/require-session";
 import { QueenMotherPortraitEditor } from "@/components/admin/QueenMotherPortraitEditor";
 import { prisma } from "@/lib/db/prisma";
 import { loadMpOptionsForCommunityRegion } from "@/lib/server/council-mp-evaluation";
@@ -419,16 +419,15 @@ export default async function AdminCommunityDetailPage({ params, searchParams }:
                   </button>
                 </form>
                 {(forumTotalPosts.get(f.id) ?? 0) === 0 ? (
-                  <form action={deleteCommunityForumAdminAction} className="mt-3">
-                    <input type="hidden" name="forumId" value={f.id} />
-                    <input type="hidden" name="communityId" value={community.id} />
-                    <button
-                      type="submit"
-                      className={adminQueueActionDangerClass}
-                    >
-                      Delete empty forum (any status)
-                    </button>
-                  </form>
+                  <div className="mt-3">
+                    <AdminConfirmDeleteForm
+                      action={deleteCommunityForumAdminAction}
+                      hiddenFields={{ forumId: f.id, communityId: community.id }}
+                      title="Delete this empty forum?"
+                      description="This removes the forum permanently. Only empty forums can be deleted."
+                      buttonLabel="Delete empty forum (any status)"
+                    />
+                  </div>
                 ) : null}
               </li>
             ))}

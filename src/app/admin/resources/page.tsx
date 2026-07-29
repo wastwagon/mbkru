@@ -12,6 +12,11 @@ import { AdminMediaField } from "@/components/admin/AdminMediaField";
 import { DeleteResourceDocumentForm } from "@/components/admin/DeleteResourceDocumentForm";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Textarea } from "@/components/ui/Textarea";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import {
   adminQueueActionClass,
@@ -50,87 +55,53 @@ export default async function AdminResourcesPage() {
       <section className="mt-2 rounded-xl border border-[var(--border)] bg-white p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Add document</h2>
         <form action={createResourceDocumentAction} encType="multipart/form-data" className="mt-4 space-y-3">
-          <div>
-            <label htmlFor="title" className="block text-xs font-medium text-[var(--foreground)]">
-              Title
-            </label>
-            <input
-              id="title"
-              name="title"
-              required
-              minLength={2}
-              maxLength={240}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
-            />
-          </div>
-          <div>
-            <label htmlFor="slug" className="block text-xs font-medium text-[var(--foreground)]">
-              Slug (optional)
-            </label>
-            <input
+          <FormField label="Title" htmlFor="title">
+            <Input id="title" name="title" required minLength={2} maxLength={240} density="admin" />
+          </FormField>
+          <FormField label="Slug" htmlFor="slug" optional>
+            <Input
               id="slug"
               name="slug"
               maxLength={120}
               placeholder="auto from title if empty"
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+              density="admin"
             />
-          </div>
-          <div>
-            <label htmlFor="summary" className="block text-xs font-medium text-[var(--foreground)]">
-              Summary (optional)
-            </label>
-            <textarea
-              id="summary"
-              name="summary"
-              rows={2}
-              maxLength={600}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
-            />
-          </div>
+          </FormField>
+          <FormField label="Summary" htmlFor="summary" optional>
+            <Textarea id="summary" name="summary" rows={2} maxLength={600} density="admin" />
+          </FormField>
           <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label htmlFor="category" className="block text-xs font-medium text-[var(--foreground)]">
-                Category
-              </label>
-              <select
-                id="category"
-                name="category"
-                className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
-              >
+            <FormField label="Category" htmlFor="category">
+              <Select id="category" name="category" density="admin">
                 <option value="REPORTS">Reports</option>
                 <option value="POLICY_BRIEFS">Policy briefs</option>
                 <option value="RESEARCH">Research</option>
                 <option value="OTHER">Other</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="sortOrder" className="block text-xs font-medium text-[var(--foreground)]">
-                Sort order
-              </label>
-              <input
+              </Select>
+            </FormField>
+            <FormField label="Sort order" htmlFor="sortOrder">
+              <Input
                 id="sortOrder"
                 name="sortOrder"
                 type="number"
                 min={0}
                 max={999999}
                 defaultValue={0}
-                className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                density="admin"
               />
-            </div>
+            </FormField>
           </div>
-          <div>
-            <label htmlFor="file" className="block text-xs font-medium text-[var(--foreground)]">
-              File (PDF, Word, ODT, plain text — max 25 MB)
-            </label>
-            <input
+          <FormField label="File (PDF, Word, ODT, plain text — max 25 MB)" htmlFor="file">
+            <Input
               id="file"
               name="file"
               type="file"
               required
               accept=".pdf,.doc,.docx,.odt,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.oasis.opendocument.text,text/plain"
-              className="mt-1 block w-full text-sm text-[var(--foreground-secondary)] file:mr-4 file:rounded-lg file:border-0 file:bg-[var(--primary)] file:px-4 file:py-2 file:font-semibold file:text-white"
+              density="admin"
+              className="border-0 bg-transparent px-0 shadow-none text-[var(--foreground-secondary)] file:mr-4 file:rounded-lg file:border-0 file:bg-[var(--primary)] file:px-4 file:py-2 file:font-semibold file:text-white"
             />
-          </div>
+          </FormField>
           <AdminMediaField
             name="coverMediaId"
             label="Cover image (optional)"
@@ -140,12 +111,9 @@ export default async function AdminResourcesPage() {
             <input type="checkbox" name="publishNow" className="rounded border-[var(--border)]" />
             Publish immediately
           </label>
-          <button
-            type="submit"
-            className="rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-[var(--primary-foreground)]"
-          >
+          <Button type="submit" density="admin">
             Save document
-          </button>
+          </Button>
         </form>
       </section>
 

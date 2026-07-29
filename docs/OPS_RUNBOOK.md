@@ -26,6 +26,21 @@ Use while editorial, legal, and data work continues **without deleting programme
 
 ---
 
+## Switch from training / demo data to real content
+
+Use while staff finish CMS training and begin loading live programme data.
+
+| Step | Action |
+|------|--------|
+| 1. Spot training Voice rows | `/admin/reports` — amber **Training** badges; filter **Real only** / **Training only** |
+| 2. Archive training reports | Dry-run then apply: `npm run ops:archive-training-reports` (see `/admin/settings` → Launch readiness) |
+| 3. Stop re-seeding demo accountability | Production: keep `SKIP_DB_SEED` / no `RUN_DB_SEED_ON_BOOT`. Staging: `SEED_ACCOUNTABILITY_DEMO=0` when CSV/roster is authoritative |
+| 4. Load real catalogue | Constituencies CSV → reconcile → MPs CSV → manifesto registry → cited promises → Report Card draft (unpublished until methodology sign-off) |
+| 5. Replace seed marketing | `/admin/posts`, `/admin/resources`, `/admin/partners`, `/admin/media`, `/admin/town-halls` |
+| 6. Public exclusion | Production excludes DEMO/SEED from public surfaces by default; override only with `INCLUDE_TRAINING_DATA_ON_PUBLIC=1` for decks |
+
+---
+
 ## Quarterly / pre-release verification
 
 Use before major traffic (e.g. election window) or after infra changes:

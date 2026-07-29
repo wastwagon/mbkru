@@ -13,4 +13,6 @@ export type PromiseTrackerStats = {
   byStatus: Partial<Record<string, number>>;
   /** Up to four policy sectors in this slice, by row count (desc). */
   topPolicySectors: TopPolicySectorSlice[];
+  /** ISO timestamp when this snapshot was computed. */
+  generatedAt: string;
 };

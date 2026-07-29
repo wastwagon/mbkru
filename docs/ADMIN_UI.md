@@ -29,6 +29,8 @@ Use `src/lib/admin/admin-page-layout.ts`:
 - `AdminTablePanel`: bordered, scroll-safe table shell
 - `AdminSectionCard`: bordered section shell for grouped analytics/details
 - `AdminEmptyState`: plain muted text by default; richer dashed panel when `title` / `action` are set
+- `AdminConfirmDeleteForm`: ConfirmDialog-guarded destructive submits for CMS deletes
+- `TrainingReportBadge`: marks DEMO/SEED / Testing Phase citizen reports in admin queues
 - Dashboard viz (shared with public transparency): `StatBarList`, `StatusDonut`, `MonthTrendBars`, `Sparkline` in `src/components/viz/`
 - Home snapshot data: `getAdminHomeSnapshot()` in `src/lib/server/admin-home-attention.ts`
 - Prefer shared UI primitives for new controls:

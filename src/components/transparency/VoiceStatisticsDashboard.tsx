@@ -30,12 +30,6 @@ export function VoiceStatisticsDashboard({ analytics }: Props) {
       count,
     }));
 
-  const regionItems = analytics.byRegion.map((r) => ({
-    key: r.regionId,
-    label: r.regionName,
-    count: r.count,
-  }));
-
   const csvHref = `/api/export/citizen-report-analytics-csv?months=${analytics.windowMonths}`;
 
   return (
@@ -144,13 +138,6 @@ export function VoiceStatisticsDashboard({ analytics }: Props) {
       </div>
 
       <GhanaRegionsReportHeatMap regions={analytics.byRegion} />
-
-      {analytics.byRegion.length > 0 ? (
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
-          <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">Regional ranking</h2>
-          <StatBarList items={regionItems} accent="gold" />
-        </div>
-      ) : null}
     </div>
   );
 }

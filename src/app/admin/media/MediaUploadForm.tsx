@@ -3,6 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+
 export function MediaUploadForm() {
   const router = useRouter();
   const [status, setStatus] = useState<string | null>(null);
@@ -40,26 +44,23 @@ export function MediaUploadForm() {
       <h2 className="font-semibold text-[var(--foreground)]">Upload image</h2>
       <p className="mt-1 text-sm text-[var(--foreground-secondary)]">JPEG, PNG, WebP or GIF · max 8MB</p>
       <div className="mt-4 space-y-3">
-        <input
-          type="file"
-          name="file"
-          accept="image/jpeg,image/png,image/webp,image/gif"
-          required
-          className="block w-full text-sm text-[var(--foreground)]"
-        />
-        <input
-          type="text"
-          name="alt"
-          placeholder="Alt text (optional)"
-          className="w-full rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--foreground)]"
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          className="rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
-        >
-          {loading ? "Uploading…" : "Upload"}
-        </button>
+        <FormField label="File" htmlFor="file">
+          <Input
+            id="file"
+            type="file"
+            name="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            required
+            density="admin"
+            className="border-0 bg-transparent px-0 shadow-none"
+          />
+        </FormField>
+        <FormField label="Alt text" htmlFor="alt" optional>
+          <Input id="alt" type="text" name="alt" placeholder="Alt text (optional)" density="admin" />
+        </FormField>
+        <Button type="submit" density="admin" disabled={loading} loading={loading} loadingLabel="Uploading…">
+          Upload
+        </Button>
         {status ? <p className="text-sm text-[var(--foreground-secondary)]">{status}</p> : null}
       </div>
     </form>

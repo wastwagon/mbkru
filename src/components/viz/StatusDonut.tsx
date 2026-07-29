@@ -44,8 +44,12 @@ export function StatusDonut({
         <div
           className="absolute inset-0 rounded-full shadow-inner ring-1 ring-black/5"
           style={{ background: `conic-gradient(${gradient})` }}
+          aria-hidden
         />
-        <div className="absolute inset-[22%] flex flex-col items-center justify-center rounded-full bg-white ring-1 ring-slate-200">
+        <div
+          className="absolute inset-[22%] flex flex-col items-center justify-center rounded-full bg-white ring-1 ring-slate-200"
+          aria-hidden
+        >
           <span className="font-display text-2xl font-bold tabular-nums text-[var(--foreground)]">{total}</span>
           <span className="text-[10px] font-medium uppercase tracking-wider text-[var(--foreground-secondary)]">
             {centerCaption}

@@ -3,6 +3,9 @@ import Link from "next/link";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -26,52 +29,28 @@ export default async function AdminRegionsPage() {
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Add region</h2>
         <p className="mt-1 text-xs text-[var(--foreground-secondary)]">Use sparingly — Ghana normally ships sixteen seeded rows.</p>
         <form action={createRegionAction} className="mt-4 grid gap-3 sm:grid-cols-2">
-          <div className="sm:col-span-2">
-            <label htmlFor="new-name" className="block text-xs font-medium">
-              Name
-            </label>
-            <input
-              id="new-name"
-              name="name"
-              required
-              maxLength={120}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
-            />
-          </div>
-          <div>
-            <label htmlFor="new-slug" className="block text-xs font-medium">
-              Slug
-            </label>
-            <input
+          <FormField label="Name" htmlFor="new-name" className="sm:col-span-2">
+            <Input id="new-name" name="name" required maxLength={120} density="admin" />
+          </FormField>
+          <FormField label="Slug" htmlFor="new-slug">
+            <Input
               id="new-slug"
               name="slug"
               required
               maxLength={80}
               pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
               placeholder="western-north"
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 font-mono text-sm"
+              density="admin"
+              className="font-mono"
             />
-          </div>
-          <div>
-            <label htmlFor="new-order" className="block text-xs font-medium">
-              Sort order <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
-            </label>
-            <input
-              id="new-order"
-              name="sortOrder"
-              type="number"
-              min={0}
-              max={9999}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
-            />
-          </div>
+          </FormField>
+          <FormField label="Sort order" htmlFor="new-order" optional>
+            <Input id="new-order" name="sortOrder" type="number" min={0} max={9999} density="admin" />
+          </FormField>
           <div className="sm:col-span-2">
-            <button
-              type="submit"
-              className="rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
-            >
+            <Button type="submit" density="admin">
               Create region
-            </button>
+            </Button>
           </div>
         </form>
       </section>
@@ -86,38 +65,30 @@ export default async function AdminRegionsPage() {
               <li key={r.id} className="rounded-2xl border border-[var(--border)] bg-white p-4">
                 <form action={updateRegionAction} className="grid gap-3 sm:grid-cols-2">
                   <input type="hidden" name="id" value={r.id} />
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-medium" htmlFor={`name-${r.id}`}>
-                      Name
-                    </label>
-                    <input
+                  <FormField label="Name" htmlFor={`name-${r.id}`} className="sm:col-span-2">
+                    <Input
                       id={`name-${r.id}`}
                       name="name"
                       required
                       defaultValue={r.name}
                       maxLength={120}
-                      className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                      density="admin"
                     />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium" htmlFor={`slug-${r.id}`}>
-                      Slug
-                    </label>
-                    <input
+                  </FormField>
+                  <FormField label="Slug" htmlFor={`slug-${r.id}`}>
+                    <Input
                       id={`slug-${r.id}`}
                       name="slug"
                       required
                       defaultValue={r.slug}
                       maxLength={80}
                       pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
-                      className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 font-mono text-sm"
+                      density="admin"
+                      className="font-mono"
                     />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium" htmlFor={`order-${r.id}`}>
-                      Sort order
-                    </label>
-                    <input
+                  </FormField>
+                  <FormField label="Sort order" htmlFor={`order-${r.id}`}>
+                    <Input
                       id={`order-${r.id}`}
                       name="sortOrder"
                       type="number"
@@ -125,19 +96,16 @@ export default async function AdminRegionsPage() {
                       max={9999}
                       required
                       defaultValue={r.sortOrder}
-                      className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+                      density="admin"
                     />
-                  </div>
+                  </FormField>
                   <div className="sm:col-span-2 flex flex-wrap items-center justify-end gap-3">
                     <Link href={`/admin/regions/${r.id}/gallery`} className={`text-sm font-medium ${primaryLinkClass}`}>
                       Header photo &amp; sector gallery →
                     </Link>
-                    <button
-                      type="submit"
-                      className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-2 text-sm font-medium hover:bg-[var(--muted)]"
-                    >
+                    <Button type="submit" variant="surface" density="admin">
                       Save
-                    </button>
+                    </Button>
                   </div>
                 </form>
                 <p className="mt-2 font-mono text-xs text-[var(--foreground-secondary)]">id: {r.id}</p>

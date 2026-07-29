@@ -1,11 +1,13 @@
 import Link from "next/link";
 
 import { requireAdminSession } from "@/lib/admin/require-session";
+import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
 import { AdminListPanel } from "@/components/admin/AdminListPanel";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { Button } from "@/components/ui/Button";
 import { prisma } from "@/lib/db/prisma";
-import { focusRingMdClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 
 export default async function AdminPostsPage() {
   await requireAdminSession();
@@ -17,17 +19,20 @@ export default async function AdminPostsPage() {
         title="News posts"
         description="Create and publish articles for the public news index."
         actions={
-          <Link
-            href="/admin/posts/new"
-            className={`inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] ${focusRingMdClass}`}
-          >
+          <Button href="/admin/posts/new" density="admin">
             New post
-          </Link>
+          </Button>
         }
       />
       <AdminListPanel>
         {posts.length === 0 ? (
-          <li className="p-6 text-sm text-[var(--foreground-secondary)]">No posts yet.</li>
+          <li className="p-6">
+            <AdminEmptyState
+              title="No posts yet"
+              message="Create an article to appear on the public news index."
+              action={{ href: "/admin/posts/new", label: "New post" }}
+            />
+          </li>
         ) : (
           posts.map((p) => (
             <li key={p.id} className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">

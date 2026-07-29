@@ -23,9 +23,11 @@ import { requireAdminSession } from "@/lib/admin/require-session";
 import { adminQueueActionClass } from "@/lib/admin/admin-ui-classes";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { TrainingReportBadge } from "@/components/admin/TrainingReportBadge";
 import { prisma } from "@/lib/db/prisma";
 import { roundApproximateCoord } from "@/lib/geo/round-approximate-coord";
 import { destructiveTextControlClass, primaryLinkClass } from "@/lib/primary-link-styles";
+import { isTrainingCitizenReport } from "@/lib/reports/training-data";
 
 import type {
   CitizenReportExperienceVerificationTier,
@@ -246,6 +248,23 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
           </>
         }
       />
+
+      {isTrainingCitizenReport(report) ? (
+        <div
+          className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950"
+          role="note"
+        >
+          <p className="flex flex-wrap items-center gap-2 font-semibold">
+            Training / demo report
+            <TrainingReportBadge trackingCode={report.trackingCode} title={report.title} />
+          </p>
+          <p className="mt-1 text-amber-900/90">
+            This row uses a demo/seed tracking code or a “Testing Phase” title. Do not treat it as real citizen intake
+            when loading live programme content. Prefer the Real only filter on the queue, or archive training rows via{" "}
+            <code className="text-[11px]">npm run ops:archive-training-reports</code>.
+          </p>
+        </div>
+      ) : null}
 
       {report.kind === "SITUATIONAL_ALERT" ? (
         <div

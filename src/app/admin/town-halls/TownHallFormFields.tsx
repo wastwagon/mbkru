@@ -1,10 +1,11 @@
 import type { ProgrammeEventKind, TownHallEventStatus } from "@prisma/client";
 
 import { AdminMediaField } from "@/components/admin/AdminMediaField";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Textarea } from "@/components/ui/Textarea";
 import { programmeEventKindLabel } from "@/lib/programme-event-labels";
-
-const input = "mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm";
-const label = "block text-xs font-medium text-[var(--foreground)]";
 
 export type TownHallFormDefaults = {
   id?: string;
@@ -41,162 +42,126 @@ export function TownHallFormFields({
   return (
     <>
       {defaults.id ? <input type="hidden" name="id" value={defaults.id} /> : null}
-      <div>
-        <label htmlFor="slug" className={label}>
-          Slug <span className="font-normal text-[var(--foreground-secondary)]">(lowercase, hyphens)</span>
-        </label>
-        <input
+      <FormField label="Slug" htmlFor="slug" hint="Lowercase, hyphens">
+        <Input
           id="slug"
           name="slug"
           required
           maxLength={140}
           pattern="[a-z0-9]+(-[a-z0-9]+)*"
           defaultValue={defaults.slug}
-          className={input}
+          density="admin"
           autoComplete="off"
         />
-      </div>
-      <div className="sm:col-span-2">
-        <label htmlFor="title" className={label}>
-          Title
-        </label>
-        <input id="title" name="title" required maxLength={300} defaultValue={defaults.title} className={input} />
-      </div>
-      <div>
-        <label htmlFor="kind" className={label}>
-          Programme type
-        </label>
-        <select id="kind" name="kind" className={input} defaultValue={defaults.kind} required>
+      </FormField>
+      <FormField label="Title" htmlFor="title" className="sm:col-span-2">
+        <Input id="title" name="title" required maxLength={300} defaultValue={defaults.title} density="admin" />
+      </FormField>
+      <FormField label="Programme type" htmlFor="kind">
+        <Select id="kind" name="kind" density="admin" defaultValue={defaults.kind} required>
           {KINDS.map((k) => (
             <option key={k} value={k}>
               {programmeEventKindLabel(k)}
             </option>
           ))}
-        </select>
-      </div>
-      <div className="sm:col-span-2">
-        <label htmlFor="summary" className={label}>
-          Summary
-        </label>
-        <textarea
+        </Select>
+      </FormField>
+      <FormField label="Summary" htmlFor="summary" className="sm:col-span-2">
+        <Textarea
           id="summary"
           name="summary"
           rows={4}
           maxLength={20000}
           defaultValue={defaults.summary}
-          className={input}
+          density="admin"
         />
-      </div>
-      <div>
-        <label htmlFor="programmeQuarter" className={label}>
-          Programme quarter <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
-        </label>
-        <input
+      </FormField>
+      <FormField label="Programme quarter" htmlFor="programmeQuarter" optional>
+        <Input
           id="programmeQuarter"
           name="programmeQuarter"
           maxLength={80}
           placeholder="e.g. Q3 2026"
           defaultValue={defaults.programmeQuarter}
-          className={input}
+          density="admin"
         />
-      </div>
-      <div>
-        <label htmlFor="regionId" className={label}>
-          Region <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
-        </label>
-        <select id="regionId" name="regionId" className={input} defaultValue={defaults.regionId}>
+      </FormField>
+      <FormField label="Region" htmlFor="regionId" optional>
+        <Select id="regionId" name="regionId" density="admin" defaultValue={defaults.regionId}>
           <option value="">— None / national —</option>
           {regions.map((r) => (
             <option key={r.id} value={r.id}>
               {r.name}
             </option>
           ))}
-        </select>
-      </div>
-      <div className="sm:col-span-2">
-        <label htmlFor="constituencyId" className={label}>
-          Constituency <span className="font-normal text-[var(--foreground-secondary)]">(optional — for debates)</span>
-        </label>
-        <select id="constituencyId" name="constituencyId" className={input} defaultValue={defaults.constituencyId}>
+        </Select>
+      </FormField>
+      <FormField
+        label="Constituency"
+        htmlFor="constituencyId"
+        className="sm:col-span-2"
+        optional
+        hint="For debates"
+      >
+        <Select id="constituencyId" name="constituencyId" density="admin" defaultValue={defaults.constituencyId}>
           <option value="">— None —</option>
           {constituencies.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name} ({c.regionName})
             </option>
           ))}
-        </select>
-      </div>
-      <div>
-        <label htmlFor="status" className={label}>
-          Status
-        </label>
-        <select id="status" name="status" className={input} defaultValue={defaults.status} required>
+        </Select>
+      </FormField>
+      <FormField label="Status" htmlFor="status">
+        <Select id="status" name="status" density="admin" defaultValue={defaults.status} required>
           {STATUSES.map((s) => (
             <option key={s} value={s}>
               {s}
             </option>
           ))}
-        </select>
-      </div>
-      <div>
-        <label htmlFor="sortOrder" className={label}>
-          Sort order
-        </label>
-        <input
+        </Select>
+      </FormField>
+      <FormField label="Sort order" htmlFor="sortOrder">
+        <Input
           id="sortOrder"
           name="sortOrder"
           type="number"
           min={0}
           max={999999}
           defaultValue={defaults.sortOrder}
-          className={input}
+          density="admin"
         />
-      </div>
-      <div className="sm:col-span-2">
-        <label htmlFor="venueLine" className={label}>
-          Venue line <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
-        </label>
-        <input id="venueLine" name="venueLine" maxLength={500} defaultValue={defaults.venueLine} className={input} />
-      </div>
-      <div>
-        <label htmlFor="startsAt" className={label}>
-          Starts <span className="font-normal text-[var(--foreground-secondary)]">(optional, local)</span>
-        </label>
-        <input id="startsAt" name="startsAt" type="datetime-local" defaultValue={defaults.startsAt} className={input} />
-      </div>
-      <div>
-        <label htmlFor="endsAt" className={label}>
-          Ends <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
-        </label>
-        <input id="endsAt" name="endsAt" type="datetime-local" defaultValue={defaults.endsAt} className={input} />
-      </div>
-      <div className="sm:col-span-2">
-        <label htmlFor="infoUrl" className={label}>
-          Info URL <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
-        </label>
-        <input
+      </FormField>
+      <FormField label="Venue line" htmlFor="venueLine" className="sm:col-span-2" optional>
+        <Input id="venueLine" name="venueLine" maxLength={500} defaultValue={defaults.venueLine} density="admin" />
+      </FormField>
+      <FormField label="Starts" htmlFor="startsAt" optional hint="Local timezone">
+        <Input id="startsAt" name="startsAt" type="datetime-local" defaultValue={defaults.startsAt} density="admin" />
+      </FormField>
+      <FormField label="Ends" htmlFor="endsAt" optional>
+        <Input id="endsAt" name="endsAt" type="datetime-local" defaultValue={defaults.endsAt} density="admin" />
+      </FormField>
+      <FormField label="Info URL" htmlFor="infoUrl" className="sm:col-span-2" optional>
+        <Input
           id="infoUrl"
           name="infoUrl"
           type="url"
           maxLength={2000}
           placeholder="https://"
           defaultValue={defaults.infoUrl}
-          className={input}
+          density="admin"
         />
-      </div>
-      <div className="sm:col-span-2">
-        <label htmlFor="sourceCitation" className={label}>
-          Source / citation <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
-        </label>
-        <textarea
+      </FormField>
+      <FormField label="Source / citation" htmlFor="sourceCitation" className="sm:col-span-2" optional>
+        <Textarea
           id="sourceCitation"
           name="sourceCitation"
           rows={3}
           maxLength={20000}
           defaultValue={defaults.sourceCitation}
-          className={input}
+          density="admin"
         />
-      </div>
+      </FormField>
       <AdminMediaField
         name="featuredMediaId"
         label="Featured photo (optional)"

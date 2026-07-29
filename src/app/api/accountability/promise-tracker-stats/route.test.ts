@@ -41,6 +41,7 @@ describe("GET /api/accountability/promise-tracker-stats", () => {
       reportCardEntriesPublished: 0,
       byStatus: { TRACKING: 3 },
       topPolicySectors: [],
+      generatedAt: "2026-07-28T12:00:00.000Z",
     });
   });
 

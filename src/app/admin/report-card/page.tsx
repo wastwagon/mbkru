@@ -11,6 +11,10 @@ import { requireAdminSession } from "@/lib/admin/require-session";
 import { adminQueueActionNeutralClass, adminSuccessButtonClass } from "@/lib/admin/admin-ui-classes";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
 import { prisma } from "@/lib/db/prisma";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { reportCardPublicVersusStoredLabel } from "@/lib/report-card-public-label";
@@ -36,59 +40,39 @@ export default async function AdminReportCardPage() {
         }
       />
 
-      <section className="mt-2 rounded-2xl border border-[var(--border)] bg-white p-6">
+      <section id="new-cycle" className="mt-2 rounded-2xl border border-[var(--border)] bg-white p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">New cycle</h2>
         <form action={createReportCardCycleAction} className="mt-4 grid gap-3 sm:grid-cols-2">
-          <div>
-            <label htmlFor="year" className="block text-xs font-medium">
-              Year
-            </label>
-            <input
-              id="year"
-              name="year"
-              type="number"
-              required
-              min={1992}
-              max={2100}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <label htmlFor="label" className="block text-xs font-medium">
-              Label
-            </label>
-            <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
-              Shown on the public site unless it looks like internal scaffolding (pilot, layout workflow, etc.) — then
-              visitors see &quot;People&apos;s Report Card [year]&quot; instead.
-            </p>
-            <input
+          <FormField label="Year" htmlFor="year">
+            <Input id="year" name="year" type="number" required min={1992} max={2100} density="admin" />
+          </FormField>
+          <FormField
+            label="Label"
+            htmlFor="label"
+            className="sm:col-span-2"
+            hint={
+              <>
+                Shown on the public site unless it looks like internal scaffolding (pilot, layout workflow, etc.) — then
+                visitors see &quot;People&apos;s Report Card [year]&quot; instead.
+              </>
+            }
+          >
+            <Input
               id="label"
               name="label"
               required
               maxLength={200}
               placeholder="e.g. 2026 mid-term snapshot"
-              className="mt-2 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+              density="admin"
             />
-          </div>
+          </FormField>
+          <FormField label="Methodology notes" htmlFor="methodology" optional className="sm:col-span-2">
+            <Textarea id="methodology" name="methodology" rows={3} maxLength={100000} density="admin" />
+          </FormField>
           <div className="sm:col-span-2">
-            <label htmlFor="methodology" className="block text-xs font-medium">
-              Methodology notes <span className="font-normal text-[var(--foreground-secondary)]">(optional)</span>
-            </label>
-            <textarea
-              id="methodology"
-              name="methodology"
-              rows={3}
-              maxLength={100000}
-              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <button
-              type="submit"
-              className="rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]"
-            >
+            <Button type="submit" density="admin">
               Create cycle
-            </button>
+            </Button>
           </div>
         </form>
       </section>
@@ -96,7 +80,11 @@ export default async function AdminReportCardPage() {
       <AdminListPanel className="mt-10">
         {cycles.length === 0 ? (
           <li className="p-6">
-            <AdminEmptyState message="No cycles yet." />
+            <AdminEmptyState
+              title="No cycles yet"
+              message="Create a cycle above to start adding scorecard entries."
+              action={{ href: "#new-cycle", label: "Create a cycle" }}
+            />
           </li>
         ) : (
           cycles.map((c) => {

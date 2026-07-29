@@ -1,9 +1,15 @@
 import Link from "next/link";
 
 import { deletePostAction, savePostAction } from "@/app/admin/posts/actions";
+import { AdminConfirmDeleteForm } from "@/components/admin/AdminConfirmDeleteForm";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
-import { destructiveTextControlClass, primaryLinkClass } from "@/lib/primary-link-styles";
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Textarea } from "@/components/ui/Textarea";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 import type { Media, Post } from "@prisma/client";
 
 type PostWithOptional = (Post & { featuredMedia: Media | null }) | null;
@@ -16,49 +22,49 @@ export function PostEditor({ post, media }: { post: PostWithOptional; media: Med
       <AdminPageHeader title={isEdit ? "Edit post" : "New post"} />
       <form action={savePostAction} className="mt-2 space-y-5">
         {post?.id ? <input type="hidden" name="id" value={post.id} /> : null}
-        <div>
-          <label className="block text-sm font-medium text-[var(--foreground)]">Title</label>
-          <input
-            name="title"
-            required
-            defaultValue={post?.title ?? ""}
-            className="mt-1 w-full rounded-xl border border-[var(--border)] px-4 py-3 text-[var(--foreground)]"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-[var(--foreground)]">Slug (URL)</label>
-          <input
+        <FormField label="Title" htmlFor="title">
+          <Input id="title" name="title" required defaultValue={post?.title ?? ""} density="admin" />
+        </FormField>
+        <FormField label="Slug (URL)" htmlFor="slug">
+          <Input
+            id="slug"
             name="slug"
             placeholder="auto from title if empty"
             defaultValue={post?.slug ?? ""}
-            className="mt-1 w-full rounded-xl border border-[var(--border)] px-4 py-3 text-[var(--foreground)]"
+            density="admin"
           />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-[var(--foreground)]">Excerpt</label>
-          <textarea
-            name="excerpt"
-            rows={3}
-            defaultValue={post?.excerpt ?? ""}
-            className="mt-1 w-full rounded-xl border border-[var(--border)] px-4 py-3 text-[var(--foreground)]"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-[var(--foreground)]">Body (Markdown)</label>
-          <textarea
+        </FormField>
+        <FormField label="Excerpt" htmlFor="excerpt">
+          <Textarea id="excerpt" name="excerpt" rows={3} defaultValue={post?.excerpt ?? ""} density="admin" />
+        </FormField>
+        <FormField label="Body (Markdown)" htmlFor="body">
+          <Textarea
+            id="body"
             name="body"
             required
             rows={16}
             defaultValue={post?.body ?? ""}
-            className="mt-1 w-full rounded-xl border border-[var(--border)] px-4 py-3 font-mono text-sm text-[var(--foreground)]"
+            density="admin"
+            className="font-mono text-sm"
           />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-[var(--foreground)]">Featured image (library)</label>
-          <select
+        </FormField>
+        <FormField
+          label="Featured image (library)"
+          htmlFor="featuredMediaId"
+          hint={
+            <>
+              <Link href="/admin/media" className={primaryLinkClass}>
+                Upload images
+              </Link>{" "}
+              to reuse them here.
+            </>
+          }
+        >
+          <Select
+            id="featuredMediaId"
             name="featuredMediaId"
             defaultValue={post?.featuredMediaId ?? ""}
-            className="mt-1 w-full rounded-xl border border-[var(--border)] px-4 py-3 text-[var(--foreground)]"
+            density="admin"
           >
             <option value="">None</option>
             {media.map((m) => (
@@ -66,14 +72,8 @@ export function PostEditor({ post, media }: { post: PostWithOptional; media: Med
                 {m.filename} {m.alt ? `— ${m.alt}` : ""}
               </option>
             ))}
-          </select>
-          <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
-            <Link href="/admin/media" className={primaryLinkClass}>
-              Upload images
-            </Link>{" "}
-            to reuse them here.
-          </p>
-        </div>
+          </Select>
+        </FormField>
         <div className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -87,28 +87,26 @@ export function PostEditor({ post, media }: { post: PostWithOptional; media: Med
           </label>
         </div>
         <div className="flex flex-wrap gap-3">
-          <button type="submit" className="rounded-xl bg-[var(--primary)] px-6 py-3 font-semibold text-white">
+          <Button type="submit" density="admin">
             Save
-          </button>
-          <Link
-            href="/admin/posts"
-            className="inline-flex items-center rounded-xl border border-[var(--border)] px-6 py-3 text-sm font-semibold text-[var(--foreground)]"
-          >
+          </Button>
+          <Button href="/admin/posts" variant="surface" density="admin">
             Cancel
-          </Link>
+          </Button>
         </div>
       </form>
 
       {isEdit && post ? (
-        <form action={deletePostAction} className="mt-10 border-t border-[var(--border)] pt-8">
-          <input type="hidden" name="id" value={post.id} />
-          <button
-            type="submit"
-            className={`text-sm font-semibold text-red-600 ${destructiveTextControlClass}`}
-          >
-            Delete post
-          </button>
-        </form>
+        <div className="mt-10 border-t border-[var(--border)] pt-8">
+          <AdminConfirmDeleteForm
+            action={deletePostAction}
+            hiddenFields={{ id: post.id }}
+            title="Delete this post?"
+            description="This permanently deletes the post. This cannot be undone."
+            buttonLabel="Delete post"
+            variant="text"
+          />
+        </div>
       ) : null}
     </AdminPageContainer>
   );

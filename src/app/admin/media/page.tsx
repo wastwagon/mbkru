@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { MediaUploadForm } from "@/app/admin/media/MediaUploadForm";
+import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
 import { requireAdminSession } from "@/lib/admin/require-session";
 import { AdminPageContainer } from "@/components/admin/AdminPageContainer";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -21,13 +22,19 @@ export default async function AdminMediaPage() {
         title="Image library"
         description="Upload once, then pick these images as featured images on news posts."
       />
-      <div className="max-w-lg">
+      <div id="upload" className="max-w-lg">
         <MediaUploadForm />
       </div>
       <h2 className="mt-12 font-semibold text-[var(--foreground)]">All images</h2>
       <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.length === 0 ? (
-          <li className="text-sm text-[var(--foreground-secondary)]">No uploads yet.</li>
+          <li className="sm:col-span-2 lg:col-span-3">
+            <AdminEmptyState
+              title="No uploads yet"
+              message="Upload an image above to start the library for news featured images."
+              action={{ href: "#upload", label: "Upload image" }}
+            />
+          </li>
         ) : (
           items.map((m) => (
             <li

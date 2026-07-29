@@ -91,5 +91,6 @@ export async function getPromiseTrackerStats(filters: PromisesApiFilters): Promi
     reportCardEntriesPublished: entryCount,
     byStatus,
     topPolicySectors,
+    generatedAt: new Date().toISOString(),
   };
 }

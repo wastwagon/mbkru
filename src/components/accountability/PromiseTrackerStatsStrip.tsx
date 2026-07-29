@@ -6,6 +6,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import { ghanaParliamentTermShortLabel } from "@/config/ghana-parliament-term";
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
+import { DataFreshnessBadge } from "@/components/ui/DataFreshnessBadge";
 import type { PromiseTrackerStats } from "@/lib/promise-tracker-public-types";
 
 type Props = {
@@ -319,9 +320,11 @@ export function PromiseTrackerStatsStrip({ stats, subtitle, compact }: Props) {
               </p>
             ) : null}
           </div>
-          <span className="shrink-0 rounded-full bg-emerald-400/15 px-3.5 py-1.5 text-xs font-semibold text-emerald-100 ring-1 ring-emerald-400/30">
-            Data live
-          </span>
+          <DataFreshnessBadge
+            generatedAt={stats.generatedAt}
+            label="Data live"
+            className="shrink-0 bg-emerald-400/15 text-emerald-100 ring-emerald-400/30"
+          />
         </div>
 
         <dl

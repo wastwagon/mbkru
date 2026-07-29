@@ -32,7 +32,7 @@ export function AdminAttentionList({ items, className = "" }: Props) {
       <AdminEmptyState
         className={className}
         title="Nothing urgent"
-        message="No SLA breaches, open community reports, or failed notification jobs right now."
+        message="No SLA breaches, open community reports, failed notifications, pending posts, verifications, report queue backlog, or public-cause drafts right now."
         action={{ href: "/admin/analytics/citizen-reports", label: "View report analytics" }}
       />
     );

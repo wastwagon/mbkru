@@ -83,12 +83,6 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
     count: row.count,
   }));
 
-  const regionItems = data.byRegion.map((r) => ({
-    key: r.regionId,
-    label: r.regionName,
-    count: r.count,
-  }));
-
   const windowShare =
     data.totals.all > 0 ? Math.round((data.totals.inWindow / data.totals.all) * 100) : 0;
   const slaTone =
@@ -257,26 +251,58 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
         <AdminSectionCard>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">By kind (window)</h2>
-          <StatBarList items={kindWindowItems} emptyMessage="No rows in window." />
+          {kindWindowItems.length === 0 ? (
+            <AdminEmptyState
+              className="mt-4"
+              title="No kinds in window"
+              message="Widen the month window or wait for new submissions."
+              action={{ href: "/admin/reports", label: "Open report queue" }}
+            />
+          ) : (
+            <StatBarList items={kindWindowItems} />
+          )}
         </AdminSectionCard>
         <AdminSectionCard>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">By status (window)</h2>
-          <StatusDonut items={statusWindowItems} centerCaption="In window" emptyMessage="No rows in window." />
+          {statusWindowItems.length === 0 ? (
+            <AdminEmptyState
+              className="mt-4"
+              title="No statuses in window"
+              message="Widen the month window or check the triage queue."
+              action={{ href: "/admin/reports", label: "Open report queue" }}
+            />
+          ) : (
+            <StatusDonut items={statusWindowItems} centerCaption="In window" />
+          )}
         </AdminSectionCard>
       </div>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
         <AdminSectionCard>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">By kind (all-time)</h2>
-          <StatBarList
-            items={kindAllItems}
-            maxCount={Math.max(1, data.totals.all)}
-            emptyMessage="No rows yet."
-          />
+          {kindAllItems.length === 0 ? (
+            <AdminEmptyState
+              className="mt-4"
+              title="No reports yet"
+              message="Citizen reports will appear here once the queue receives submissions."
+              action={{ href: "/admin/reports", label: "Open report queue" }}
+            />
+          ) : (
+            <StatBarList items={kindAllItems} maxCount={Math.max(1, data.totals.all)} />
+          )}
         </AdminSectionCard>
         <AdminSectionCard>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">By status (all-time)</h2>
-          <StatusDonut items={statusAllItems} centerCaption="All time" emptyMessage="No rows yet." />
+          {statusAllItems.length === 0 ? (
+            <AdminEmptyState
+              className="mt-4"
+              title="No status breakdown yet"
+              message="Workflow statuses populate as reports move through triage."
+              action={{ href: "/admin/reports", label: "Open report queue" }}
+            />
+          ) : (
+            <StatusDonut items={statusAllItems} centerCaption="All time" />
+          )}
         </AdminSectionCard>
       </div>
 
@@ -287,18 +313,38 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
             From <code className="rounded bg-[var(--section-light)] px-1 py-0.5 text-[11px]">operationsPlaybookKey</code>{" "}
             on each report.
           </p>
-          <StatBarList items={playbookAllItems} emptyMessage="No playbook tags yet." />
+          {playbookAllItems.length === 0 ? (
+            <AdminEmptyState
+              className="mt-4"
+              title="No playbook tags yet"
+              message="Assign an operations playbook key on a report to start tracking tags."
+              action={{ href: "/admin/reports", label: "Open report queue" }}
+            />
+          ) : (
+            <StatBarList items={playbookAllItems} />
+          )}
         </AdminSectionCard>
         <AdminSectionCard>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">Ops playbook tag (window)</h2>
-          <StatBarList items={playbookWindowItems} emptyMessage="No playbook tags in window." />
+          {playbookWindowItems.length === 0 ? (
+            <AdminEmptyState
+              className="mt-4"
+              title="No playbook tags in window"
+              message="Widen the month window or tag reports during triage."
+              action={{ href: "/admin/reports", label: "Open report queue" }}
+            />
+          ) : (
+            <StatBarList items={playbookWindowItems} />
+          )}
         </AdminSectionCard>
       </div>
 
       <section className="mt-10 space-y-6">
         <div>
           <h2 className="text-sm font-semibold text-[var(--foreground)]">Regional heat map</h2>
-          <p className="mt-1 text-xs text-[var(--foreground-secondary)]">All-time counts by tagged region.</p>
+          <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
+            All-time counts by tagged region — ranking is in the table under the map.
+          </p>
           {data.byRegion.length === 0 ? (
             <AdminEmptyState
               className="mt-3"
@@ -312,13 +358,6 @@ export default async function AdminCitizenReportAnalyticsPage({ searchParams }: 
             </div>
           )}
         </div>
-
-        {data.byRegion.length > 0 ? (
-          <AdminSectionCard>
-            <h2 className="text-sm font-semibold text-[var(--foreground)]">Regional ranking</h2>
-            <StatBarList items={regionItems} accent="gold" />
-          </AdminSectionCard>
-        ) : null}
       </section>
     </AdminPageContainer>
   );
