@@ -109,15 +109,14 @@ Staff log in at **/admin/login**.
 
 | Feature | URL | What it does | Status |
 |---------|-----|--------------|--------|
-| Register | /register | Create account (email, password, region, constituency) | Working |
+| Register | /register | Create account (email, password, region; optional constituency/name) — **no Ghana Card** | Working |
 | Sign in | /login | Member login | Working |
 | Forgot / reset password | /forgot-password | Password recovery | Working |
-| My account | /account | Dashboard: reports, notifications, Ghana Card, privacy tools | Working |
+| My account | /account | Dashboard: reports, notifications, privacy tools | Working |
 | My reports | /account/reports | List of member's submissions | Working |
 | Notifications | /account/notifications | In-app alerts | Working |
-| Ghana Card verification | /account | Identity check for high-trust MP performance reports | Built — requires Hubtel credentials |
 
-**Training note:** Most report types only need a member account. **MP performance reports** additionally require verified Ghana Card when that gate is enabled.
+**Training note:** **Ghana Card is not part of registration.** Full facilitator guide: `docs/MBKRU_TRAINING_TEAM_HANDBOOK.md`.
 
 ### MBKRU Voice — citizen reporting
 
@@ -129,7 +128,7 @@ Staff log in at **/admin/login**.
 | Public causes | /citizens-voice/causes | Staff-approved reports open for public support | Working |
 | Report discussions | /citizens-voice/discussions | Comments, reactions, support on open reports | Working |
 | Voice statistics | /transparency | Aggregate counts — no personal data | Working |
-| MBKRU Voice AI chat | Chat widget on Voice pages | AI assistant for questions | Working — needs OpenAI key |
+| MBKRU Voice chatbot | Site-wide floating assistant | English Q&A for relevant platform questions (FAQ fallback without OpenAI) | Working — rich answers need OpenAI key |
 | Whistleblower guidance | /whistleblowing | Safe escalation guidance | Working |
 
 **Report types staff can receive:**
@@ -209,7 +208,7 @@ Staff log in at **/admin/login**.
 | Item | Priority | Notes |
 |------|----------|-------|
 | Document Voice triage SLA & abuse response path | High | Staff need RACI for response times |
-| Configure Hubtel for Ghana Card verification | High | Without it, MP performance submit may be blocked |
+| Train staff with Training Team Handbook (no Ghana Card at registration) | High | See `docs/MBKRU_TRAINING_TEAM_HANDBOOK.md` |
 | Configure email (Resend) for status updates | Medium | Report status change emails to citizens |
 | Configure SMS (Twilio) if desired | Optional | Status SMS to members who provide phone |
 | Import real MP/constituency data via admin CSV | High | Verify roster against official EC data |
@@ -272,7 +271,7 @@ Staff log in at **/admin/login**.
 | Ghana Card (Hubtel) | Identity verification for MP performance reports | Recommended | Verification unavailable |
 | SMS (Twilio) | Optional status SMS | Optional | SMS silently skipped |
 | Bot protection (Turnstile) | Spam protection on public forms | Optional | Forms work without it |
-| AI chat (OpenAI) | MBKRU Voice chatbot | Optional | Chat unavailable |
+| AI chat (OpenAI) | MBKRU Voice chatbot (rich English answers) | Optional | FAQ fallback still answers relevant questions |
 | Analytics (GA4 / Plausible) | Public traffic measurement | Optional | No analytics |
 | Redis | Rate limiting, optional session security | Optional | Falls back to in-memory limits |
 
@@ -302,7 +301,7 @@ Staff log in at **/admin/login**.
 3. Test tracking codes and member notifications
 4. Test community join → post → moderation flow
 5. Test Council MP Evaluation on a pilot community portal
-6. Configure Hubtel and verify Ghana Card flow on a test account
+6. Confirm registration flow taught without Ghana Card (see Training Team Handbook)
 
 ### Week 4 — Accountability publication
 
@@ -367,7 +366,7 @@ Created automatically by `npm run setup:local`:
 | Contact & lead forms | Saves to database (no email alert) |
 | Ghana Card verify | Mock mode |
 | SMS status updates | Logged to console only |
-| Voice AI chat | Unavailable until OpenAI key set |
+| Voice chatbot | FAQ English fallback works; rich answers need OpenAI key |
 
 ### Pending production API integrations (expected)
 

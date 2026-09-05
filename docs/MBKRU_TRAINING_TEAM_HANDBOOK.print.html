@@ -1,0 +1,829 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><title>MBKRU Advocates - Training Team Handbook</title>
+<style>
+@page{size:A4;margin:18mm 16mm 20mm 16mm}
+:root{--green:#0d4f3c;--green-soft:#e8f3ee;--ink:#1a2420;--muted:#5a6b63;--line:#d5e0db;--accent:#c45c26}
+*{box-sizing:border-box}body{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:10.5pt;line-height:1.45;color:var(--ink);margin:0 auto;padding:1.5rem;max-width:48rem}
+.cover{page-break-after:always;min-height:85vh;display:flex;flex-direction:column;justify-content:center;border-top:6px solid var(--green);padding-top:2rem}
+.cover .eyebrow{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;text-transform:uppercase;letter-spacing:.14em;font-size:.75rem;color:var(--green);font-weight:700;margin-bottom:1rem}
+.cover h1{font-size:2rem;line-height:1.15;color:var(--green);margin:0 0 .75rem;border:none;padding:0}
+.cover .subtitle{font-size:1.05rem;color:var(--muted);margin-bottom:2rem}
+.cover .meta{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:.9rem;background:var(--green-soft);border-left:4px solid var(--green);padding:1rem 1.1rem}
+.cover .meta p{margin:.25rem 0}.badge{display:inline-block;background:var(--green);color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;padding:.35rem .65rem;margin-bottom:1.25rem}
+h1{font-size:1.45rem;color:var(--green);border-bottom:2px solid var(--green);padding-bottom:.35rem;margin:1.75rem 0 .85rem;page-break-after:avoid}
+h2{font-size:1.15rem;color:var(--green);margin:1.4rem 0 .55rem;page-break-after:avoid}
+h3{font-size:1rem;color:#163d30;margin:1.1rem 0 .4rem;page-break-after:avoid}
+body>h1:first-of-type{display:none}p{margin:.4rem 0 .55rem}ul,ol{margin:.35rem 0 .7rem 1.2rem;padding:0}li{margin:.2rem 0}
+ul.checklist{list-style:disc;margin-left:1.2rem}
+table{width:100%;border-collapse:collapse;margin:.6rem 0 1rem;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:8.8pt}
+th,td{border:1px solid var(--line);padding:.35rem .45rem;vertical-align:top;text-align:left}th{background:var(--green-soft);color:var(--green);font-weight:700}tr{page-break-inside:avoid}
+blockquote{margin:.75rem 0;padding:.65rem .9rem;background:#fff8f3;border-left:4px solid var(--accent);color:#3a2a20}blockquote p{margin:0}
+code{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.86em;background:#f3f6f4;padding:.05rem .28rem;border-radius:3px}
+pre{background:#f3f6f4;border:1px solid var(--line);padding:.75rem .9rem;font-size:8.5pt;page-break-inside:avoid;white-space:pre-wrap}pre code{background:none;padding:0}
+hr{border:none;border-top:1px solid var(--line);margin:1.25rem 0}a{color:var(--green);text-decoration:none}
+.footer-note{margin-top:2rem;padding-top:.75rem;border-top:2px solid var(--green);font-size:.85rem;color:var(--muted);font-style:italic}
+@media print{body{padding:0;max-width:none}a{color:inherit}}
+</style></head><body>
+<section class="cover"><div class="badge">Confidential - Internal training and handover</div>
+<div class="eyebrow">MBKRU Advocates - Programme Operations</div>
+<h1>Training Team Handbook</h1>
+<p class="subtitle">Complete platform guide with accuracy audit, security talking points, MBKRU Voice chatbot (English demos), and Report Card verified/unverified filters.</p>
+<div class="meta">
+<p><strong>Platform:</strong> https://mbkru.org/</p>
+<p><strong>Version:</strong> 2.2.2 - July 2026</p>
+<p><strong>Registration:</strong> No Ghana Card at registration</p>
+<p><strong>Report Card:</strong> Verified / Unverified public Voice filter live</p>
+<p><strong>Accuracy:</strong> Section 20 - checked against UI, backend, and admin</p>
+</div></section>
+<h1>MBKRU Advocates - Training Team Handbook</h1>
+<p><strong>Platform:</strong> https://mbkru.org/ </p>
+<p><strong>Document type:</strong> Staff training &amp; programme handover guide (complete feature set) </p>
+<p><strong>Audience:</strong> Training facilitators, programme operators, community stewards, diaspora ambassadors, new staff </p>
+<p><strong>Version:</strong> 2.2.2 - July 2026 </p>
+<p><strong>Language of training &amp; chatbot assistance:</strong> <strong>English only</strong> (no translation) </p>
+<p><strong>Related:</strong> <code>MBKRU_PLATFORM_HANDOVER_REPORT.md</code>, <code>/methodology</code>, <code>docs/SECURITY_CHECKLIST.md</code>, <code>docs/COMMUNITIES_PUBLIC_GOVERNANCE.md</code>, <code>docs/CSV_IMPORT_RUNBOOK.md</code>, <code>docs/VOICE_AND_ACCESSIBILITY_GUIDE.md</code>, <code>docs/MBKRU_Diaspora_Programme_Integration.pdf</code></p>
+<hr/>
+<h2>Document control &amp; leftovers cleanup (v2.2)</h2>
+<table>
+<tr><th>Change</th><th>Detail</th></tr>
+<tr><td>Registration</td><td><strong>Ghana Card removed</strong> from registration training - do not teach it as a join step</td></tr>
+<tr><td>Ghana Card (account)</td><td>Optional verify may still appear on <code>/account</code>; can gate <strong>MP performance</strong> submit when Hubtel is configured - train as optional/advanced, not registration</td></tr>
+<tr><td>MBKRU Voice chatbot</td><td>Site-wide assistant; <strong>training demos in English only</strong>; product may still show a language control - do not promise multilingual translation</td></tr>
+<tr><td>Chatbot availability</td><td>Works with OpenAI when configured; <strong>FAQ fallback</strong> still answers without API keys</td></tr>
+<tr><td>Report Card verification</td><td><strong>Public filter live:</strong> Verified / Unverified / All on <code>/report-card</code> Voice browse (and regional hubs). Staff set tiers in admin</td></tr>
+<tr><td>Platform accuracy</td><td><strong>Section 20 audit</strong> - handbook claims checked against frontend, backend, and admin</td></tr>
+<tr><td>Platform security</td><td><strong>Section 16</strong> - trainer talking points</td></tr>
+<tr><td>Scope</td><td>Full Phase 1-3 feature handover</td></tr>
+</table>
+<hr/>
+<h2>How to use this handbook</h2>
+<table>
+<tr><th>If you are...</th><th>Start with...</th></tr>
+<tr><td>New trainer</td><td>Sections 1-2, then modules in order</td></tr>
+<tr><td>Checking &quot;is this really live?&quot;</td><td><strong>Section 20 Platform accuracy audit</strong></td></tr>
+<tr><td>Running a lab</td><td>Appendix A (URLs) + Appendix B (drills)</td></tr>
+<tr><td>Onboarding Queen Mothers</td><td>Section 8 Communities</td></tr>
+<tr><td>Onboarding diaspora ambassadors</td><td>Section 12 Diaspora</td></tr>
+<tr><td>Editorial / accountability staff</td><td>Sections 9-11 (incl. verified report filters)</td></tr>
+<tr><td>Support / front-line staff</td><td>Section 5 MBKRU Voice chatbot + Section 4 Voice reports</td></tr>
+</table>
+<hr/>
+<h2>Table of contents</h2>
+<ol>
+<li>Platform overview </li>
+<li>Who uses the platform (roles) </li>
+<li>Member registration &amp; sign-in </li>
+<li>MBKRU Voice - citizen reports </li>
+<li><strong>MBKRU Voice chatbot (English assistant)</strong> </li>
+<li>Petitions &amp; other public forms </li>
+<li>Situational alerts &amp; election observation </li>
+<li>Communities &amp; Queen Mother council portal </li>
+<li>Parliament tracker - MPs roster </li>
+<li>Promises &amp; government tracker </li>
+<li>People&#x27;s Report Card - scorecard methodology </li>
+<li>Diaspora programme </li>
+<li>Public content, guidance &amp; regional hubs </li>
+<li>Member account, notifications &amp; privacy </li>
+<li>Staff admin console - full operations map </li>
+<li><strong>Platform security (trainer talking points)</strong> </li>
+<li>Trust, safety &amp; boundaries </li>
+<li>Suggested training curriculum </li>
+<li>Complete feature checklist (leave nothing out) </li>
+<li><strong>Platform accuracy audit (UI / backend / admin)</strong> </li>
+<li>Appendices </li>
+</ol>
+<hr/>
+<h2>1. Platform overview</h2>
+<h3>1.1 What MBKRU Advocates is</h3>
+<p><strong>MBKRU Advocates</strong> is Ghana&#x27;s civic accountability and citizen engagement platform. It helps citizens, traditional leaders, diaspora supporters, researchers, and programme staff to:</p>
+<ul>
+<li>Monitor <strong>MPs</strong> and <strong>government commitments</strong> with cited evidence </li>
+<li>Submit and track <strong>citizen reports</strong> (MBKRU Voice) </li>
+<li>Get <strong>English-language assistance</strong> from the <strong>MBKRU Voice chatbot</strong> on how to use the platform </li>
+<li>Run and sign <strong>petitions</strong> </li>
+<li>Participate in <strong>community spaces</strong> (including Queen Mother councils) </li>
+<li>Publish a transparent <strong>People&#x27;s Report Card</strong> </li>
+<li>Support <strong>diaspora</strong> engagement with official signposting and feedback </li>
+</ul>
+<p>MBKRU is <strong>evidence-led</strong> and <strong>non-partisan</strong>. It is <strong>not</strong> the Electoral Commission, Parliament, a court, CHRAJ, the police, NIA, or a law firm.</p>
+<h3>1.2 Programme phases (all live)</h3>
+<table>
+<tr><th>Phase</th><th>What users see</th><th>Status</th></tr>
+<tr><td><strong>Phase 1</strong></td><td>Public website, news, resources, partners, contact, diaspora hub</td><td>Live</td></tr>
+<tr><td><strong>Phase 2</strong></td><td>Members, Voice reporting, chatbot, petitions, parliament/promises, communities</td><td>Live</td></tr>
+<tr><td><strong>Phase 3</strong></td><td>People&#x27;s Report Card, election observation, partner data access</td><td>Live</td></tr>
+</table>
+<p>Production: <strong>https://mbkru.org/</strong> runs the full Phase 1-3 programme.</p>
+<h3>1.3 Platform map (teach first)</h3>
+<pre><code>
+PUBLIC                         MEMBER                            STAFF ADMIN
+
+-------------------------      -----------------------------     -----------------------------
+
+Home / About / News            Register and login                Content CMS
+
+Resources / Partners / Contact Submit and track reports          Reports triage
+
+Methodology / Data sources     MBKRU Voice chatbot (English)     Voice analytics
+
+Parliamentarians tracker       Petitions                         Petitions
+
+Promises / Government tracker  Communities and forums            Parliament and promises
+
+People&#x27;s Report Card           Council portal (leaders)          Report Card editor
+
+Diaspora hub and feedback      My account and notifications      Communities and verifications
+
+Town halls / Debates / Regions Privacy export / delete           Diaspora feedback inbox
+
+Whistleblowing / Legal         Accessibility assistive tools     Operators, audit, settings
+
+Transparency (Voice stats)                                       Notification outbox
+
+</code></pre>
+<h3>1.4 One-sentence pitch for trainers</h3>
+<blockquote><p>MBKRU gives Ghanaians a trusted place to ask for help in English, report what they experience, follow commitments with evidence, organise in communities, and see MP accountability scores - without replacing official institutions.</p></blockquote>
+<hr/>
+<h2>2. Who uses the platform (roles)</h2>
+<table>
+<tr><th>Actor</th><th>Login?</th><th>What they can do</th></tr>
+<tr><td><strong>Public visitor</strong></td><td>No</td><td>Browse all public pages; use <strong>MBKRU Voice chatbot</strong>; track reports with a code; sign some petitions</td></tr>
+<tr><td><strong>Member (citizen)</strong></td><td><code>/login</code></td><td>Reports, petitions, communities, account</td></tr>
+<tr><td><strong>Community member</strong></td><td>Yes + membership</td><td>Forums (subject to moderation)</td></tr>
+<tr><td><strong>Community moderator</strong></td><td>Yes + role</td><td>Approve joins, moderate posts, manage members</td></tr>
+<tr><td><strong>Queen Mother (verified)</strong></td><td>Yes + verified role</td><td>Moderator tools + <strong>sign Council MP Evaluations</strong></td></tr>
+<tr><td><strong>Admin / operator</strong></td><td><code>/admin/login</code></td><td>Full staff console (<strong>separate</strong> from member login)</td></tr>
+<tr><td><strong>MP</strong></td><td>No login</td><td>Appears as data only</td></tr>
+<tr><td><strong>Diaspora supporter</strong></td><td>No special role</td><td>Public pages + optional member account</td></tr>
+</table>
+<p><strong>Critical:</strong> <code>/login</code> is not the same as <code>/admin/login</code>.</p>
+<hr/>
+<h2>3. Member registration &amp; sign-in</h2>
+<h3>3.1 Registration policy (current)</h3>
+<table>
+<tr><th>Item</th><th>Rule</th></tr>
+<tr><td><strong>Ghana Card at registration</strong></td><td><strong>Not used. Do not teach it.</strong></td></tr>
+<tr><td>Required</td><td>Email, password (at least 8 characters), confirm password, <strong>region</strong></td></tr>
+<tr><td>Optional</td><td>Display name, constituency</td></tr>
+<tr><td>After success</td><td>Redirect to <code>/account</code> (or intended next page)</td></tr>
+</table>
+<h3>3.2 Register - steps</h3>
+<ol>
+<li>Open https://mbkru.org/register </li>
+<li>Enter email </li>
+<li>Create and confirm password </li>
+<li>Optional display name </li>
+<li>Select <strong>region</strong> (required) </li>
+<li>Optional constituency </li>
+<li>Submit -&gt; land on <strong>My Account</strong></li>
+</ol>
+<h3>3.3 Sign-in &amp; recovery</h3>
+<table>
+<tr><th>Action</th><th>URL</th></tr>
+<tr><td>Sign in</td><td><code>/login</code></td></tr>
+<tr><td>Forgot password</td><td><code>/forgot-password</code></td></tr>
+<tr><td>My account</td><td><code>/account</code></td></tr>
+<tr><td>My reports</td><td><code>/account/reports</code></td></tr>
+<tr><td>Notifications</td><td><code>/account/notifications</code></td></tr>
+</table>
+<h3>3.4 Identity messaging for trainers</h3>
+<ul>
+<li>Joining MBKRU <strong>does not</strong> require Ghana Card. </li>
+<li>Official <strong>NIA Ghana Card</strong> guidance for diaspora lives on <code>/diaspora</code> as <strong>government signposting</strong>, not as MBKRU registration. </li>
+<li><strong>Optional:</strong> <code>/account</code> may still offer Ghana Card verify for programme trust features. When Hubtel is configured, <strong>MP performance</strong> report submit can require a verified card - other report types do not. </li>
+<li>Do not revive old training slides that list Ghana Card as a <strong>registration</strong> field.</li>
+</ul>
+<hr/>
+<h2>4. MBKRU Voice - citizen reports</h2>
+<h3>4.1 What Voice reporting is</h3>
+<p>Citizen reporting channel with evidence and tracking. Staff triage. Approved items may become public <strong>causes</strong>.</p>
+<table>
+<tr><th>Page</th><th>URL</th></tr>
+<tr><td>Hub</td><td><code>/citizens-voice</code></td></tr>
+<tr><td>Submit</td><td><code>/citizens-voice/submit</code></td></tr>
+<tr><td>Election submit</td><td><code>/citizens-voice/submit/election</code></td></tr>
+<tr><td>Track</td><td><code>/track-report</code></td></tr>
+<tr><td>Public causes</td><td><code>/citizens-voice/causes</code></td></tr>
+<tr><td>Discussion (per report)</td><td><code>/citizens-voice/discussions/[reportId]</code> - <strong>no standalone discussions index</strong></td></tr>
+<tr><td>Transparency stats</td><td><code>/transparency</code></td></tr>
+</table>
+<h3>4.2 Report types (teach all five)</h3>
+<table>
+<tr><th>Type</th><th>Example</th><th>Notes</th></tr>
+<tr><td>MBKRU Voice (general)</td><td>Street lighting, procurement, service delivery</td><td>Member account</td></tr>
+<tr><td>MP performance</td><td>Surgery hours, responsiveness, casework</td><td>May require Ghana Card on account when Hubtel is on</td></tr>
+<tr><td>Government performance</td><td>Assembly timelines, executive delivery</td><td>Member account</td></tr>
+<tr><td>Situational alert</td><td>Market closures, road blocks</td><td>Member account</td></tr>
+<tr><td>Election observation</td><td>Queue times, accessibility</td><td>Phase 3 feature flag</td></tr>
+</table>
+<h3>4.3 Submit a report - steps</h3>
+<ol>
+<li>Sign in </li>
+<li>Go to <code>/citizens-voice/submit</code> </li>
+<li>Choose report type </li>
+<li>Complete title, description, location, related MP/institution if relevant, attachments </li>
+<li>Submit and <strong>save the tracking code</strong> </li>
+<li>Confirm under <strong>My Account -&gt; Reports</strong></li>
+</ol>
+<h3>4.4 Track a report</h3>
+<ol>
+<li>Open <code>/track-report</code> </li>
+<li>Enter tracking code </li>
+<li>Read status </li>
+</ol>
+<table>
+<tr><th>Status</th><th>Meaning</th></tr>
+<tr><td>RECEIVED</td><td>Logged</td></tr>
+<tr><td>UNDER_REVIEW</td><td>Staff assessing</td></tr>
+<tr><td>ESCALATED</td><td>Further action</td></tr>
+<tr><td>CLOSED</td><td>Complete</td></tr>
+<tr><td>ARCHIVED</td><td>Retained, not active</td></tr>
+</table>
+<h3>4.5 Staff triage</h3>
+<p>Admin: <code>/admin/reports</code></p>
+<ol>
+<li>Open queue -&gt; read submission + attachments </li>
+<li>Assess credibility / safety / duplicates </li>
+<li>Update status + staff notes </li>
+<li>Promote suitable items to <strong>public causes</strong> </li>
+<li>Monitor <code>/admin/analytics/citizen-reports</code> and MP performance signals </li>
+</ol>
+<p><strong>Council evaluations</strong> (Queen Mother sign-off) arrive as intake source <strong>Council evaluation</strong>.</p>
+<h3>4.6 Public causes &amp; discussions</h3>
+<ul>
+<li>Staff promote approved reports to <code>/citizens-voice/causes</code> </li>
+<li>Public can discuss on discussion pages with comments and reactions (Like / Thank / Insight) </li>
+<li>Do not publish personal data from private reports without policy consent </li>
+</ul>
+<hr/>
+<h2>5. MBKRU Voice chatbot (English assistant)</h2>
+<blockquote><p><strong>Training standard:</strong> Demos and answers for this handover are <strong>English only</strong>. The assistant answers <strong>relevant questions</strong> about using MBKRU. It is <strong>not a translation service</strong>. If the product UI still shows a language control, trainers should leave it on <strong>English (Ghana)</strong> and not teach multilingual translation as a programme promise.</p></blockquote>
+<h3>5.1 What it is</h3>
+<p><strong>MBKRU Voice</strong> is the always-available floating chat assistant on the public site (site-wide launcher). It helps visitors and members find the right page, understand how to report, track commitments, join communities, use diaspora signposting, and navigate the platform safely.</p>
+<p>It is <strong>guidance</strong>, not legal advice, emergency response, or an official government desk.</p>
+<h3>5.2 Where to find it</h3>
+<table>
+<tr><th>Entry point</th><th>How</th></tr>
+<tr><td>Floating <strong>MBKRU Voice</strong> button</td><td>Bottom of most public pages</td></tr>
+<tr><td>Citizens Voice page CTA</td><td>&quot;Open MBKRU Voice chat&quot;</td></tr>
+<tr><td>Mobile / header Voice control</td><td>Opens the same chat panel</td></tr>
+<tr><td>Accessibility tools</td><td>Can hand a spoken transcript into the chat</td></tr>
+</table>
+<h3>5.3 What it can help with (relevant questions)</h3>
+<p>Train staff to steer users toward these topics:</p>
+<table>
+<tr><th>Topic</th><th>Example user question</th><th>Typical help</th></tr>
+<tr><td>Reporting</td><td>&quot;How do I submit a report?&quot;</td><td>Links to Citizens Voice / submit / track</td></tr>
+<tr><td>Petitions</td><td>&quot;How do I start a petition?&quot;</td><td>Browse / create petition links</td></tr>
+<tr><td>Accountability</td><td>&quot;Where do I see MP promises?&quot;</td><td>Promises, government tracker, parliament, Report Card</td></tr>
+<tr><td>Communities</td><td>&quot;How do I join a Queen Mother community?&quot;</td><td>Communities / town halls</td></tr>
+<tr><td>Diaspora</td><td>&quot;I live abroad - where do I start?&quot;</td><td>Diaspora hub + official .gov.gh signposting</td></tr>
+<tr><td>Contact / policy</td><td>&quot;How do I contact MBKRU?&quot;</td><td>Contact, FAQ, data sources, privacy</td></tr>
+</table>
+<h3>5.4 What it must not do (teach this)</h3>
+<table>
+<tr><th>Do not</th><th>Instead</th></tr>
+<tr><td>Translate pages or chat into other languages (training scope)</td><td>Answer in <strong>English</strong></td></tr>
+<tr><td>Give legal strategy or litigation advice</td><td>Point to <code>/legal-empowerment</code> and qualified professionals</td></tr>
+<tr><td>Give emergency / crisis / violence instructions</td><td>Direct to local emergency services + <code>/whistleblowing</code> / <code>/contact</code></td></tr>
+<tr><td>Issue Ghana Cards, passports, or book missions</td><td>Signpost to NIA / MFA / GIS via <code>/diaspora</code></td></tr>
+<tr><td>Invent election results or court findings</td><td>Point to methodology and official sources</td></tr>
+<tr><td>Replace staff triage of reports</td><td>Guide the user to submit / track correctly</td></tr>
+</table>
+<h3>5.5 How the assistant works (for trainers)</h3>
+<ol>
+<li>User opens chat and types a question in <strong>English</strong> </li>
+<li>Safety guardrails check for emergency / self-harm / legal-strategy prompts </li>
+<li>When OpenAI is configured, the assistant uses site knowledge (and optional web search if enabled) to answer </li>
+<li>When OpenAI is not configured, <strong>built-in FAQ / intent fallbacks</strong> still reply with useful English guidance and links </li>
+<li>Replies may include <strong>suggested links</strong> to the right MBKRU pages </li>
+<li>Optional: attach image / <code>.txt</code> / PDF for context; optional read-aloud of replies (assistive) </li>
+</ol>
+<h3>5.6 Features to demonstrate in training</h3>
+<table>
+<tr><th>Feature</th><th>Trainer note</th></tr>
+<tr><td>Text Q&amp;A</td><td>Keep demo questions in English</td></tr>
+<tr><td>Suggested links</td><td>Click through to prove navigation help</td></tr>
+<tr><td>Quick prompts</td><td>Use for first-time users</td></tr>
+<tr><td>Clear chat</td><td>Reset between trainee demos</td></tr>
+<tr><td>Attachments (image / text / PDF)</td><td>Optional - for interpreting evidence context, not for filing a formal report</td></tr>
+<tr><td>&quot;Search the web&quot; (if enabled)</td><td>Optional live context; still not official government advice</td></tr>
+<tr><td>Fallback mode</td><td>Unplug / unset API key in staging to show FAQ still works</td></tr>
+<tr><td>Rate limiting</td><td>Rapid spam may return &quot;too many requests&quot;</td></tr>
+</table>
+<h3>5.7 Staff analytics</h3>
+<table>
+<tr><th>Admin page</th><th>Purpose</th></tr>
+<tr><td><code>/admin/analytics/mbkru-voice</code></td><td>Chatbot usage summary</td></tr>
+<tr><td><code>/admin/analytics/mbkru-voice/events</code></td><td>Raw telemetry event log</td></tr>
+<tr><td>Export</td><td>CSV/JSON export from analytics tools</td></tr>
+</table>
+<h3>5.8 Chatbot practice script (lab)</h3>
+<ol>
+<li>Open mbkru.org -&gt; open <strong>MBKRU Voice</strong> </li>
+<li>Ask: &quot;How do I submit a citizen report?&quot; -&gt; follow suggested link </li>
+<li>Ask: &quot;Where can I track government commitments?&quot; </li>
+<li>Ask: &quot;I am in the diaspora - how do I get Ghana Card help?&quot; -&gt; confirm it <strong>signposts</strong>, does not process ID </li>
+<li>Ask a legal-strategy style question -&gt; confirm safe refusal + Legal empowerment link </li>
+<li>Clear chat and repeat with a second trainee </li>
+</ol>
+<hr/>
+<h2>6. Petitions &amp; other public forms</h2>
+<h3>6.1 Petitions</h3>
+<table>
+<tr><th>Action</th><th>Who</th><th>URL</th></tr>
+<tr><td>Browse</td><td>Anyone</td><td><code>/petitions</code></td></tr>
+<tr><td>Create</td><td>Members</td><td><code>/petitions/new</code></td></tr>
+<tr><td>Sign</td><td>Anyone (guest may confirm email)</td><td><code>/petitions/[slug]</code></td></tr>
+<tr><td>Moderate</td><td>Staff</td><td><code>/admin/petitions</code></td></tr>
+</table>
+<p><strong>Create:</strong> sign in -&gt; <code>/petitions/new</code> -&gt; title, problem, ask -&gt; submit -&gt; share link. </p>
+<p><strong>Sign:</strong> open petition -&gt; complete form -&gt; confirm email if prompted. </p>
+<p><strong>Admin:</strong> moderate visibility/status; review pending signature analytics.</p>
+<h3>6.2 Other forms</h3>
+<table>
+<tr><th>Form</th><th>URL</th><th>Admin inbox</th></tr>
+<tr><td>Contact</td><td><code>/contact</code></td><td>Contact submissions</td></tr>
+<tr><td>Newsletter / early access / tracker signup</td><td>Site CTAs</td><td>Lead capture</td></tr>
+<tr><td>Diaspora feedback</td><td><code>/diaspora/feedback</code></td><td>Diaspora feedback</td></tr>
+<tr><td>Community verification upload</td><td>Community membership panel</td><td>Community verifications</td></tr>
+<tr><td>Report attachments</td><td>Voice submit</td><td>Attached to report</td></tr>
+</table>
+<p>Always show the <strong>citizen -&gt; admin inbox -&gt; response</strong> loop.</p>
+<hr/>
+<h2>7. Situational alerts &amp; election observation</h2>
+<h3>7.1 Situational alerts</h3>
+<ul>
+<li>Hub: <code>/situational-alerts</code> </li>
+<li>Submit: <code>/situational-alerts/submit</code> (members) </li>
+<li>Time-sensitive local situations; triaged with Voice reports </li>
+</ul>
+<h3>7.2 Election observation</h3>
+<ul>
+<li>Hub: <code>/election-observation</code> </li>
+<li>Structured submit: <code>/citizens-voice/submit/election</code> </li>
+<li>Observe process and accessibility - <strong>do not</strong> declare winners or act as EC </li>
+</ul>
+<hr/>
+<h2>8. Communities &amp; Queen Mother council portal</h2>
+<h3>8.1 What a community is</h3>
+<p>Bounded space (often traditional area / geography) for announcements, forums, concerns, and council workspace. <strong>Not</strong> a replacement for courts, police, CHRAJ, or customary dispute processes outside the platform.</p>
+<h3>8.2 Admin - register a community</h3>
+<p><strong>Path:</strong> <code>/admin/communities</code></p>
+<ol>
+<li>Admin login </li>
+<li>Create community with: slug, name, description, region, traditional area, visibility (<code>PUBLIC</code> / <code>MEMBERS_ONLY</code>), join policy (<code>OPEN</code> / <code>APPROVAL_REQUIRED</code>) </li>
+<li>Starts as <strong>DRAFT</strong> </li>
+<li><strong>Activate</strong> -&gt; <strong>ACTIVE</strong> when ready </li>
+<li>Only <strong>ACTIVE + PUBLIC</strong> appear in the public directory </li>
+</ol>
+<p>Also: provision stewards, set default MP if used, review verifications (<code>/admin/community-verifications</code>), moderate posts (<code>/admin/communities/moderation</code>), handle post reports (<code>/admin/community-reports</code>).</p>
+<h3>8.3 Users join - steps &amp; benefits</h3>
+<ol>
+<li>Browse <code>/communities</code> </li>
+<li>Open <code>/communities/[slug]</code> </li>
+<li>Sign in / register </li>
+<li>Join now (<strong>OPEN</strong>) or request (<strong>APPROVAL_REQUIRED</strong>) </li>
+<li>Use forums; leaders use portal / manage </li>
+</ol>
+<p><strong>Benefits:</strong> local moderated discussion; announcements &amp; concerns; reply notifications; path to traditional-role verification; council MP evaluations feeding programme accountability.</p>
+<h3>8.4 Queen Mother / council portal</h3>
+<p><strong>URL:</strong> <code>/communities/[slug]/portal</code></p>
+<table>
+<tr><th>Area</th><th>Purpose</th></tr>
+<tr><td>Concerns</td><td>Council issue capture</td></tr>
+<tr><td>Announcements</td><td>Leadership communications</td></tr>
+<tr><td>Council discussion</td><td>Internal conversation</td></tr>
+<tr><td>Presence</td><td>Who is active</td></tr>
+<tr><td>Membership</td><td>Join / verification</td></tr>
+<tr><td><strong>Council MP Evaluation</strong></td><td>Structured MP meeting evaluation</td></tr>
+</table>
+<p><strong>Evaluation path:</strong> draft -&gt; Queen Mother <strong>sign-off</strong> -&gt; Citizen Report (Council evaluation) -&gt; <code>/admin/reports</code>.</p>
+<p><strong>Manage:</strong> <code>/communities/[slug]/manage</code> - approve joins, roles, bans, moderate posts.</p>
+<h3>8.5 Forum vocabulary</h3>
+<p>Forum -&gt; Thread -&gt; Reply / Pending (awaiting moderation) / Locked forum </p>
+<hr/>
+<h2>9. Parliament tracker - MPs roster</h2>
+<h3>9.1 Public</h3>
+<ul>
+<li><code>/parliament-tracker</code> - search sitting MPs </li>
+<li><code>/regions/[slug]</code> - regional hubs </li>
+</ul>
+<h3>9.2 Staff load MPs</h3>
+<p>Admin: <code>/admin/parliament</code></p>
+<ol>
+<li>Ensure regions exist </li>
+<li>Import constituencies CSV first </li>
+<li><strong>Dry-run reconcile</strong> MP CSV </li>
+<li>Review creates / updates / errors </li>
+<li>Import MP CSV </li>
+<li>Spot-check public tracker </li>
+</ol>
+<p>MP CSV headers: <code>name,slug,role,party,constituency_slug,active</code> </p>
+<p>Detail: <code>docs/CSV_IMPORT_RUNBOOK.md</code>, <code>docs/DATA_SOURCES.md</code>.</p>
+<hr/>
+<h2>10. Promises &amp; government tracker</h2>
+<h3>10.1 Public views</h3>
+<table>
+<tr><th>Page</th><th>Shows</th></tr>
+<tr><td><code>/promises</code> / browse</td><td>Tracked pledges</td></tr>
+<tr><td><code>/promises/[slug]</code></td><td>One promise / MP pledge sheet</td></tr>
+<tr><td><code>/government-commitments</code></td><td>Government programme filter</td></tr>
+</table>
+<p>Statuses: TRACKING / IN_PROGRESS / FULFILLED / BROKEN / DEFERRED / BLOCKED </p>
+<h3>10.2 Staff upload / edit promises</h3>
+<ol>
+<li><code>/admin/parliament</code> -&gt; select MP </li>
+<li>Create promise with title, source/citation, government-programme flag, status </li>
+<li>Update status + evidence over time </li>
+<li>Confirm on public catalogue </li>
+</ol>
+<p><strong>Rule:</strong> Citizen reports illustrate problems; they do <strong>not alone</strong> mark a promise fulfilled.</p>
+<h3>10.3 Manifestos &amp; exports</h3>
+<ul>
+<li>Admin -&gt; Manifestos for source registry </li>
+<li>Exports: MPs CSV, promises CSV </li>
+<li>Partner API summary: <code>/partner-api</code> </li>
+</ul>
+<hr/>
+<h2>11. People&#x27;s Report Card - scorecard methodology</h2>
+<h3>11.1 Public pages</h3>
+<ul>
+<li><code>/report-card</code> / <code>/report-card/[year]</code> / <code>/methodology</code> / <code>/data-sources</code> </li>
+</ul>
+<p><strong>Two browse tabs on <code>/report-card</code> (when both are enabled):</strong></p>
+<table>
+<tr><th>Tab</th><th>What users see</th><th>Filters</th></tr>
+<tr><td><strong>Voice submissions</strong></td><td>Citizen reports feeding accountability</td><td>Region, report type, <strong>Verification (All / Verified / Unverified)</strong>, title search</td></tr>
+<tr><td><strong>Programme scores</strong></td><td>Published MP scorecard rows</td><td>Year, region, search</td></tr>
+</table>
+<h3>11.1a Verified vs unverified reports (live)</h3>
+<p>Staff set an <strong>experience verification tier</strong> on each report in <code>/admin/reports/[id]</code>:</p>
+<table>
+<tr><th>Staff tier</th><th>Public label</th></tr>
+<tr><td>UNVERIFIED (default)</td><td><strong>Unverified</strong></td></tr>
+<tr><td>CORROBORATED</td><td><strong>Verified</strong></td></tr>
+<tr><td>DOCUMENTED</td><td><strong>Verified</strong></td></tr>
+</table>
+<p>Council MP evaluations signed by a Queen Mother typically enter the queue already <strong>CORROBORATED</strong> (shown as Verified).</p>
+<p><strong>Public filter (train this):</strong> On the Report Card Voice tab (and regional hubs), users choose:</p>
+<ol>
+<li><strong>All reports</strong> </li>
+<li><strong>Verified only</strong> - staff-corroborated or documented </li>
+<li><strong>Unverified only</strong> - not yet corroborated </li>
+</ol>
+<p>Cards show a <strong>Verified</strong> or <strong>Unverified</strong> badge. Index C of the scorecard methodology remains an <strong>editorial</strong> use of citizen experience - publishing MP scores is still a staff Report Card workflow, separate from the public Voice browse filter.</p>
+<h3>11.2 Triple index (Ghana v1)</h3>
+<table>
+<tr><th>Index</th><th>Focus</th><th>Weight</th></tr>
+<tr><td>A - Legislative duty</td><td>Official parliamentary record</td><td>~50%</td></tr>
+<tr><td>B - Constituency representation</td><td>Reachability, casework pathways, documented transparency</td><td>~35%</td></tr>
+<tr><td>C - Citizen-verified experience</td><td>Triaged Voice / council signal (capped)</td><td>~15%</td></tr>
+</table>
+<p>Evidence ladder: Tier A official -&gt; Tier B secondary -&gt; Tier C moderated citizen experience.</p>
+<h3>11.3 Government tracker vs Report Card</h3>
+<table>
+<tr><th>Product</th><th>Focus</th></tr>
+<tr><td>Report Card</td><td>MP as legislator / representative</td></tr>
+<tr><td>Government tracker</td><td>Programme / manifesto commitments with evidence</td></tr>
+</table>
+<h3>11.4 Publish process (staff)</h3>
+<ol>
+<li><code>/admin/report-card</code> - create cycle </li>
+<li>Edit MP narratives + scores </li>
+<li>Editorial + methodology review </li>
+<li>Optional dispute window for official-data facts </li>
+<li>Publish only after sign-off </li>
+<li>Verify public page </li>
+</ol>
+<p><strong>&quot;Pending&quot;</strong> is not final findings.</p>
+<hr/>
+<h2>12. Diaspora programme</h2>
+<h3>12.1 Overview</h3>
+<p>Hub <code>/diaspora</code> helps Ghanaians abroad and returnees with:</p>
+<ol>
+<li>Signposting to official channels (NIA, passport, nationality) </li>
+<li>Accountability collaboration (commitments, petitions, feedback) </li>
+<li>Structured diaspora feedback (<code>/diaspora/feedback</code>) </li>
+</ol>
+<p>Admin review: <code>/admin/diaspora-feedback</code> </p>
+<p>Context: &quot;17th Region&quot; news briefing </p>
+<p><strong>MBKRU does not</strong> replace embassies, NIA, GIS, MFA, or lawyers.</p>
+<h3>12.2 How diaspora access the platform</h3>
+<p>No special diaspora login. Use public site; register as member for Voice/petitions/communities.</p>
+<table>
+<tr><th>Need</th><th>Path</th></tr>
+<tr><td>ID / passport / nationality guidance</td><td><code>/diaspora</code> -&gt; official links</td></tr>
+<tr><td>Track government commitments</td><td><code>/government-commitments</code></td></tr>
+<tr><td>Petitions</td><td><code>/petitions</code></td></tr>
+<tr><td>Feedback</td><td><code>/diaspora/feedback</code></td></tr>
+<tr><td>Civic reports</td><td>Register -&gt; Voice submit</td></tr>
+<tr><td>Ask &quot;how do I...?&quot;</td><td><strong>MBKRU Voice chatbot (English)</strong></td></tr>
+<tr><td>Partners</td><td><code>/partners</code>, <code>/contact</code></td></tr>
+</table>
+<h3>12.3 Benefits</h3>
+<ul>
+<li>Official signposting (avoid unofficial &quot;agents&quot;) </li>
+<li>Same transparency tools as residents </li>
+<li>Amplify petitions; structured feedback into the programme </li>
+<li>Optional full member participation </li>
+<li>Non-partisan engagement with Ghana&#x27;s accountability agenda </li>
+</ul>
+<hr/>
+<h2>13. Public content, guidance &amp; regional hubs</h2>
+<p>Trainers should walk these even if not &quot;transactional&quot;:</p>
+<table>
+<tr><th>Area</th><th>URL</th><th>Purpose</th></tr>
+<tr><td>Homepage</td><td><code>/</code></td><td>Programme overview, stats, shortcuts</td></tr>
+<tr><td>About</td><td><code>/about</code></td><td>Organisation &amp; pillars</td></tr>
+<tr><td>News</td><td><code>/news</code></td><td>Editorial updates</td></tr>
+<tr><td>Resources</td><td><code>/resources</code></td><td>Downloadable documents</td></tr>
+<tr><td>Partners</td><td><code>/partners</code></td><td>Partners &amp; collaboration</td></tr>
+<tr><td>Contact</td><td><code>/contact</code></td><td>Enquiries</td></tr>
+<tr><td>FAQ</td><td><code>/faq</code></td><td>Common questions</td></tr>
+<tr><td>Privacy / Terms / Accessibility</td><td><code>/privacy</code>, <code>/terms</code>, <code>/accessibility</code></td><td>Trust pages</td></tr>
+<tr><td>Methodology</td><td><code>/methodology</code></td><td>How scoring &amp; tracking work</td></tr>
+<tr><td>Data sources</td><td><code>/data-sources</code></td><td>Where data comes from</td></tr>
+<tr><td>Legal empowerment</td><td><code>/legal-empowerment</code></td><td>Signposting (not legal advice)</td></tr>
+<tr><td>Whistleblowing</td><td><code>/whistleblowing</code></td><td>Safe escalation guidance</td></tr>
+<tr><td>Town halls</td><td><code>/town-halls</code></td><td>Programme events / forums</td></tr>
+<tr><td>Debates</td><td><code>/debates</code></td><td>Constituency debate surface</td></tr>
+<tr><td>Regions</td><td><code>/regions/[slug]</code></td><td>16 regional hubs</td></tr>
+<tr><td>Partner API</td><td><code>/partner-api</code></td><td>Research/media data terms</td></tr>
+<tr><td>Transparency</td><td><code>/transparency</code></td><td>Aggregate Voice statistics</td></tr>
+</table>
+<h3>13.1 Accessibility assistive tools (related to Voice)</h3>
+<p>Floating accessibility controls can: read page summary, read selection, speech-to-text, hand transcript to chatbot, adjust speech rate.</p>
+<p><strong>Training note:</strong> Demonstrations and chatbot answers for this handover remain <strong>English</strong>. Do not present translation of the site or chatbot replies as a trained programme capability.</p>
+<hr/>
+<h2>14. Member account, notifications &amp; privacy</h2>
+<table>
+<tr><th>Feature</th><th>URL / location</th><th>Notes</th></tr>
+<tr><td>Account home</td><td><code>/account</code></td><td>Reports, explore links, status</td></tr>
+<tr><td>My reports</td><td><code>/account/reports</code></td><td>Personal submissions</td></tr>
+<tr><td>Notifications</td><td><code>/account/notifications</code></td><td>In-app alerts (replies, status, community)</td></tr>
+<tr><td>Password recovery</td><td><code>/forgot-password</code></td><td>Needs email configured to deliver</td></tr>
+<tr><td>Privacy export / delete</td><td>Account privacy tools</td><td>Support staff must know the path</td></tr>
+<tr><td>Email / SMS outbox</td><td>Admin notifications</td><td>Status updates when Resend/Twilio configured</td></tr>
+</table>
+<hr/>
+<h2>15. Staff admin console - full operations map</h2>
+<p><strong>Login:</strong> <code>/admin/login</code> / Operators: <code>/admin/operators</code> / Audit: <code>/admin/operational-audit</code></p>
+<table>
+<tr><th>Group</th><th>Areas</th></tr>
+<tr><td><strong>Overview</strong></td><td>Dashboard</td></tr>
+<tr><td><strong>Content</strong></td><td>News posts, media library, resources, manifestos, partners &amp; leadership</td></tr>
+<tr><td><strong>Voice &amp; inbound</strong></td><td>Citizen reports, report analytics, MP performance signals, MBKRU Voice analytics &amp; event log, petitions, petition pending analytics, public causes, contact, leads, diaspora feedback</td></tr>
+<tr><td><strong>Accountability</strong></td><td>Parliament &amp; promises, Report Card, town halls</td></tr>
+<tr><td><strong>Communities</strong></td><td>Communities, post moderation, community reports, verifications, members</td></tr>
+<tr><td><strong>System</strong></td><td>Operators, regions, notification outbox, operational audit, site settings (maintenance)</td></tr>
+</table>
+<h3>Daily operator checklist</h3>
+<ul class="checklist">
+<li>Triage new citizen reports</li>
+<li>Petitions moderation</li>
+<li>Community posts &amp; verifications</li>
+<li>Contact + diaspora feedback inboxes</li>
+<li>Notification outbox stuck jobs</li>
+<li>Spot-check public pages after publishes</li>
+<li>(Weekly) Review MBKRU Voice analytics for friction themes</li>
+</ul>
+<hr/>
+<h2>16. Platform security (trainer talking points)</h2>
+<blockquote><p><strong>Trainer message:</strong> MBKRU was built with <strong>enterprise-grade security controls</strong> across login, forms, admin, uploads, and public APIs. You can tell cohorts - with confidence - that the platform is <strong>secure by design</strong>: separate staff and citizen sessions, hardened cookies, rate limits, bot protection, validated inputs, private evidence storage, audit trails, and modern browser security headers on every page.</p></blockquote>
+<h3>16.1 One-minute pitch (memorise this)</h3>
+<blockquote><p>&quot;MBKRU protects citizens and staff with layered security. Member and admin logins are completely separate. Passwords are hashed, sessions use secure httpOnly cookies, public forms are rate-limited and can use bot protection, every API input is validated, report attachments are stored privately with size and type limits, and the site ships with strong security headers (including HTTPS enforcement and clickjacking protection). Sensitive admin actions can be audited. The chatbot and Voice tools also refuse unsafe emergency or legal-strategy prompts.&quot;</p></blockquote>
+<h3>16.2 Security controls trainers should explain</h3>
+<table>
+<tr><th>Layer</th><th>What is in place</th><th>Plain-language line for trainees</th></tr>
+<tr><td><strong>Separate login worlds</strong></td><td>Member <code>/login</code> and staff <code>/admin/login</code> use <strong>different session secrets</strong></td><td>Staff access cannot be confused with a citizen account</td></tr>
+<tr><td><strong>Strong passwords</strong></td><td>Passwords stored with <strong>bcrypt hashing</strong> (never plain text)</td><td>Even database staff cannot &quot;read&quot; your password</td></tr>
+<tr><td><strong>Secure sessions</strong></td><td>Cookies are <strong>httpOnly</strong>, <strong>Secure</strong> in production, <strong>SameSite=lax</strong></td><td>Scripts in the browser cannot steal your session cookie easily</td></tr>
+<tr><td><strong>Admin lock-down</strong></td><td>Admin routes require a <strong>valid admin session</strong>; login is <strong>rate-limited</strong></td><td>Brute-force guessing of staff passwords is throttled</td></tr>
+<tr><td><strong>Bot &amp; abuse protection</strong></td><td><strong>Rate limits</strong> on contact, auth, reports, chatbot, partner reads; optional <strong>Cloudflare Turnstile</strong></td><td>Spammers and scrapers are slowed or blocked</td></tr>
+<tr><td><strong>Input validation</strong></td><td><strong>Zod</strong> schemas on JSON bodies; <strong>Prisma</strong> parameterized queries (no raw user SQL)</td><td>Classic injection-style attacks are designed out</td></tr>
+<tr><td><strong>Upload safety</strong></td><td>Report / media uploads respect <strong>size and MIME limits</strong>; private storage paths are sanitised</td><td>Evidence files cannot be arbitrary malware dumps</td></tr>
+<tr><td><strong>Privacy of presence</strong></td><td>Peer display names on hubs/presence only when the viewer is <strong>signed in</strong></td><td>Guests do not get a free list of who is online by name</td></tr>
+<tr><td><strong>Privacy tools</strong></td><td>Members can <strong>export</strong> or <strong>delete</strong> account data (with safeguards)</td><td>Users keep control of their personal data</td></tr>
+<tr><td><strong>Chatbot safety</strong></td><td>Guardrails block emergency / self-harm / legal-strategy prompts</td><td>The assistant will not give dangerous advice</td></tr>
+<tr><td><strong>Browser hardening</strong></td><td>Global headers: <strong>CSP</strong>, <strong>HSTS</strong>, <strong>X-Frame-Options</strong>, and related protections</td><td>Pages resist clickjacking and force HTTPS in production</td></tr>
+<tr><td><strong>Operational audit</strong></td><td>Sensitive admin actions can be reviewed in <strong>Operational audit</strong></td><td>Programme can see who did what in the staff console</td></tr>
+<tr><td><strong>Notification outbox</strong></td><td>Email/SMS jobs are queued and retryable - not ad-hoc scripts</td><td>Delivery is controlled and observable</td></tr>
+</table>
+<h3>16.3 What &quot;secure&quot; means for each audience</h3>
+<table>
+<tr><th>Audience</th><th>Reassure them that...</th></tr>
+<tr><td><strong>Citizens / members</strong></td><td>Their login is protected; reports and attachments are handled under programme controls; tracking codes do not expose other people&#x27;s data</td></tr>
+<tr><td><strong>Queen Mothers / stewards</strong></td><td>Community manage tools require verified membership roles; moderation and bans are intentional leadership actions, not open to every joiner</td></tr>
+<tr><td><strong>Diaspora users</strong></td><td>Feedback and forms are rate-limited; MBKRU signposts official .gov.gh sites and does not harvest passport/ID processing</td></tr>
+<tr><td><strong>Staff / admins</strong></td><td>Admin is a closed surface; operators are managed deliberately; heavy exports are rate-limited per session</td></tr>
+<tr><td><strong>Partners / media</strong></td><td>Public partner reads are rate-limited; research exports follow programme access rules</td></tr>
+</table>
+<h3>16.4 Demo script for the security module (10-15 min)</h3>
+<ol>
+<li>Show member login vs admin login URLs - emphasise <strong>two different doors</strong>. </li>
+<li>In browser DevTools (trainer only), show a session cookie flagged <strong>HttpOnly</strong> (and Secure on production). </li>
+<li>Submit the contact or chatbot form rapidly in staging to show <strong>rate limiting</strong> if configured. </li>
+<li>Open <code>/admin/operational-audit</code> (staff) and explain that sensitive actions leave a trail. </li>
+<li>Ask the chatbot a legal-strategy or crisis-style question and show the <strong>safe refusal</strong>. </li>
+<li>Point to <code>/privacy</code> and account privacy tools - security includes <strong>user rights</strong>, not only locks. </li>
+<li>Close with: &quot;Security is layered - no single control does everything; MBKRU stacks many controls together.&quot;</li>
+</ol>
+<h3>16.5 Trainer do&#x27;s and don&#x27;ts</h3>
+<table>
+<tr><th>Do</th><th>Don&#x27;t</th></tr>
+<tr><td>Say the platform is <strong>built with strong, layered security</strong> suitable for civic data</td><td>Claim MBKRU is &quot;unhackable&quot; or that no further review will ever be needed</td></tr>
+<tr><td>Name concrete controls (separate sessions, hashing, rate limits, headers, audit)</td><td>Share production secrets, admin passwords, or API keys in class</td></tr>
+<tr><td>Point trainees to <code>/privacy</code> and safe reporting habits</td><td>Ask trainees to paste real national ID numbers into chat or demos</td></tr>
+<tr><td>Encourage strong unique passwords and logging out on shared devices</td><td>Use the same password for admin and personal email in demos</td></tr>
+</table>
+<h3>16.6 Related ops documents (for advanced trainers)</h3>
+<ul>
+<li><code>docs/SECURITY_CHECKLIST.md</code> - living release / quarterly security checklist </li>
+<li><code>docs/OPS_RUNBOOK.md</code> - production operations </li>
+<li><code>docs/ARCHITECTURE.md</code> - how systems fit together </li>
+</ul>
+<hr/>
+<h2>17. Trust, safety &amp; boundaries</h2>
+<table>
+<tr><th>MBKRU does</th><th>MBKRU does not</th></tr>
+<tr><td>Host moderated citizen reports</td><td>Replace police / CHRAJ / courts</td></tr>
+<tr><td>Answer relevant questions in English via chatbot</td><td>Act as translator or emergency desk</td></tr>
+<tr><td>Track commitments with citations</td><td>Declare election winners</td></tr>
+<tr><td>Publish methodology-based scores</td><td>Issue legal rulings or national IDs</td></tr>
+<tr><td>Signpost diaspora to official sites</td><td>Provide immigration legal advice</td></tr>
+<tr><td>Support traditional council digital workspace</td><td>Replace customary dispute forums entirely</td></tr>
+<tr><td>Protect accounts, forms, and admin with layered security</td><td>Replace users&#x27; own password hygiene or device safety</td></tr>
+</table>
+<p>Demo/seed content must never be presented as real citizen findings in public communications.</p>
+<hr/>
+<h2>18. Suggested training curriculum</h2>
+<table>
+<tr><th>Week</th><th>Focus</th><th>Outcomes</th></tr>
+<tr><td><strong>1</strong></td><td>Overview, roles, registration (no Ghana Card), <strong>security pitch</strong>, <strong>MBKRU Voice chatbot English lab</strong></td><td>Register; explain security layers; use chatbot; admin accounts</td></tr>
+<tr><td><strong>2</strong></td><td>Voice reports, causes, petitions, contact, diaspora feedback</td><td>One of each form + triage</td></tr>
+<tr><td><strong>3</strong></td><td>Communities, portal, Queen Mother evaluation</td><td>Pilot community end-to-end</td></tr>
+<tr><td><strong>4</strong></td><td>MPs CSV, promises, government tracker, Report Card draft</td><td>Sample promise + draft scorecard (no premature publish)</td></tr>
+</table>
+<h3>Half-day agenda</h3>
+<ol>
+<li>Platform story &amp; roles - 25 min </li>
+<li>Registration lab - 15 min </li>
+<li><strong>Platform security talking points + mini-demo</strong> - 15 min </li>
+<li><strong>MBKRU Voice chatbot lab (English)</strong> - 30 min </li>
+<li>Voice reports + tracking - 40 min </li>
+<li>Petitions &amp; forms - 25 min </li>
+<li>Communities &amp; Queen Mother portal - 50 min </li>
+<li>Parliament / promises / government tracker - 40 min </li>
+<li>Scorecard methodology - 40 min </li>
+<li>Diaspora programme - 25 min </li>
+<li>Admin ops, analytics, trust boundaries - 25 min </li>
+<li>Assessment drill - 20 min </li>
+</ol>
+<hr/>
+<h2>19. Complete feature checklist (leave nothing out)</h2>
+<p>Use this as the master &quot;have we trained it?&quot; list:</p>
+<ul class="checklist">
+<li>Homepage, About, News, Resources, Partners, Contact, FAQ</li>
+<li>Privacy, Terms, Accessibility</li>
+<li>Member register / login / forgot password / account / reports / notifications / privacy tools</li>
+<li><strong>MBKRU Voice chatbot (English Q&amp;A, links, fallback, guardrails, analytics)</strong></li>
+<li>Accessibility assistive panel (read / dictate - English demos)</li>
+<li>Citizens Voice hub, submit (all kinds), track, causes, discussions, transparency</li>
+<li>Situational alerts hub + submit</li>
+<li>Election observation hub + election submit</li>
+<li>Petitions browse / create / sign / admin</li>
+<li>Contact, leads, diaspora feedback forms</li>
+<li>Communities browse / join / forums / portal / manage</li>
+<li>Admin create community DRAFT-&gt;ACTIVE, verifications, moderation, community reports</li>
+<li>Council MP Evaluation -&gt; reports queue</li>
+<li>Parliament tracker + CSV import dry-run</li>
+<li>Promises catalogue + government commitments + manifesto registry</li>
+<li>People&#x27;s Report Card + methodology + data sources + admin publish flow</li>
+<li><strong>Report Card Voice filter: All / Verified / Unverified</strong> + badges on cards</li>
+<li>Staff set experience verification tier on <code>/admin/reports/[id]</code></li>
+<li>Diaspora hub + journeys + feedback + admin review</li>
+<li>Town halls, debates, regional hubs</li>
+<li>Legal empowerment, whistleblowing</li>
+<li>Partner API page + CSV/JSON exports awareness</li>
+<li>Admin full nav groups + operators + audit + settings + notification outbox</li>
+<li><strong>Platform security pitch</strong> (separate sessions, hashing, rate limits, headers, audit, chatbot guardrails)</li>
+<li>Optional Ghana Card on <code>/account</code> / MP performance gate (when Hubtel on)</li>
+<li>What MBKRU is <strong>not</strong> + demo-data hygiene</li>
+</ul>
+<hr/>
+<h2>20. Platform accuracy audit (UI / backend / admin)</h2>
+<p>Reviewed against the live codebase (July 2026). Use this when someone asks: &quot;Is everything in the handbook actually built?&quot;</p>
+<h3>20.1 Confirmed live (frontend + backend + admin where claimed)</h3>
+<table>
+<tr><th>Area</th><th>Status</th></tr>
+<tr><td>Registration without Ghana Card; login; forgot password; account; reports; notifications; privacy export/delete</td><td>Live</td></tr>
+<tr><td>Voice reports (5 kinds), track, causes, discussion threads, transparency</td><td>Live</td></tr>
+<tr><td>MBKRU Voice chatbot (site-wide), FAQ fallback, attachments, optional web search, admin analytics</td><td>Live</td></tr>
+<tr><td>Accessibility assistive tools</td><td>Live</td></tr>
+<tr><td>Petitions browse / create / sign / admin</td><td>Live</td></tr>
+<tr><td>Situational alerts; election observation (Phase 3 flag)</td><td>Live</td></tr>
+<tr><td>Communities browse/join/portal/manage; admin DRAFT-&gt;ACTIVE; verifications; moderation</td><td>Live</td></tr>
+<tr><td>Council MP Evaluation -&gt; reports queue</td><td>Live</td></tr>
+<tr><td>Parliament tracker; CSV import; promises; government commitments; manifestos</td><td>Live</td></tr>
+<tr><td>Report Card public + admin cycles; methodology; data sources</td><td>Live</td></tr>
+<tr><td><strong>Verified / Unverified public filter on Report Card Voice browse</strong></td><td>Live</td></tr>
+<tr><td>Diaspora hub + feedback + admin</td><td>Live</td></tr>
+<tr><td>Town halls, debates, regions, legal, whistleblowing, partner API page</td><td>Live</td></tr>
+<tr><td>Full admin nav (content, Voice, accountability, communities, system)</td><td>Live</td></tr>
+<tr><td>Security controls in Section 16 (sessions, bcrypt, rate limits, headers, audit, etc.)</td><td>Live (some optional: Turnstile, Redis, Hubtel)</td></tr>
+</table>
+<h3>20.2 Caveats trainers must state accurately</h3>
+<table>
+<tr><th>Topic</th><th>Accurate line</th></tr>
+<tr><td>Ghana Card</td><td><strong>Not</strong> on registration. May still appear on <strong>My Account</strong>; can gate <strong>MP performance</strong> when Hubtel is configured</td></tr>
+<tr><td>Chatbot language</td><td><strong>Train in English.</strong> Product may show a language control - do not promise translation</td></tr>
+<tr><td>Discussions</td><td>Per-report URLs only - no <code>/citizens-voice/discussions</code> index page</td></tr>
+<tr><td>Partner API</td><td>Public terms page + rate-limited CSV/JSON - not a private partner console</td></tr>
+<tr><td>Phase flags</td><td>Confirm production runs Phase 3 so election observatory and full scorecard depth are visible</td></tr>
+<tr><td>Town halls / debates</td><td>Live directories; often programme/planning surfaces rather than full interactive debate tools</td></tr>
+<tr><td>Security pitch</td><td>Strong layered controls - do not claim &quot;unhackable&quot;</td></tr>
+</table>
+<h3>20.3 How verified reports flow (end-to-end)</h3>
+<ol>
+<li>Citizen or council submits a report  </li>
+<li>Staff triage at <code>/admin/reports</code>  </li>
+<li>Staff set experience verification tier: UNVERIFIED, CORROBORATED, or DOCUMENTED  </li>
+<li>Public <code>/report-card</code> Voice tab can filter: All, Verified, or Unverified (badge on each card)  </li>
+<li>Separately, editors may use verified experience in Index C when publishing scores in <code>/admin/report-card</code></li>
+</ol>
+<h3>20.4 Staff how-to - mark a report verified</h3>
+<ol>
+<li>Open <code>/admin/reports</code> -&gt; select report </li>
+<li>Set <strong>Experience verification</strong> to Corroborated or Documented </li>
+<li>Save </li>
+<li>On https://mbkru.org/report-card (Voice tab), choose <strong>Verified only</strong> - the report should appear with a <strong>Verified</strong> badge </li>
+</ol>
+<hr/>
+<h2>Appendices</h2>
+<h3>Appendix A - Quick URL reference</h3>
+<table>
+<tr><th>Audience</th><th>URL</th></tr>
+<tr><td>Public home</td><td>https://mbkru.org/</td></tr>
+<tr><td>Register</td><td>https://mbkru.org/register</td></tr>
+<tr><td>Member login</td><td>https://mbkru.org/login</td></tr>
+<tr><td>Submit report</td><td>https://mbkru.org/citizens-voice/submit</td></tr>
+<tr><td>Track report</td><td>https://mbkru.org/track-report</td></tr>
+<tr><td>Petitions</td><td>https://mbkru.org/petitions</td></tr>
+<tr><td>Communities</td><td>https://mbkru.org/communities</td></tr>
+<tr><td>Parliament tracker</td><td>https://mbkru.org/parliament-tracker</td></tr>
+<tr><td>Promises</td><td>https://mbkru.org/promises</td></tr>
+<tr><td>Government commitments</td><td>https://mbkru.org/government-commitments</td></tr>
+<tr><td>Report Card</td><td>https://mbkru.org/report-card</td></tr>
+<tr><td>Methodology</td><td>https://mbkru.org/methodology</td></tr>
+<tr><td>Diaspora</td><td>https://mbkru.org/diaspora</td></tr>
+<tr><td>Diaspora feedback</td><td>https://mbkru.org/diaspora/feedback</td></tr>
+<tr><td>Transparency</td><td>https://mbkru.org/transparency</td></tr>
+<tr><td>Staff admin</td><td>https://mbkru.org/admin/login</td></tr>
+</table>
+<h3>Appendix B - Competency drills</h3>
+<p>Trainee is competent when they can:</p>
+<ol>
+<li>Register <strong>without</strong> mentioning Ghana Card </li>
+<li>Open <strong>MBKRU Voice chatbot</strong> and get English help for report + diaspora + commitments questions </li>
+<li>Explain chatbot is <strong>not</strong> a translator / lawyer / emergency service </li>
+<li>Submit a Voice report and retrieve via tracking code </li>
+<li>Create and sign a petition (incl. guest email confirm) </li>
+<li>As admin, create DRAFT community, activate, join as member </li>
+<li>Explain OPEN vs APPROVAL_REQUIRED </li>
+<li>Describe Council MP Evaluation -&gt; reports queue </li>
+<li>Add/update a promise on the correct public tracker </li>
+<li>Explain triple-index scorecard in plain English </li>
+<li>Walk diaspora hub -&gt; official signpost -&gt; feedback </li>
+<li>Name three things MBKRU is <strong>not</strong> </li>
+<li>Find MBKRU Voice analytics in admin </li>
+<li>Deliver the <strong>one-minute security pitch</strong> and name at least five concrete controls </li>
+<li>On <code>/report-card</code>, filter <strong>Verified only</strong> and <strong>Unverified only</strong>, and explain staff tiers </li>
+<li>As admin, change a report&#x27;s experience verification tier and confirm the public filter updates </li>
+</ol>
+<h3>Appendix C - Connected services</h3>
+<table>
+<tr><th>Service</th><th>Used for</th><th>If missing</th></tr>
+<tr><td>PostgreSQL</td><td>All data</td><td>Site cannot run</td></tr>
+<tr><td>Email (Resend)</td><td>Alerts</td><td>Forms still save</td></tr>
+<tr><td>SMS (Twilio)</td><td>Optional SMS</td><td>Skipped</td></tr>
+<tr><td>Turnstile</td><td>Bot protection</td><td>Forms still work</td></tr>
+<tr><td>OpenAI</td><td>Rich chatbot answers, optional speech</td><td><strong>FAQ fallback still works</strong></td></tr>
+<tr><td>Tavily</td><td>Optional web context in chat</td><td>Chat works without it</td></tr>
+<tr><td>Redis</td><td>Shared rate limits</td><td>In-memory fallback</td></tr>
+</table>
+<h3>Appendix D - Document control</h3>
+<table>
+<tr><th>Field</th><th>Value</th></tr>
+<tr><td>Owner</td><td>MBKRU programme operations / training lead</td></tr>
+<tr><td>Version</td><td>2.2.2 - July 2026</td></tr>
+<tr><td>Chatbot language</td><td><strong>English-only training demos (no translation promise)</strong></td></tr>
+<tr><td>Registration policy</td><td><strong>No Ghana Card at registration</strong></td></tr>
+<tr><td>Report Card Voice</td><td><strong>Verified / Unverified public filter live</strong></td></tr>
+<tr><td>Security module</td><td><strong>Section 16 - layered platform security for trainers</strong></td></tr>
+<tr><td>Accuracy audit</td><td><strong>Section 20 - UI / backend / admin verification</strong></td></tr>
+<tr><td>PDF companion</td><td><code>docs/MBKRU_TRAINING_TEAM_HANDBOOK.pdf</code></td></tr>
+</table>
+<hr/>
+<p><em>End of Training Team Handbook v2.2.2 - MBKRU Advocates. Prepared for professional staff training and full feature handover.</em></p>
+<p class="footer-note">End of Training Team Handbook v2.2.2 - MBKRU Advocates.</p>
+</body></html>
