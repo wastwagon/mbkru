@@ -78,7 +78,7 @@ export function HomeHeroSlider({
           const src = s.kind === "brand" ? images.hero : s.kind === "news" ? s.post.image : images.news;
           const alt =
             s.kind === "brand"
-              ? "Community gathering — illustrative photography for the hero"
+              ? "Community gathering in Ghana — homepage photography"
               : s.kind === "news"
                 ? s.post.title
                 : "News and public updates — illustrative photography";

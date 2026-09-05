@@ -6,102 +6,105 @@
  * Replace filenames here when production assets and verified text are ready.
  */
 
-/** Wide civic / outdoor scene (1200×678) */
-const IMG_WIDE_CIVIC =
-  "604200028a3cf7a32efee05f918b846dcbed5db41a396098a4edc9f260a9ccd2-1200x678.webp";
-
 /** Path under `public/images/` */
 function pub(file: string) {
   return `/images/${file}`;
 }
 
 /**
- * Illustrative imagery — semantic categories for pages and cards (local assets)
+ * Illustrative imagery — semantic categories for pages and cards (local assets).
+ * Filenames are content-matched for go-live (civic Ghana; no sports-crowd stand-ins).
  */
 export const images = {
-  /** Hero, CTA sections — broad civic / outdoor Ghana */
-  hero: pub(IMG_WIDE_CIVIC),
-  heroThumb: pub(IMG_WIDE_CIVIC),
+  /** Homepage slider + wide civic Ghana */
+  hero: pub("mbkru-hero-civic-ghana.jpg"),
+  heroThumb: pub("mbkru-hero-civic-ghana.jpg"),
 
-  /** About, mission — heritage and culture */
+  /** About, mission — Akan heritage */
   about: pub("130207142157-ghana-tourism-akan-dance.jpg"),
   aboutMission: pub("130207142157-ghana-tourism-akan-dance.jpg"),
 
-  /** Digital platform — citizens and public engagement */
-  platform: pub("191129141031-01-ghana-citizens-year-of-return.jpg"),
+  /** Digital platform / Voice statistics */
+  platform: pub("mbkru-voice-digital.jpg"),
 
-  /** Pillar A — Digital platform, connectivity */
-  digital: pub("FQ4-3QqXMAAFN2d.jpeg.webp"),
-  digitalThumb: pub("FQ4-3QqXMAAFN2d.jpeg.webp"),
+  /** Pillar A — Digital platform, MBKRU Voice */
+  digital: pub("mbkru-voice-digital.jpg"),
+  digitalThumb: pub("mbkru-voice-digital.jpg"),
 
-  /** Pillar B — Festivals and large gatherings */
-  community: pub("Afrochella_Festival_2019_1.jpg"),
-  communityThumb: pub("Afrochella_Festival_2019_1.jpg"),
+  /** Pillar B — Traditional-area communities / Queen Mother networks */
+  community: pub("mbkru-communities.jpg"),
+  communityThumb: pub("mbkru-communities.jpg"),
 
-  /** Pillar C — Legal, justice */
-  legal: pub("cf68ddd9c6f144d6f1181fe8d38ffd79.jpg"),
-  legalThumb: pub("cf68ddd9c6f144d6f1181fe8d38ffd79.jpg"),
+  /** Town halls and regional forums */
+  townHall: pub("mbkru-town-hall.jpg"),
 
-  /** Pillar D — Accountability, press, governance */
-  accountability: pub("IMG_AIF65_Blame-Ekoue_003-2.jpg"),
-  accountabilityThumb: pub("IMG_AIF65_Blame-Ekoue_003-2.jpg"),
+  /** Election observation */
+  election: pub("mbkru-election-observation.jpg"),
 
-  /** Pillar E — Diaspora bridge, leadership listening */
-  leadership: pub("Ghana_Black_Americans_66881.jpg.avif"),
-  leadershipThumb: pub("Ghana_Black_Americans_66881.jpg.avif"),
+  /** Pillar C — Legal empowerment */
+  legal: pub("mbkru-legal-empowerment.jpg"),
+  legalThumb: pub("mbkru-legal-empowerment.jpg"),
 
-  /** Partners — collaboration */
-  partnership: pub("32a127dcb0d1b5945184124693744fe2.jpg"),
+  /** Pillar D — People's Report Card / Electoral Watch */
+  accountability: pub("mbkru-report-card-electoral-watch.jpg"),
+  accountabilityThumb: pub("mbkru-report-card-electoral-watch.jpg"),
 
-  /** Diaspora / “17th Region” — Ghana and global Ghanaian community */
-  diaspora: pub("Ghana_Black_Americans_66881.jpg.avif"),
-  diasporaSummit: pub("Afrochella_Festival_2019_1.jpg"),
+  /** Pillar E — Diaspora bridge */
+  leadership: pub("mbkru-diaspora.jpg"),
+  leadershipThumb: pub("mbkru-diaspora.jpg"),
 
-  /** News — media, press */
-  news: pub("IMG_AIF65_Blame-Ekoue_003-2.jpg"),
+  /** Partners — civic collaboration */
+  partnership: pub("mbkru-partnership.jpg"),
 
-  /** Resources — documents, research */
-  resources: pub("cf68ddd9c6f144d6f1181fe8d38ffd79.jpg"),
+  /** Diaspora / “17th Region” */
+  diaspora: pub("mbkru-diaspora.jpg"),
+  diasporaSummit: pub("191129141031-01-ghana-citizens-year-of-return.jpg"),
+
+  /** News — civic press */
+  news: pub("mbkru-news-press.jpg"),
+
+  /** Resources — policy documents */
+  resources: pub("mbkru-resources.jpg"),
 
   /** Landscape — wide outdoor / civic */
-  landscape: pub(IMG_WIDE_CIVIC),
+  landscape: pub("mbkru-hero-civic-ghana.jpg"),
 } as const;
 
 /** Footer engagement gallery — 9 distinct images for 3×3 grid */
 export const footerGalleryImages = [
-  pub("Afrochella_Festival_2019_1.jpg"),
+  pub("mbkru-hero-civic-ghana.jpg"),
   pub("130207142157-ghana-tourism-akan-dance.jpg"),
-  pub(IMG_WIDE_CIVIC),
+  pub("mbkru-town-hall.jpg"),
   pub("191129141031-01-ghana-citizens-year-of-return.jpg"),
-  pub("Ghana_Black_Americans_66881.jpg.avif"),
-  pub("FQ4-3QqXMAAFN2d.jpeg.webp"),
-  pub("32a127dcb0d1b5945184124693744fe2.jpg"),
-  pub("cf68ddd9c6f144d6f1181fe8d38ffd79.jpg"),
-  pub("IMG_AIF65_Blame-Ekoue_003-2.jpg"),
+  pub("mbkru-diaspora.jpg"),
+  pub("mbkru-voice-digital.jpg"),
+  pub("mbkru-communities.jpg"),
+  pub("mbkru-legal-empowerment.jpg"),
+  pub("mbkru-report-card-electoral-watch.jpg"),
 ] as const;
 
 /** Alt text for `footerGalleryImages` (same order) — accessibility */
 export const footerGalleryAlts = [
-  "Crowd at Afrochella festival celebrating Ghanaian music and culture",
+  "Civic street life in Ghana",
   "Traditional Akan dancers in kente at a public heritage event",
-  "Wide outdoor civic scene in Ghana",
-  "Ghana citizens at a Year of Return heritage gathering",
-  "Ghanaian diaspora and community connection",
-  "Crowd at a public event in Ghana",
-  "Community gathering in Ghana",
-  "Formal civic or institutional setting in Ghana",
-  "Press or public affairs photography in Ghana",
+  "Town hall forum with citizens in Ghana",
+  "Ghanaians and returnees at a Year of Return gathering",
+  "Ghanaian diaspora homecoming with national flags",
+  "Citizen using a phone to file a civic report",
+  "Queen Mother and traditional-area civic gathering",
+  "Legal empowerment session in Ghana",
+  "Citizens reviewing a public report card",
 ] as const;
 
 /**
  * Pillar image map — for homepage and About page
  */
 export const pillarImages = [
-  { id: "digital", image: images.digitalThumb, alt: "Digital connectivity and public events in Ghana" },
-  { id: "community", image: images.communityThumb, alt: "Festival crowd and cultural celebration in Ghana" },
-  { id: "legal", image: images.legalThumb, alt: "Justice and legal empowerment" },
-  { id: "accountability", image: images.accountabilityThumb, alt: "Accountability, press, and governance" },
-  { id: "leadership", image: images.leadershipThumb, alt: "Diaspora and citizen engagement with leadership" },
+  { id: "digital", image: images.digitalThumb, alt: "Citizen filing a civic report on a phone in Ghana" },
+  { id: "community", image: images.communityThumb, alt: "Queen Mother and traditional-area civic gathering in Ghana" },
+  { id: "legal", image: images.legalThumb, alt: "Legal empowerment and civic navigation in Ghana" },
+  { id: "accountability", image: images.accountabilityThumb, alt: "Ghanaian citizens reviewing a public report card" },
+  { id: "leadership", image: images.leadershipThumb, alt: "Ghanaian diaspora homecoming and civic belonging" },
 ] as const;
 
 /**
@@ -274,7 +277,7 @@ export const starterNewsArticles = [
     title: "MBKRU Launches Website for Citizen Voice",
     excerpt: "My Brother's Keeper Restoration United (MBKRU) announces the launch of its official website, marking a new chapter in connecting ordinary Ghanaians directly to the Presidency and holding elected officials accountable.",
     date: "12 Mar 2026",
-    image: images.news,
+    image: pub("mbkru-post-website-launch.jpg"),
     featured: true,
   },
   {
@@ -290,7 +293,7 @@ export const starterNewsArticles = [
     title: "Five Pillars for Accountability",
     excerpt: "From digital platforms to Town Hall Meetings, legal empowerment to People's Report Cards — how MBKRU will build a transparent bridge between citizens and government.",
     date: "8 Mar 2026",
-    image: images.platform,
+    image: images.accountability,
     featured: false,
   },
   {
@@ -315,7 +318,7 @@ export const starterNewsArticles = [
     title: "Town Hall Meetings & Regional Forums",
     excerpt: "Physical engagement network bringing citizens face-to-face with decision-makers across all 16 regions.",
     date: "28 Feb 2026",
-    image: images.community,
+    image: images.townHall,
     featured: false,
   },
   {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { content } from "@/lib/site-content";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -46,6 +47,9 @@ export default function ContactPage() {
       <PageHeader
         title="Contact Us"
         description="Reach the MBKRU team for partnerships, press, general enquiries, or feedback on this site. We read every message and aim to reply within two business days."
+        eyebrow={pageHeaderPresets.partners.eyebrow}
+        heroImage={pageHeaderPresets.partners.heroImage}
+        heroImageAlt={pageHeaderPresets.partners.heroImageAlt}
       />
 
       <section className="section-spacing section-full bg-[var(--section-light)]">

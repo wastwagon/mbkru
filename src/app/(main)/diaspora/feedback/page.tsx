@@ -4,6 +4,7 @@ import { DiasporaProgrammePhaseNotice } from "@/components/diaspora/DiasporaProg
 import { DiasporaFeedbackForm } from "@/components/forms/DiasporaFeedbackForm";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 
 export const metadata: Metadata = {
   title: "Diaspora experience & feedback",
@@ -20,6 +21,9 @@ export default function DiasporaFeedbackPage() {
       <PageHeader
         title="Diaspora experience & feedback"
         description="Tell us about a recent visit, or choose “engaging from abroad” if you have not travelled to Ghana lately — both paths use the same secure form. Your email is used for follow-up; submissions are stored for programme records."
+        eyebrow={pageHeaderPresets.diaspora.eyebrow}
+        heroImage={pageHeaderPresets.diaspora.heroImage}
+        heroImageAlt={pageHeaderPresets.diaspora.heroImageAlt}
       />
 
       <section className="section-spacing section-full bg-[var(--section-light)]">

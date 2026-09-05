@@ -1,7 +1,8 @@
-# MBKRU — Next.js + Postgres + Redis (admin CMS: /admin)
+# MBKRU — production-like image (Coolify / VPS). Not the default local restore path.
+# Local preview with hot reload: docker-compose.dev.yml (./scripts/docker-dev-up.sh → http://localhost:1100).
 # Default image build is Phase 3 (full Voice + report card). Override with NEXT_PUBLIC_PLATFORM_PHASE=1 for marketing-only.
 # Run: docker compose up -d --build
-# Entrypoint runs migrate + seed when DATABASE_URL is set (see docker-entrypoint.sh).
+# Entrypoint always migrates when DATABASE_URL is set. Seed is skipped in NODE_ENV=production unless RUN_DB_SEED_ON_BOOT=1.
 # Redis: used for shared rate limits and optional member session jti (Phase 2+).
 # Manual retry: Admin → Settings, or: docker compose exec mbkru-web npx prisma db seed
 

@@ -2579,6 +2579,28 @@ async function main() {
   }
   console.log("Regions seeded:", REGIONS_SEED.length);
 
+  async function upsertPublicJpeg(storagePath, filename, alt) {
+    let row = await prisma.media.findFirst({ where: { storagePath } });
+    if (!row) {
+      row = await prisma.media.create({
+        data: { filename, storagePath, mimeType: "image/jpeg", alt, visibility: "PUBLIC" },
+      });
+    } else if (row.alt !== alt) {
+      row = await prisma.media.update({ where: { id: row.id }, data: { alt } });
+    }
+    return row;
+  }
+
+  const ahafoMiningMedia = await upsertPublicJpeg(
+    "/images/sectors/mining-ahafo.jpg",
+    "mining-ahafo.jpg",
+    "Open-pit gold mining in the forested hills of Ahafo Region, Ghana",
+  );
+  await prisma.region.update({
+    where: { slug: "ahafo" },
+    data: { headerMediaId: ahafoMiningMedia.id },
+  });
+
   const skipConstituencyJson =
     process.env.SEED_CONSTITUENCIES_JSON === "0" || process.env.SEED_CONSTITUENCIES_JSON === "false";
   if (skipConstituencyJson) {
@@ -2620,7 +2642,49 @@ async function main() {
     console.warn("Skip admin: set ADMIN_EMAIL and ADMIN_PASSWORD to create the first admin.");
   }
 
+  const POST_FEATURED_MEDIA = {
+    "mbkru-website-launch": {
+      path: "/images/mbkru-post-website-launch.jpg",
+      filename: "mbkru-post-website-launch.jpg",
+      alt: "MBKRU team preparing the public citizen-voice website",
+    },
+    "why-mbkru": {
+      path: "/images/130207142157-ghana-tourism-akan-dance.jpg",
+      filename: "130207142157-ghana-tourism-akan-dance.jpg",
+      alt: "Ghanaian heritage and civic life",
+    },
+    "our-approach": {
+      path: "/images/mbkru-report-card-electoral-watch.jpg",
+      filename: "mbkru-report-card-electoral-watch.jpg",
+      alt: "Citizens reviewing a public report card in Ghana",
+    },
+    "partnership-update": {
+      path: "/images/mbkru-partnership.jpg",
+      filename: "mbkru-partnership.jpg",
+      alt: "Civic partnership meeting in Ghana",
+    },
+    "diaspora-17th-region-2025": {
+      path: "/images/mbkru-diaspora.jpg",
+      filename: "mbkru-diaspora.jpg",
+      alt: "Ghanaian diaspora homecoming with national flags",
+    },
+    "citizen-engagement": {
+      path: "/images/mbkru-town-hall.jpg",
+      filename: "mbkru-town-hall.jpg",
+      alt: "Town hall forum with citizens in Ghana",
+    },
+    "queen-mother-communities-launch": {
+      path: "/images/mbkru-communities.jpg",
+      filename: "mbkru-communities.jpg",
+      alt: "Queen Mother and traditional-area civic gathering",
+    },
+  };
+
   for (const p of POSTS_SEED) {
+    const featured = POST_FEATURED_MEDIA[p.slug];
+    const media = featured
+      ? await upsertPublicJpeg(featured.path, featured.filename, featured.alt)
+      : null;
     await prisma.post.upsert({
       where: { slug: p.slug },
       create: {
@@ -2629,12 +2693,14 @@ async function main() {
         excerpt: p.excerpt,
         body: p.body,
         publishedAt: p.publishedAt,
+        featuredMediaId: media?.id ?? null,
       },
       update: {
         title: p.title,
         excerpt: p.excerpt,
         body: p.body,
         publishedAt: p.publishedAt,
+        featuredMediaId: media?.id ?? null,
       },
     });
   }

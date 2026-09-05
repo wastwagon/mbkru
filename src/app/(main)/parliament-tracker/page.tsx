@@ -224,8 +224,8 @@ export default async function ParliamentTrackerPage() {
           <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-12">
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-[var(--shadow-card)] ring-1 ring-black/5">
               <Image
-                src={images.hero}
-                alt="Citizens and accountability"
+                src={images.accountability}
+                alt="Ghanaian citizens reviewing a public report card"
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"

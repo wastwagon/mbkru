@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,9 @@ export default function ElectionObservationPage() {
       <PageHeader
         title="Election observation"
         description="During Phase 3 deployments, MBKRU accepts dedicated election-window reports alongside Voice and situational channels. Submissions are moderated; they are not filings with the Electoral Commission or courts."
+        eyebrow={pageHeaderPresets.election.eyebrow}
+        heroImage={pageHeaderPresets.election.heroImage}
+        heroImageAlt={pageHeaderPresets.election.heroImageAlt}
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">

@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { getPublishedPartners, partnerCategoryLabel } from "@/lib/content/partners-cms";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { images } from "@/lib/site-content";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 
 export const metadata: Metadata = {
   title: "Partners & Supporters",
@@ -21,6 +22,9 @@ export default async function PartnersPage() {
       <PageHeader
         title="Partners & Supporters"
         description="We work with development partners, civil society, and foundations committed to governance, citizen voice, and poverty eradication in Ghana."
+        eyebrow={pageHeaderPresets.partners.eyebrow}
+        heroImage={pageHeaderPresets.partners.heroImage}
+        heroImageAlt={pageHeaderPresets.partners.heroImageAlt}
       />
 
       <section className="section-spacing section-full bg-[var(--section-light)]">

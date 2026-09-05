@@ -38,9 +38,26 @@ Civic Accountability & Citizens Engagement Platform for Ghana.
 - Node.js **20+** (see `.nvmrc`)
 - npm
 
-### One-command local setup (Docker + DB + seed)
+### Restore local preview (Docker Desktop)
 
-Requires **Docker Desktop** (or Docker Engine + Compose). Creates `.env` from `.env.example` with generated secrets if missing, starts **Postgres** (host port **55432**) and **Redis**, runs migrations and seed (starter MPs/manifesto-linked promises, news, optional pilot members).
+This is the laptop stack: **Postgres + Redis + Next.js** at **http://localhost:1100**. It is **not** production. Shipping to [mbkru.org](https://mbkru.org/) is a **git push to `main`** (Coolify rebuilds from GitHub).
+
+```bash
+./scripts/docker-dev-up.sh
+```
+
+That command recreates the containers and database volumes if they were deleted, applies migrations, and seeds starter/admin data. Then open:
+
+- Site: [http://localhost:1100](http://localhost:1100)
+- Admin: [http://localhost:1100/admin/login](http://localhost:1100/admin/login) — `admin@example.com` / `DevAdmin!mbkru-local-2026` (from `.env`)
+- Health: [http://localhost:1100/api/health](http://localhost:1100/api/health)
+
+Stop: `docker compose -f docker-compose.dev.yml down`  
+Wipe the local database as well: `docker compose -f docker-compose.dev.yml down -v`
+
+### One-command host Next.js (DB still in Docker)
+
+If you prefer Next.js on the host and only Postgres/Redis in Docker:
 
 ```bash
 npm run setup:local
@@ -179,40 +196,49 @@ Images referenced by `mainImage` are downloaded into `public/uploads`. If your s
 
 ## Docker
 
-### Production (Docker Desktop or Coolify)
+Two different stacks — do not mix them.
 
-```bash
-docker compose up -d --build
-docker compose exec mbkru-web npx prisma db seed
-```
+| What you want | Command | Result |
+|---------------|---------|--------|
+| **Local preview on this Mac** | `./scripts/docker-dev-up.sh` | http://localhost:1100 (hot reload). Uses `docker-compose.dev.yml`. |
+| **Ship to the live site** | `git push origin main` | Coolify on the VPS rebuilds [mbkru.org](https://mbkru.org/) from GitHub. Local Docker is never production. |
 
-App runs at http://localhost:1100 (port 1100 → container 3000). The image runs **`prisma migrate deploy`** on start when `DATABASE_URL` is set. Sensitive uploads (Voice attachments and community verification docs) are stored under **`PRIVATE_UPLOADS_DIR`** (`var/private-uploads` by default), while public media/resources remain under `public/uploads`.
+### Local Docker Desktop (restore this after deleting containers)
 
-Use a `.env` file in the project root so `build.args` pick up `NEXT_PUBLIC_*` for the image build, and set `ADMIN_SESSION_SECRET`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD`.
-
-### Full stack (Postgres + Redis for Phase 2+)
-
-```bash
-docker compose -f docker-compose.fullstack.yml up -d --build
-# optional manual retry if seed fails:
-docker compose -f docker-compose.fullstack.yml exec mbkru-web node /app/node_modules/prisma/build/index.js db seed
-```
-
-Same URL; Postgres backs the app; Redis is on the Docker network for rate limiting and future queues. On startup, `docker-entrypoint.sh` runs `prisma migrate deploy` automatically when `DATABASE_URL` is set. Seed requires `RUN_DB_SEED_ON_BOOT=1` in production (or runs by default in non-production unless `SKIP_DB_SEED=1`).
-
-### Development with Docker
-
-Creates **Postgres** (host **55432** → container 5432), **Redis**, and the **Next.js** dev server on **http://localhost:1100**. The dev container runs **`prisma migrate deploy`** on each start, then **`npm run dev`**.
+Recreates **Postgres** (host **55432**), **Redis** (host **56379**), and the **Next.js** dev server on **http://localhost:1100**. Migrations run on start; the script then seeds admin + demo data.
 
 ```bash
 ./scripts/docker-dev-up.sh
-# optional (idempotent) starter/admin seed:
-docker compose -f docker-compose.dev.yml exec mbkru-dev npx prisma db seed
 ```
 
-Or manually: `docker compose -f docker-compose.dev.yml up -d --build` (copy `.env.example` → `.env` first for `ADMIN_*` / session secrets).
+Host-side `.env` must use those published ports (already set in `.env.example`):
+
+- `DATABASE_URL=postgresql://mbkru:mbkru_dev@localhost:55432/mbkru`
+- `REDIS_URL=redis://localhost:56379`
+
+Do **not** point `REDIS_URL` at `localhost:6379` — that port is usually another project’s Redis.
 
 If Docker errors with **blob … input/output error** or **containerd**, restart Docker Desktop, free disk space, or use **Troubleshoot → Clean / Reset data** (local images are removed).
+
+### Production-like image on this Mac (optional)
+
+Use only when you need to test the standalone production image locally. This is **not** how mbkru.org is updated, and it does **not** hot-reload.
+
+```bash
+RUN_DB_SEED_ON_BOOT=1 docker compose up -d --build
+```
+
+App: http://localhost:1100 (host **1100** → container **3000**). `docker-entrypoint.sh` runs **`prisma migrate deploy`** on start. Because `NODE_ENV=production`, seed needs **`RUN_DB_SEED_ON_BOOT=1`** (or seed once with):
+
+```bash
+docker compose exec mbkru-web node /app/node_modules/prisma/build/index.js db seed
+```
+
+(`npx prisma` is not available in the production image.)
+
+`docker-compose.fullstack.yml` is an older duplicate of the same three services — prefer `docker-compose.yml` if you need this path.
+
+Sensitive uploads (Voice attachments and community verification docs) live under **`PRIVATE_UPLOADS_DIR`** (`var/private-uploads` by default); public media stays under `public/uploads`.
 
 ### Build image only
 
@@ -221,28 +247,23 @@ docker build -t mbkru-website .
 docker run -p 1100:3000 mbkru-website
 ```
 
-## Deploy to Coolify (VPS)
+## Deploy to production (Coolify / mbkru.org)
 
-1. **Push to GitHub** — Ensure the repo has the Dockerfile and docker-compose.yml
-2. **Add Resource in Coolify** — New Resource → Docker Compose (or Dockerfile)
-3. **Connect repo** — Link your GitHub repo
-4. **Configure:**
-   - Build: Use existing Dockerfile (or Coolify will detect it)
-   - Port: Map container `3000` → host `1100` (or your preferred port)
-   - Domain: Add your domain (e.g. mbkruadvocates.org) for SSL
-5. **Environment variables** — Add in Coolify (build + runtime as needed):
-   - `NEXT_PUBLIC_SITE_URL` = https://yourdomain.com
-   - `NEXT_PUBLIC_PLATFORM_PHASE` = **`3`** for the full platform (default in `.env.example` / Docker), or **`1`** for marketing-only only (**must be set at build time** — rebuild after changing it). Use **`2`** for Voice + members + public report card + transparency stats without Phase 3 election-observation extras.
-   - `DATABASE_URL` (Postgres service on the same stack or managed DB)
-   - `ADMIN_SESSION_SECRET` (long random string)
-   - `ADMIN_EMAIL` / `ADMIN_PASSWORD` (then run seed once, or run seed in a deploy hook)
-   - For Phase 2+: **`MEMBER_SESSION_SECRET`** (≥32 chars, different from admin secret)
-6. **Persistent volume** — Mount or use a named volume for `/app/public/uploads` so media survives redeploys.
-7. **Deploy** — Every new container runs **`docker-entrypoint.sh`**, which runs **`prisma migrate deploy`** whenever **`DATABASE_URL`** is set (**no Coolify hooks required**). Optional first-time **`prisma db seed`**: set **`RUN_DB_SEED_ON_BOOT=1`** in Coolify (staging/demo) — production stays empty until you seed or opt in deliberately.
+Local Docker Desktop and production are separate. **Code reaches the live site only through GitHub `main`.**
 
-**If `/login` or `/register` say member auth is off:** the running image was built with `NEXT_PUBLIC_PLATFORM_PHASE=1`. Bump the variable in Coolify **build arguments**, add `MEMBER_SESSION_SECRET`, and **trigger a new build** (not just a restart).
+1. Commit on a branch, open a PR (or merge locally), then **`git push origin main`**.
+2. Coolify is already connected to [github.com/wastwagon/mbkru](https://github.com/wastwagon/mbkru) and rebuilds the production image from `Dockerfile` / `docker-compose.yml`.
+3. Every new container runs **`docker-entrypoint.sh`** → **`prisma migrate deploy`**. Do **not** set `RUN_DB_SEED_ON_BOOT=1` on production (that would re-seed demo content).
+4. Confirm [https://mbkru.org/api/health](https://mbkru.org/api/health) after deploy.
 
-Coolify handles SSL (Let's Encrypt), restarts, and zero-downtime deploys automatically.
+Coolify env (already on the VPS — change there, not in local `.env`):
+
+- `NEXT_PUBLIC_SITE_URL` = `https://mbkru.org` (**rebuild** after changing any `NEXT_PUBLIC_*`)
+- `NEXT_PUBLIC_PLATFORM_PHASE` = `3`
+- `DATABASE_URL`, `ADMIN_SESSION_SECRET`, `MEMBER_SESSION_SECRET`, plus optional Resend / Turnstile / Hubtel keys
+- Persistent volumes for `/app/public/uploads` and `/app/var/private-uploads`
+
+**If `/login` or `/register` say member auth is off:** the running image was built with `NEXT_PUBLIC_PLATFORM_PHASE=1`. Set it to `3` in Coolify **build arguments** and **trigger a new build** (not just a restart).
 
 ## Deploy to Vercel (Alternative)
 
@@ -266,7 +287,7 @@ Coolify handles SSL (Let's Encrypt), restarts, and zero-downtime deploys automat
 - [ ] Add final content (About, Contact details, etc.)
 - [ ] Run DB migrations + seed; add news posts and media in `/admin`
 - [ ] Set up email (contact form, newsletter)
-- [ ] Add reCAPTCHA to contact form
+- [ ] Add Cloudflare Turnstile to contact form (not reCAPTCHA)
 - [ ] Configure custom domain
 - [ ] Set up Google Analytics 4 & Search Console
 - [ ] Admin walkthrough (login, posts, media library)

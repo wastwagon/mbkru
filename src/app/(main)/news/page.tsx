@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { formatPublishedNewsCount } from "@/lib/public-news-copy";
 import { getPublicNewsCatalog } from "@/lib/public-news-catalog";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 
 export const metadata: Metadata = {
   title: "News",
@@ -23,7 +24,13 @@ export default async function NewsPage() {
   if (total === 0) {
     return (
       <div>
-        <PageHeader title="News" description={pageDescription} />
+        <PageHeader
+          title="News"
+          description={pageDescription}
+          eyebrow={pageHeaderPresets.news.eyebrow}
+          heroImage={pageHeaderPresets.news.heroImage}
+          heroImageAlt={pageHeaderPresets.news.heroImageAlt}
+        />
         <section className="section-spacing section-full bg-[var(--section-light)]">
           <div className="mx-auto max-w-lg px-4 text-center sm:px-6 lg:px-8">
             <p className="text-[var(--foreground-secondary)]">{formatPublishedNewsCount(0)}</p>
@@ -46,7 +53,13 @@ export default async function NewsPage() {
 
   return (
     <div>
-      <PageHeader title="News" description={pageDescription} />
+      <PageHeader
+        title="News"
+        description={pageDescription}
+        eyebrow={pageHeaderPresets.news.eyebrow}
+        heroImage={pageHeaderPresets.news.heroImage}
+        heroImageAlt={pageHeaderPresets.news.heroImageAlt}
+      />
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="mb-8 text-center text-sm font-medium text-[var(--foreground-secondary)] sm:text-left">

@@ -8,6 +8,7 @@ import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { reportKindLabel } from "@/lib/report-status-text";
 import { isCivicPetitionsAndPublicCausesEnabled } from "@/lib/reports/accountability-pages";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 import { mergeCitizenReportWhere } from "@/lib/reports/training-data";
 import { kindBadgeClass } from "@/lib/voice-submission-card-shared";
 
@@ -46,6 +47,9 @@ export default async function PublicCausesIndexPage() {
         title="Public causes"
         description="When staff publish a Voice submission here, it appears on this list with an editor-approved summary (not the full report). Other members can show support and join the discussion on each cause — sign in to comment. Use petitions if you want a separate signature campaign."
         breadcrumbCurrentLabel="Causes"
+        eyebrow={pageHeaderPresets.voice.eyebrow}
+        heroImage={pageHeaderPresets.voice.heroImage}
+        heroImageAlt={pageHeaderPresets.voice.heroImageAlt}
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">

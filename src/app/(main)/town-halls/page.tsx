@@ -8,6 +8,7 @@ import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { isTownHallDirectoryPageEnabled } from "@/lib/reports/accountability-pages";
 import { getProgrammeTownHallEvents } from "@/lib/server/town-hall-events";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,9 @@ export default async function TownHallsPage() {
         title="Town halls & regional forums"
         description="Presidential and regional listening sessions. Programme rows below follow our published calendar; confirmed dates and venues are announced on News when partners sign off."
         breadcrumbCurrentLabel="Forums"
+        eyebrow={pageHeaderPresets.townHall.eyebrow}
+        heroImage={pageHeaderPresets.townHall.heroImage}
+        heroImageAlt={pageHeaderPresets.townHall.heroImageAlt}
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl space-y-8 px-4 sm:px-6 lg:px-8">

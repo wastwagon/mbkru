@@ -5,6 +5,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ProcessFlowDiagram, DATA_PROVENANCE_STEPS } from "@/components/ui/ProcessFlowDiagram";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 
 export const metadata: Metadata = {
   title: "Data sources",
@@ -212,6 +213,9 @@ export default function DataSourcesPage() {
         title="Data sources"
         description="MBKRU publishes non-partisan tools. Below is where bundled datasets come from and how to verify them."
         breadcrumbCurrentLabel="Data sources"
+        eyebrow={pageHeaderPresets.resources.eyebrow}
+        heroImage={pageHeaderPresets.resources.heroImage}
+        heroImageAlt={pageHeaderPresets.resources.heroImageAlt}
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl space-y-10 px-4 text-sm text-[var(--foreground-secondary)] sm:px-6 lg:px-8">

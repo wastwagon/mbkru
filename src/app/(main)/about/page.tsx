@@ -12,6 +12,7 @@ import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { getPublishedEndorsements, getPublishedLeadershipProfiles } from "@/lib/content/partners-cms";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { images, mbkruStrategicContent, heroContent } from "@/lib/site-content";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 
 export const metadata: Metadata = {
   title: "About",
@@ -85,6 +86,9 @@ export default async function AboutPage() {
       <PageHeader
         title="About MBKRU"
         description={`My Brother's Keeper Restoration United — ${heroContent.tagline}. ${heroContent.motto}`}
+        eyebrow={pageHeaderPresets.about.eyebrow}
+        heroImage={pageHeaderPresets.about.heroImage}
+        heroImageAlt={pageHeaderPresets.about.heroImageAlt}
       />
 
       <AboutPlatformLinks />

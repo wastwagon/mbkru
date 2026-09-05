@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ProcessFlowDiagram, SITUATIONAL_ALERT_FLOW_STEPS } from "@/components/ui/ProcessFlowDiagram";
 import { images } from "@/lib/site-content";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 import { isSituationalAlertsIntakeEnabled } from "@/lib/reports/situational-alerts-gate";
 
@@ -54,6 +55,9 @@ export default async function SituationalAlertsPage() {
       <PageHeader
         title="Physical Engagement Network"
         description="Physical engagement network — Town Hall Meetings, Regional Forums, and National People's Assembly."
+        eyebrow={pageHeaderPresets.townHall.eyebrow}
+        heroImage={pageHeaderPresets.townHall.heroImage}
+        heroImageAlt={pageHeaderPresets.townHall.heroImageAlt}
       />
 
       <div className="border-b border-[var(--border)] bg-white py-6">
@@ -68,8 +72,8 @@ export default async function SituationalAlertsPage() {
           <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-12">
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-[var(--shadow-card)] ring-1 ring-black/5 lg:order-2">
               <Image
-                src={images.hero}
-                alt="Citizens and community engagement"
+                src={images.townHall}
+                alt="Town hall forum with citizens in Ghana"
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"

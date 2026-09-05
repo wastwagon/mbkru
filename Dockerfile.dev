@@ -8,6 +8,6 @@ COPY prisma ./prisma
 COPY prisma.config.ts ./prisma.config.ts
 RUN npm ci
 COPY . .
-RUN chmod +x /app/docker-dev-entrypoint.sh
 EXPOSE 1100
-ENTRYPOINT ["/app/docker-dev-entrypoint.sh"]
+# Use `sh` so a bind-mounted host file without +x still starts (Docker Desktop local).
+ENTRYPOINT ["sh", "/app/docker-dev-entrypoint.sh"]

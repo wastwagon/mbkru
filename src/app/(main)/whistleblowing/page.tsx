@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { ProcessFlowDiagram, LEGAL_ROUTING_STEPS } from "@/components/ui/ProcessFlowDiagram";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 import { isWhistleblowerGuidancePageEnabled } from "@/lib/reports/accountability-pages";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,9 @@ export default function WhistleblowingPage() {
       <PageHeader
         title="Whistleblowing & safe reporting"
         description="MBKRU documents public-interest concerns with care for privacy and security. This page explains how Voice relates to whistleblowing — not legal advice."
+        eyebrow={pageHeaderPresets.legal.eyebrow}
+        heroImage={pageHeaderPresets.legal.heroImage}
+        heroImageAlt={pageHeaderPresets.legal.heroImageAlt}
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">

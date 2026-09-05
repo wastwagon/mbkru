@@ -5,6 +5,7 @@ import { MobileInstallHelp } from "@/components/pwa/MobileInstallHelp";
 import { MbkruVoiceCallout } from "@/components/voice/MbkruVoiceCallout";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 import { faqContent } from "@/lib/site-content";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 
 export const metadata: Metadata = {
   title: "Frequently Asked Questions",
@@ -18,6 +19,9 @@ export default function FAQPage() {
       <PageHeader
         title="Frequently Asked Questions"
         description="Common questions about MBKRU, our platform, and how you can get involved."
+        eyebrow={pageHeaderPresets.about.eyebrow}
+        heroImage={pageHeaderPresets.about.heroImage}
+        heroImageAlt={pageHeaderPresets.about.heroImageAlt}
       />
 
       <section className="section-spacing section-full bg-[var(--section-light)]">

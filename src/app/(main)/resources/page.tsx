@@ -18,6 +18,7 @@ import {
   resourceTitleLinkClass,
 } from "@/lib/primary-link-styles";
 import { images, resourcesConceptNote } from "@/lib/site-content";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 
 export const metadata: Metadata = {
   title: "Resources",
@@ -77,6 +78,9 @@ export default async function ResourcesPage() {
       <PageHeader
         title="Resources"
         description="Reports, policy briefs, and research documents from MBKRU."
+        eyebrow={pageHeaderPresets.resources.eyebrow}
+        heroImage={pageHeaderPresets.resources.heroImage}
+        heroImageAlt={pageHeaderPresets.resources.heroImageAlt}
       />
 
       <section className="section-spacing section-full bg-[var(--section-light)]">
@@ -88,7 +92,7 @@ export default async function ResourcesPage() {
           <div className="relative mb-16 aspect-[21/9] overflow-hidden rounded-2xl">
             <Image
               src={images.resources}
-              alt="Resources and documents"
+              alt="Policy reports and civic research documents"
               fill
               className="object-cover"
               sizes="100vw"

@@ -88,6 +88,12 @@ export default async function RegionHubPage({ params, searchParams }: Props) {
     }
   }
 
+  const fallbackHero = sectorGallery[0];
+  const headerImage = dbRegion?.headerMedia?.storagePath ?? fallbackHero?.src;
+  const headerAlt = dbRegion?.headerMedia
+    ? (dbRegion.headerMedia.alt ?? `${staticRegion.name} region`)
+    : fallbackHero?.alt;
+
   const reportBrowseEnabled = isReportCardPublicEnabled() || isCitizensVoiceEnabled();
 
   return (
@@ -95,10 +101,8 @@ export default async function RegionHubPage({ params, searchParams }: Props) {
       <PageHeader
         title={staticRegion.name}
         description={`Regional capital ${staticRegion.capital}. Explore MBKRU engagement plans, connect with others in this region, and browse People&apos;s Report Card items scoped here.`}
-        heroImage={dbRegion?.headerMedia?.storagePath}
-        heroImageAlt={
-          dbRegion?.headerMedia ? (dbRegion.headerMedia.alt ?? `${staticRegion.name} region`) : undefined
-        }
+        heroImage={headerImage}
+        heroImageAlt={headerAlt}
       />
 
       <section className="section-spacing section-full bg-[var(--section-light)] pb-10">

@@ -8,6 +8,7 @@ import { isDatabaseConfigured } from "@/lib/db/prisma";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { isTownHallDirectoryPageEnabled } from "@/lib/reports/accountability-pages";
 import { getProgrammeTownHallEvents } from "@/lib/server/town-hall-events";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +32,9 @@ export default async function ConstituencyDebatesPage() {
         title="Constituency debates"
         description="Programme planning toward pre-election debates in every constituency before Ghana 2028. Rows below stay provisional until partners, media, and the EC framework confirm schedules."
         breadcrumbCurrentLabel="Debates"
+        eyebrow={pageHeaderPresets.election.eyebrow}
+        heroImage={pageHeaderPresets.election.heroImage}
+        heroImageAlt={pageHeaderPresets.election.heroImageAlt}
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-3xl space-y-8 px-4 sm:px-6 lg:px-8">

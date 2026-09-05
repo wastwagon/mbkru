@@ -1,17 +1,17 @@
-# MBKRU — full-stack local development in Docker (Next.js dev server + Postgres + Redis).
+# MBKRU — local Docker Desktop stack (Next.js hot reload + Postgres + Redis).
+# This is the stack to restore on your laptop. It does not deploy mbkru.org.
 #
 # Hot reload: the app directory is bind-mounted; WATCHPACK_POLLING helps file watching on Docker Desktop (macOS/Windows).
 # Rebuild the image only when dependencies or Dockerfile.dev change — not for normal code edits.
 #
-# Setup:
-#   cp .env.example .env
-#   Set ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_SESSION_SECRET, MEMBER_SESSION_SECRET (and any optional keys you use).
-#   docker compose -f docker-compose.dev.yml up --build
-#
+# Restore / start:
+#   ./scripts/docker-dev-up.sh
 # Open http://localhost:1100
 #
+# Production (mbkru.org) is Coolify from GitHub `main` — see README.md.
+#
 # DATABASE_URL / REDIS_URL below point at Compose service names; keep localhost URLs in .env for host-side tools
-# (Postgres is published on 55432, Redis on 6379 by default).
+# (Postgres is published on 55432, Redis on 56379 by default).
 #
 # Optional first-time / refreshed demo data (idempotent):
 #   docker compose -f docker-compose.dev.yml exec mbkru-dev npx prisma db seed
@@ -21,6 +21,8 @@
 #
 # New npm dependencies:
 #   docker compose -f docker-compose.dev.yml build --no-cache mbkru-dev
+
+name: mbkru-local
 
 services:
   redis:

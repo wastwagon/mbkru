@@ -71,11 +71,16 @@ export function defaultSectorGallery(regionName: string, keySectors: string | un
     const credit = SECTOR_CREDITS[key];
     if (!credit) continue;
     seen.add(key);
+    const ahafoMining = regionName === "Ahafo" && key === "mining";
     images.push({
-      src: credit.file,
-      alt: `${label} — a key sector of ${regionName} Region, Ghana`,
+      src: ahafoMining ? "/images/sectors/mining-ahafo.jpg" : credit.file,
+      alt: ahafoMining
+        ? "Open-pit gold mining in the forested hills of Ahafo Region, Ghana"
+        : `${label} — a key sector of ${regionName} Region, Ghana`,
       label,
-      credit: `${credit.author} · ${credit.license} · Wikimedia Commons`,
+      credit: ahafoMining
+        ? "Ahafo Region gold mining landscape · MBKRU programme photography"
+        : `${credit.author} · ${credit.license} · Wikimedia Commons`,
     });
   }
   return images;

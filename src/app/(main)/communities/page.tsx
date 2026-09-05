@@ -17,6 +17,7 @@ import { searchCommunitiesAndPosts } from "@/lib/server/communities-search";
 import { countVerifiedQueenMothersByCommunityIds, countVerifiedQueenMothersByCommunitySlugs, listQueenMotherPortraitPreviewsByCommunityIds } from "@/lib/server/communities-verified";
 import { isCommunitiesBrowseEnabled } from "@/lib/reports/accountability-pages";
 import { primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 import { normalizeCommunitySearchQuery } from "@/lib/validation/communities";
 
 export const dynamic = "force-dynamic";
@@ -153,6 +154,9 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
       <PageHeader
         title="Communities"
         description="Spaces for traditional areas, Queen Mother networks, and local accountability. Each community can host forums (discussion areas), threaded posts, and replies — sign in to join members-only spaces and participate."
+        eyebrow={pageHeaderPresets.community.eyebrow}
+        heroImage={pageHeaderPresets.community.heroImage}
+        heroImageAlt={pageHeaderPresets.community.heroImageAlt}
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">

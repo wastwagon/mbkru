@@ -4,7 +4,7 @@ import type { Media, Post } from "@prisma/client";
 
 import { prisma } from "@/lib/db/prisma";
 import { isDatabaseConfigured } from "@/lib/db/prisma";
-import { images } from "@/lib/site-content";
+import { images, starterNewsArticles } from "@/lib/site-content";
 
 export type PostWithMedia = Post & { featuredMedia: Media | null };
 
@@ -35,6 +35,8 @@ export async function getPublishedPostBySlug(slug: string): Promise<PostWithMedi
 
 export function postHeroImage(post: PostWithMedia): string {
   if (post.featuredMedia?.storagePath) return post.featuredMedia.storagePath;
+  const starter = starterNewsArticles.find((a) => a.slug === post.slug);
+  if (starter?.image) return starter.image;
   return images.news;
 }
 

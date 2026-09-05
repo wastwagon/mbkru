@@ -9,6 +9,7 @@ import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { petitionTopicLabel } from "@/lib/petition-topics";
 import { focusRingSmClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { isCivicPetitionsAndPublicCausesEnabled } from "@/lib/reports/accountability-pages";
+import { pageHeaderPresets } from "@/lib/page-header-presets";
 
 import type { PetitionTopic } from "@prisma/client";
 
@@ -52,6 +53,9 @@ export default async function PetitionsIndexPage({ searchParams }: IndexProps) {
         title="Petitions"
         description="Create a petition when you want to show breadth of concern on an issue. Signing uses your email once to prevent duplicates; optional updates are petition-specific."
         breadcrumbCurrentLabel="Petitions"
+        eyebrow={pageHeaderPresets.accountability.eyebrow}
+        heroImage={pageHeaderPresets.accountability.heroImage}
+        heroImageAlt={pageHeaderPresets.accountability.heroImageAlt}
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
