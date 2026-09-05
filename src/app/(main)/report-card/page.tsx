@@ -27,6 +27,7 @@ import { ReportCardBrowseTabs } from "@/components/accountability/ReportCardBrow
 import { ReportCardPilotBanner } from "@/components/accountability/ReportCardPilotBanner";
 import { ReportCardVoiceFiltersForm } from "@/components/accountability/ReportCardVoiceFiltersForm";
 import { VOICE_SUBMISSION_KIND_FILTERS } from "@/lib/reports/voice-submission-kind-filters";
+import { parseVoiceVerificationBrowseFilter } from "@/lib/reports/voice-verification-filter";
 import {
   parseReportCardBrowseTab,
   reportCardIndexHref,
@@ -48,7 +49,7 @@ export const maxDuration = 120;
 export const metadata: Metadata = {
   title: "People's Report Card",
   description:
-    "Browse MBKRU Voice submissions and published People's Report Card programme scores — filter by region or search, track reports, and read public threads when staff publish them.",
+    "Browse MBKRU Voice submissions and published People's Report Card programme scores — filter by region, verification (verified or unverified), or search, track reports, and read public threads when staff publish them.",
 };
 
 export default async function ReportCardIndexPage({
@@ -63,6 +64,7 @@ export default async function ReportCardIndexPage({
     vregion?: string;
     vpage?: string;
     vkind?: string;
+    vverify?: string;
     tab?: string;
   }>;
 }) {
@@ -111,6 +113,10 @@ export default async function ReportCardIndexPage({
     ? (normalizedVkind as CitizenReportKind)
     : null;
 
+  const voiceVerifyFilter = parseVoiceVerificationBrowseFilter(
+    typeof sp.vverify === "string" ? sp.vverify : undefined,
+  );
+
   const activeTab = parseReportCardBrowseTab(sp.tab, { voiceOn, showScores });
   const browseTabs = showReportCardBrowseTabs({ voiceOn, showScores, hasCycles });
   const tabQuery = browseTabs ? activeTab : undefined;
@@ -121,6 +127,7 @@ export default async function ReportCardIndexPage({
         regionId: selectedVRegionId || null,
         q: vqRaw.trim() || null,
         kind: voiceKindFilter,
+        verification: voiceVerifyFilter,
       })
     : { rows: [], totalFiltered: 0, page: 1 };
 
@@ -136,6 +143,7 @@ export default async function ReportCardIndexPage({
         vregion: selectedVRegionId || undefined,
         vpage: vTotalPages,
         vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
         tab: tabQuery,
       }),
     );
@@ -163,6 +171,7 @@ export default async function ReportCardIndexPage({
         vregion: selectedVRegionId || undefined,
         vpage: vPage > 1 ? vPage : undefined,
         vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
         tab: tabQuery,
       }),
     );
@@ -292,6 +301,7 @@ export default async function ReportCardIndexPage({
                 vregion: selectedVRegionId || undefined,
                 vpage: vPage > 1 ? vPage : undefined,
                 vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
                 tab: "voice",
               })}
               scoresHref={reportCardIndexHref({
@@ -303,6 +313,7 @@ export default async function ReportCardIndexPage({
                 vregion: selectedVRegionId || undefined,
                 vpage: vPage > 1 ? vPage : undefined,
                 vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
                 tab: "scores",
               })}
             />
@@ -330,6 +341,7 @@ export default async function ReportCardIndexPage({
                   voice={{
                     vregion: selectedVRegionId,
                     vkind: voiceKindFilter ?? "",
+                    vverify: voiceVerifyFilter ?? "",
                     vq: vqRaw,
                   }}
                   resetHref={reportCardIndexHref({
@@ -341,7 +353,8 @@ export default async function ReportCardIndexPage({
                   })}
                 />
                 <p className="mt-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
-                  Newest first (archived hidden). Engagement shows on cards when discussion is open.
+                  Newest first (archived hidden). Filter by <strong>Verified</strong> (staff-corroborated or documented)
+                  or <strong>Unverified</strong>. Engagement shows on cards when discussion is open.
                 </p>
               </div>
 
@@ -402,6 +415,7 @@ export default async function ReportCardIndexPage({
                             vregion: selectedVRegionId || undefined,
                             vpage: safeVPage - 1,
                             vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
                             tab: tabQuery ?? "voice",
                           })}
                           className={`${primaryNavLinkClass} font-semibold`}
@@ -423,6 +437,7 @@ export default async function ReportCardIndexPage({
                             vregion: selectedVRegionId || undefined,
                             vpage: safeVPage + 1,
                             vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
                             tab: tabQuery ?? "voice",
                           })}
                           className={`${primaryNavLinkClass} font-semibold`}
@@ -467,6 +482,7 @@ export default async function ReportCardIndexPage({
                   <input type="hidden" name="vregion" value={selectedVRegionId} />
                   <input type="hidden" name="vpage" value={String(safeVPage)} />
                   <input type="hidden" name="vkind" value={voiceKindFilter ?? ""} />
+                <input type="hidden" name="vverify" value={voiceVerifyFilter ?? ""} />
                   <label className="lg:col-span-3">
                     <span className="mb-1.5 block text-xs font-semibold text-[var(--foreground-secondary)] sm:text-sm">
                       Cycle (year)
@@ -527,6 +543,7 @@ export default async function ReportCardIndexPage({
                         vregion: selectedVRegionId || undefined,
                         vpage: vPage > 1 ? vPage : undefined,
                         vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
                         tab: tabQuery ?? "scores",
                       })}
                       className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[var(--border)] px-3 py-2.5 text-sm font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--section-light)] sm:flex-1 ${focusRingSmClass}`}
@@ -600,6 +617,7 @@ export default async function ReportCardIndexPage({
                             vregion: selectedVRegionId || undefined,
                             vpage: vPage > 1 ? vPage : undefined,
                             vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
                             tab: tabQuery ?? "scores",
                           })}
                           className={`${primaryNavLinkClass} font-semibold`}
@@ -621,6 +639,7 @@ export default async function ReportCardIndexPage({
                             vregion: selectedVRegionId || undefined,
                             vpage: vPage > 1 ? vPage : undefined,
                             vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
                             tab: tabQuery ?? "scores",
                           })}
                           className={`${primaryNavLinkClass} font-semibold`}

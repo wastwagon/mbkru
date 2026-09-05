@@ -24,6 +24,7 @@ export type ReportCardVoiceFiltersValues = {
   vregion: string;
   vkind: string;
   vq: string;
+  vverify: string;
 };
 
 type RegionOption = { id: string; name: string };
@@ -39,6 +40,7 @@ function buildReportCardVoiceQuery(preserve: ReportCardVoiceFiltersPreserve, voi
   if (vpage > 1) p.set("vpage", String(vpage));
   if (voice.vregion.trim()) p.set("vregion", voice.vregion.trim());
   if (voice.vkind.trim()) p.set("vkind", voice.vkind.trim());
+  if (voice.vverify.trim()) p.set("vverify", voice.vverify.trim());
   if (voice.vq.trim()) p.set("vq", voice.vq.trim());
   if (preserve.activeTab === "voice") p.set("tab", "voice");
 
@@ -72,6 +74,7 @@ export function ReportCardVoiceFiltersForm({
     const nextVoice: ReportCardVoiceFiltersValues = {
       vregion: lockedVoiceRegion?.id ?? String(fd.get("vregion") ?? ""),
       vkind: String(fd.get("vkind") ?? ""),
+      vverify: String(fd.get("vverify") ?? ""),
       vq: String(fd.get("vq") ?? ""),
     };
     const qs = buildReportCardVoiceQuery(preserve, { ...nextVoice, vpage: 1 });
@@ -80,7 +83,7 @@ export function ReportCardVoiceFiltersForm({
     router.refresh();
   }
 
-  const formKey = `${voice.vregion}|${voice.vkind}|${voice.vq}`;
+  const formKey = `${voice.vregion}|${voice.vkind}|${voice.vverify}|${voice.vq}`;
 
   const labelClass = "mb-1.5 block text-xs font-semibold text-[var(--foreground-secondary)] sm:text-sm";
   const fieldClass = `w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`;
@@ -88,7 +91,7 @@ export function ReportCardVoiceFiltersForm({
   return (
     <form key={formKey} className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-12 lg:items-end" onSubmit={applyFilters}>
       {lockedVoiceRegion ? (
-        <div className="sm:col-span-2 lg:col-span-3">
+        <div className="sm:col-span-2 lg:col-span-2">
           <span className={labelClass}>Region</span>
           <p className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-3 py-2.5 text-sm text-[var(--foreground)]">
             <span className="font-semibold">{lockedVoiceRegion.name}</span>
@@ -97,7 +100,7 @@ export function ReportCardVoiceFiltersForm({
           <input type="hidden" name="vregion" value={lockedVoiceRegion.id} />
         </div>
       ) : (
-        <label className="sm:col-span-1 lg:col-span-3">
+        <label className="sm:col-span-1 lg:col-span-2">
           <span className={labelClass}>Region</span>
           <select name="vregion" defaultValue={voice.vregion} className={fieldClass}>
             <option value="">All regions</option>
@@ -109,7 +112,7 @@ export function ReportCardVoiceFiltersForm({
           </select>
         </label>
       )}
-      <label className="sm:col-span-1 lg:col-span-3">
+      <label className="sm:col-span-1 lg:col-span-2">
         <span className={labelClass}>Report type</span>
         <select name="vkind" defaultValue={voice.vkind} className={fieldClass}>
           <option value="">All types</option>
@@ -118,6 +121,14 @@ export function ReportCardVoiceFiltersForm({
               {reportKindLabel(k)}
             </option>
           ))}
+        </select>
+      </label>
+      <label className="sm:col-span-1 lg:col-span-2">
+        <span className={labelClass}>Verification</span>
+        <select name="vverify" defaultValue={voice.vverify} className={fieldClass}>
+          <option value="">All reports</option>
+          <option value="verified">Verified only</option>
+          <option value="unverified">Unverified only</option>
         </select>
       </label>
       <label className="sm:col-span-2 lg:col-span-4">

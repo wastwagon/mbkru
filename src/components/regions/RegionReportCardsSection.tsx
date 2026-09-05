@@ -28,6 +28,7 @@ import {
 } from "@/lib/reports/accountability-pages";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 import { VOICE_SUBMISSION_KIND_FILTERS } from "@/lib/reports/voice-submission-kind-filters";
+import { parseVoiceVerificationBrowseFilter } from "@/lib/reports/voice-verification-filter";
 import {
   getCachedPublishedReportCardCycles,
   getCachedPublishedReportCardYearStats,
@@ -53,6 +54,7 @@ export async function RegionReportCardsSection({
     vq?: string;
     vpage?: string;
     vkind?: string;
+    vverify?: string;
     tab?: string;
   }>;
 }) {
@@ -99,12 +101,17 @@ export async function RegionReportCardsSection({
     ? (normalizedVkind as CitizenReportKind)
     : null;
 
+  const voiceVerifyFilter = parseVoiceVerificationBrowseFilter(
+    typeof sp.vverify === "string" ? sp.vverify : undefined,
+  );
+
   const voiceBrowse = voiceOn
     ? await getVoiceSubmissionsBrowseEntries({
         page: vPage,
         regionId: selectedVRegionId,
         q: vqRaw.trim() || null,
         kind: voiceKindFilter,
+        verification: voiceVerifyFilter,
       })
     : { rows: [], totalFiltered: 0, page: 1 };
 
@@ -120,6 +127,7 @@ export async function RegionReportCardsSection({
         vregion: selectedVRegionId,
         vpage: vTotalPages,
         vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
       }),
     );
   }
@@ -146,6 +154,7 @@ export async function RegionReportCardsSection({
         vregion: selectedVRegionId,
         vpage: vPage > 1 ? vPage : undefined,
         vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
       }),
     );
   }
@@ -233,6 +242,7 @@ export async function RegionReportCardsSection({
               vregion: selectedVRegionId,
               vpage: vPage > 1 ? vPage : undefined,
               vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
               tab: "voice",
             })}
             scoresHref={reportCardBrowseHref(browseBase, {
@@ -244,6 +254,7 @@ export async function RegionReportCardsSection({
               vregion: selectedVRegionId,
               vpage: vPage > 1 ? vPage : undefined,
               vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
               tab: "scores",
             })}
           />
@@ -271,6 +282,7 @@ export async function RegionReportCardsSection({
                 voice={{
                   vregion: selectedVRegionId,
                   vkind: voiceKindFilter ?? "",
+                  vverify: voiceVerifyFilter ?? "",
                   vq: vqRaw,
                 }}
                 resetHref={browseBase}
@@ -278,7 +290,8 @@ export async function RegionReportCardsSection({
                 lockedVoiceRegion={{ id: regionId, name: regionName }}
               />
               <p className="mt-3 text-xs text-[var(--foreground-secondary)]">
-                Listed by most recent (excluding archived). Same filters as the main Report Card page, scoped to this region.
+                Listed by most recent (excluding archived). Filter verified vs unverified like the main Report Card page;
+                results stay scoped to this region.
               </p>
             </div>
 
@@ -336,6 +349,7 @@ export async function RegionReportCardsSection({
                             vregion: selectedVRegionId,
                             vpage: safeVPage - 1,
                             vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
                           }) + "#browse-voice"
                         }
                         className={`${primaryNavLinkClass} font-semibold`}
@@ -358,6 +372,7 @@ export async function RegionReportCardsSection({
                             vregion: selectedVRegionId,
                             vpage: safeVPage + 1,
                             vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
                           }) + "#browse-voice"
                         }
                         className={`${primaryNavLinkClass} font-semibold`}
@@ -404,6 +419,7 @@ export async function RegionReportCardsSection({
                 <input type="hidden" name="vregion" value={selectedVRegionId} />
                 <input type="hidden" name="vpage" value={String(safeVPage)} />
                 <input type="hidden" name="vkind" value={voiceKindFilter ?? ""} />
+                <input type="hidden" name="vverify" value={voiceVerifyFilter ?? ""} />
                 <input type="hidden" name="region" value={selectedRegionId} />
                 <label className="lg:col-span-4">
                   <span className="mb-1.5 block text-xs font-semibold text-[var(--foreground-secondary)] sm:text-sm">
@@ -449,6 +465,7 @@ export async function RegionReportCardsSection({
                         vregion: selectedVRegionId,
                         vpage: vPage > 1 ? vPage : undefined,
                         vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
                       }) + "#browse-scores"
                     }
                     className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[var(--border)] px-3 py-2.5 text-sm font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--section-light)] sm:flex-1 ${focusRingSmClass}`}
@@ -522,6 +539,7 @@ export async function RegionReportCardsSection({
                             vregion: selectedVRegionId,
                             vpage: vPage > 1 ? vPage : undefined,
                             vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
                           }) + "#browse-scores"
                         }
                         className={`${primaryNavLinkClass} font-semibold`}
@@ -544,6 +562,7 @@ export async function RegionReportCardsSection({
                             vregion: selectedVRegionId,
                             vpage: vPage > 1 ? vPage : undefined,
                             vkind: voiceKindFilter ?? undefined,
+        vverify: voiceVerifyFilter ?? undefined,
                           }) + "#browse-scores"
                         }
                         className={`${primaryNavLinkClass} font-semibold`}

@@ -1,7 +1,9 @@
 import "server-only";
 
-import type { CitizenReportKind, CitizenReportStatus, Prisma } from "@prisma/client";
+import type { CitizenReportExperienceVerificationTier, CitizenReportKind, CitizenReportStatus, Prisma } from "@prisma/client";
 import { mergeCitizenReportWhere } from "@/lib/reports/training-data";
+import type { VoiceVerificationBrowseFilter } from "@/lib/reports/voice-verification-filter";
+import { voiceVerificationBrowseWhere } from "@/lib/reports/voice-verification-filter";
 
 export { VOICE_SUBMISSION_KIND_FILTERS } from "@/lib/reports/voice-submission-kind-filters";
 import { unstable_cache } from "next/cache";
@@ -474,6 +476,8 @@ export type VoiceSubmissionBrowseRow = {
   /** Sum of discussion comment reactions (LIKE / THANK / INSIGHT) on this report’s thread. */
   discussionReactionTotals: { LIKE: number; THANK: number; INSIGHT: number };
   attachmentCount: number;
+  /** Staff experience ladder — public browse shows Verified vs Unverified only. */
+  experienceVerificationTier: CitizenReportExperienceVerificationTier;
 };
 
 function memberSubmitterLabel(m: { displayName: string | null; email: string } | null): string | null {
@@ -489,17 +493,21 @@ export async function getVoiceSubmissionsBrowseEntries(opts: {
   regionId: string | null;
   q: string | null;
   kind: CitizenReportKind | null;
+  /** Public filter: staff-corroborated/documented vs unverified. */
+  verification?: VoiceVerificationBrowseFilter | null;
 }): Promise<{ rows: VoiceSubmissionBrowseRow[]; totalFiltered: number; page: number }> {
   const safePage = Number.isFinite(opts.page) && opts.page >= 1 ? Math.floor(opts.page) : 1;
   const skip = (safePage - 1) * VOICE_SUBMISSIONS_BROWSE_PAGE_SIZE;
   const q = opts.q?.trim() ?? "";
   const regionId = opts.regionId?.trim() || null;
+  const verificationWhere = voiceVerificationBrowseWhere(opts.verification ?? null);
 
   const where = mergeCitizenReportWhere({
     status: { not: "ARCHIVED" },
     ...(regionId ? { regionId } : {}),
     ...(opts.kind != null ? { kind: opts.kind } : {}),
     ...(q.length > 0 ? { title: { contains: q, mode: "insensitive" } } : {}),
+    ...(verificationWhere ?? {}),
   });
 
   const [raw, totalFiltered] = await Promise.all([
@@ -518,6 +526,7 @@ export async function getVoiceSubmissionsBrowseEntries(opts: {
         createdAt: true,
         discussionEnabled: true,
         localArea: true,
+        experienceVerificationTier: true,
         region: { select: { name: true } },
         parliamentMember: { select: { name: true, slug: true, role: true } },
         member: { select: { displayName: true, email: true } },
@@ -558,6 +567,7 @@ export async function getVoiceSubmissionsBrowseEntries(opts: {
       publicCommentCount: engagement.publicCommentCount,
       discussionReactionTotals: engagement.discussionReactionTotals,
       attachmentCount: r._count.attachments,
+      experienceVerificationTier: r.experienceVerificationTier,
     };
   });
 

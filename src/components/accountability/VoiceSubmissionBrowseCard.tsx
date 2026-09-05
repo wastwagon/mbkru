@@ -1,5 +1,6 @@
 import { VoiceSubmissionSurfaceCard } from "@/components/accountability/VoiceSubmissionSurfaceCard";
 import { isPromisesBrowseEnabled } from "@/lib/reports/accountability-pages";
+import { publicExperienceVerificationLabel } from "@/lib/reports/voice-verification-filter";
 import type { VoiceSubmissionBrowseRow } from "@/lib/server/accountability-cache";
 import { cardNarrative, stripSeedMarkers } from "@/lib/voice-submission-card-shared";
 import { formatBrowsePlaceLabel } from "@/lib/voice-submission-display";
@@ -58,6 +59,7 @@ export function VoiceSubmissionBrowseCard({ row }: Props) {
       legacyCauseSlug={row.publicCauseSlug}
       staffSummaryPending={Boolean(row.publicCauseSlug && !row.publicCauseSummary)}
       attachmentCount={row.attachmentCount}
+      verificationLabel={publicExperienceVerificationLabel(row.experienceVerificationTier)}
     />
   );
 }

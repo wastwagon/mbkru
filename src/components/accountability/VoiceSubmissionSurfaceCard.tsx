@@ -37,6 +37,8 @@ export type VoiceSubmissionSurfaceCardProps = {
   legacyCauseSlug?: string | null;
   staffSummaryPending?: boolean;
   attachmentCount?: number;
+  /** Public Verified / Unverified badge from staff experience ladder. */
+  verificationLabel?: "Verified" | "Unverified" | null;
 };
 
 const secondaryText = "text-[var(--foreground-secondary)]";
@@ -62,6 +64,7 @@ export function VoiceSubmissionSurfaceCard({
   legacyCauseSlug = null,
   staffSummaryPending = false,
   attachmentCount = 0,
+  verificationLabel = null,
 }: VoiceSubmissionSurfaceCardProps) {
   const TitleTag = titleHeadingLevel;
   const titleId = `voice-surface-title-${id}`;
@@ -88,6 +91,15 @@ export function VoiceSubmissionSurfaceCard({
         >
           {reportKindLabel(kind)}
         </span>
+        {verificationLabel === "Verified" ? (
+          <span className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold leading-tight text-emerald-900">
+            Verified
+          </span>
+        ) : verificationLabel === "Unverified" ? (
+          <span className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[11px] font-semibold leading-tight text-slate-700">
+            Unverified
+          </span>
+        ) : null}
         {showTrainingBadge ? (
           <span className="inline-flex rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[11px] font-semibold leading-tight text-amber-900">
             Training data

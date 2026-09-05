@@ -9,6 +9,8 @@ export type ReportCardBrowseQuery = {
   vregion?: string;
   vpage?: number;
   vkind?: string;
+  /** Public Voice browse: `verified` | `unverified`. */
+  vverify?: string;
   tab?: ReportCardBrowseTab;
 };
 
@@ -41,6 +43,7 @@ function appendReportCardBrowseQuery(sp: URLSearchParams, opts: ReportCardBrowse
   if (opts.vregion?.trim()) sp.set("vregion", opts.vregion.trim());
   if (opts.vpage != null && opts.vpage > 1) sp.set("vpage", String(opts.vpage));
   if (opts.vkind?.trim()) sp.set("vkind", opts.vkind.trim());
+  if (opts.vverify?.trim()) sp.set("vverify", opts.vverify.trim());
   if (opts.tab === "scores") sp.set("tab", "scores");
   else if (opts.tab === "voice") sp.set("tab", "voice");
 }
