@@ -13,7 +13,7 @@ import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { sectionRevealTransition } from "@/lib/motion-reveal";
 import { focusRingPillClass, focusRingSmClass } from "@/lib/primary-link-styles";
 
-const pill = `inline-flex shrink-0 snap-start items-center whitespace-nowrap rounded-full border border-[var(--border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--foreground)] shadow-sm transition-[border-color,color,box-shadow,transform] duration-200 ease-out hover:border-[var(--primary)]/45 hover:text-[var(--primary)] hover:shadow-[var(--shadow-sm)] active:scale-[0.98] motion-reduce:active:scale-100 ${focusRingPillClass}`;
+const pill = `inline-flex shrink-0 snap-start items-center whitespace-nowrap rounded-full border border-[var(--border)] bg-[var(--card)] px-4 py-2.5 text-sm font-semibold text-[var(--foreground)] shadow-sm transition-[border-color,color,box-shadow,transform] duration-200 ease-out hover:border-[var(--primary)]/45 hover:text-[var(--primary)] hover:shadow-[var(--shadow-sm)] active:scale-[0.98] motion-reduce:active:scale-100 ${focusRingPillClass}`;
 
 /** Horizontal live-tool shortcuts — merged from the former homepage live strip. */
 export function HomeLiveToolsPills() {
@@ -31,7 +31,7 @@ export function HomeLiveToolsPills() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-24px 0px" }}
       transition={sectionRevealTransition(reducedMotion)}
-      className="mt-8 rounded-2xl border border-[var(--primary)]/15 bg-white/80 px-4 py-5 sm:mt-10 sm:px-6"
+      className="mt-8 rounded-2xl border border-[var(--primary)]/15 bg-[var(--card)]/80 px-4 py-5 sm:mt-10 sm:px-6"
     >
       {!phase1 ? (
         <>

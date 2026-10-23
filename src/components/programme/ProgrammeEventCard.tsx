@@ -70,7 +70,7 @@ export function ProgrammeEventCard({
   ].filter(Boolean);
 
   return (
-    <article className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
+    <article className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-[var(--shadow-card)] sm:p-6">
       {featuredImage ? (
         <div className="relative mb-4 aspect-[21/9] overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--section-light)]">
           <Image
@@ -134,7 +134,7 @@ export function ProgrammeEventsEmptyState({
   newsHref?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-dashed border-[var(--border)] bg-white px-6 py-10 text-center shadow-sm">
+    <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--card)] px-6 py-10 text-center shadow-sm">
       <TopicPictogram variant="TOWN_HALL" className="mx-auto h-12 w-12" />
       <p className="mt-4 text-sm text-[var(--foreground-secondary)]">{message}</p>
       <p className="mt-3 text-sm">

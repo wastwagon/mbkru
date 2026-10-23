@@ -92,7 +92,7 @@ export function Dialog({
                 ? { duration: 0.15 }
                 : { type: "spring", stiffness: 420, damping: 36, mass: 0.75 }
             }
-            className={`fixed inset-x-0 bottom-0 z-50 flex max-h-[min(90dvh,calc(100dvh-env(safe-area-inset-bottom)))] w-full flex-col overflow-hidden overscroll-contain rounded-t-2xl border border-[var(--border)] bg-white shadow-xl focus-visible:outline-none sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:w-[calc(100%-2rem)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl ${sizeClass[size]} ${panelClassName}`}
+            className={`fixed inset-x-0 bottom-0 z-50 flex max-h-[min(90dvh,calc(100dvh-env(safe-area-inset-bottom)))] w-full flex-col overflow-hidden overscroll-contain rounded-t-2xl border border-[var(--border)] bg-[var(--card)] shadow-xl focus-visible:outline-none sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:w-[calc(100%-2rem)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl ${sizeClass[size]} ${panelClassName}`}
             onClick={(e) => e.stopPropagation()}
           >
             {bare ? (

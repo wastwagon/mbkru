@@ -39,7 +39,7 @@ export default async function AccountNotificationsPage() {
   const unreadCount = notifications.filter((n) => n.readAt == null).length;
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-card)] sm:p-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm text-[var(--foreground-secondary)]">
@@ -75,7 +75,7 @@ export default async function AccountNotificationsPage() {
               <li
                 key={n.id}
                 className={`rounded-xl border border-[var(--border)] p-4 transition-shadow duration-200 ${
-                  unread ? "bg-[var(--section-light)]/60 shadow-sm" : "bg-white"
+                  unread ? "bg-[var(--section-light)]/60 shadow-sm" : "bg-[var(--card)]"
                 }`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">

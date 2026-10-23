@@ -16,7 +16,7 @@ export default async function TrackReportPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16 sm:pb-20">
         <div className="mx-auto max-w-md px-4 sm:px-6 lg:px-8">
-          <p className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+          <p className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
             Your tracking code is your citizen receipt — save it when you submit. Status updates here are for reference
             only, not a formal regulator filing.{" "}
             <Link href="/methodology" className={primaryNavLinkClass}>
@@ -24,7 +24,7 @@ export default async function TrackReportPage() {
             </Link>
           </p>
           <div
-            className="mt-4 rounded-xl border border-[var(--border)] bg-white px-4 py-3.5 text-xs leading-relaxed text-[var(--foreground-secondary)] sm:px-5 sm:py-4"
+            className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3.5 text-xs leading-relaxed text-[var(--foreground-secondary)] sm:px-5 sm:py-4"
             role="note"
           >
             <p>
@@ -43,7 +43,7 @@ export default async function TrackReportPage() {
               .
             </p>
           </div>
-          <div className="mt-6 rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm sm:p-6">
+          <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm sm:p-6">
             <TrackReportLookup />
           </div>
           <p className="mt-8 text-center text-sm text-[var(--foreground-secondary)]">

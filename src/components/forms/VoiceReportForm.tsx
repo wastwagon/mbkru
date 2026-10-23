@@ -13,7 +13,11 @@ import { nearestRegionSlug } from "@/lib/geo/ghana-region-centroids";
 import { roundApproximateCoord } from "@/lib/geo/round-approximate-coord";
 import { openAccessibilityTools } from "@/lib/a11y-voice-dispatch";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
-import { mobileInlineActionClass, mobileInlineActionDangerClass } from "@/lib/mobile-ui-classes";
+import {
+  mobileFormStickySubmitBarClass,
+  mobileInlineActionClass,
+  mobileInlineActionDangerClass,
+} from "@/lib/mobile-ui-classes";
 import { fieldControlClass, selectControlClass } from "@/lib/ui/field-styles";
 import { findVoiceLanguage } from "@/lib/voice-languages";
 import {
@@ -655,7 +659,7 @@ export function VoiceReportForm({
 
   if (authStatus === "loading") {
     return (
-      <div className="mx-auto max-w-2xl rounded-xl border border-[var(--border)] bg-white/80 px-6 py-10 text-center">
+      <div className="mx-auto max-w-2xl rounded-xl border border-[var(--border)] bg-[var(--card)]/80 px-6 py-10 text-center">
         <p className="text-sm text-[var(--foreground-secondary)]">{str.checkingSignIn}</p>
       </div>
     );
@@ -663,7 +667,7 @@ export function VoiceReportForm({
 
   if (authStatus === "signedOut") {
     return (
-      <div className="mx-auto max-w-2xl rounded-xl border border-[var(--border)] bg-white/80 px-6 py-10 text-center">
+      <div className="mx-auto max-w-2xl rounded-xl border border-[var(--border)] bg-[var(--card)]/80 px-6 py-10 text-center">
         <p className="text-sm text-[var(--foreground-secondary)]">{str.redirectingSignIn}</p>
       </div>
     );
@@ -723,7 +727,7 @@ export function VoiceReportForm({
 
       {visibleQueueItems.length > 0 ? (
         <div
-          className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 shadow-sm"
+          className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 shadow-sm"
           aria-label={str.pendingDraftsAria}
         >
           <p className="text-sm font-semibold text-[var(--foreground)]">{str.pendingDraftsTitle}</p>
@@ -803,7 +807,7 @@ export function VoiceReportForm({
               </Link>
             </p>
           ) : null}
-          <details className="mt-4 rounded-lg border border-green-200/80 bg-white/60 px-3 py-2 text-sm text-green-950">
+          <details className="mt-4 rounded-lg border border-green-200/80 bg-[var(--card)]/60 px-3 py-2 text-sm text-green-950">
             <summary
               className={`cursor-pointer rounded-sm font-medium text-green-900 outline-none marker:text-green-700 ${focusRingSmClass}`}
             >
@@ -825,7 +829,7 @@ export function VoiceReportForm({
       ) : null}
 
       {lockKind ? (
-        <div className="rounded-xl border border-[var(--border)] bg-white/80 px-4 py-3 text-sm text-[var(--foreground-secondary)]">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)]/80 px-4 py-3 text-sm text-[var(--foreground-secondary)]">
           <span className="font-medium text-[var(--foreground)]">{str.reportTypeLockedPrefix} </span>
           {kindOptionLabel(str, kind)}
         </div>
@@ -1117,7 +1121,7 @@ export function VoiceReportForm({
         className="flex justify-start"
       />
 
-      <fieldset className="rounded-xl border border-[var(--border)] bg-white/80 px-4 py-4">
+      <fieldset className="rounded-xl border border-[var(--border)] bg-[var(--card)]/80 px-4 py-4">
         <legend className="px-1 text-sm font-semibold text-[var(--foreground)]">
           {str.assistedSectionTitle} <span className="text-red-600">*</span>
         </legend>
@@ -1169,36 +1173,40 @@ export function VoiceReportForm({
         </span>
       </label>
 
-      {error ? (
-        <p className="text-sm text-red-600" role="alert">
-          {error}
-        </p>
-      ) : null}
-
-      {!locationGateOk ? (
-        <p className="text-sm text-[var(--foreground-secondary)]" role="status">
-          {str.submitDisabledHint}
-        </p>
-      ) : null}
-
-      <Button
-        type="submit"
-        disabled={
-          loading ||
-          (isTurnstileWidgetEnabled && !turnstileToken) ||
-          !locationGateOk ||
-          !disclaimerAgreed ||
-          (submitterWasAssisted !== "yes" && submitterWasAssisted !== "no") ||
-          title.trim().length < TITLE_MIN_LEN ||
-          body.trim().length < BODY_MIN_LEN ||
-          (kind === "MP_PERFORMANCE" && ghanaCardVerified === false) ||
-          (kind === "MP_PERFORMANCE" && !lockKind && (!parliamentMemberId.trim() || mpOptions.length === 0))
-        }
-        size="lg"
-        className="w-full min-w-0 justify-center sm:w-auto"
+      <div
+        className={`${mobileFormStickySubmitBarClass} !bg-[var(--section-light)]/95 supports-[backdrop-filter]:!bg-[var(--section-light)]/90`}
       >
-        {loading ? str.submitting : str.submit}
-      </Button>
+        {error ? (
+          <p className="text-sm text-red-600" role="alert">
+            {error}
+          </p>
+        ) : null}
+
+        {!locationGateOk ? (
+          <p className="text-sm text-[var(--foreground-secondary)]" role="status">
+            {str.submitDisabledHint}
+          </p>
+        ) : null}
+
+        <Button
+          type="submit"
+          disabled={
+            loading ||
+            (isTurnstileWidgetEnabled && !turnstileToken) ||
+            !locationGateOk ||
+            !disclaimerAgreed ||
+            (submitterWasAssisted !== "yes" && submitterWasAssisted !== "no") ||
+            title.trim().length < TITLE_MIN_LEN ||
+            body.trim().length < BODY_MIN_LEN ||
+            (kind === "MP_PERFORMANCE" && ghanaCardVerified === false) ||
+            (kind === "MP_PERFORMANCE" && !lockKind && (!parliamentMemberId.trim() || mpOptions.length === 0))
+          }
+          size="lg"
+          className="w-full min-w-0 justify-center sm:w-auto"
+        >
+          {loading ? str.submitting : str.submit}
+        </Button>
+      </div>
     </form>
   );
 }

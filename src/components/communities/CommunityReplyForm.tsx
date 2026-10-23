@@ -45,7 +45,7 @@ export function CommunityReplyForm({ communitySlug, rootPostId }: Props) {
   }
 
   return (
-    <form onSubmit={(e) => void onSubmit(e)} className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
+    <form onSubmit={(e) => void onSubmit(e)} className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm">
       <h3 className="text-sm font-semibold text-[var(--foreground)]">Add reply</h3>
       <FormField label="Kind" htmlFor="reply-kind" className="mt-3">
         <Select

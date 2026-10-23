@@ -42,7 +42,7 @@ export default function DiasporaFeedbackPage() {
             .
           </p>
 
-          <div className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-10">
+          <div className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-card)] sm:p-10">
             <DiasporaFeedbackForm />
           </div>
         </div>

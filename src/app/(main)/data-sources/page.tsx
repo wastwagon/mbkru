@@ -60,13 +60,13 @@ const sources: { heading: string; body: ReactNode }[] = [
         <MaintainerDetails>
           <p>
             Bundled seed file:{" "}
-            <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[12px] text-[var(--foreground)]">
+            <code className="rounded bg-[var(--card)] px-1.5 py-0.5 font-mono text-[12px] text-[var(--foreground)]">
               prisma/data/constituencies.seed.json
             </code>
           </p>
           <p>
             Regenerate from Wikipedia:{" "}
-            <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[12px] text-[var(--foreground)]">
+            <code className="rounded bg-[var(--card)] px-1.5 py-0.5 font-mono text-[12px] text-[var(--foreground)]">
               npm run data:refresh-constituencies-seed
             </code>
           </p>
@@ -98,19 +98,19 @@ const sources: { heading: string; body: ReactNode }[] = [
         <MaintainerDetails>
           <p>
             Bundled seed file:{" "}
-            <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[12px] text-[var(--foreground)]">
+            <code className="rounded bg-[var(--card)] px-1.5 py-0.5 font-mono text-[12px] text-[var(--foreground)]">
               prisma/data/parliament-members.seed.json
             </code>
           </p>
           <p>
             Regenerate:{" "}
-            <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[12px] text-[var(--foreground)]">
+            <code className="rounded bg-[var(--card)] px-1.5 py-0.5 font-mono text-[12px] text-[var(--foreground)]">
               npm run data:refresh-members-seed-wikipedia
             </code>
           </p>
           <p>
             Source notes:{" "}
-            <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[12px] text-[var(--foreground)]">
+            <code className="rounded bg-[var(--card)] px-1.5 py-0.5 font-mono text-[12px] text-[var(--foreground)]">
               prisma/data/PARLIAMENT_MEMBERS_SEED_SOURCE.txt
             </code>
           </p>
@@ -137,13 +137,13 @@ const sources: { heading: string; body: ReactNode }[] = [
         </p>
         <MaintainerDetails>
           <p>
-            Rows map to <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[12px]">TownHallEvent</code> in the
+            Rows map to <code className="rounded bg-[var(--card)] px-1.5 py-0.5 font-mono text-[12px]">TownHallEvent</code> in the
             application database. Starter programme rows may ship with bundled data unless{" "}
-            <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[12px]">SEED_TOWN_HALL_PROGRAMME=0</code>.
+            <code className="rounded bg-[var(--card)] px-1.5 py-0.5 font-mono text-[12px]">SEED_TOWN_HALL_PROGRAMME=0</code>.
           </p>
           <p>
             Citation notes in source:{" "}
-            <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[12px]">prisma/data/TOWN_HALL_SEED_SOURCES.txt</code>
+            <code className="rounded bg-[var(--card)] px-1.5 py-0.5 font-mono text-[12px]">prisma/data/TOWN_HALL_SEED_SOURCES.txt</code>
           </p>
         </MaintainerDetails>
       </>
@@ -173,7 +173,7 @@ const sources: { heading: string; body: ReactNode }[] = [
         <MaintainerDetails>
           <p>
             Bundled seed:{" "}
-            <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[12px] text-[var(--foreground)]">
+            <code className="rounded bg-[var(--card)] px-1.5 py-0.5 font-mono text-[12px] text-[var(--foreground)]">
               prisma/data/communities.seed.json
             </code>
           </p>
@@ -195,7 +195,7 @@ const sources: { heading: string; body: ReactNode }[] = [
         <MaintainerDetails>
           <p>
             Extended import and column notes for operators:{" "}
-            <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[12px] text-[var(--foreground)]">
+            <code className="rounded bg-[var(--card)] px-1.5 py-0.5 font-mono text-[12px] text-[var(--foreground)]">
               docs/DATA_SOURCES.md
             </code>{" "}
             in the website source repository.
@@ -228,13 +228,13 @@ export default function DataSourcesPage() {
           <ProcessFlowDiagram title="How data reaches the public site" steps={DATA_PROVENANCE_STEPS} />
           <ul className="space-y-8">
             {sources.map((s) => (
-              <li key={s.heading} className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+              <li key={s.heading} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
                 <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">{s.heading}</h2>
                 <div className="mt-3 space-y-3 leading-relaxed">{s.body}</div>
               </li>
             ))}
           </ul>
-          <details className="rounded-xl border border-[var(--border)] bg-white p-4 text-sm">
+          <details className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 text-sm">
             <summary
               className={`cursor-pointer rounded-sm font-semibold text-[var(--foreground)] ${focusRingSmClass}`}
             >

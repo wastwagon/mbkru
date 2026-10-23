@@ -17,7 +17,7 @@ export function ReportCardBrowseTabs({ active, voiceHref, scoresHref, voiceCount
     `inline-flex min-h-11 flex-1 items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors sm:flex-none ${focusRingSmClass} ${
       active === tab
         ? "bg-[var(--primary)] text-white shadow-sm"
-        : "border border-[var(--border)] bg-white text-[var(--foreground)] hover:bg-[var(--section-light)]"
+        : "border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] hover:bg-[var(--section-light)]"
     }`;
 
   return (

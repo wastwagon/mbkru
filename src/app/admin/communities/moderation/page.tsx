@@ -54,7 +54,7 @@ export default async function AdminCommunityPostsModerationPage() {
       ) : (
         <ul className="mt-8 space-y-6">
           {pendingPosts.map((p) => (
-            <li id={`mod-post-${p.id}`} key={p.id} className="rounded-xl border border-[var(--border)] bg-white p-5">
+            <li id={`mod-post-${p.id}`} key={p.id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
                 {p.community.name}
                 <span className="ml-2 font-normal normal-case text-[var(--foreground-secondary)]">

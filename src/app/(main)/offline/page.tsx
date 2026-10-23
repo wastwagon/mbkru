@@ -23,7 +23,7 @@ export default function OfflinePage() {
         title="You are offline"
         description="Reconnect to browse live data and submit reports. These pages may still open from cache."
       />
-      <section className="section-spacing section-full bg-white">
+      <section className="section-spacing section-full bg-[var(--background)]">
         <div className="mx-auto max-w-lg px-4 sm:px-6">
           <ul className="space-y-2">
             {OFFLINE_LINKS.map((item) => (

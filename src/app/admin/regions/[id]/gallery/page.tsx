@@ -64,7 +64,7 @@ export default async function AdminRegionGalleryPage({ params }: { params: Promi
         </Link>
       </p>
 
-      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-5">
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Region header photo</h2>
         <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Shown at the top of the public {region.name} page, next to the title. Leave empty for the plain header.

@@ -59,7 +59,7 @@ export function GhanaRegionsSvgMap({ onSelectRegion, selectedRegionName }: Props
   }, []);
 
   return (
-    <div className="relative mt-8 rounded-xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow-card)] sm:p-6">
+    <div className="relative mt-8 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow-card)] sm:p-6">
       <div>
         <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-black">
           Regional map
@@ -162,7 +162,7 @@ export function GhanaRegionsSvgMap({ onSelectRegion, selectedRegionName }: Props
 
       {hover && hoverData ? (
         <div
-          className="pointer-events-none fixed z-[60] max-w-xs rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-xs shadow-lg ring-1 ring-black/5"
+          className="pointer-events-none fixed z-[60] max-w-xs rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-xs shadow-lg ring-1 ring-black/5"
           style={{
             left: Math.max(
               8,

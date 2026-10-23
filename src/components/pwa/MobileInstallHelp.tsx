@@ -13,7 +13,7 @@ export function MobileInstallHelp() {
   return (
     <section
       aria-labelledby="mobile-install-heading"
-      className="rounded-2xl border border-[var(--primary)]/20 bg-white p-5 shadow-[var(--shadow-card)] sm:p-6"
+      className="rounded-2xl border border-[var(--primary)]/20 bg-[var(--card)] p-5 shadow-[var(--shadow-card)] sm:p-6"
     >
       <h2 id="mobile-install-heading" className="font-display text-lg font-semibold text-[var(--foreground)]">
         Using MBKRU on your phone

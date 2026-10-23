@@ -131,7 +131,7 @@ export default async function ResourcesPage() {
                       <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">
                         {resourceCategoryLabel(cat)}
                       </h3>
-                      <ul className="mt-4 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-white">
+                      <ul className="mt-4 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-[var(--card)]">
                         {rows.map((d) => (
                           <li key={d.id} className="flex flex-col gap-2 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
                             <div className="flex min-w-0 items-start gap-4">
@@ -179,7 +179,7 @@ export default async function ResourcesPage() {
               </div>
             </div>
           ) : dbOn ? (
-            <p className="mb-16 rounded-xl border border-[var(--border)] bg-white p-6 text-center text-sm text-[var(--foreground-secondary)]">
+            <p className="mb-16 rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 text-center text-sm text-[var(--foreground-secondary)]">
               Published documents will appear here. Editors can upload from{" "}
               <Link href="/admin/resources" className={`${primaryNavLinkClass} font-semibold`}>
                 Admin → Resource library
@@ -199,7 +199,7 @@ export default async function ResourcesPage() {
             ))}
           </div>
 
-          <div className="mt-16 rounded-xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)]">
+          <div className="mt-16 rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-card)]">
             <h2 className="font-display text-xl font-bold text-[var(--foreground)]">Have questions?</h2>
             <p className="mt-2 text-[var(--foreground-secondary)]">
               Visit our FAQ page for answers to common questions about MBKRU, membership, and our platform.

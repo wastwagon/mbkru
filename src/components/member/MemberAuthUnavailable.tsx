@@ -18,7 +18,7 @@ export function MemberAuthUnavailable({ variant }: Props) {
       />
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-lg px-4 sm:px-6 lg:px-8">
-          <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-card)] sm:p-8">
             <p className="text-[var(--foreground)] leading-relaxed">
               <strong>Member sign-in is not available on this site yet.</strong> Public pages and contact stay open;
               accounts and MBKRU Voice reporting open when the programme enables them here.

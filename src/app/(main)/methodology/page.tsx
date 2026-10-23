@@ -41,7 +41,7 @@ export default async function MethodologyPage() {
         heroImageAlt={preset.heroImageAlt}
       />
 
-      <section className="section-spacing section-full bg-white">
+      <section className="section-spacing section-full bg-[var(--background)]">
         <div className="mx-auto max-w-3xl px-4 text-[var(--foreground)] sm:px-6 lg:px-8">
           <p className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
             How MBKRU documents pledges, scores, and citizen voice — independent civic monitoring, not a government

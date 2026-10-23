@@ -33,7 +33,7 @@ export function ReportCardBrowseCard({ year, row }: Props) {
   const reportHref = `/report-card/${year}?mp=${encodeURIComponent(m.slug)}`;
 
   return (
-    <article className="flex h-full flex-col rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
+    <article className="flex h-full flex-col rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 flex-1 items-start gap-3">
           <MpPortrait name={m.name} portraitPath={m.portraitPath} size="md" />

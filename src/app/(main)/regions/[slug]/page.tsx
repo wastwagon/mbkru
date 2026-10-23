@@ -112,7 +112,7 @@ export default async function RegionHubPage({ params, searchParams }: Props) {
               ← Ghana regions map
             </Link>
           </nav>
-          <p className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+          <p className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
             Independent civic monitoring scoped to {staticRegion.name} — Voice reports, Report Card scores, and community
             spaces linked to traditional areas. Not an official government channel.{" "}
             <Link href="/methodology" className={primaryNavLinkClass}>

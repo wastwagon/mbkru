@@ -38,7 +38,7 @@ export function RegionGalleryManager({
 
   return (
     <div className="space-y-8">
-      <section className="rounded-2xl border border-[var(--border)] bg-white p-6">
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Add a sector photo</h2>
         <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Pick from the media library or upload from your computer. Suggested sectors for {regionName}:{" "}
@@ -144,7 +144,7 @@ export function RegionGalleryManager({
             {rows.map((row, i) => {
               const replacement = replacements[row.id];
               return (
-                <li key={row.id} className="rounded-2xl border border-[var(--border)] bg-white p-4">
+                <li key={row.id} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
                   <div className="flex flex-wrap items-start gap-4">
                     <span className="relative block h-24 w-32 shrink-0 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--section-light)]">
                       <Image

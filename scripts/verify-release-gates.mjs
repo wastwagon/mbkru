@@ -29,4 +29,5 @@ run("Prisma schema validate", "npx", ["prisma", "validate"]);
 run("TypeScript (noEmit)", "npx", ["tsc", "--noEmit"]);
 run("Vitest", "npm", ["run", "test"]);
 
-console.log("\n✓ Release gates passed (automated slice only).\n");
+console.log("\n✓ Release gates passed (automated slice only).");
+console.log("  Manual mobile/UX walkthrough: docs/MOBILE_UX_RELEASE_CHECKLIST.md\n");

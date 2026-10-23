@@ -40,7 +40,7 @@ export default async function AdminReportCardPage() {
         }
       />
 
-      <section id="new-cycle" className="mt-2 rounded-2xl border border-[var(--border)] bg-white p-6">
+      <section id="new-cycle" className="mt-2 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">New cycle</h2>
         <form action={createReportCardCycleAction} className="mt-4 grid gap-3 sm:grid-cols-2">
           <FormField label="Year" htmlFor="year">

@@ -12,13 +12,14 @@ import {
   diasporaFeedbackFormSchema,
   type DiasporaFeedbackFormInput,
 } from "@/lib/validation/public-forms";
+import { mobileFormStickySubmitBarClass } from "@/lib/mobile-ui-classes";
 import { FormTurnstile, isTurnstileWidgetEnabled } from "./FormTurnstile";
 
 const inputBase = fieldControlClass();
 
 const labelClass = "block text-sm font-medium text-[var(--foreground)]";
 const sectionTitle = "font-display text-lg font-semibold text-[var(--foreground)]";
-const radioCard = `flex cursor-pointer items-center gap-3 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm font-medium transition-shadow ${focusRingWithinSmClass} has-[:checked]:border-[var(--primary)] has-[:checked]:bg-[var(--primary)]/5 has-[:checked]:text-[var(--foreground)]`;
+const radioCard = `flex cursor-pointer items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm font-medium transition-shadow ${focusRingWithinSmClass} has-[:checked]:border-[var(--primary)] has-[:checked]:bg-[var(--primary)]/5 has-[:checked]:text-[var(--foreground)]`;
 
 function todayIsoDate() {
   const d = new Date();
@@ -155,7 +156,7 @@ export function DiasporaFeedbackForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-10" noValidate>
-      <section className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-sm)] sm:p-8">
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-sm)] sm:p-8">
         <h2 className={sectionTitle}>How are you engaging?</h2>
         <p className="mt-2 text-sm text-[var(--foreground-secondary)]">
           Pick one path so we ask the right questions. You can switch before you submit.
@@ -300,7 +301,7 @@ export function DiasporaFeedbackForm() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-sm)] sm:p-8">
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-sm)] sm:p-8">
         <h2 className={sectionTitle}>Your experience</h2>
         <fieldset className="mt-6">
           <legend className={labelClass}>
@@ -493,7 +494,7 @@ export function DiasporaFeedbackForm() {
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-4 pt-2">
+      <div className={`flex flex-col gap-4 pt-2 sm:flex-row sm:flex-wrap sm:items-center ${mobileFormStickySubmitBarClass}`}>
         <Button
           type="submit"
           disabled={isSubmitting || (isTurnstileWidgetEnabled && !turnstileToken)}

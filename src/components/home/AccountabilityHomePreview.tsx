@@ -25,7 +25,7 @@ export function AccountabilityHomePreview({ data }: Props) {
   return (
     <section
       id="accountability"
-      className="section-full border-b border-[var(--border)] bg-white py-12 sm:py-16 lg:py-20"
+      className="section-full border-b border-[var(--border)] bg-[var(--background)] py-12 sm:py-16 lg:py-20"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div

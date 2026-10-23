@@ -21,7 +21,7 @@ export function AccountPwaInstallCard() {
   if (!showAccountCard || !mode) return null;
 
   return (
-    <section className="rounded-2xl border border-[var(--primary)]/20 bg-white p-5 shadow-sm">
+    <section className="rounded-2xl border border-[var(--primary)]/20 bg-[var(--card)] p-5 shadow-sm">
       <p className="text-sm font-semibold text-[var(--foreground)]">Install MBKRU on this device</p>
       <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
         {mode === "android"

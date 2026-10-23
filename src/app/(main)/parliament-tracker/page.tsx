@@ -111,7 +111,7 @@ export default async function ParliamentTrackerPage() {
         heroImageAlt={headerPreset.heroImageAlt}
       />
 
-      <div className="section-spacing border-b border-[var(--border)] bg-white pb-8">
+      <div className="section-spacing border-b border-[var(--border)] bg-[var(--background)] pb-8">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <AccountabilityDisclaimerCallout variant="parliamentHub" className="mb-6" />
           <p className="text-center text-sm leading-relaxed text-[var(--foreground-secondary)]">
@@ -121,7 +121,7 @@ export default async function ParliamentTrackerPage() {
       </div>
 
       {dbReady && mpRoster.length > 0 ? (
-        <section className="section-spacing section-full bg-white pb-6">
+        <section className="section-spacing section-full bg-[var(--background)] pb-6">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <FindYourRepresentative rows={mpRoster} showPromises={showPromises} variant="prominent" />
           </div>
@@ -131,7 +131,7 @@ export default async function ParliamentTrackerPage() {
       {dbReady ? (
         <section className="section-spacing section-full bg-[var(--section-light)] pb-10">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6">
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm sm:p-6">
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <h2 className="font-display text-lg font-bold text-[var(--foreground)]">Parliamentary roster</h2>
@@ -191,7 +191,7 @@ export default async function ParliamentTrackerPage() {
       {dbReady && recentMpVoice.length > 0 ? (
         <section className="section-spacing section-full bg-[var(--section-light)] pb-10">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6">
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm sm:p-6">
               <h2 className="font-display text-lg font-bold text-[var(--foreground)]">
                 Recent MP performance reports (Citizen Voice)
                 <span className="ml-2 text-base font-normal text-[var(--foreground-secondary)]">
@@ -219,7 +219,7 @@ export default async function ParliamentTrackerPage() {
       ) : null}
 
       {/* Hero section — full-width with hero image */}
-      <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-white">
+      <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-[var(--background)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-12">
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-[var(--shadow-card)] ring-1 ring-black/5">
@@ -272,7 +272,7 @@ export default async function ParliamentTrackerPage() {
       </section>
 
       {/* Accountability Tools — full-width cards */}
-      <section className="section-spacing section-full bg-white">
+      <section className="section-spacing section-full bg-[var(--background)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <span className="inline-block rounded-full bg-[var(--accent-gold)]/15 px-4 py-1.5 text-sm font-medium text-[var(--accent-gold)]">
@@ -303,8 +303,8 @@ export default async function ParliamentTrackerPage() {
       {/* Tracker signup — premium CTA card */}
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="overflow-hidden rounded-2xl border border-[var(--primary)]/20 bg-white shadow-[var(--shadow-card)]">
-            <div className="bg-gradient-to-r from-[var(--primary)]/5 via-white to-[var(--primary)]/5 px-6 py-8 sm:p-10">
+          <div className="overflow-hidden rounded-2xl border border-[var(--primary)]/20 bg-[var(--card)] shadow-[var(--shadow-card)]">
+            <div className="bg-gradient-to-r from-[var(--primary)]/5 via-[var(--card)] to-[var(--primary)]/5 px-6 py-8 sm:p-10">
               <span className="inline-block rounded-full bg-[var(--primary)]/10 px-4 py-1.5 text-sm font-medium text-[var(--primary)]">
                 Stay Informed
               </span>

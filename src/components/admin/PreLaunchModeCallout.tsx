@@ -1,7 +1,7 @@
 /** Explains admin-only preview while the construction gate is on. */
 export function PreLaunchModeCallout() {
   return (
-    <div className="mb-8 rounded-2xl border border-[var(--primary)]/25 bg-gradient-to-br from-[var(--primary)]/8 to-white px-5 py-4 sm:px-6">
+    <div className="mb-8 rounded-2xl border border-[var(--primary)]/25 bg-gradient-to-br from-[var(--primary)]/8 to-[var(--card)] px-5 py-4 sm:px-6">
       <p className="font-display text-base font-semibold text-[var(--foreground)]">Pre-launch mode</p>
       <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
         The public under-construction gate is <strong className="text-[var(--foreground)]">on</strong>. Visitors and

@@ -40,7 +40,7 @@ export function MediaUploadForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+    <form onSubmit={onSubmit} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
       <h2 className="font-semibold text-[var(--foreground)]">Upload image</h2>
       <p className="mt-1 text-sm text-[var(--foreground-secondary)]">JPEG, PNG, WebP or GIF · max 8MB</p>
       <div className="mt-4 space-y-3">

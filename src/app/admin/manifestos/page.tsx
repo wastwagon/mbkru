@@ -35,7 +35,7 @@ export default async function AdminManifestosPage() {
         }
       />
 
-      <section id="add-manifesto" className="mt-2 rounded-xl border border-[var(--border)] bg-white p-5">
+      <section id="add-manifesto" className="mt-2 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Add manifesto</h2>
         <form action={createManifestoDocumentAction} className="mt-4 space-y-3">
           <FormField label="Title" htmlFor="title">
@@ -90,7 +90,7 @@ export default async function AdminManifestosPage() {
         ) : (
           <ul className="mt-4 space-y-3">
             {manifestos.map((m) => (
-              <li key={m.id} className="rounded-xl border border-[var(--border)] bg-white p-4 text-sm">
+              <li key={m.id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 text-sm">
                 <p className="font-medium text-[var(--foreground)]">{m.title}</p>
                 <p className="mt-1 text-[var(--foreground-secondary)]">
                   <span className="font-mono">{m.partySlug}</span> · {m.electionCycle}

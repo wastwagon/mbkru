@@ -55,7 +55,7 @@ export default function ContactPage() {
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
-            <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-card)] sm:p-8">
               <h2 className="font-display text-2xl font-bold text-[var(--foreground)]">
                 Send a Message
               </h2>
@@ -68,7 +68,7 @@ export default function ContactPage() {
               {infoBlocks.map((block) => (
                 <div
                   key={block.heading}
-                  className="flex gap-4 rounded-xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-card)] transition-shadow duration-200 motion-reduce:transition-none"
+                  className="flex gap-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-[var(--shadow-card)] transition-shadow duration-200 motion-reduce:transition-none"
                 >
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--primary)]/15 to-[var(--accent)]/10 text-[var(--primary)]">
                     {block.icon}

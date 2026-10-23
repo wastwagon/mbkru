@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 
+import { AccountabilityMobileFilterDisclosure } from "@/components/accountability/AccountabilityMobileFilterDisclosure";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
+import { mobileFormStickySubmitBarClass } from "@/lib/mobile-ui-classes";
 import { reportKindLabel } from "@/lib/report-status-text";
 import type { CitizenReportKind } from "@prisma/client";
 
@@ -84,12 +86,16 @@ export function ReportCardVoiceFiltersForm({
   }
 
   const formKey = `${voice.vregion}|${voice.vkind}|${voice.vverify}|${voice.vq}`;
+  const filtersActive = Boolean(
+    voice.vregion.trim() || voice.vkind.trim() || voice.vverify.trim() || voice.vq.trim(),
+  );
 
   const labelClass = "mb-1.5 block text-xs font-semibold text-[var(--foreground-secondary)] sm:text-sm";
-  const fieldClass = `w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`;
+  const fieldClass = `w-full rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`;
 
   return (
-    <form key={formKey} className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-12 lg:items-end" onSubmit={applyFilters}>
+    <AccountabilityMobileFilterDisclosure title="Filter Voice submissions" active={filtersActive} className="mt-4">
+    <form key={formKey} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-12 lg:items-end" onSubmit={applyFilters}>
       {lockedVoiceRegion ? (
         <div className="sm:col-span-2 lg:col-span-2">
           <span className={labelClass}>Region</span>
@@ -142,7 +148,7 @@ export function ReportCardVoiceFiltersForm({
           autoComplete="off"
         />
       </label>
-      <div className="flex flex-col gap-2 sm:col-span-2 sm:flex-row lg:col-span-2">
+      <div className={`flex flex-col gap-2 sm:col-span-2 sm:flex-row lg:col-span-2 ${mobileFormStickySubmitBarClass} !mx-0 max-sm:-mb-4 max-sm:border-0 max-sm:bg-transparent max-sm:px-0 max-sm:pt-3 max-sm:shadow-none max-sm:backdrop-blur-none`}>
         <button
           type="submit"
           className={`min-h-11 w-full rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[var(--primary-dark)] sm:flex-1 ${focusRingSmClass}`}
@@ -157,5 +163,6 @@ export function ReportCardVoiceFiltersForm({
         </Link>
       </div>
     </form>
+    </AccountabilityMobileFilterDisclosure>
   );
 }

@@ -19,10 +19,12 @@ import { isDatabaseConfigured, prisma } from "@/lib/db/prisma";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 import { focusRingSmClass, primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
+import { mobileFormStickySubmitBarClass } from "@/lib/mobile-ui-classes";
 import {
   isCivicPetitionsAndPublicCausesEnabled,
   isReportCardPublicEnabled,
 } from "@/lib/reports/accountability-pages";
+import { AccountabilityMobileFilterDisclosure } from "@/components/accountability/AccountabilityMobileFilterDisclosure";
 import { ReportCardBrowseTabs } from "@/components/accountability/ReportCardBrowseTabs";
 import { ReportCardPilotBanner } from "@/components/accountability/ReportCardPilotBanner";
 import { ReportCardVoiceFiltersForm } from "@/components/accountability/ReportCardVoiceFiltersForm";
@@ -207,7 +209,7 @@ export default async function ReportCardIndexPage({
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Citizen submissions CTA */}
-          <div className="mx-auto mb-10 max-w-4xl rounded-2xl border border-[var(--primary)]/25 bg-gradient-to-br from-[var(--primary)]/10 to-white px-5 py-6 sm:px-8">
+          <div className="mx-auto mb-10 max-w-4xl rounded-2xl border border-[var(--primary)]/25 bg-gradient-to-br from-[var(--primary)]/10 to-[var(--card)] px-5 py-6 sm:px-8">
             <p className="font-display text-lg font-semibold text-[var(--foreground)]">Your observations matter</p>
             <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
               Report MP performance, government delivery, situational issues, or election observations. Staff triage every
@@ -226,7 +228,7 @@ export default async function ReportCardIndexPage({
               )}
               <Link
                 href="/track-report"
-                className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-[var(--border)] bg-white px-5 py-2.5 text-sm font-semibold text-[var(--foreground)] transition hover:bg-[var(--section-light)]"
+                className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)] px-5 py-2.5 text-sm font-semibold text-[var(--foreground)] transition hover:bg-[var(--section-light)]"
               >
                 Track a report
               </Link>
@@ -325,7 +327,7 @@ export default async function ReportCardIndexPage({
               <AccountabilityDisclaimerCallout variant="voiceSubmissions" className="mx-auto mt-10 max-w-5xl" />
               <div
                 id="browse-voice"
-                className="mx-auto mt-6 max-w-5xl rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6"
+                className="mx-auto mt-6 max-w-5xl scroll-mt-[max(5.5rem,calc(env(safe-area-inset-top)+4.5rem))] rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm sm:p-6"
               >
                 <p className="text-sm font-semibold text-[var(--foreground)]">Reports submitted (MBKRU Voice)</p>
                 <ReportCardVoiceFiltersForm
@@ -378,7 +380,7 @@ export default async function ReportCardIndexPage({
                 </div>
 
                 {voiceBrowse.rows.length === 0 ? (
-                  <p className="rounded-2xl border border-[var(--border)] bg-white px-6 py-12 text-center text-sm text-[var(--foreground-secondary)]">
+                  <p className="rounded-2xl border border-[var(--border)] bg-[var(--card)] px-6 py-12 text-center text-sm text-[var(--foreground-secondary)]">
                     No submissions match these filters yet — or none have been received.{" "}
                     <Link href="/citizens-voice/submit" className={primaryNavLinkClass}>
                       Submit a report
@@ -470,12 +472,17 @@ export default async function ReportCardIndexPage({
               ) : null}
               <div
                 id="browse-scores"
-                className="mx-auto mt-6 max-w-5xl rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6"
+                className="mx-auto mt-6 max-w-5xl scroll-mt-[max(5.5rem,calc(env(safe-area-inset-top)+4.5rem))] rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm sm:p-6"
               >
                 <p className="text-sm font-semibold text-[var(--foreground)]">
                   Programme scores (People&apos;s Report Card)
                 </p>
-                <form method="get" action="/report-card#browse-scores" className="mt-4 grid gap-4 lg:grid-cols-12 lg:items-end">
+                <AccountabilityMobileFilterDisclosure
+                  title="Filter programme scores"
+                  active={Boolean(selectedRegionId || qRaw.trim())}
+                  className="mt-4"
+                >
+                <form method="get" action="/report-card#browse-scores" className="grid gap-4 lg:grid-cols-12 lg:items-end">
                   <input type="hidden" name="page" value="1" />
                   <input type="hidden" name="tab" value="scores" />
                   <input type="hidden" name="vq" value={vqRaw} />
@@ -490,7 +497,7 @@ export default async function ReportCardIndexPage({
                     <select
                       name="year"
                       defaultValue={selectedYear}
-                      className={`w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`}
+                      className={`w-full rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`}
                     >
                       {cycles.map((c) => (
                         <option key={c.id} value={c.year}>
@@ -506,7 +513,7 @@ export default async function ReportCardIndexPage({
                     <select
                       name="region"
                       defaultValue={selectedRegionId}
-                      className={`w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`}
+                      className={`w-full rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`}
                     >
                       <option value="">All regions</option>
                       {regions.map((r) => (
@@ -525,11 +532,11 @@ export default async function ReportCardIndexPage({
                       name="q"
                       defaultValue={qRaw}
                       placeholder="e.g. surname or first name"
-                      className={`w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] placeholder:text-[var(--foreground-secondary)]/60 ${focusRingSmClass}`}
+                      className={`w-full rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2.5 text-sm text-[var(--foreground)] placeholder:text-[var(--foreground-secondary)]/60 ${focusRingSmClass}`}
                       autoComplete="off"
                     />
                   </label>
-                  <div className="flex flex-col gap-2 sm:flex-row lg:col-span-2">
+                  <div className={`flex flex-col gap-2 sm:flex-row lg:col-span-2 ${mobileFormStickySubmitBarClass} !mx-0 max-sm:-mb-4 max-sm:border-0 max-sm:bg-transparent max-sm:px-0 max-sm:pt-3 max-sm:shadow-none max-sm:backdrop-blur-none`}>
                     <button
                       type="submit"
                       className={`min-h-11 w-full rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[var(--primary-dark)] sm:flex-1 ${focusRingSmClass}`}
@@ -552,6 +559,7 @@ export default async function ReportCardIndexPage({
                     </Link>
                   </div>
                 </form>
+                </AccountabilityMobileFilterDisclosure>
                 <p className="mt-3 text-xs text-[var(--foreground-secondary)]">
                   Showing scores for{" "}
                   <span className="font-medium text-[var(--foreground)]">{selectedYear}</span>
@@ -584,7 +592,7 @@ export default async function ReportCardIndexPage({
                 </div>
 
                 {browse.rows.length === 0 ? (
-                  <p className="rounded-2xl border border-[var(--border)] bg-white px-6 py-12 text-center text-sm text-[var(--foreground-secondary)]">
+                  <p className="rounded-2xl border border-[var(--border)] bg-[var(--card)] px-6 py-12 text-center text-sm text-[var(--foreground-secondary)]">
                     No programme entries match these filters. Try clearing search, choosing another region, or another cycle year.
                   </p>
                 ) : (
@@ -656,7 +664,7 @@ export default async function ReportCardIndexPage({
               </div>
             </>
           ) : showScores && !hasCycles ? (
-            <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-[var(--border)] bg-white px-6 py-10 text-center text-sm text-[var(--foreground-secondary)]">
+            <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-[var(--border)] bg-[var(--card)] px-6 py-10 text-center text-sm text-[var(--foreground-secondary)]">
               No published programme cycles yet. Voice submissions appear above when Voice is enabled.
             </div>
           ) : null}

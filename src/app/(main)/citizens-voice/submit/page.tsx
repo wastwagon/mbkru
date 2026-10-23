@@ -44,7 +44,7 @@ export default async function SubmitVoiceReportPage() {
         title="Submit a report"
         description="Choose report type — general Voice, MP performance, government performance, situational alerts, or election observation (when enabled). You submit directly; staff moderate and triage. You get a tracking code to check status. Not a court filing or official agency petition unless you also use those channels."
       />
-      <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
+      <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="mb-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-center text-sm text-[var(--foreground-secondary)]">
             <Link

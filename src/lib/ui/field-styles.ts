@@ -19,13 +19,13 @@ export type FieldDensity = "public" | "admin" | "compact";
 const densityClass: Record<FieldDensity, string> = {
   /** Auth, contact, voice — roomier public fields (matches prior inputClass clones). */
   public:
-    "mt-1 block w-full touch-manipulation rounded-xl border bg-white px-4 py-3 text-base text-[var(--foreground)] transition-shadow",
+    "mt-1 block w-full touch-manipulation rounded-xl border bg-[var(--card)] px-4 py-3 text-base text-[var(--foreground)] transition-shadow",
   /** Admin dashboards — denser, 16px text (matches adminFormFieldClass). */
   admin:
-    "mt-1 block w-full touch-manipulation rounded-lg border bg-white px-3 py-2.5 text-base text-[var(--foreground)] transition-shadow",
+    "mt-1 block w-full touch-manipulation rounded-lg border bg-[var(--card)] px-3 py-2.5 text-base text-[var(--foreground)] transition-shadow",
   /** Filter toolbars / mobile panels — tighter padding than public. */
   compact:
-    "mt-1 w-full touch-manipulation rounded-xl border bg-white px-3 py-2.5 text-base text-[var(--foreground)] transition-shadow",
+    "mt-1 w-full touch-manipulation rounded-xl border bg-[var(--card)] px-3 py-2.5 text-base text-[var(--foreground)] transition-shadow",
 };
 
 const fieldNormalClass =

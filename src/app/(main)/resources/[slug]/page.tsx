@@ -71,7 +71,7 @@ export default async function ResourceDocumentDetailPage({ params }: Props) {
               ← All resources
             </Link>
           </p>
-          <dl className="mt-8 space-y-4 rounded-2xl border border-[var(--border)] bg-white p-6 text-sm">
+          <dl className="mt-8 space-y-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 text-sm">
             <div>
               <dt className="font-medium text-[var(--foreground-secondary)]">Category</dt>
               <dd className="mt-1 text-[var(--foreground)]">{resourceCategoryLabel(doc.category)}</dd>

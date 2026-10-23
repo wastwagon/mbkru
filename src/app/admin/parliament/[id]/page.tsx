@@ -108,7 +108,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
         ) : null}
       </dl>
 
-      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-5">
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Portrait</h2>
         <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Official parliament.gh photos are imported by{" "}
@@ -160,7 +160,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
         </div>
       </dl>
 
-      <section className="mt-10 rounded-xl border border-[var(--border)] bg-white p-5">
+      <section className="mt-10 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Methodology fairness metadata</h2>
         <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Optional flags for editorial methodology (e.g. Speaker of Parliament, attendance metric exclusions). Stored as JSON on this roster row.
@@ -210,7 +210,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
         </form>
       </section>
 
-      <section className="mt-10 rounded-xl border border-[var(--border)] bg-white p-5">
+      <section className="mt-10 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">{accountabilityProse.adminAddPromiseHeading}</h2>
         <form action={createCampaignPromiseAction} className="mt-4 space-y-3">
           <input type="hidden" name="memberId" value={member.id} />
@@ -417,7 +417,7 @@ export default async function AdminParliamentMemberPage({ params }: Props) {
         ) : (
           <ul className="mt-4 space-y-4">
             {member.promises.map((p) => (
-              <li key={p.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
+              <li key={p.id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
                 <p className="font-medium text-[var(--foreground)]">{p.title}</p>
                 {p.description ? (
                   <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--foreground-secondary)]">

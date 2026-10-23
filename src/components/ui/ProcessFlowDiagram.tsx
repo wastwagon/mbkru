@@ -15,15 +15,17 @@ export function ProcessFlowDiagram({
 }) {
   return (
     <figure
-      className={`rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm sm:p-6 ${className}`}
+      className={`rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm sm:p-6 ${className}`}
       aria-label={title}
     >
       <figcaption className="text-sm font-semibold text-[var(--foreground)]">{title}</figcaption>
-      <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <ol
+        className="mt-4 flex gap-3 overflow-x-auto overscroll-x-contain scroll-smooth pb-1 snap-x snap-proximity motion-reduce:snap-none [-webkit-overflow-scrolling:touch] sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 lg:grid-cols-4"
+      >
         {steps.map((step, i) => (
           <li
             key={step.title}
-            className="relative rounded-xl border border-[var(--primary)]/20 bg-[var(--primary)]/[0.04] p-4"
+            className="relative min-w-[min(100%,15.5rem)] shrink-0 snap-start rounded-xl border border-[var(--primary)]/20 bg-[var(--primary)]/[0.04] p-4 sm:min-w-0 sm:shrink"
           >
             <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[var(--primary)] text-xs font-bold text-white">
               {i + 1}

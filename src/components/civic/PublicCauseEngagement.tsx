@@ -123,7 +123,7 @@ export function PublicCauseEngagement({
         This issue was filed through MBKRU Voice and published here so other members can respond. Support and comments are
         for civic dialogue only — not a court filing or official complaint record.
       </p>
-      <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
         <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">Show support</h2>
         <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
           Members can signal shared concern. This is not a legal filing or vote.
@@ -151,7 +151,7 @@ export function PublicCauseEngagement({
         )}
       </div>
 
-      <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
         <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">Discussion</h2>
         <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
           Stay factual and respectful. Moderators may hide posts that breach community standards.

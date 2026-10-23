@@ -39,7 +39,7 @@ export default async function AdminMediaPage() {
           items.map((m) => (
             <li
               key={m.id}
-              className="overflow-hidden rounded-xl border border-[var(--border)] bg-white shadow-sm"
+              className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-sm"
             >
               <div className="relative aspect-[4/3] bg-[var(--section-light)]">
                 <Image src={m.storagePath} alt={m.alt || m.filename} fill className="object-cover" sizes="300px" />

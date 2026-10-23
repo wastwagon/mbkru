@@ -70,7 +70,7 @@ export function SiteVisibilityPanel() {
 
   if (loading) {
     return (
-      <div className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+      <div className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
         <p className="text-sm text-[var(--foreground-secondary)]">Loading site visibility…</p>
       </div>
     );
@@ -87,7 +87,7 @@ export function SiteVisibilityPanel() {
   return (
     <div
       id="site-visibility"
-      className="mt-8 scroll-mt-24 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm sm:p-8"
+      className="mt-8 scroll-mt-24 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm sm:p-8"
     >
       <h2 className="font-display text-lg font-bold text-[var(--foreground)]">Public site visibility</h2>
       <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">

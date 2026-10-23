@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Kumbh_Sans, Lora, Playfair_Display } from "next/font/google";
+import { colorThemeBootScript } from "@/lib/client/color-theme";
 import { heroContent } from "@/lib/site-content";
 import "./globals.css";
 
@@ -93,7 +95,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script id="mbkru-color-theme-boot" strategy="beforeInteractive">
+          {colorThemeBootScript}
+        </Script>
+      </head>
       <body
         className={`${kumbhSans.variable} ${lora.variable} ${playfairDisplay.variable} font-sans flex min-h-screen flex-col antialiased`}
       >

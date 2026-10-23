@@ -24,7 +24,7 @@ export function CommunityCoverEditor({
   const [selected, setSelected] = useState<PickerMedia | CoverMedia | null>(initialCover);
 
   return (
-    <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-5">
+    <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
       <h2 className="text-sm font-semibold text-[var(--foreground)]">Cover image</h2>
       <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
         Shown on the public community browse list and detail page. Use a public library image or upload a new one.

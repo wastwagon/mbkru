@@ -56,7 +56,7 @@ export async function RegionCommunitiesSpotlight({ regionSlug, regionName }: Pro
   const verifiedTotal = [...verifiedById.values()].reduce((n, v) => n + v, 0);
 
   return (
-    <section className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm sm:p-6">
+    <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm sm:p-6">
       <h3 className="text-sm font-semibold text-[var(--foreground)]">Queen Mother &amp; traditional spaces</h3>
       <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
         {total} civic {total === 1 ? "space" : "spaces"} linked to traditional areas in {regionName}. Join open spaces

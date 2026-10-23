@@ -32,7 +32,7 @@ export function CommunityThreadCard({ communitySlug, post, viewerMemberId, showF
   const threadHref = `/communities/${communitySlug}/post/${post.id}`;
 
   return (
-    <li className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
+    <li className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
       <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--foreground-secondary)]">
         {showForumBadge && post.communityForum ? (
           <>

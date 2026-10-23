@@ -25,7 +25,7 @@ export default async function AdminRegionsPage() {
         description="Reference geography for petitions, Voice reports, communities, and town halls. Changing a slug breaks deep links that embed the old value."
       />
 
-      <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6">
+      <section className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Add region</h2>
         <p className="mt-1 text-xs text-[var(--foreground-secondary)]">Use sparingly — Ghana normally ships sixteen seeded rows.</p>
         <form action={createRegionAction} className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -62,7 +62,7 @@ export default async function AdminRegionsPage() {
         ) : (
           <ul className="mt-4 space-y-6">
             {regions.map((r) => (
-              <li key={r.id} className="rounded-2xl border border-[var(--border)] bg-white p-4">
+              <li key={r.id} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
                 <form action={updateRegionAction} className="grid gap-3 sm:grid-cols-2">
                   <input type="hidden" name="id" value={r.id} />
                   <FormField label="Name" htmlFor={`name-${r.id}`} className="sm:col-span-2">

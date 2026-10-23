@@ -73,7 +73,7 @@ export default async function AdminMemberDetailPage({ params }: Props) {
             </p>
           ) : null}
           {member.identityReviewRequestMessage ? (
-            <pre className="mt-3 max-h-48 overflow-auto whitespace-pre-wrap rounded-xl border border-[var(--border)] bg-white p-3 text-xs text-[var(--foreground)]">
+            <pre className="mt-3 max-h-48 overflow-auto whitespace-pre-wrap rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 text-xs text-[var(--foreground)]">
               {member.identityReviewRequestMessage}
             </pre>
           ) : (
@@ -82,7 +82,7 @@ export default async function AdminMemberDetailPage({ params }: Props) {
         </section>
       ) : null}
 
-      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6">
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Verification status</h2>
         <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Staff-only notes below are not shown on the member&apos;s account page.
@@ -129,7 +129,7 @@ export default async function AdminMemberDetailPage({ params }: Props) {
         </form>
       </section>
 
-      <section className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
+      <section className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Ghana Card (Hubtel)</h2>
         <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Automated NIA check for MP performance submit gate. Full card number is never stored — hash + last four only.

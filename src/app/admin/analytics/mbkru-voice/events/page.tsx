@@ -63,7 +63,7 @@ export default async function AdminMbkruVoiceAnalyticsEventsPage({ searchParams 
         />
       ) : (
         <>
-          <form className="mt-6 flex flex-wrap items-end gap-3 rounded-xl border border-[var(--border)] bg-white p-4">
+          <form className="mt-6 flex flex-wrap items-end gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
             <FormField label="Filter name contains" htmlFor="q">
               <Input
                 id="q"

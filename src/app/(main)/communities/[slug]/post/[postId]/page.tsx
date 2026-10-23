@@ -133,7 +133,7 @@ export default async function CommunityPostDetailPage({ params }: Props) {
             </p>
           ) : null}
 
-          <article className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+          <article className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
             <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--foreground-secondary)]">
               <span className="font-medium uppercase tracking-wide text-[var(--foreground)]">{post.kind}</span>
               <span>·</span>
@@ -184,7 +184,7 @@ export default async function CommunityPostDetailPage({ params }: Props) {
               <h2 className="text-sm font-semibold text-[var(--foreground)]">Replies ({replies.length})</h2>
               <ul className="mt-4 space-y-4">
                 {replies.map((r) => (
-                  <li key={r.id} className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm">
+                  <li key={r.id} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm">
                     <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--foreground-secondary)]">
                       <span className="font-medium uppercase tracking-wide text-[var(--foreground)]">{r.kind}</span>
                       <span>·</span>

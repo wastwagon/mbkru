@@ -48,7 +48,7 @@ export function ParliamentCsvImport() {
   }
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-white p-5">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
       <h2 className="text-sm font-semibold text-[var(--foreground)]">Import CSV</h2>
       <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
         Header row (exact):{" "}

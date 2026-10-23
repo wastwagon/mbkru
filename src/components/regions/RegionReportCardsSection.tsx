@@ -174,7 +174,7 @@ export async function RegionReportCardsSection({
   return (
     <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto mb-10 max-w-4xl rounded-2xl border border-[var(--primary)]/25 bg-gradient-to-br from-[var(--primary)]/10 to-white px-5 py-6 sm:px-8">
+        <div className="mx-auto mb-10 max-w-4xl rounded-2xl border border-[var(--primary)]/25 bg-gradient-to-br from-[var(--primary)]/10 to-[var(--card)] px-5 py-6 sm:px-8">
           <p className="font-display text-lg font-semibold text-[var(--foreground)]">
             People&apos;s Report Card — {regionName}
           </p>
@@ -264,7 +264,7 @@ export async function RegionReportCardsSection({
           <>
             <div
               id="browse-voice"
-              className="mx-auto mt-10 max-w-5xl rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6"
+              className="mx-auto mt-10 max-w-5xl rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm sm:p-6"
             >
               <p className="text-sm font-semibold text-[var(--foreground)]">
                 Voice reports — {regionName}
@@ -315,7 +315,7 @@ export async function RegionReportCardsSection({
               </div>
 
               {voiceBrowse.rows.length === 0 ? (
-                <p className="rounded-2xl border border-[var(--border)] bg-white px-6 py-12 text-center text-sm text-[var(--foreground-secondary)]">
+                <p className="rounded-2xl border border-[var(--border)] bg-[var(--card)] px-6 py-12 text-center text-sm text-[var(--foreground-secondary)]">
                   No submissions from this region match these filters yet.
                 </p>
               ) : (
@@ -403,7 +403,7 @@ export async function RegionReportCardsSection({
             ) : null}
             <div
               id="browse-scores"
-              className="mx-auto mt-14 max-w-5xl rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-6"
+              className="mx-auto mt-14 max-w-5xl rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm sm:p-6"
             >
               <p className="text-sm font-semibold text-[var(--foreground)]">
                 Programme scores — {regionName}
@@ -428,7 +428,7 @@ export async function RegionReportCardsSection({
                   <select
                     name="year"
                     defaultValue={selectedYear}
-                    className={`w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`}
+                    className={`w-full rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2.5 text-sm text-[var(--foreground)] ${focusRingSmClass}`}
                   >
                     {cycles.map((c) => (
                       <option key={c.id} value={c.year}>
@@ -446,7 +446,7 @@ export async function RegionReportCardsSection({
                     name="q"
                     defaultValue={qRaw}
                     placeholder="e.g. surname or first name"
-                    className={`w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] placeholder:text-[var(--foreground-secondary)]/60 ${focusRingSmClass}`}
+                    className={`w-full rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2.5 text-sm text-[var(--foreground)] placeholder:text-[var(--foreground-secondary)]/60 ${focusRingSmClass}`}
                     autoComplete="off"
                   />
                 </label>
@@ -505,7 +505,7 @@ export async function RegionReportCardsSection({
               </div>
 
               {browse.rows.length === 0 ? (
-                <p className="rounded-2xl border border-[var(--border)] bg-white px-6 py-12 text-center text-sm text-[var(--foreground-secondary)]">
+                <p className="rounded-2xl border border-[var(--border)] bg-[var(--card)] px-6 py-12 text-center text-sm text-[var(--foreground-secondary)]">
                   No programme entries for this region in this cycle. Try another year or clear search.
                 </p>
               ) : (
@@ -579,7 +579,7 @@ export async function RegionReportCardsSection({
             </div>
           </>
         ) : showScores && !hasCycles ? (
-          <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-[var(--border)] bg-white px-6 py-10 text-center text-sm text-[var(--foreground-secondary)]">
+          <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-[var(--border)] bg-[var(--card)] px-6 py-10 text-center text-sm text-[var(--foreground-secondary)]">
             No published programme cycles yet for scorecards.
           </div>
         ) : null}

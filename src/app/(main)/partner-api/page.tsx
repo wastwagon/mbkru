@@ -34,7 +34,7 @@ export default function PartnerApiPage() {
         description={accountabilityProse.partnerApiPageIntro}
       />
 
-      <section className="section-spacing section-full bg-white">
+      <section className="section-spacing section-full bg-[var(--background)]">
         <div className="mx-auto max-w-3xl px-4 text-[var(--foreground)] sm:px-6 lg:px-8">
           <p className="rounded-lg border border-amber-200/80 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">
             <strong className="font-semibold">Programme summary.</strong> Confirm wording with MBKRU before citing this page

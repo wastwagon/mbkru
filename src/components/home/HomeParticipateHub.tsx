@@ -249,7 +249,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true, showLiveTo
   return (
     <section
       id="participate"
-      className="section-full border-b border-[var(--border)] bg-gradient-to-b from-[var(--section-light)] to-white py-12 sm:py-16 lg:py-20"
+      className="section-full border-b border-[var(--border)] bg-gradient-to-b from-[var(--section-light)] to-[var(--background)] py-12 sm:py-16 lg:py-20"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -315,7 +315,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true, showLiveTo
             >
               <Link
                 href={a.href}
-                className="flex h-full flex-col rounded-2xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow-sm)] transition-[border-color,box-shadow,transform] duration-300 ease-out hover:border-[var(--primary)]/35 sm:p-5"
+                className="flex h-full flex-col rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow-sm)] transition-[border-color,box-shadow,transform] duration-300 ease-out hover:border-[var(--primary)]/35 sm:p-5"
               >
                 <span className="font-display text-sm font-semibold text-[var(--foreground)]">{a.title}</span>
                 <span className="mt-2.5 text-xs leading-relaxed text-[var(--foreground-secondary)] sm:text-[13px]">{a.body}</span>
@@ -374,7 +374,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true, showLiveTo
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-24px 0px" }}
                 transition={sectionRevealTransition(reducedMotion)}
-                className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-sm)] sm:p-6"
+                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-[var(--shadow-sm)] sm:p-6"
               >
                 <div className="flex items-start justify-between gap-3">
                   <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Top petitions</h3>
@@ -412,7 +412,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true, showLiveTo
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-24px 0px" }}
                 transition={sectionRevealTransition(reducedMotion, 0.04)}
-                className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-sm)] sm:p-6"
+                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-[var(--shadow-sm)] sm:p-6"
               >
                 <div className="flex items-start justify-between gap-3">
                   <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Public causes</h3>
@@ -447,7 +447,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true, showLiveTo
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-24px 0px" }}
                 transition={sectionRevealTransition(reducedMotion, 0.05)}
-                className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-sm)] sm:p-6"
+                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-[var(--shadow-sm)] sm:p-6"
               >
                 <div className="flex items-start justify-between gap-3">
                   <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Communities</h3>
@@ -482,7 +482,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true, showLiveTo
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-24px 0px" }}
                 transition={sectionRevealTransition(reducedMotion, 0.06)}
-                className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-sm)] sm:p-6"
+                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-[var(--shadow-sm)] sm:p-6"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Forums &amp; programme rows</h3>

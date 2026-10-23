@@ -63,7 +63,7 @@ export function CouncilMpEvaluationSection({
         ) : null}
       </div>
 
-      <form action={upsertCouncilMpEvaluationDraftAction} className="mt-6 space-y-4 rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
+      <form action={upsertCouncilMpEvaluationDraftAction} className="mt-6 space-y-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm">
         <input type="hidden" name="communitySlug" value={communitySlug} />
         <h3 className="text-sm font-semibold text-[var(--foreground)]">New meeting record</h3>
 
@@ -189,7 +189,7 @@ export function CouncilMpEvaluationSection({
           <h3 className="text-sm font-semibold text-[var(--foreground)]">Drafts awaiting Queen Mother sign-off</h3>
           <ul className="mt-4 space-y-4">
             {drafts.map((d) => (
-              <li key={d.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
+              <li key={d.id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
                 <p className="text-sm font-semibold text-[var(--foreground)]">{d.parliamentMember.name}</p>
                 <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                   Meeting{" "}

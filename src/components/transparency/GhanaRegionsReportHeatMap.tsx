@@ -87,7 +87,7 @@ export function GhanaRegionsReportHeatMap({ regions, highlightSlug }: Props) {
     : null;
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-[var(--shadow-card)] sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Reports by region</h3>

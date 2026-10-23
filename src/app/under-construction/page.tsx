@@ -18,8 +18,8 @@ export default async function UnderConstructionPage() {
   const body = constructionBodyOrDefault(config.constructionBody);
 
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-b from-[var(--section-light-tertiary)] via-white to-[var(--section-light)]">
-      <header className="border-b border-[var(--border)] bg-white/80 px-4 py-5 backdrop-blur-sm sm:px-6">
+    <div className="flex min-h-screen flex-col bg-gradient-to-b from-[var(--section-light-tertiary)] via-[var(--background)] to-[var(--section-light)]">
+      <header className="border-b border-[var(--border)] bg-[var(--card)]/80 px-4 py-5 backdrop-blur-sm sm:px-6">
         <div className="mx-auto flex max-w-3xl items-center justify-center">
           <Logo />
         </div>
@@ -46,7 +46,7 @@ export default async function UnderConstructionPage() {
             </Link>
             <Link
               href="/admin/login"
-              className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[var(--border)] bg-white px-6 py-2.5 text-sm font-semibold text-[var(--foreground)] transition hover:bg-[var(--section-light)]"
+              className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)] px-6 py-2.5 text-sm font-semibold text-[var(--foreground)] transition hover:bg-[var(--section-light)]"
             >
               Admin sign in
             </Link>

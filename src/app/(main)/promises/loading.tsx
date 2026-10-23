@@ -6,7 +6,7 @@ export default function PromisesSegmentLoading() {
         <div className="mx-auto h-9 max-w-md rounded-lg bg-[var(--muted)]/80" />
         <div className="mx-auto mt-4 h-4 max-w-2xl rounded bg-[var(--muted)]/60" />
         <div className="mx-auto mt-3 h-4 max-w-xl rounded bg-[var(--muted)]/50" />
-        <ul className="mt-10 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-white">
+        <ul className="mt-10 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-[var(--card)]">
           {Array.from({ length: 8 }).map((_, i) => (
             <li key={i} className="px-4 py-4">
               <div className="h-5 w-48 rounded bg-[var(--muted)]/70" />

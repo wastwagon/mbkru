@@ -8,7 +8,7 @@ export default function AccessibilityPage() {
         description="Inclusive access across keyboard, speech, and readable content experiences."
       />
       <section className="mx-auto max-w-5xl px-6 pb-16 pt-6 sm:px-8">
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
           <h2 className="text-lg font-bold text-[var(--foreground)]">Current accessibility support</h2>
           <ul className="mt-3 space-y-2 text-sm leading-relaxed text-[var(--foreground)]">
             <li>Keyboard-first navigation with visible focus styles and skip-to-content support.</li>

@@ -63,7 +63,7 @@ export default async function PromisesByMemberPage({ params }: Props) {
 
           <AccountabilityDisclaimerCallout variant="promiseCatalogue" className="mt-4" />
 
-          <div className="mt-6 flex items-center gap-4 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-5">
+          <div className="mt-6 flex items-center gap-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm sm:p-5">
             <MpPortrait name={member.name} portraitPath={member.portraitPath} size="lg" />
             <div className="min-w-0">
               <p className="font-display text-lg font-bold text-[var(--foreground)]">{member.name}</p>
@@ -73,7 +73,7 @@ export default async function PromisesByMemberPage({ params }: Props) {
             </div>
           </div>
 
-          <p className="mt-4 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+          <p className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
             MP commitment sheet — verified catalogue rows below, plus Citizen Voice intakes filed by residents. Not a legal
             finding.{" "}
             <Link href="/methodology" className={primaryNavLinkClass}>
@@ -104,7 +104,7 @@ export default async function PromisesByMemberPage({ params }: Props) {
           </div>
 
           {member.promises.length === 0 ? (
-            <p className="mt-8 rounded-2xl border border-[var(--border)] bg-white px-4 py-6 text-sm text-[var(--foreground-secondary)]">
+            <p className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4 py-6 text-sm text-[var(--foreground-secondary)]">
               No catalogue commitments are published for this MP yet. Voice intakes above are filed by residents;
               catalogue rows appear when editors publish verified commitments.
             </p>

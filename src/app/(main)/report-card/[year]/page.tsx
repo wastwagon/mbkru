@@ -195,7 +195,7 @@ export default async function ReportCardYearPage({
             </div>
           ) : null}
           {meta.methodology?.trim() ? (
-            <div className="mt-6 rounded-xl border border-[var(--border)] bg-white p-4 text-sm text-[var(--foreground-secondary)]">
+            <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 text-sm text-[var(--foreground-secondary)]">
               <p className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground)]">
                 Cycle methodology
               </p>
@@ -203,7 +203,7 @@ export default async function ReportCardYearPage({
             </div>
           ) : null}
 
-          <div className="mt-6 rounded-xl border border-[var(--border)] bg-white p-4">
+          <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
               Cycle at a glance
             </p>
@@ -240,7 +240,7 @@ export default async function ReportCardYearPage({
             ) : null}
           </div>
 
-          <div className="mt-4 rounded-xl border border-[var(--border)] bg-white p-4">
+          <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
             <form method="get" className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
               <input type="hidden" name="page" value="1" />
               <label className="text-sm">
@@ -250,7 +250,7 @@ export default async function ReportCardYearPage({
                 <select
                   name="mp"
                   defaultValue={selectedExists ? selectedMp : ""}
-                  className="w-full rounded-md border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--foreground)]"
+                  className="w-full rounded-md border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--foreground)]"
                 >
                   <option value="">All MPs in this cycle</option>
                   {members.map((m) => (
@@ -294,7 +294,7 @@ export default async function ReportCardYearPage({
               {filteredEntries.map((e) => (
                 <li
                   key={e.id}
-                  className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm"
+                  className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="flex min-w-0 items-start gap-3">

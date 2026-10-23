@@ -13,7 +13,7 @@ export function CommunityQueenMotherRoster({ profiles }: { profiles: QueenMother
   if (profiles.length === 0) return null;
 
   return (
-    <section className="mt-8 rounded-2xl border border-[var(--accent-gold)]/30 bg-gradient-to-br from-[var(--accent-gold-light)] to-white p-5 shadow-sm sm:p-6">
+    <section className="mt-8 rounded-2xl border border-[var(--accent-gold)]/30 bg-gradient-to-br from-[var(--accent-gold-light)] to-[var(--card)] p-5 shadow-sm sm:p-6">
       <div className="flex flex-wrap items-center gap-2">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Verified Queen Mothers</h2>
         <CommunityQueenMotherBadge count={profiles.length} />
@@ -25,7 +25,7 @@ export function CommunityQueenMotherRoster({ profiles }: { profiles: QueenMother
         {profiles.map((p) => (
           <li
             key={p.membershipId}
-            className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-white/90 px-3 py-3"
+            className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)]/90 px-3 py-3"
           >
             {p.portrait ? (
               <span className="relative inline-block h-14 w-14 shrink-0 overflow-hidden rounded-full border border-[var(--accent-gold)]/40 bg-[var(--section-light)]">

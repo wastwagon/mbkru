@@ -120,7 +120,7 @@ export default async function AdminPetitionDetailPage({ params, searchParams }: 
         </p>
       ) : null}
 
-      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-5">
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Status</h2>
         <form action={updatePetitionStatusAction} className="mt-3 flex flex-wrap items-end gap-2">
           <input type="hidden" name="id" value={petition.id} />
@@ -146,7 +146,7 @@ export default async function AdminPetitionDetailPage({ params, searchParams }: 
         </form>
       </section>
 
-      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-5">
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-sm font-semibold text-[var(--foreground)]">Confirmed signatures ({petition.signatures.length})</h2>
           <a
@@ -191,7 +191,7 @@ export default async function AdminPetitionDetailPage({ params, searchParams }: 
         )}
       </section>
 
-      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-5">
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-sm font-semibold text-[var(--foreground)]">Pending email verification ({petition.pendingSignatures.length})</h2>
           <Link href="/admin/analytics/petition-pending" className={`text-xs font-semibold ${primaryLinkClass}`}>

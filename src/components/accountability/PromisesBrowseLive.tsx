@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 
+import { AccountabilityMobileFilterDisclosure } from "@/components/accountability/AccountabilityMobileFilterDisclosure";
 import { PromiseEvidenceCard } from "@/components/accountability/PromiseEvidenceCard";
 import { PromiseTrackerStatsStrip } from "@/components/accountability/PromiseTrackerStatsStrip";
 import {
@@ -398,12 +399,17 @@ export function PromisesBrowseLive({
             ) : null}
           </div>
         </div>
+        <AccountabilityMobileFilterDisclosure
+          title="Filter commitments"
+          active={hasActiveFilters}
+          className={filterToolbarHeader ? "mt-4" : "mt-3"}
+        >
         <div
         role="search"
         aria-label="Filter the commitment catalogue by search, source slice, and category"
-        className={`flex flex-col gap-4 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-end ${filterToolbarHeader ? "mt-4" : "mt-3"}`}
+        className="flex flex-col gap-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm max-sm:rounded-none max-sm:border-0 max-sm:bg-transparent max-sm:p-0 max-sm:shadow-none sm:flex-row sm:flex-wrap sm:items-end"
       >
-        <p className="w-full text-sm font-semibold text-[var(--foreground)]">Filter commitments</p>
+        <p className="hidden w-full text-sm font-semibold text-[var(--foreground)] sm:block">Filter commitments</p>
         <div className="min-w-0 flex-1 sm:max-w-xs">
           <label htmlFor="live-q" className={filterLabelClass}>
             Search <span className="font-normal">(live)</span>
@@ -523,6 +529,7 @@ export function PromisesBrowseLive({
           )}
         </div>
       </div>
+        </AccountabilityMobileFilterDisclosure>
         </>
       )}
 

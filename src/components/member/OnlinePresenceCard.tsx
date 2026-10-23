@@ -54,7 +54,7 @@ export function OnlinePresenceCard({
           {onlinePeers.map((p) => (
             <li
               key={p.id}
-              className="rounded-full border border-[var(--border)] bg-white px-3 py-1 text-xs font-medium text-[var(--foreground)]"
+              className="rounded-full border border-[var(--border)] bg-[var(--card)] px-3 py-1 text-xs font-medium text-[var(--foreground)]"
             >
               {p.label}
             </li>

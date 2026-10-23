@@ -91,7 +91,7 @@ export function ObjectivesCarousel({ objectives }: ObjectivesCarouselProps) {
               <Link
                 key={`${slideIdx}-${obj.title}`}
                 href={obj.href}
-                className="group flex h-full min-h-0 flex-col gap-2 rounded-xl border border-[var(--border)] bg-white p-3 shadow-[var(--shadow-card)] transition-all duration-300 hover:border-[var(--accent-warm)]/30 hover:shadow-[var(--shadow-card-hover)] sm:flex-row sm:gap-3 sm:p-4"
+                className="group flex h-full min-h-0 flex-col gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 shadow-[var(--shadow-card)] transition-all duration-300 hover:border-[var(--accent-warm)]/30 hover:shadow-[var(--shadow-card-hover)] sm:flex-row sm:gap-3 sm:p-4"
               >
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--accent-warm)]/10 text-[var(--accent-warm)] transition-colors group-hover:bg-[var(--accent-warm)]/20 sm:h-10 sm:w-10">
                   <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,7 +134,7 @@ export function ObjectivesCarousel({ objectives }: ObjectivesCarouselProps) {
             type="button"
             onClick={() => scrollToSlide(activeSlide - 1)}
             aria-label="Previous"
-            className="flex h-11 w-11 touch-manipulation items-center justify-center rounded-full border border-[var(--border)] bg-white text-[var(--foreground)] shadow-sm transition-all hover:border-[var(--accent-warm)] hover:bg-[var(--accent-warm)]/5 disabled:opacity-40 disabled:pointer-events-none sm:h-10 sm:w-10"
+            className="flex h-11 w-11 touch-manipulation items-center justify-center rounded-full border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] shadow-sm transition-all hover:border-[var(--accent-warm)] hover:bg-[var(--accent-warm)]/5 disabled:opacity-40 disabled:pointer-events-none sm:h-10 sm:w-10"
             disabled={activeSlide === 0}
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

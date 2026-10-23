@@ -7,6 +7,7 @@ import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
+import { mobileFormStickySubmitBarClass } from "@/lib/mobile-ui-classes";
 import { PETITION_TOPICS, petitionTopicLabel, type PetitionTopicValue } from "@/lib/petition-topics";
 
 type Region = { id: string; name: string };
@@ -53,7 +54,7 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm sm:p-8">
+    <form onSubmit={onSubmit} className="space-y-5 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm sm:p-8">
       {error ? (
         <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
           {error}
@@ -131,9 +132,11 @@ export function PetitionCreateForm({ regions }: { regions: Region[] }) {
           </Select>
         </FormField>
       </div>
-      <Button type="submit" loading={busy} loadingLabel="Publishing…" className="w-full min-w-0 justify-center sm:w-auto">
-        Publish petition
-      </Button>
+      <div className={mobileFormStickySubmitBarClass}>
+        <Button type="submit" loading={busy} loadingLabel="Publishing…" className="w-full min-w-0 justify-center sm:w-auto">
+          Publish petition
+        </Button>
+      </div>
     </form>
   );
 }

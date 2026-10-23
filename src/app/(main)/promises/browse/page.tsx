@@ -97,7 +97,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
 const lensPillBase =
   "inline-flex min-h-10 touch-manipulation items-center justify-center rounded-full border px-4 py-2 text-sm font-semibold transition";
-const lensInactive = "border-[var(--border)] bg-white text-[var(--foreground)] hover:bg-[var(--section-light)]";
+const lensInactive = "border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] hover:bg-[var(--section-light)]";
 const lensActive =
   "border-[var(--primary)]/35 bg-[var(--primary)]/10 text-[var(--primary)] ring-1 ring-[var(--primary)]/20";
 

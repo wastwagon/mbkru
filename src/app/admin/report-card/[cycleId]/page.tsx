@@ -103,7 +103,7 @@ export default async function AdminReportCardCyclePage({ params, searchParams }:
         )}
       </div>
 
-      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6">
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Dispute window</h2>
         <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Optional end datetime (UTC) for a published correction / dispute period — shown on the public cycle page when
@@ -132,7 +132,7 @@ export default async function AdminReportCardCyclePage({ params, searchParams }:
         </form>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6">
+      <section className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Add or update entry</h2>
         <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Same member + cycle updates the existing row. Index A/B/C are the Ghana triple ledger (0–100 each). Checking
@@ -263,7 +263,7 @@ export default async function AdminReportCardCyclePage({ params, searchParams }:
         ) : (
           <ul className="mt-4 space-y-6">
             {cycle.entries.map((e) => (
-              <li key={e.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
+              <li key={e.id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
                 <p className="font-medium text-[var(--foreground)]">{e.member.name}</p>
                 {e.overallScore != null ? (
                   <p className="mt-1 text-sm text-[var(--primary)]">Headline score: {e.overallScore}</p>

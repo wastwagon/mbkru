@@ -241,17 +241,29 @@ export const content = {
 
   /** Legal */
   privacyContact: "info@mbkruadvocates.org",
+
+  /** Site credit — public footer backlink (nofollow optional at page level; keep follow for partner visibility). */
+  developerCredit: {
+    lead: "Designed & developed by",
+    href: "https://oceancyber.net/",
+    name: "OceanCyber",
+  },
 } as const;
 
-export type TopBarSocialIcon = "facebook" | "linkedin" | "twitter";
+export type PublicSocialIconId = "facebook" | "linkedin" | "twitter";
 
-/** Resolve social URLs for the top bar: env → coded http URL → /contact */
-export function getTopBarSocialLinks(): {
+/** @deprecated Use `PublicSocialIconId` */
+export type TopBarSocialIcon = PublicSocialIconId;
+
+export type PublicSocialLink = {
   href: string;
   label: string;
-  icon: TopBarSocialIcon;
+  icon: PublicSocialIconId;
   external: boolean;
-}[] {
+};
+
+/** Resolve social URLs for top bar + footer: env → coded http URL → /contact */
+export function getPublicSocialLinks(): PublicSocialLink[] {
   function resolve(envKey: string, coded: string): { href: string; external: boolean } {
     if (typeof process !== "undefined") {
       const v = process.env[envKey]?.trim();
@@ -267,6 +279,9 @@ export function getTopBarSocialLinks(): {
     { label: "X (Twitter)", icon: "twitter", ...resolve("NEXT_PUBLIC_TWITTER_URL", content.social.twitter) },
   ];
 }
+
+/** @deprecated Renamed to `getPublicSocialLinks` */
+export const getTopBarSocialLinks = getPublicSocialLinks;
 
 /**
  * Starter news slugs — align with `prisma/seed.mjs` upserts; CMS is the live source of truth.

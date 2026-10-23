@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { formatSubmissionDateTime } from "@/lib/format-submission-datetime";
 import { redirectToMemberLogin } from "@/lib/client/member-login-redirect";
+import { mobileFormStickySubmitBarClass } from "@/lib/mobile-ui-classes";
 
 const labelClass = "mb-1.5 block text-xs font-semibold text-[var(--foreground-secondary)] sm:text-sm";
 
@@ -109,6 +110,10 @@ function Inner() {
           placeholder="e.g. ABCD2345EFGH"
           autoComplete="off"
           spellCheck={false}
+          autoCapitalize="characters"
+          autoCorrect="off"
+          enterKeyHint="search"
+          inputMode="text"
         />
       </div>
       {error ? (
@@ -156,7 +161,7 @@ function Inner() {
             </p>
           ) : null}
           {result.adminReplies && result.adminReplies.length > 0 ? (
-            <div className="mt-4 rounded-lg border border-[var(--border)] bg-white p-3">
+            <div className="mt-4 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
               <p className="text-xs font-semibold text-[var(--foreground)]">Notes from MBKRU</p>
               <ul className="mt-2 space-y-3">
                 {result.adminReplies.map((r) => (
@@ -172,9 +177,11 @@ function Inner() {
           ) : null}
         </div>
       ) : null}
-      <Button type="submit" loading={loading} loadingLabel="Checking…" className="min-h-11 w-full justify-center sm:w-auto">
-        Check status
-      </Button>
+      <div className={mobileFormStickySubmitBarClass}>
+        <Button type="submit" loading={loading} loadingLabel="Checking…" className="min-h-11 w-full justify-center sm:w-auto">
+          Check status
+        </Button>
+      </div>
     </form>
   );
 }

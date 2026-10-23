@@ -93,7 +93,7 @@ export default async function AboutPage() {
 
       <AboutPlatformLinks />
 
-      <section className="section-spacing section-full bg-white">
+      <section className="section-spacing section-full bg-[var(--background)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-xl border border-[var(--border)] bg-[var(--section-light)] p-4 text-sm text-[var(--foreground-secondary)]">
             MBKRU Voice includes structured reporting and an AI-assisted customer service chat experience. It is not a
@@ -140,7 +140,7 @@ export default async function AboutPage() {
       </section>
 
       {/* Section 2: Vision & Mission — programme document order */}
-      <section className="section-spacing section-full bg-white">
+      <section className="section-spacing section-full bg-[var(--background)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-10">
             <div>
@@ -165,7 +165,7 @@ export default async function AboutPage() {
                 {stats.map(({ value, suffix, label, icon }) => (
                   <div
                     key={label}
-                    className="rounded-lg border border-[var(--border)] bg-white p-2.5 shadow-[var(--shadow-sm)] transition-all duration-300 hover:border-[var(--primary)]/20 hover:shadow-[var(--shadow-card)] sm:p-3"
+                    className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-2.5 shadow-[var(--shadow-sm)] transition-all duration-300 hover:border-[var(--primary)]/20 hover:shadow-[var(--shadow-card)] sm:p-3"
                   >
                     <div className="flex items-center gap-2">
                       <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[var(--primary)]/10 text-[var(--primary)]">
@@ -220,7 +220,7 @@ export default async function AboutPage() {
       </section>
 
       {/* Core objectives + accountability (moved from homepage) */}
-      <section id="core-objectives" className="section-spacing section-full bg-white">
+      <section id="core-objectives" className="section-spacing section-full bg-[var(--background)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-12">
             <div>
@@ -294,7 +294,7 @@ export default async function AboutPage() {
                 </svg>
               </Button>
             </div>
-            <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-card)] sm:p-8">
               <h3 className="font-display text-lg font-semibold text-[var(--foreground)]">Explore further</h3>
               <p className="mt-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
                 Start here for the busiest public routes; membership and registration follow the pillars section.
@@ -350,7 +350,7 @@ export default async function AboutPage() {
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-2">
-            <div className="rounded-xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow-card)] sm:p-5">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow-card)] sm:p-5">
               <h2 className="font-display text-lg font-bold text-[var(--foreground)] sm:text-xl">
                 Membership &amp; Governance
               </h2>
@@ -362,7 +362,7 @@ export default async function AboutPage() {
                 <li>• Fully transparent finances published quarterly</li>
               </ul>
             </div>
-            <div className="rounded-xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow-card)] sm:p-5">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow-card)] sm:p-5">
               <h2 className="font-display text-lg font-bold text-[var(--foreground)] sm:text-xl">
                 Funding Model (Proposed)
               </h2>
@@ -405,7 +405,7 @@ export default async function AboutPage() {
               {leadership.map((profile) => (
                 <li
                   key={profile.id}
-                  className="rounded-2xl border border-[var(--border)] bg-white p-5 text-left shadow-[var(--shadow-card)]"
+                  className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 text-left shadow-[var(--shadow-card)]"
                 >
                   {profile.portraitMedia ? (
                     <span className="relative block aspect-square w-24 overflow-hidden rounded-xl">
@@ -429,7 +429,7 @@ export default async function AboutPage() {
               ))}
             </ul>
           ) : (
-            <div className="mt-8 rounded-2xl border border-dashed border-[var(--border)] bg-white/80 px-6 py-12 text-center">
+            <div className="mt-8 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--card)]/80 px-6 py-12 text-center">
               <TopicPictogram variant="leadership" className="mx-auto h-14 w-14" />
               <p className="mt-4 text-sm text-[var(--foreground-secondary)]">No leadership listings published yet.</p>
               <p className="mt-2 text-xs text-[var(--foreground-secondary)]">
@@ -456,7 +456,7 @@ export default async function AboutPage() {
               {endorsements.map((endorsement) => (
                 <li
                   key={endorsement.id}
-                  className="rounded-2xl border border-[var(--border)] bg-white p-6 text-left shadow-[var(--shadow-card)]"
+                  className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 text-left shadow-[var(--shadow-card)]"
                 >
                   <blockquote className="text-base italic leading-relaxed text-[var(--foreground)]">
                     &ldquo;{endorsement.quote}&rdquo;
@@ -474,7 +474,7 @@ export default async function AboutPage() {
               ))}
             </ul>
           ) : (
-            <div className="mt-8 rounded-2xl border border-dashed border-[var(--border)] bg-white px-6 py-10 text-center">
+            <div className="mt-8 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--card)] px-6 py-10 text-center">
               <TopicPictogram variant="endorsement" className="mx-auto h-14 w-14" />
               <p className="mt-4 text-sm text-[var(--foreground-secondary)]">No endorsements published yet.</p>
             </div>
@@ -501,7 +501,7 @@ export default async function AboutPage() {
             We respectfully submit this concept for consideration and partnership with the Government of Ghana, civil society, development partners, and—most importantly—the citizens of our beloved country.
           </p>
 
-          <div className="mt-10 rounded-xl border border-[var(--border)] bg-white/80 p-5 sm:p-6">
+          <div className="mt-10 rounded-xl border border-[var(--border)] bg-[var(--card)]/80 p-5 sm:p-6">
             <h3 className="font-display text-sm font-bold uppercase tracking-wide text-[var(--foreground)]">
               Expected Impact
             </h3>
@@ -544,7 +544,7 @@ export default async function AboutPage() {
       {/* Section 9: Acronyms — enhanced quick reference */}
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-2xl border border-[var(--primary)]/20 bg-white/60 p-6 shadow-[var(--shadow-card)] sm:p-8">
+          <div className="rounded-2xl border border-[var(--primary)]/20 bg-[var(--card)]/60 p-6 shadow-[var(--shadow-card)] sm:p-8">
             <Badge variant="primary">Quick Reference</Badge>
             <h2 className="mt-3 font-display text-xl font-bold text-[var(--foreground)] sm:text-2xl">
               Acronyms Used
@@ -556,7 +556,7 @@ export default async function AboutPage() {
               {acronyms.map(({ abbr, full }) => (
                 <div
                   key={abbr}
-                  className="group flex items-start gap-4 rounded-xl border border-[var(--border)] bg-white px-4 py-3.5 shadow-sm transition-all duration-300 hover:border-[var(--primary)]/30 hover:shadow-[var(--shadow-card)]"
+                  className="group flex items-start gap-4 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3.5 shadow-sm transition-all duration-300 hover:border-[var(--primary)]/30 hover:shadow-[var(--shadow-card)]"
                 >
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--primary)]/10 font-display text-sm font-bold text-[var(--primary)] transition-colors group-hover:bg-[var(--primary)]/20">
                     {abbr.slice(0, 2)}

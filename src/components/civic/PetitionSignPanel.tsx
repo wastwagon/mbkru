@@ -130,7 +130,7 @@ export function PetitionSignPanel({
       : null;
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
       <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">Sign this petition</h2>
       <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
         Your email prevents duplicate signatures. Optional updates are only for this petition.

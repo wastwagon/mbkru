@@ -60,10 +60,10 @@ function KpiCard({
       ? "ring-1 ring-emerald-200/80 shadow-emerald-500/10"
       : accent === "amber"
         ? "ring-1 ring-amber-200/80 shadow-amber-500/10"
-        : "ring-1 ring-slate-200/90 shadow-slate-900/5";
+        : "ring-1 ring-[var(--border)] shadow-slate-900/5";
   return (
     <div
-      className={`rounded-2xl bg-white p-4 shadow-md ${ring} sm:p-5`}
+      className={`rounded-2xl bg-[var(--card)] p-4 shadow-md ${ring} sm:p-5`}
       style={{ boxShadow: "0 4px 24px rgba(15, 23, 42, 0.06)" }}
     >
       <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--foreground-secondary)]">{label}</p>
@@ -98,7 +98,7 @@ function StatusDonutWithLegend({
   const holeClass =
     variant === "dark"
       ? "bg-gradient-to-br from-slate-900 to-slate-800 ring-1 ring-slate-600/50"
-      : "bg-white ring-1 ring-slate-200/90";
+      : "bg-[var(--card)] ring-1 ring-[var(--border)]";
   const labelBright = variant === "dark" ? "text-sky-200/90" : "text-slate-500";
   const legendClass = variant === "dark" ? "text-sm font-medium text-slate-200" : "text-sm font-medium text-slate-700";
   const numClass = variant === "dark" ? "tabular-nums text-white" : "tabular-nums text-slate-900";
@@ -405,7 +405,7 @@ export function PromiseTrackerStatsStrip({ stats, subtitle, compact }: Props) {
       </div>
 
       {totalPromises > 0 && !compact ? (
-        <div className="rounded-3xl border border-slate-200/90 bg-white p-5 shadow-sm sm:p-6">
+        <div className="rounded-3xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm sm:p-6">
           <StatusDonutWithLegend
             met={met}
             inProgress={inProgress}

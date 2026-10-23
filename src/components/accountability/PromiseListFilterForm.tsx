@@ -1,10 +1,12 @@
-import Link from "next/link";
+"use client";
 
+import { AccountabilityMobileFilterDisclosure } from "@/components/accountability/AccountabilityMobileFilterDisclosure";
 import { Button } from "@/components/ui/Button";
 import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
+import { mobileFormStickySubmitBarClass } from "@/lib/mobile-ui-classes";
 import {
   PROMISE_LIST_STATUS_FILTER,
   PROMISE_LIST_STATUS_LABELS,
@@ -37,9 +39,10 @@ export function PromiseListFilterForm({
   governmentOnlyChecked,
 }: Props) {
   return (
+    <AccountabilityMobileFilterDisclosure title="Filter commitments" active={hasActiveFilters} className="mt-8">
     <form
       method="get"
-      className="mt-8 flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-end"
+      className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm max-sm:rounded-none max-sm:border-0 max-sm:bg-transparent max-sm:p-0 max-sm:shadow-none sm:flex-row sm:flex-wrap sm:items-end"
     >
       <FormField label="Search" htmlFor={`${idPrefix}-q`} className="min-w-0 flex-1 sm:max-w-xs">
         <Input
@@ -85,7 +88,7 @@ export function PromiseListFilterForm({
           </label>
         </div>
       ) : null}
-      <div className="flex w-full flex-wrap gap-2 sm:w-auto">
+      <div className={`flex w-full flex-wrap gap-2 sm:w-auto ${mobileFormStickySubmitBarClass} !mx-0 max-sm:-mb-4 max-sm:border-0 max-sm:bg-transparent max-sm:px-0 max-sm:pt-3 max-sm:shadow-none max-sm:backdrop-blur-none`}>
         <Button type="submit" className="min-h-11 flex-1 justify-center sm:flex-none">
           Apply
         </Button>
@@ -96,5 +99,6 @@ export function PromiseListFilterForm({
         ) : null}
       </div>
     </form>
+    </AccountabilityMobileFilterDisclosure>
   );
 }

@@ -21,6 +21,7 @@ import {
   getVoiceChromeStrings,
   voiceLanguageMenuLabel,
 } from "@/lib/voice-ui-i18n";
+import { ColorThemePreferenceSelect } from "@/components/theme/ColorThemePreferenceSelect";
 import {
   defaultVoicePreferences,
   findVoiceLanguage,
@@ -578,7 +579,7 @@ export function AccessibilityVoiceTools() {
     <>
       {showOnboarding ? (
         <aside
-          className="fixed left-3 right-3 top-20 z-[95] mx-auto w-auto max-w-md rounded-2xl border border-[var(--border)] bg-white p-3 shadow-xl sm:left-auto sm:right-4 sm:top-24"
+          className="fixed left-3 right-3 top-20 z-[95] mx-auto w-auto max-w-md rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3 shadow-xl sm:left-auto sm:right-4 sm:top-24"
           aria-label="Accessibility onboarding"
         >
           <p className="text-sm font-semibold text-[var(--foreground)]">{a11y.onboardingTitle}</p>
@@ -608,7 +609,7 @@ export function AccessibilityVoiceTools() {
           <section
           ref={panelRef}
           id="mbkru-accessibility-tools"
-          className={`fixed left-3 right-3 z-[100] mx-auto mt-0 w-auto max-w-[min(30rem,calc(100vw-1.5rem))] max-h-[min(72dvh,calc(100dvh-env(safe-area-inset-top)-6rem))] overflow-y-auto overscroll-contain rounded-2xl border border-[var(--border)] bg-white p-3.5 pb-4 shadow-xl sm:left-auto sm:right-4 sm:p-4 sm:pb-4 ${mobileOverlayTopClass}`}
+          className={`fixed left-3 right-3 z-[100] mx-auto mt-0 w-auto max-w-[min(30rem,calc(100vw-1.5rem))] max-h-[min(72dvh,calc(100dvh-env(safe-area-inset-top)-6rem))] overflow-y-auto overscroll-contain rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3.5 pb-4 shadow-xl sm:left-auto sm:right-4 sm:p-4 sm:pb-4 ${mobileOverlayTopClass}`}
           aria-label={a11y.panelAria}
           role="dialog"
           aria-modal="true"
@@ -662,6 +663,16 @@ export function AccessibilityVoiceTools() {
               className={focusRingSmClass}
             />
           </div>
+
+          <ColorThemePreferenceSelect
+            strings={{
+              displayThemeLabel: a11y.displayThemeLabel,
+              displayThemeSystem: a11y.displayThemeSystem,
+              displayThemeLight: a11y.displayThemeLight,
+              displayThemeDark: a11y.displayThemeDark,
+              displayThemeNote: a11y.displayThemeNote,
+            }}
+          />
 
           {audioCaps && (audioCaps.whisper || audioCaps.tts) ? (
             <div className="mt-3 flex flex-col gap-1.5 rounded-xl border border-[var(--border)]/80 bg-[var(--section-light)]/60 px-2.5 py-2 text-[11px] leading-snug text-[var(--foreground-secondary)]">

@@ -72,7 +72,7 @@ export default async function AdminTownHallsPage() {
         }
       />
 
-      <section className="mt-2 rounded-2xl border border-[var(--border)] bg-white p-6">
+      <section className="mt-2 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">New programme row</h2>
         <form action={createTownHallEventAction} className="mt-4 grid gap-4 sm:grid-cols-2">
           <TownHallFormFields regions={regions} constituencies={constituencies} defaults={emptyDefaults} />

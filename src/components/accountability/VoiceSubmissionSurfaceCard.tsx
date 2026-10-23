@@ -83,7 +83,7 @@ export function VoiceSubmissionSurfaceCard({
   return (
     <article
       aria-labelledby={titleId}
-      className="flex h-full min-h-0 w-full flex-col rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition-shadow hover:border-[var(--primary)]/30 sm:p-5"
+      className="flex h-full min-h-0 w-full flex-col rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm transition-shadow hover:border-[var(--primary)]/30 sm:p-5"
     >
       <div className="flex flex-wrap items-center gap-2">
         <span

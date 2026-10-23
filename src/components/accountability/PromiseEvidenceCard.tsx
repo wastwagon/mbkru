@@ -110,7 +110,7 @@ export function PromiseEvidenceCard({
     (isCatRow && !pageRef);
 
   return (
-    <details className="group rounded-2xl border border-[var(--border)] bg-white shadow-sm transition hover:border-[var(--primary)]/35">
+    <details className="group rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-sm transition hover:border-[var(--primary)]/35">
       <summary
         className={`flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 rounded-sm p-5 ${focusRingSmClass} [&::-webkit-details-marker]:hidden`}
       >
@@ -243,7 +243,7 @@ export function PromiseEvidenceCard({
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className={`inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[var(--primary)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--primary)] transition-colors hover:bg-[var(--primary)]/5 sm:w-auto ${focusRingSmClass}`}
+              className={`inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[var(--primary)] bg-[var(--card)] px-4 py-2.5 text-sm font-semibold text-[var(--primary)] transition-colors hover:bg-[var(--primary)]/5 sm:w-auto ${focusRingSmClass}`}
             >
               <ExternalLinkIcon className="shrink-0 opacity-80" />
               Source: {sourceLabel.length > 48 ? `${sourceLabel.slice(0, 45)}…` : sourceLabel}

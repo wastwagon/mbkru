@@ -53,7 +53,7 @@ export default async function PublicCausesIndexPage() {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <p className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+          <p className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
             Editor-approved summaries from MBKRU Voice — not the full citizen report. Sign in to comment and show
             support.{" "}
             <Link href="/petitions" className={primaryNavLinkClass}>
@@ -84,7 +84,7 @@ export default async function PublicCausesIndexPage() {
 
                 return (
                   <li key={c.id}>
-                    <article className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
+                    <article className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
                       <div className="flex flex-wrap items-start gap-3">
                         <TopicPictogram variant={c.kind as CitizenReportKind} />
                         <div className="min-w-0 flex-1">

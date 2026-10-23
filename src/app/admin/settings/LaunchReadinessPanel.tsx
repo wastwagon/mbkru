@@ -48,7 +48,7 @@ export async function LaunchReadinessPanel() {
   return (
     <div
       id="launch-readiness"
-      className="mt-8 scroll-mt-24 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm sm:p-8"
+      className="mt-8 scroll-mt-24 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm sm:p-8"
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="font-display text-lg font-bold text-[var(--foreground)]">Launch readiness</h2>
@@ -115,16 +115,16 @@ export async function LaunchReadinessPanel() {
           <li>Resolve blockers above (editorial, legal, Hubtel, backups).</li>
           <li>
             Record manual sign-offs on production:{" "}
-            <code className="rounded bg-white px-1">LAUNCH_LEGAL_REVIEW_SIGNED_OFF=1</code>,{" "}
-            <code className="rounded bg-white px-1">LAUNCH_BACKUP_DRILL_COMPLETE=1</code>
+            <code className="rounded bg-[var(--muted)] px-1">LAUNCH_LEGAL_REVIEW_SIGNED_OFF=1</code>,{" "}
+            <code className="rounded bg-[var(--muted)] px-1">LAUNCH_BACKUP_DRILL_COMPLETE=1</code>
           </li>
-          <li>Optional: <code className="rounded bg-white px-1">npm run ops:archive-training-reports -- --apply</code></li>
+          <li>Optional: <code className="rounded bg-[var(--muted)] px-1">npm run ops:archive-training-reports -- --apply</code></li>
           <li>
             Turn off the gate in{" "}
             <a href="#site-visibility" className="font-medium text-[var(--primary)] underline">
               Site visibility
             </a>{" "}
-            or <code className="rounded bg-white px-1">npm run ops:construction:off</code>
+            or <code className="rounded bg-[var(--muted)] px-1">npm run ops:construction:off</code>
           </li>
           <li>Smoke-test as a logged-out visitor (not admin).</li>
         </ol>

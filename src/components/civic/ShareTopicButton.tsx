@@ -40,7 +40,7 @@ export function ShareTopicButton({ url, title, summary, className }: Props) {
       <button
         type="button"
         onClick={() => void onShare()}
-        className="rounded-xl border border-[var(--border)] bg-white px-4 py-2 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--section-light)]"
+        className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-2 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--section-light)]"
       >
         Share
       </button>

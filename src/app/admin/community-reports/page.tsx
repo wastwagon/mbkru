@@ -59,7 +59,7 @@ export default async function AdminCommunityReportsPage() {
         ) : (
           <ul className="mt-4 space-y-3">
             {openReports.map((r) => (
-              <li key={r.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
+              <li key={r.id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
                     <p className="text-sm font-medium text-[var(--foreground)]">{r.post.community.name}</p>
@@ -118,7 +118,7 @@ export default async function AdminCommunityReportsPage() {
             {recentClosed.map((r) => (
               <li
                 key={r.id}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm"
               >
                 <p className="text-[var(--foreground)]">
                   <span className="font-medium">{r.post.community.name}</span> · {r.status.toLowerCase()} ·{" "}

@@ -56,6 +56,120 @@
   --mobile-install-banner-height: 0rem;
 }
 
+/** Dark surfaces — OS preference unless `data-color-theme="light"` on `<html>`. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-color-theme="light"]) {
+    --background: #0c1117;
+    --foreground: #e8eef4;
+    --foreground-secondary: #a3b2c4;
+    --card: #141b24;
+    --card-foreground: #e8eef4;
+    --border: #2a3544;
+    --muted: #1a222c;
+    --muted-foreground: #94a3b8;
+    --section-light: #121820;
+    --section-light-alt: #161e28;
+    --section-light-tertiary: #1a232e;
+    --section-light-cream: #1c1810;
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
+    --shadow: 0 2px 8px rgb(0 0 0 / 0.4);
+    --shadow-md: 0 4px 16px rgb(0 0 0 / 0.45);
+    --shadow-card: 0 4px 40px rgb(0 0 0 / 0.5);
+    --ring: #2dd4bf;
+  }
+}
+
+/** Manual dark (accessibility panel → Display theme). */
+:root[data-color-theme="dark"] {
+  --background: #0c1117;
+  --foreground: #e8eef4;
+  --foreground-secondary: #a3b2c4;
+  --card: #141b24;
+  --card-foreground: #e8eef4;
+  --border: #2a3544;
+  --muted: #1a222c;
+  --muted-foreground: #94a3b8;
+  --section-light: #121820;
+  --section-light-alt: #161e28;
+  --section-light-tertiary: #1a232e;
+  --section-light-cream: #1c1810;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
+  --shadow: 0 2px 8px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 16px rgb(0 0 0 / 0.45);
+  --shadow-card: 0 4px 40px rgb(0 0 0 / 0.5);
+  --ring: #2dd4bf;
+}
+
+/** Force light on dark OS when user chooses Light. */
+:root[data-color-theme="light"] {
+  --background: #ffffff;
+  --foreground: #1a3652;
+  --foreground-secondary: #3f5366;
+  --card: #ffffff;
+  --card-foreground: #1e3a4f;
+  --border: #e2e8f0;
+  --muted: #f4fcf9;
+  --muted-foreground: #5b6b7d;
+  --section-light: #fafcf9;
+  --section-light-alt: #eef8f4;
+  --section-light-tertiary: #e8f6f1;
+  --section-light-cream: #fff9ec;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow: 0 2px 8px rgb(0 0 0 / 0.06);
+  --shadow-md: 0 4px 16px rgb(0 0 0 / 0.08);
+  --shadow-card: 0 4px 50px rgb(0 0 0 / 0.08);
+  --ring: #0d9488;
+}
+
+/* Admin queue buttons — readable on dark surfaces (OS or manual theme). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-color-theme="light"]) .admin-action-warning,
+  :root[data-color-theme="dark"] .admin-action-warning {
+    border-color: rgb(217 119 6 / 0.45);
+    background-color: rgb(69 26 3 / 0.45);
+    color: rgb(254 243 199);
+  }
+  :root:not([data-color-theme="light"]) .admin-action-warning:hover,
+  :root[data-color-theme="dark"] .admin-action-warning:hover {
+    background-color: rgb(120 53 15 / 0.55);
+  }
+  :root:not([data-color-theme="light"]) .admin-action-warning-outline:hover,
+  :root[data-color-theme="dark"] .admin-action-warning-outline:hover {
+    background-color: rgb(69 26 3 / 0.35);
+    color: rgb(254 243 199);
+  }
+  :root:not([data-color-theme="light"]) .admin-action-success,
+  :root[data-color-theme="dark"] .admin-action-success {
+    border-color: rgb(52 211 153 / 0.4);
+    background-color: rgb(6 44 30 / 0.45);
+    color: rgb(209 250 229);
+  }
+  :root:not([data-color-theme="light"]) .admin-action-success:hover,
+  :root[data-color-theme="dark"] .admin-action-success:hover {
+    background-color: rgb(6 78 59 / 0.55);
+  }
+  :root:not([data-color-theme="light"]) .admin-action-success-strong,
+  :root[data-color-theme="dark"] .admin-action-success-strong {
+    border-color: rgb(16 185 129 / 0.45);
+    background-color: rgb(6 44 30 / 0.5);
+    color: rgb(167 243 208);
+  }
+  :root:not([data-color-theme="light"]) .admin-action-danger,
+  :root:not([data-color-theme="light"]) .admin-action-delete,
+  :root[data-color-theme="dark"] .admin-action-danger,
+  :root[data-color-theme="dark"] .admin-action-delete {
+    border-color: rgb(251 113 133 / 0.4);
+    background-color: rgb(76 5 25 / 0.4);
+    color: rgb(255 228 230);
+  }
+  :root:not([data-color-theme="light"]) .admin-action-danger:hover,
+  :root:not([data-color-theme="light"]) .admin-action-delete:hover,
+  :root[data-color-theme="dark"] .admin-action-danger:hover,
+  :root[data-color-theme="dark"] .admin-action-delete:hover {
+    background-color: rgb(136 19 55 / 0.5);
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -90,9 +204,16 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+}
+
+/* iOS / iPadOS: prefer San Francisco for body UI; display/logo fonts stay on brand families. */
+@supports (-webkit-touch-callout: none) {
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, var(--font-sans), system-ui, sans-serif;
+  }
 }
 
 /* Mobile-first: respect notched devices; pair with viewport in layout.tsx */
@@ -119,7 +240,15 @@ body {
 
 html {
   scroll-behavior: smooth;
+  color-scheme: light dark;
   -webkit-tap-highlight-color: rgba(13, 148, 136, 0.12);
+}
+
+/* In-page anchors clear sticky header + safe area (report card browse, methodology, etc.). */
+[id="browse-voice"],
+[id="browse-scores"],
+[id="main"] {
+  scroll-margin-top: max(5.5rem, calc(env(safe-area-inset-top) + 4.5rem));
 }
 
 button,
@@ -188,6 +317,11 @@ button,
     padding-right: 4rem;
   }
 }
+
+/*
+ * Surface helpers — in components prefer `surfaceCardClass` / `surfacePageClass`
+ * from `@/lib/ui/surface-classes`, or Tailwind `bg-card` / `bg-background`.
+ */
 
 /* Section spacing — mobile-first; slightly roomier on large screens */
 .section-spacing {

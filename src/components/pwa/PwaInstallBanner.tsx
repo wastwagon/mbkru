@@ -15,7 +15,7 @@ export function PwaInstallBanner() {
       aria-label="Install MBKRU app"
       className="fixed inset-x-0 bottom-[calc(var(--mobile-bottom-nav-height)+max(0.25rem,env(safe-area-inset-bottom)))] z-[99] px-3 pb-2 lg:inset-x-auto lg:bottom-6 lg:right-6 lg:left-auto lg:max-w-sm lg:px-0 lg:pb-0"
     >
-      <div className="mx-auto flex max-w-lg items-start gap-3 rounded-2xl border border-[var(--primary)]/25 bg-white p-3.5 shadow-lg ring-1 ring-black/5">
+      <div className="mx-auto flex max-w-lg items-start gap-3 rounded-2xl border border-[var(--primary)]/25 bg-[var(--card)] p-3.5 shadow-lg ring-1 ring-black/5">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--primary)]/10 text-[var(--primary)]">
           <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />

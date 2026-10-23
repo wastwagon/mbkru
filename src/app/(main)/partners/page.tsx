@@ -72,7 +72,7 @@ export default async function PartnersPage() {
                 {partners.map((partner) => (
                   <li
                     key={partner.id}
-                    className="rounded-2xl border border-[var(--border)] bg-white px-5 py-6 text-center"
+                    className="rounded-2xl border border-[var(--border)] bg-[var(--card)] px-5 py-6 text-center"
                   >
                     {partner.logoMedia ? (
                       <span className="relative mx-auto block h-20 w-full max-w-[180px]">
@@ -120,7 +120,7 @@ export default async function PartnersPage() {
                   ].map((slot) => (
                     <li
                       key={slot.label}
-                      className="rounded-2xl border border-dashed border-[var(--border)] bg-white px-5 py-6 text-center"
+                      className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--card)] px-5 py-6 text-center"
                     >
                       <p className="text-sm font-semibold text-[var(--foreground)]">{slot.label}</p>
                       <p className="mt-1 text-xs text-[var(--foreground-secondary)]">{slot.detail}</p>

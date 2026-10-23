@@ -52,7 +52,7 @@ export default async function AdminResourcesPage() {
         }
       />
 
-      <section className="mt-2 rounded-xl border border-[var(--border)] bg-white p-5">
+      <section className="mt-2 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Add document</h2>
         <form action={createResourceDocumentAction} encType="multipart/form-data" className="mt-4 space-y-3">
           <FormField label="Title" htmlFor="title">
@@ -127,7 +127,7 @@ export default async function AdminResourcesPage() {
           docs.map((d) => (
             <li
               key={d.id}
-              className="flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-white p-4 sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="flex min-w-0 items-start gap-3">
                 {d.coverMedia ? (

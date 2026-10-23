@@ -53,7 +53,7 @@ export function AccountSidebar() {
       `inline-flex min-h-11 shrink-0 items-center rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap touch-manipulation ${focusRingSmClass}`,
       active
         ? "bg-[var(--primary)] text-white shadow-sm"
-        : "border border-[var(--border)] bg-white text-[var(--foreground-secondary)]",
+        : "border border-[var(--border)] bg-[var(--card)] text-[var(--foreground-secondary)]",
     ].join(" ");
 
   return (

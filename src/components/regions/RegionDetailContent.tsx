@@ -26,7 +26,7 @@ export function RegionDetailContent({
 }) {
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm sm:p-6">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm sm:p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Regional facts</h2>
         <dl className="mt-4 space-y-4">
           <div>
@@ -74,7 +74,7 @@ export function RegionDetailContent({
 
       <RegionSectorGallery regionName={region.name} images={sectorGallery} />
 
-      <div className="rounded-2xl border border-[var(--primary)]/20 bg-gradient-to-br from-[var(--primary)]/8 to-white p-5 shadow-sm sm:p-6">
+      <div className="rounded-2xl border border-[var(--primary)]/20 bg-gradient-to-br from-[var(--primary)]/8 to-[var(--card)] p-5 shadow-sm sm:p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">MBKRU engagement in {region.name}</h2>
         <div className="mt-4 space-y-4">
           {region.pillarFocus && region.pillarFocus.length > 0 ? (
@@ -83,7 +83,7 @@ export function RegionDetailContent({
               <ul className="mt-2 flex flex-wrap gap-2" aria-label="MBKRU pillar focus">
                 {region.pillarFocus.map((p) => (
                   <li key={p}>
-                    <span className="inline-flex rounded-full border border-[var(--primary)]/25 bg-white px-2.5 py-0.5 text-[11px] font-semibold text-[var(--primary-dark)]">
+                    <span className="inline-flex rounded-full border border-[var(--primary)]/25 bg-[var(--card)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--primary-dark)]">
                       {p} · {PILLAR_LABELS[p] ?? p}
                     </span>
                   </li>

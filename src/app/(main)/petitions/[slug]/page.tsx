@@ -128,7 +128,7 @@ export default async function PetitionDetailPage({ params, searchParams }: Props
             </div>
           ) : null}
 
-          <div className="mt-6 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+          <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
             <p className="text-xs text-[var(--foreground-secondary)]">
               By {p.author.displayName ?? "Member"}
               {p.region?.name ? ` · ${p.region.name}` : ""} · Opened{" "}
@@ -142,7 +142,7 @@ export default async function PetitionDetailPage({ params, searchParams }: Props
           </div>
 
           {recent.length > 0 ? (
-            <div className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+            <div className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
               <h2 className="font-display text-sm font-semibold text-[var(--foreground)]">Recent signers</h2>
               <ul className="mt-3 space-y-2 text-sm text-[var(--foreground-secondary)]">
                 {recent.map((s, i) => (
@@ -166,7 +166,7 @@ export default async function PetitionDetailPage({ params, searchParams }: Props
                 guestEmailVerificationEnabled={guestEmailVerificationEnabled}
               />
             ) : (
-              <p className="rounded-xl border border-[var(--border)] bg-white p-6 text-sm text-[var(--foreground-secondary)]">
+              <p className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 text-sm text-[var(--foreground-secondary)]">
                 This petition is closed and no longer accepts signatures.
               </p>
             )}

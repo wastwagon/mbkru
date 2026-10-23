@@ -106,7 +106,7 @@ export default async function CommunityManagePage({ params }: Props) {
             </Link>
           </p>
 
-          <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-5">
+          <section className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
             <h2 className="text-sm font-semibold text-[var(--foreground)]">Pending join requests</h2>
             {community.memberships.length === 0 ? (
               <p className="mt-2 text-sm text-[var(--foreground-secondary)]">None.</p>
@@ -134,7 +134,7 @@ export default async function CommunityManagePage({ params }: Props) {
             )}
           </section>
 
-          <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-5">
+          <section className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
             <h2 className="text-sm font-semibold text-[var(--foreground)]">Active members</h2>
             {activeMembers.length === 0 ? (
               <p className="mt-2 text-sm text-[var(--foreground-secondary)]">None yet.</p>
@@ -200,7 +200,7 @@ export default async function CommunityManagePage({ params }: Props) {
             )}
           </section>
 
-          <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-5">
+          <section className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
             <h2 className="text-sm font-semibold text-[var(--foreground)]">Banned members</h2>
             {bannedMembers.length === 0 ? (
               <p className="mt-2 text-sm text-[var(--foreground-secondary)]">None.</p>
@@ -229,7 +229,7 @@ export default async function CommunityManagePage({ params }: Props) {
             )}
           </section>
 
-          <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-5">
+          <section className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
             <h2 className="text-sm font-semibold text-[var(--foreground)]">Posts awaiting moderation</h2>
             {pendingPosts.length === 0 ? (
               <p className="mt-2 text-sm text-[var(--foreground-secondary)]">None.</p>
@@ -275,7 +275,7 @@ export default async function CommunityManagePage({ params }: Props) {
             )}
           </section>
 
-          <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-5">
+          <section className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
             <h2 className="text-sm font-semibold text-[var(--foreground)]">Open post reports</h2>
             {openPostReports.length === 0 ? (
               <p className="mt-2 text-sm text-[var(--foreground-secondary)]">None.</p>

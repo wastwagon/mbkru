@@ -79,7 +79,7 @@ export default async function AdminTownHallEditPage({ params }: Props) {
         }
       />
 
-      <section className="mt-2 rounded-2xl border border-[var(--border)] bg-white p-6">
+      <section className="mt-2 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
         <form action={updateTownHallEventAction} className="grid gap-4 sm:grid-cols-2">
           <TownHallFormFields regions={regions} constituencies={constituencies} defaults={defaults} />
           <div className="sm:col-span-2 flex flex-wrap gap-3">

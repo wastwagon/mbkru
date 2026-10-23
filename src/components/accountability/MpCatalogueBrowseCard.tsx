@@ -26,7 +26,7 @@ export function MpCatalogueBrowseCard({
   const metaParts = [role, party, constituencyName].filter(Boolean);
 
   return (
-    <article className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
+    <article className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 flex-1 items-start gap-3">
           <MpPortrait name={name} portraitPath={portraitPath} size="md" />

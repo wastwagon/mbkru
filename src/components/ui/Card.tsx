@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
+import { surfaceCardClass } from "@/lib/ui/surface-classes";
 
 interface CardProps {
   title: string;
@@ -40,7 +41,7 @@ export function Card({
   );
 
   const baseClasses =
-    "rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm transition-[border-color,box-shadow,transform] duration-300 ease-out hover:border-[var(--primary)]/35 sm:p-8";
+    `rounded-2xl border border-[var(--border)] ${surfaceCardClass} p-5 shadow-sm transition-[border-color,box-shadow,transform] duration-300 ease-out hover:border-[var(--primary)]/35 sm:p-8`;
 
   if (href) {
     return (

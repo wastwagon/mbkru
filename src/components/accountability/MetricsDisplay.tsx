@@ -91,7 +91,7 @@ export function MetricsDisplay({
                 {innerLeaf != null ? (
                   innerLeaf
                 ) : (
-                  <div className="rounded-md border border-[var(--border)]/60 bg-white/50 p-2">
+                  <div className="rounded-md border border-[var(--border)]/60 bg-[var(--card)]/50 p-2">
                     <MetricsDisplay value={v} maxDepth={maxDepth - 1} />
                   </div>
                 )}

@@ -55,7 +55,7 @@ export function DatabaseMaintenancePanel() {
   };
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
       <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">
         Database — migrations &amp; seed
       </h2>

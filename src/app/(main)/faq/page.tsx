@@ -34,7 +34,7 @@ export default function FAQPage() {
             {faqContent.map((item, i) => (
               <details
                 key={i}
-                className="group rounded-xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-card)] transition-all duration-300 open:border-[var(--primary)]/20 open:shadow-[var(--shadow-card-hover)]"
+                className="group rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-[var(--shadow-card)] transition-all duration-300 open:border-[var(--primary)]/20 open:shadow-[var(--shadow-card-hover)]"
               >
                 <summary
                   className={`flex min-h-11 cursor-pointer list-none items-start justify-between gap-4 rounded-lg py-2 font-display text-lg font-semibold text-[var(--foreground)] touch-manipulation [&::-webkit-details-marker]:hidden ${focusRingSmClass}`}

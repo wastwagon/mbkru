@@ -60,7 +60,7 @@ export function CommunityBrowseCard({
   const joinButtonClass =
     joinPolicy === "OPEN"
       ? `inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] sm:w-auto ${focusRingSmClass}`
-      : `inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[var(--border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--primary)] transition-colors hover:bg-[var(--section-light)] sm:w-auto ${focusRingSmClass}`;
+      : `inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-2.5 text-sm font-semibold text-[var(--primary)] transition-colors hover:bg-[var(--section-light)] sm:w-auto ${focusRingSmClass}`;
 
   const metaParts: string[] = [];
   if (region) metaParts.push(region.name);
@@ -68,7 +68,7 @@ export function CommunityBrowseCard({
   metaParts.push(joinPolicy === "OPEN" ? "Open to join" : "Approval required");
 
   return (
-    <article className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
+    <article className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
       <div className="flex flex-wrap items-start gap-3">
         {cover ? (
           <span className="relative inline-block h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--section-light)]">

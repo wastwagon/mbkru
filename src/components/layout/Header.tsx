@@ -211,7 +211,7 @@ function MemberAuthNav({
         {menuOpen ? (
           <div
             role="menu"
-            className="absolute right-0 top-full z-[60] min-w-[220px] -mt-px rounded-xl border border-[var(--border)] bg-white pb-1 pt-[calc(0.5rem+1px)] shadow-[var(--shadow-dropdown)]"
+            className="absolute right-0 top-full z-[60] min-w-[220px] -mt-px rounded-xl border border-[var(--border)] bg-[var(--card)] pb-1 pt-[calc(0.5rem+1px)] shadow-[var(--shadow-dropdown)]"
           >
             <Link
               role="menuitem"
@@ -383,7 +383,7 @@ function DesktopNavDropdown({
             role="menu"
             id={`nav-menu-${entry.id}`}
             aria-labelledby={`nav-trigger-${entry.id}`}
-            className="w-full min-w-0 rounded-xl border border-[var(--border)] bg-white py-1 shadow-[var(--shadow-dropdown)]"
+            className="w-full min-w-0 rounded-xl border border-[var(--border)] bg-[var(--card)] py-1 shadow-[var(--shadow-dropdown)]"
           >
             {entry.items.map((item) => {
               const isItemActive = leafIsActive(pathname, searchParams, item);
@@ -467,7 +467,7 @@ export function Header() {
     <header
       className={`relative w-full transition-[background-color,box-shadow,backdrop-filter] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
         useLightChrome
-          ? "bg-white/95 shadow-[var(--shadow-md)] backdrop-blur-md supports-[backdrop-filter]:bg-white/80"
+          ? "bg-[var(--card)]/95 shadow-[var(--shadow-md)] backdrop-blur-md supports-[backdrop-filter]:bg-[var(--card)]/80"
           : "bg-[var(--section-dark)] shadow-none backdrop-blur-none"
       }`}
     >
@@ -579,7 +579,7 @@ export function Header() {
                   ? { duration: 0.15 }
                   : { type: "spring", stiffness: 460, damping: 34, mass: 0.62 }
               }
-              className="relative z-50 overflow-hidden border-t border-[var(--border)] bg-white shadow-[var(--shadow-lg)] lg:hidden"
+              className="relative z-50 overflow-hidden border-t border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-lg)] lg:hidden"
             >
             <div className="max-h-[min(72vh,calc(100dvh-6rem))] space-y-0 overflow-y-auto overscroll-contain px-3 py-4 sm:px-4">
               {navStructure.map((entry) => {
@@ -653,11 +653,11 @@ export function Header() {
                   onNavigate={() => setMobileMenuOpen(false)}
                 />
               ) : null}
-              <div className="sticky bottom-0 border-t border-[var(--border)]/60 bg-white pt-3 pb-[max(0.25rem,env(safe-area-inset-bottom))]">
+              <div className="sticky bottom-0 border-t border-[var(--border)]/60 bg-[var(--card)] pt-3 pb-[max(0.25rem,env(safe-area-inset-bottom))]">
                 <Link
                   href="/contact"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex min-h-[48px] items-center justify-center rounded-xl border-2 border-[var(--primary)]/25 bg-white px-6 text-sm font-semibold text-[var(--primary)] touch-manipulation"
+                  className="flex min-h-[48px] items-center justify-center rounded-xl border-2 border-[var(--primary)]/25 bg-[var(--card)] px-6 text-sm font-semibold text-[var(--primary)] touch-manipulation"
                 >
                   Contact
                 </Link>

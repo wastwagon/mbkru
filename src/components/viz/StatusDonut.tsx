@@ -47,7 +47,7 @@ export function StatusDonut({
           aria-hidden
         />
         <div
-          className="absolute inset-[22%] flex flex-col items-center justify-center rounded-full bg-white ring-1 ring-slate-200"
+          className="absolute inset-[22%] flex flex-col items-center justify-center rounded-full bg-[var(--card)] ring-1 ring-[var(--border)]"
           aria-hidden
         >
           <span className="font-display text-2xl font-bold tabular-nums text-[var(--foreground)]">{total}</span>

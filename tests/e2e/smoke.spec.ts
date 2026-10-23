@@ -113,6 +113,21 @@ test.describe("proxy member gates (guest, no cookies)", () => {
   });
 });
 
+test.describe("trust and polish", () => {
+  test("homepage footer links to OceanCyber developer credit", async ({ page }) => {
+    await page.goto("/");
+    const credit = page.locator('footer a[href="https://oceancyber.net/"]');
+    await expect(credit).toBeVisible();
+    await expect(credit).toContainText("OceanCyber");
+  });
+
+  test("accessibility panel includes display theme control", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: /accessibility/i }).click();
+    await expect(page.getByLabel("Display theme")).toBeVisible();
+  });
+});
+
 test.describe("mobile shell", () => {
   test("bottom nav opens voice chat dialog", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "mobile-chrome", "mobile viewport project only");

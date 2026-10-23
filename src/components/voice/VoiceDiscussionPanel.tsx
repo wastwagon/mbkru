@@ -152,7 +152,7 @@ export function VoiceDiscussionPanel({ initial, reportId }: Props) {
 
   return (
     <div className="space-y-8">
-      <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
         <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">Report</h2>
         <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-[var(--foreground)]">{data.body}</p>
         <p className="mt-4 text-xs text-[var(--foreground-secondary)]">
@@ -161,7 +161,7 @@ export function VoiceDiscussionPanel({ initial, reportId }: Props) {
         </p>
       </div>
 
-      <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
         <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">Support</h2>
         <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
           Members can signal shared concern — not a vote or legal filing.
@@ -187,7 +187,7 @@ export function VoiceDiscussionPanel({ initial, reportId }: Props) {
         )}
       </div>
 
-      <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
         <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">Discussion</h2>
         <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
           Stay factual and respectful. You are accountable for what you post.
@@ -309,7 +309,7 @@ function CommentBlock({
               className={`rounded-full border px-2.5 py-1 text-xs font-medium transition ${
                 comment.viewerReaction === k
                   ? "border-[var(--primary)] bg-[var(--primary)]/12 text-[var(--primary)]"
-                  : "border-[var(--border)] bg-white text-[var(--foreground-secondary)] hover:bg-[var(--section-light)]"
+                  : "border-[var(--border)] bg-[var(--card)] text-[var(--foreground-secondary)] hover:bg-[var(--section-light)]"
               }`}
             >
               {labels[k]} · {comment.reactions[k]}

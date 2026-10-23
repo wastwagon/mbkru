@@ -54,7 +54,7 @@ export function FindYourRepresentative({
 
   return (
     <section
-      className={`overflow-hidden rounded-2xl border border-[var(--primary)]/20 bg-gradient-to-br from-white via-white to-[var(--primary)]/[0.04] shadow-[var(--shadow-card)] ${className}`}
+      className={`overflow-hidden rounded-2xl border border-[var(--primary)]/20 bg-gradient-to-br from-[var(--card)] via-[var(--card)] to-[var(--primary)]/[0.08] shadow-[var(--shadow-card)] ${className}`}
       aria-labelledby="find-rep-heading"
     >
       <div className={`${prominent ? "p-6 sm:p-8" : "p-4 sm:p-5"}`}>
@@ -106,7 +106,7 @@ export function FindYourRepresentative({
               placeholder={accountabilityProse.mpRosterSearchPlaceholder}
               autoComplete="off"
               enterKeyHint="search"
-              className={`w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white py-3 pl-12 pr-4 text-sm text-[var(--foreground)] shadow-sm transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`}
+              className={`w-full touch-manipulation rounded-xl border border-[var(--border)] bg-[var(--card)] py-3 pl-12 pr-4 text-sm text-[var(--foreground)] shadow-sm transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`}
             />
           </div>
         </div>
@@ -118,7 +118,7 @@ export function FindYourRepresentative({
                 {accountabilityProse.mpRosterSearchEmpty.replace("{query}", trimmed)}
               </p>
             ) : (
-              <ul className="divide-y divide-[var(--border)]/80 overflow-hidden rounded-xl border border-[var(--border)] bg-white">
+              <ul className="divide-y divide-[var(--border)]/80 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]">
                 {results.map((row) => {
                   const meta = [row.party, row.constituencyName].filter(Boolean).join(" · ");
                   const href = showPromises ? `/promises/${encodeURIComponent(row.slug)}` : "/parliament-tracker";

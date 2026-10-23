@@ -451,7 +451,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
       </dl>
 
       {report.kind === "MP_PERFORMANCE" ? (
-        <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
+        <div className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
           {report.intakeSource === "COUNCIL_EVALUATION" ? (
             <div className="mb-5 rounded-lg border border-[var(--accent-gold)]/40 bg-[var(--accent-gold-light)]/25 px-4 py-3 text-sm">
               <p className="font-semibold text-[var(--foreground)]">Council evaluation intake</p>
@@ -494,7 +494,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
               id="experienceVerificationTier"
               name="experienceVerificationTier"
               defaultValue={report.experienceVerificationTier}
-              className="rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm sm:max-w-md"
+              className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm sm:max-w-md"
             >
               {EXPERIENCE_TIER_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -541,14 +541,14 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
         />
       ) : null}
 
-      <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
+      <div className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Narrative</h2>
         <pre className="mt-3 whitespace-pre-wrap font-sans text-sm text-[var(--foreground-secondary)]">
           {report.body}
         </pre>
       </div>
 
-      <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
+      <div className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Submitter-visible notes</h2>
         <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Shown to the reporter on <strong className="text-[var(--foreground)]">My reports</strong> (signed-in) and on{" "}
@@ -718,7 +718,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
         </form>
       </div>
 
-      <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
+      <div className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Team note audit trail</h2>
         <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Append-only log of posts, edits, and visibility changes (no full message bodies stored here).
@@ -764,7 +764,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
       </div>
 
       {report.attachments.length > 0 ? (
-        <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
+        <div className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
           <h2 className="text-sm font-semibold text-[var(--foreground)]">Attachments</h2>
           <ul className="mt-4 grid gap-4 sm:grid-cols-2">
             {report.attachments.map((a) => {
@@ -804,7 +804,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
 
       <form
         action={updateCitizenReportDiscussionEnabledAction}
-        className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5"
+        className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5"
       >
         <input type="hidden" name="id" value={report.id} />
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Voice public discussion</h2>
@@ -822,7 +822,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
             id="discussionEnabled"
             name="discussionEnabled"
             defaultValue={report.discussionEnabled ? "true" : "false"}
-            className="rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--foreground)]"
+            className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--foreground)]"
           >
             <option value="true">Open — public page live</option>
             <option value="false">Closed — hide discussion page</option>
@@ -846,7 +846,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
 
       <form
         action={updatePublicCauseThreadAction}
-        className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5"
+        className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5"
       >
         <input type="hidden" name="id" value={report.id} />
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Public cause thread</h2>
@@ -927,7 +927,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
       </form>
 
       {report.publicCauseComments.length > 0 ? (
-        <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
+        <div className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
           <h2 className="text-sm font-semibold text-[var(--foreground)]">Member comments</h2>
           <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
             Same thread is used for the public cause page (when published) and for{" "}
@@ -972,7 +972,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
 
       <form
         action={updateCitizenReportOperationsAction}
-        className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5"
+        className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5"
       >
         <input type="hidden" name="id" value={report.id} />
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Operations &amp; SLA</h2>
@@ -1033,7 +1033,7 @@ export default async function AdminReportDetailPage({ params, searchParams }: Pr
         </button>
       </form>
 
-      <form action={updateCitizenReportStatusAction} className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
+      <form action={updateCitizenReportStatusAction} className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
         <input type="hidden" name="id" value={report.id} />
         <label htmlFor="status" className="block text-sm font-medium text-[var(--foreground)]">
           Update status

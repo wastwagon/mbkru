@@ -122,7 +122,7 @@ export default async function PublicCauseDetailPage({ params }: Props) {
             </div>
           ) : null}
 
-          <div className="mt-6 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+          <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
             <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground-secondary)]">
               Public summary
             </h2>

@@ -40,7 +40,7 @@ export default async function AccountReportsPage() {
   });
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-card)] sm:p-8">
       <h1 className="font-display text-2xl font-bold text-[var(--foreground)]">My reports</h1>
       <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
         Reports filed while signed in.{" "}
@@ -59,7 +59,7 @@ export default async function AccountReportsPage() {
         ) : (
           reports.map((r) => (
             <li key={r.id}>
-              <article className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
+              <article className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
                 <h2 className="font-medium text-[var(--foreground)]">{r.title}</h2>
                 <p className="mt-1 font-mono text-xs font-semibold tracking-wide text-[var(--accent-gold)]">
                   {r.trackingCode}

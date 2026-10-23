@@ -21,7 +21,7 @@ export function RegionsViz() {
 
   return (
     <>
-      <div className="rounded-xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow-card)] sm:p-5">
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow-card)] sm:p-5">
         <div>
           <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-[var(--foreground-secondary)]">
             16 Regions of Ghana
@@ -43,7 +43,7 @@ export function RegionsViz() {
             <Link
               key={region.name}
               href={`/regions/${ghanaRegionSlugFromDisplayName(region.name)}`}
-              className={`group relative flex cursor-pointer items-center justify-between gap-3 overflow-hidden rounded-xl border border-[var(--border)] bg-gradient-to-br from-[var(--section-light)] to-white px-4 py-3 text-left text-sm font-medium text-[var(--foreground)] shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--primary)]/30 hover:shadow-md hover:shadow-[var(--primary)]/10 sm:text-base ${focusRingSmClass}`}
+              className={`group relative flex cursor-pointer items-center justify-between gap-3 overflow-hidden rounded-xl border border-[var(--border)] bg-gradient-to-br from-[var(--section-light)] to-[var(--card)] px-4 py-3 text-left text-sm font-medium text-[var(--foreground)] shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--primary)]/30 hover:shadow-md hover:shadow-[var(--primary)]/10 sm:text-base ${focusRingSmClass}`}
             >
               <span className="relative z-10">{region.name}</span>
               <span className="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[var(--primary)]/10 text-[var(--primary)] transition-all duration-200 group-hover:bg-[var(--primary)] group-hover:text-white">

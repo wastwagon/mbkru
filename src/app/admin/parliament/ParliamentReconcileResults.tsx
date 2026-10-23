@@ -97,7 +97,7 @@ export function ParliamentReconcileResults({
                   <th className="px-3 py-2 font-medium">Constituency</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--border)] bg-white">
+              <tbody className="divide-y divide-[var(--border)] bg-[var(--card)]">
                 {wouldCreate.slice(0, PREVIEW_LIMIT).map((r) => (
                   <tr key={r.slug}>
                     <AdminTd label="Slug" className="whitespace-nowrap px-3 py-2 font-mono text-[11px] sm:px-3 sm:py-2">
@@ -128,7 +128,7 @@ export function ParliamentReconcileResults({
           </h3>
           <ul className="mt-2 space-y-2">
             {wouldUpdate.slice(0, PREVIEW_LIMIT).map((u) => (
-              <li key={u.slug} className="rounded-xl border border-[var(--border)] bg-white px-4 py-3">
+              <li key={u.slug} className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3">
                 <p className="font-mono text-[11px] font-semibold text-[var(--primary)]">{u.slug}</p>
                 <ul className="mt-2 space-y-1 text-xs text-[var(--foreground-secondary)]">
                   {u.changes.map((c, i) => (
@@ -175,7 +175,7 @@ export function ParliamentReconcileResults({
                   <th className="px-3 py-2 font-medium">Party</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--border)] bg-white">
+              <tbody className="divide-y divide-[var(--border)] bg-[var(--card)]">
                 {inDatabaseNotInCsv.slice(0, PREVIEW_LIMIT).map((r) => (
                   <tr key={r.slug}>
                     <AdminTd label="Slug" className="whitespace-nowrap px-3 py-2 font-mono text-[11px] sm:px-3 sm:py-2">

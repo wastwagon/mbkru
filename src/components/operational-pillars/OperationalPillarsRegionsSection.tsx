@@ -109,7 +109,7 @@ export function OperationalPillarsRegionsSection({ showPillars = true, id = "key
                 >
                   <Link
                     href={pillar.href}
-                    className="group flex gap-4 rounded-xl border border-white/20 bg-white/5 p-4 shadow-lg backdrop-blur-md transition-[border-color,background-color,transform,box-shadow] duration-300 ease-out hover:border-[var(--accent-warm)]/50 hover:bg-white/10 sm:p-5"
+                    className="group flex gap-4 rounded-xl border border-white/20 bg-[var(--card)]/5 p-4 shadow-lg backdrop-blur-md transition-[border-color,background-color,transform,box-shadow] duration-300 ease-out hover:border-[var(--accent-warm)]/50 hover:bg-[var(--card)]/10 sm:p-5"
                   >
                     <div
                       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg font-display text-lg font-bold ${i % 2 === 0 ? "text-[var(--accent-gold)]" : "text-[var(--accent-warm)]"}`}

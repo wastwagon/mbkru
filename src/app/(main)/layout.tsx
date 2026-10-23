@@ -37,7 +37,7 @@ export default async function MainLayout({
           <TopBar />
         </div>
         <Suspense
-          fallback={<div className="min-h-[60px] border-b border-[var(--border)] bg-white/95 backdrop-blur-md" aria-hidden />}
+          fallback={<div className="min-h-[60px] border-b border-[var(--border)] bg-[var(--card)]/95 backdrop-blur-md" aria-hidden />}
         >
           <Header />
         </Suspense>

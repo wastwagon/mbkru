@@ -66,7 +66,7 @@ export default async function AdminCommunityVerificationsPage() {
         ) : (
           <ul className="mt-4 space-y-3">
             {pending.map((r) => (
-              <li key={r.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
+              <li key={r.id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
                 <p className="text-sm text-[var(--foreground)]">
                   <span className="font-medium">{r.member.displayName ?? r.member.email}</span>
                   <span className="ml-2 text-xs text-[var(--foreground-secondary)]">{r.member.email}</span>
@@ -95,7 +95,7 @@ export default async function AdminCommunityVerificationsPage() {
                           >
                             <div className="flex items-start gap-3">
                               {canPreview ? (
-                                <div className="relative h-12 w-16 shrink-0 overflow-hidden rounded border border-[var(--border)] bg-white">
+                                <div className="relative h-12 w-16 shrink-0 overflow-hidden rounded border border-[var(--border)] bg-[var(--card)]">
                                   {/* eslint-disable-next-line @next/next/no-img-element -- admin-only preview */}
                                   <img src={mediaUrl} alt={media.filename} className="h-full w-full object-cover" />
                                 </div>
@@ -177,7 +177,7 @@ export default async function AdminCommunityVerificationsPage() {
             {recent.map((r) => (
               <li
                 key={r.id}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm"
               >
                 <p className="text-[var(--foreground)]">
                   <span className="font-medium">{r.community.name}</span> · {r.member.displayName ?? r.member.email} ·{" "}

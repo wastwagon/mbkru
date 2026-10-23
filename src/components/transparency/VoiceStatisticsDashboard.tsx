@@ -34,7 +34,7 @@ export function VoiceStatisticsDashboard({ analytics }: Props) {
 
   return (
     <div className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
         <p className="min-w-0 flex-1">
           Aggregate counts only — no personal data or report text. Figures refresh on each page load.
         </p>
@@ -96,7 +96,7 @@ export function VoiceStatisticsDashboard({ analytics }: Props) {
             label: "Public cause threads",
             value: analytics.publicCauses.withThread,
             accent: "text-[var(--foreground)]",
-            border: "border-[var(--border)] bg-white",
+            border: "border-[var(--border)] bg-[var(--card)]",
           },
         ].map((kpi) => (
           <div key={kpi.label} className={`rounded-2xl border p-5 shadow-sm ${kpi.border}`}>
@@ -109,7 +109,7 @@ export function VoiceStatisticsDashboard({ analytics }: Props) {
       </div>
 
       {analytics.byMonth.length > 0 ? (
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-card)] sm:p-8">
           <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">Submission trend</h2>
           <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
             Reports received per month since {new Date(analytics.windowSince).toLocaleDateString("en-GB")}.
@@ -119,7 +119,7 @@ export function VoiceStatisticsDashboard({ analytics }: Props) {
       ) : null}
 
       <div className="grid gap-8 lg:grid-cols-2">
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-card)] sm:p-8">
           <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">By kind</h2>
           <StatBarList
             items={kindItems}
@@ -128,7 +128,7 @@ export function VoiceStatisticsDashboard({ analytics }: Props) {
           />
         </div>
 
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-card)] sm:p-8">
           <h2 className="font-display text-lg font-semibold text-[var(--foreground)]">Workflow status</h2>
           <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
             In the last {analytics.windowMonths} months.

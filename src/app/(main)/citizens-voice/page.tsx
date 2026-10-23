@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
+import { CitizensVoiceHubActions } from "@/components/voice/CitizensVoiceHubActions";
 import { VoiceOpenChatCTA } from "@/components/voice/VoiceOpenChatCTA";
 import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ProcessFlowDiagram, VOICE_REPORT_LIFECYCLE_STEPS } from "@/components/ui/ProcessFlowDiagram";
 import { pageHeaderPresets } from "@/lib/page-header-presets";
 import { Card } from "@/components/ui/Card";
-import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
+import { primaryLinkClass } from "@/lib/primary-link-styles";
 import {
   isCivicPetitionsAndPublicCausesEnabled,
   isPublicVoiceStatisticsEnabled,
@@ -78,7 +79,7 @@ export default async function CitizensVoicePage() {
       />
 
       {/* Hero section — full-width with hero image */}
-      <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-white">
+      <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-[var(--background)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <AccountabilityDisclaimerCallout variant="voiceSubmit" className="mb-6" />
           <ProcessFlowDiagram
@@ -89,7 +90,7 @@ export default async function CitizensVoicePage() {
           <div className="mb-4 lg:hidden">
             <VoiceOpenChatCTA />
           </div>
-          <p className="mb-6 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)] sm:hidden">
+          <p className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)] sm:hidden">
             AI chat for questions — not for emergencies or legal advice.{" "}
             <Link href="/privacy" className={primaryLinkClass}>
               Privacy
@@ -99,7 +100,7 @@ export default async function CitizensVoicePage() {
               Terms
             </Link>
           </p>
-          <div className="mb-6 hidden rounded-xl border border-[var(--border)] bg-white p-4 text-sm leading-relaxed text-[var(--foreground-secondary)] sm:block">
+          <div className="mb-6 hidden rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 text-sm leading-relaxed text-[var(--foreground-secondary)] sm:block">
             MBKRU Voice includes reporting tools and an AI-assisted customer service chat experience. Do not use chat for
             legal strategy or emergency response. For urgent safety matters, contact local emergency services first. See{" "}
             <Link href="/privacy" className={primaryLinkClass}>
@@ -160,7 +161,7 @@ export default async function CitizensVoicePage() {
       </section>
 
       {/* Key Benefits — full-width cards */}
-      <section className="section-spacing section-full bg-white">
+      <section className="section-spacing section-full bg-[var(--background)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <span className="inline-block rounded-full bg-[var(--accent-gold)]/15 px-4 py-1.5 text-sm font-medium text-[var(--accent-gold)]">
@@ -200,44 +201,7 @@ export default async function CitizensVoicePage() {
                 </>
               ) : null}
             </p>
-            <div className="mt-6 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
-              <Link
-                href="/citizens-voice/submit"
-                className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[var(--accent-gold)] px-6 py-2.5 text-sm font-semibold text-[var(--section-dark)] shadow-md transition-colors hover:bg-[var(--accent-warm)] sm:w-auto ${focusRingSmClass}`}
-              >
-                Submit a report
-              </Link>
-              <Link
-                href="/track-report"
-                className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl border-2 border-white/40 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 sm:w-auto ${focusRingSmClass}`}
-              >
-                Track a report
-              </Link>
-              {showStats ? (
-                <Link
-                  href="/transparency"
-                  className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl border-2 border-white/40 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 sm:w-auto ${focusRingSmClass}`}
-                >
-                  Public statistics
-                </Link>
-              ) : null}
-              {civicEngagement ? (
-                <>
-                  <Link
-                    href="/petitions"
-                    className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl border-2 border-white/40 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 sm:w-auto ${focusRingSmClass}`}
-                  >
-                    Petitions
-                  </Link>
-                  <Link
-                    href="/citizens-voice/causes"
-                    className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl border-2 border-white/40 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 sm:w-auto ${focusRingSmClass}`}
-                  >
-                    Public causes
-                  </Link>
-                </>
-              ) : null}
-            </div>
+            <CitizensVoiceHubActions showStats={showStats} civicEngagement={civicEngagement} />
           </div>
         </section>
       ) : null}
@@ -245,8 +209,8 @@ export default async function CitizensVoicePage() {
       {/* Early Access — premium CTA card */}
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="overflow-hidden rounded-2xl border border-[var(--primary)]/20 bg-white shadow-[var(--shadow-card)]">
-            <div className="bg-gradient-to-r from-[var(--primary)]/5 via-white to-[var(--primary)]/5 px-6 py-8 sm:p-10">
+          <div className="overflow-hidden rounded-2xl border border-[var(--primary)]/20 bg-[var(--card)] shadow-[var(--shadow-card)]">
+            <div className="bg-gradient-to-r from-[var(--primary)]/5 via-[var(--card)] to-[var(--primary)]/5 px-6 py-8 sm:p-10">
               <span className="inline-block rounded-full bg-[var(--primary)]/10 px-4 py-1.5 text-sm font-medium text-[var(--primary)]">
                 Early Access
               </span>

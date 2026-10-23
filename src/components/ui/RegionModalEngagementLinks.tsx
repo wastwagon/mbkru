@@ -46,7 +46,7 @@ export function RegionModalEngagementLinks({ regionSlug }: { regionSlug: string 
   }, [regionSlug]);
 
   return (
-    <section className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm sm:p-6">
+    <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm sm:p-6">
       <h3 className="text-sm font-semibold text-[var(--foreground)]">Connect in this region</h3>
       <p className="mt-1 text-sm text-[var(--foreground-secondary)]">
         Regional chat, Report Card filters, and community spaces scoped to this region.
@@ -92,7 +92,7 @@ export function RegionModalEngagementLinks({ regionSlug }: { regionSlug: string 
             {data.reportCardVoiceHref ? (
               <Link
                 href={data.reportCardVoiceHref}
-                className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[var(--border)] bg-white px-4 py-2.5 text-center text-sm font-semibold text-[var(--primary)] transition-colors hover:bg-[var(--section-light)] sm:w-auto ${focusRingSmClass}`}
+                className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-2.5 text-center text-sm font-semibold text-[var(--primary)] transition-colors hover:bg-[var(--section-light)] sm:w-auto ${focusRingSmClass}`}
               >
                 People&apos;s Report Card — this region
               </Link>

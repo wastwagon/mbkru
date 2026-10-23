@@ -259,7 +259,7 @@ export function CommunityMemberPanel({
   const next = encodeURIComponent(signInReturnPath ?? `/communities/${communitySlug}`);
 
   return (
-    <div className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+    <div className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
       <h2 className="text-sm font-semibold text-[var(--foreground)]">Membership</h2>
 
       {restrictedDetail && visibility === "MEMBERS_ONLY" ? (

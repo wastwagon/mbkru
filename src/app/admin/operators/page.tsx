@@ -86,7 +86,7 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
         </p>
       ) : null}
 
-      <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6">
+      <section className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Add operator</h2>
         <form action={createAdminOperatorAction} className="mt-4 grid max-w-xl gap-3">
           <FormField label="Email" htmlFor="email">
@@ -122,7 +122,7 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
         </form>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6">
+      <section className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Change your password</h2>
         <form action={changeOwnAdminPasswordAction} className="mt-4 grid max-w-xl gap-3">
           <FormField label="Current password" htmlFor="currentPassword">
@@ -169,7 +169,7 @@ export default async function AdminOperatorsPage({ searchParams }: Props) {
         <h2 className="text-sm font-semibold text-[var(--foreground)]">All operators</h2>
         <ul className="mt-4 space-y-8">
           {admins.map((a) => (
-            <li key={a.id} className="rounded-2xl border border-[var(--border)] bg-white p-5">
+            <li key={a.id} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
               <p className="font-medium text-[var(--foreground)]">{a.email}</p>
               <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
                 Added {a.createdAt.toLocaleString("en-GB")}

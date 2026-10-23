@@ -106,7 +106,7 @@ export default async function CommunityDetailPage({ params }: Props) {
               />
             </div>
           ) : null}
-          <div className="mt-6 rounded-2xl border border-[var(--accent-gold)]/30 bg-gradient-to-br from-[var(--accent-gold-light)] to-white px-5 py-4 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+          <div className="mt-6 rounded-2xl border border-[var(--accent-gold)]/30 bg-gradient-to-br from-[var(--accent-gold-light)] to-[var(--card)] px-5 py-4 text-sm leading-relaxed text-[var(--foreground-secondary)]">
             <p>
               <span className="font-semibold text-[var(--foreground)]">Queen Mothers &amp; council workspace</span> —
               independent civic space linked to traditional areas, not an official Traditional Council channel.
@@ -121,7 +121,7 @@ export default async function CommunityDetailPage({ params }: Props) {
 
           <CommunityOnlinePresence communitySlug={c.slug} />
 
-          <dl className="mt-6 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm text-[var(--foreground-secondary)]">
+          <dl className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm text-[var(--foreground-secondary)]">
             <div>
               <dt className="inline font-medium text-[var(--foreground)]">Visibility: </dt>
               <dd className="inline">{c.visibility === "PUBLIC" ? "Public" : "Members only"}</dd>
@@ -163,7 +163,7 @@ export default async function CommunityDetailPage({ params }: Props) {
               </Link>
             </p>
           ) : null}
-          <div className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+          <div className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
             <h2 className="text-sm font-semibold text-[var(--foreground)]">About</h2>
             {showFullAbout ? (
               <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-[var(--foreground-secondary)]">
@@ -179,7 +179,7 @@ export default async function CommunityDetailPage({ params }: Props) {
           </div>
 
           {forums.length > 0 ? (
-            <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm">
+            <section className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <h2 className="text-sm font-semibold text-[var(--foreground)]">Forums</h2>

@@ -60,14 +60,14 @@ export default async function SituationalAlertsPage() {
         heroImageAlt={pageHeaderPresets.townHall.heroImageAlt}
       />
 
-      <div className="border-b border-[var(--border)] bg-white py-6">
+      <div className="border-b border-[var(--border)] bg-[var(--card)] py-6">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <AccountabilityDisclaimerCallout variant="situationalAlerts" />
         </div>
       </div>
 
       {/* Hero section — full-width with hero image */}
-      <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-white">
+      <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-[var(--background)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-12">
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-[var(--shadow-card)] ring-1 ring-black/5 lg:order-2">
@@ -108,7 +108,7 @@ export default async function SituationalAlertsPage() {
       </section>
 
       {/* How It Works — full-width cards */}
-      <section className="section-spacing section-full bg-white">
+      <section className="section-spacing section-full bg-[var(--background)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <span className="inline-block rounded-full bg-[var(--accent-gold)]/15 px-4 py-1.5 text-sm font-medium text-[var(--accent-gold)]">
@@ -142,7 +142,7 @@ export default async function SituationalAlertsPage() {
               Submit a time-sensitive local alert for our team to review. You will get a tracking code; we do not
               publish raw submissions. Use MBKRU Voice for general civic reports.
             </p>
-            <div className="mx-auto mt-8 max-w-4xl text-left [&_figure]:border-white/20 [&_figure]:bg-white/95 [&_figcaption]:text-[var(--foreground)] [&_li]:border-[var(--primary)]/25 [&_p]:text-[var(--foreground-secondary)] [&_p.font-semibold]:text-[var(--foreground)]">
+            <div className="mx-auto mt-8 max-w-4xl text-left [&_figure]:border-white/20 [&_figure]:bg-[var(--card)]/95 [&_figcaption]:text-[var(--foreground)] [&_li]:border-[var(--primary)]/25 [&_p]:text-[var(--foreground-secondary)] [&_p.font-semibold]:text-[var(--foreground)]">
               <ProcessFlowDiagram title="Alert path" steps={SITUATIONAL_ALERT_FLOW_STEPS} />
             </div>
             <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
@@ -154,7 +154,7 @@ export default async function SituationalAlertsPage() {
               </Link>
               <Link
                 href="/track-report"
-                className="inline-flex rounded-xl border-2 border-white/40 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
+                className="inline-flex rounded-xl border-2 border-white/40 px-6 py-3 text-sm font-semibold text-white hover:bg-[var(--card)]/10"
               >
                 Track a submission
               </Link>
@@ -166,8 +166,8 @@ export default async function SituationalAlertsPage() {
       {/* Early Access — premium CTA card */}
       <section className="section-spacing section-full bg-[var(--section-light)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="overflow-hidden rounded-2xl border border-[var(--primary)]/20 bg-white shadow-[var(--shadow-card)]">
-            <div className="bg-gradient-to-r from-[var(--primary)]/5 via-white to-[var(--primary)]/5 px-6 py-8 sm:p-10">
+          <div className="overflow-hidden rounded-2xl border border-[var(--primary)]/20 bg-[var(--card)] shadow-[var(--shadow-card)]">
+            <div className="bg-gradient-to-r from-[var(--primary)]/5 via-[var(--card)] to-[var(--primary)]/5 px-6 py-8 sm:p-10">
               <span className="inline-block rounded-full bg-[var(--primary)]/10 px-4 py-1.5 text-sm font-medium text-[var(--primary)]">
                 Early Access
               </span>

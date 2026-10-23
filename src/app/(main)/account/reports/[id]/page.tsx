@@ -40,7 +40,7 @@ export default async function AccountReportDetailPage({ params }: Props) {
   if (!report) notFound();
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-card)] sm:p-8">
       <p className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm text-[var(--foreground-secondary)]">
         <Link href="/account/reports" className={`${primaryNavLinkClass} rounded-md`}>
           ← My reports
@@ -71,7 +71,7 @@ export default async function AccountReportDetailPage({ params }: Props) {
         <pre className="mt-3 whitespace-pre-wrap font-sans text-sm text-[var(--foreground-secondary)]">{report.body}</pre>
       </div>
 
-      <div className="mt-8 rounded-xl border border-[var(--border)] bg-white p-5">
+      <div className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Notes from MBKRU</h2>
         {report.adminReplies.length === 0 ? (
           <p className="mt-2 text-sm text-[var(--foreground-secondary)]">

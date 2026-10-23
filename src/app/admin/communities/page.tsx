@@ -52,7 +52,7 @@ export default async function AdminCommunitiesPage() {
         </Link>
       </p>
 
-      <section className="mt-10 rounded-xl border border-[var(--border)] bg-white p-5">
+      <section className="mt-10 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">New community</h2>
         <form action={createCommunityAction} className="mt-4 space-y-3">
           <div className="grid gap-3 sm:grid-cols-2">
@@ -179,7 +179,7 @@ export default async function AdminCommunitiesPage() {
             {communities.map((c) => (
               <li
                 key={c.id}
-                className="flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-white p-4 sm:flex-row sm:items-center sm:justify-between"
+                className="flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div>
                   <Link href={`/admin/communities/${c.id}`} className={primaryLinkClass}>

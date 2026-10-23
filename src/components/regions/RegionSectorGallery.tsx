@@ -48,7 +48,7 @@ export function RegionSectorGallery({
   const active = openIndex === null ? null : images[openIndex];
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm sm:p-6">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm sm:p-6">
       <h2 className="text-sm font-semibold text-[var(--foreground)]">
         Key sectors in {regionName} — in pictures
       </h2>
@@ -91,7 +91,7 @@ export function RegionSectorGallery({
           onClick={close}
         >
           <div
-            className="relative w-full max-w-3xl overflow-hidden rounded-2xl bg-white"
+            className="relative w-full max-w-3xl overflow-hidden rounded-2xl bg-[var(--card)]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative aspect-[3/2] bg-[var(--section-light)]">

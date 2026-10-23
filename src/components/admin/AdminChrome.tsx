@@ -16,7 +16,7 @@ function AdminMobileNavControls() {
   useBodyScrollLock(mobileNavOpen);
 
   const menuToggleClass = [
-    "inline-flex min-h-[44px] items-center justify-center rounded-xl border border-[var(--border)] bg-white px-4 text-sm font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--muted)] touch-manipulation",
+    "inline-flex min-h-[44px] items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 text-sm font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--muted)] touch-manipulation",
     focusRingMdClass,
   ].join(" ");
 
@@ -50,7 +50,7 @@ function AdminMobileNavControls() {
           />
           <div
             id="admin-mobile-nav"
-            className="relative z-40 border-b border-[var(--border)] bg-white px-3 py-4 lg:hidden"
+            className="relative z-40 border-b border-[var(--border)] bg-[var(--card)] px-3 py-4 lg:hidden"
           >
             <AdminNavigation />
             <div className="mt-4 border-t border-[var(--border)] pt-4">
@@ -79,7 +79,7 @@ export function AdminChrome({ children }: Props) {
   return (
     <div className="flex min-h-screen">
       <aside
-        className="sticky top-0 hidden h-screen w-[15.5rem] shrink-0 overflow-y-auto border-r border-[var(--border)] bg-white lg:block"
+        className="sticky top-0 hidden h-screen w-[15.5rem] shrink-0 overflow-y-auto border-r border-[var(--border)] bg-[var(--card)] lg:block"
         aria-label="Admin navigation"
       >
         <div className="border-b border-[var(--border)] px-4 py-5">

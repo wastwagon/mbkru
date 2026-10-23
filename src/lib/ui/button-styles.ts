@@ -32,7 +32,7 @@ const variantClass: Record<ButtonVariant, string> = {
     "bg-[var(--primary)] text-[var(--primary-foreground)] shadow-md hover:bg-[var(--primary-dark)] hover:shadow-lg active:scale-[0.98]",
   secondary: "bg-[var(--secondary)] text-white hover:bg-[var(--primary)] active:scale-[0.98]",
   surface:
-    "border border-[var(--border)] bg-white text-[var(--foreground)] hover:bg-[var(--section-light)] active:scale-[0.99] motion-reduce:active:scale-100",
+    "border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] hover:bg-[var(--section-light)] active:scale-[0.99] motion-reduce:active:scale-100",
   outline:
     "border-2 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white active:scale-[0.98]",
   ghost: "text-[var(--primary)] hover:bg-[var(--muted)]",

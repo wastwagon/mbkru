@@ -730,7 +730,7 @@ export function MBKRUVoiceChatbot() {
             onClick={() => setIsOpen(false)}
           />
           <section
-          className="fixed inset-x-2 bottom-[calc(var(--mobile-bottom-nav-height)+max(0.5rem,env(safe-area-inset-bottom)))] z-[109] flex max-h-[min(78dvh,calc(100dvh-var(--mobile-bottom-nav-height)-env(safe-area-inset-top)-2rem))] w-[calc(100vw-1rem)] flex-col overflow-hidden rounded-t-2xl border border-[var(--border)] bg-white shadow-xl lg:relative lg:inset-x-auto lg:bottom-auto lg:z-auto lg:max-h-[min(78vh,44rem)] lg:w-[min(30rem,96vw)] lg:rounded-2xl"
+          className="fixed inset-x-2 bottom-[calc(var(--mobile-bottom-nav-height)+max(0.5rem,env(safe-area-inset-bottom)))] z-[109] flex max-h-[min(78dvh,calc(100dvh-var(--mobile-bottom-nav-height)-env(safe-area-inset-top)-2rem))] w-[calc(100vw-1rem)] flex-col overflow-hidden rounded-t-2xl border border-[var(--border)] bg-[var(--card)] shadow-xl lg:relative lg:inset-x-auto lg:bottom-auto lg:z-auto lg:max-h-[min(78vh,44rem)] lg:w-[min(30rem,96vw)] lg:rounded-2xl"
           aria-label={ui.ariaChatbot}
           role="dialog"
           aria-modal="true"
@@ -749,7 +749,7 @@ export function MBKRUVoiceChatbot() {
                     languageId: event.target.value as VoicePreferences["languageId"],
                   }))
                 }
-                className={`h-11 max-w-[9.5rem] touch-manipulation rounded-md border border-white/40 bg-white/10 px-2 text-sm font-medium text-white ${focusRingSmClass}`}
+                className={`h-11 max-w-[9.5rem] touch-manipulation rounded-md border border-white/40 bg-[var(--card)]/10 px-2 text-sm font-medium text-white ${focusRingSmClass}`}
                 aria-label={ui.ariaChatLanguage}
               >
                 {voiceLanguageOptions.map((option) => (
@@ -761,7 +761,7 @@ export function MBKRUVoiceChatbot() {
               <button
                 type="button"
                 onClick={() => setPreferences((prev) => ({ ...prev, autoReadReplies: !prev.autoReadReplies }))}
-                className={`${mobileIconButtonClass} rounded-md border border-white/40 text-white/95 hover:bg-white/15`}
+                className={`${mobileIconButtonClass} rounded-md border border-white/40 text-white/95 hover:bg-[var(--card)]/15`}
                 aria-pressed={preferences.autoReadReplies}
                 title={preferences.autoReadReplies ? ui.readAloudTitleOn : ui.readAloudTitleOff}
                 aria-label={preferences.autoReadReplies ? ui.readAloudAriaOn : ui.readAloudAriaOff}
@@ -773,7 +773,7 @@ export function MBKRUVoiceChatbot() {
               <button
                 type="button"
                 onClick={clearConversation}
-                className={`inline-flex min-h-11 items-center rounded-md border border-white/40 px-3 py-2 text-sm font-semibold text-white/95 hover:bg-white/15 touch-manipulation ${focusRingSmClass}`}
+                className={`inline-flex min-h-11 items-center rounded-md border border-white/40 px-3 py-2 text-sm font-semibold text-white/95 hover:bg-[var(--card)]/15 touch-manipulation ${focusRingSmClass}`}
               >
                 {ui.clearChat}
               </button>
@@ -787,7 +787,7 @@ export function MBKRUVoiceChatbot() {
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className={`absolute right-2 top-2 z-10 ${mobileIconButtonClass} rounded-full border border-white/35 bg-white/15 text-white shadow-sm hover:bg-white/25`}
+              className={`absolute right-2 top-2 z-10 ${mobileIconButtonClass} rounded-full border border-white/35 bg-[var(--card)]/15 text-white shadow-sm hover:bg-[var(--card)]/25`}
               aria-label={ui.closeChatAria}
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
@@ -803,7 +803,7 @@ export function MBKRUVoiceChatbot() {
                   key={entry.label}
                   type="button"
                   onClick={() => applyQuickPrompt(entry.prompt)}
-                  className={`inline-flex min-h-11 items-center rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm font-semibold text-[var(--foreground)] touch-manipulation ${focusRingSmClass}`}
+                  className={`inline-flex min-h-11 items-center rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm font-semibold text-[var(--foreground)] touch-manipulation ${focusRingSmClass}`}
                 >
                   {entry.label}
                 </button>
@@ -815,7 +815,7 @@ export function MBKRUVoiceChatbot() {
                 className={`max-w-[90%] rounded-xl px-3 py-2 text-sm leading-relaxed ${
                   message.role === "user"
                     ? "ml-auto bg-[var(--primary)] text-white"
-                    : "border border-[var(--border)] bg-white text-[var(--foreground)]"
+                    : "border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)]"
                 }`}
               >
                 <p>{message.content}</p>
@@ -887,7 +887,7 @@ export function MBKRUVoiceChatbot() {
             ) : null}
           </div>
 
-          <form onSubmit={onSubmit} className="border-t border-[var(--border)] bg-white p-2.5 sm:p-3">
+          <form onSubmit={onSubmit} className="border-t border-[var(--border)] bg-[var(--card)] p-2.5 sm:p-3">
             <p className="mb-2 text-[10px] leading-snug text-[var(--foreground-secondary)]">
               {ui.aiDisclaimerBeforePrivacy}{" "}
               <Link href="/privacy" className={focusRingSmClass}>

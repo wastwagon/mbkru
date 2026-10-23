@@ -130,7 +130,7 @@ export default function DiasporaPage() {
         heroImageAlt={pageHeaderPresets.diaspora.heroImageAlt}
       />
 
-      <section className="section-spacing section-full border-b border-[var(--border)] bg-white">
+      <section className="section-spacing section-full border-b border-[var(--border)] bg-[var(--background)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl">
             <DiasporaProgrammePhaseNotice />
@@ -177,7 +177,7 @@ export default function DiasporaPage() {
         </div>
       </section>
 
-      <div className="border-b border-[var(--primary)]/20 bg-gradient-to-r from-[var(--primary)]/[0.08] via-white to-[var(--accent-gold)]/[0.12]">
+      <div className="border-b border-[var(--primary)]/20 bg-gradient-to-r from-[var(--primary)]/[0.08] via-[var(--card)] to-[var(--accent-gold)]/[0.12]">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-4 py-5 sm:flex-row sm:items-center sm:px-6 lg:px-8">
           <div>
             <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">Feedback — visits or abroad-only</p>
@@ -222,7 +222,7 @@ export default function DiasporaPage() {
         </div>
       </section>
 
-      <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-white">
+      <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-[var(--background)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid items-stretch gap-8 lg:grid-cols-12 lg:gap-10">
             <div className="relative lg:col-span-6">
@@ -270,7 +270,7 @@ export default function DiasporaPage() {
 
       <section
         id="documentation-journeys"
-        className="section-spacing section-full border-y border-[var(--border)] bg-white scroll-mt-24"
+        className="section-spacing section-full border-y border-[var(--border)] bg-[var(--card)] scroll-mt-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="font-display text-2xl font-bold text-balance text-[var(--foreground)] sm:text-3xl">

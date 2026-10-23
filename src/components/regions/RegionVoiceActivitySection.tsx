@@ -22,7 +22,7 @@ export async function RegionVoiceActivitySection({ regionSlug, regionName }: Pro
   return (
     <section className="section-spacing pb-16">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-6 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+        <div className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
           <span className="font-semibold text-[var(--foreground)]">{regionName}</span> has{" "}
           <span className="font-semibold tabular-nums text-[var(--primary)]">{regionCount}</span> tagged Voice report
           {regionCount === 1 ? "" : "s"} in the last {analytics.windowMonths} months (training/demo rows excluded in

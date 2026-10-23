@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import { AccountabilityMobileFilterDisclosure } from "@/components/accountability/AccountabilityMobileFilterDisclosure";
 import { accountabilityProse } from "@/config/accountability-catalogue-destinations";
 import { MpPortrait } from "@/components/accountability/MpPortrait";
 import { focusRingSmClass } from "@/lib/primary-link-styles";
@@ -47,27 +48,36 @@ export function ParliamentaryRosterList({ rows, showPromises }: Props) {
 
   return (
     <>
-      <div className="mt-6 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm sm:p-5" role="search">
-        <label htmlFor="mp-roster-search" className={filterLabelClass}>
-          {accountabilityProse.mpRosterSearchLabel}
-        </label>
-        <input
-          id="mp-roster-search"
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={accountabilityProse.mpRosterSearchPlaceholder}
-          autoComplete="off"
-          enterKeyHint="search"
-          className={`w-full touch-manipulation rounded-xl border border-[var(--border)] bg-white px-4 py-2.5 text-sm text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`}
-        />
-        {normalized ? (
-          <p className="mt-2 text-xs text-[var(--foreground-secondary)]" role="status" aria-live="polite">
-            {filtered.length} of {rows.length} MP{rows.length === 1 ? "" : "s"}{" "}
-            {filtered.length === 1 ? "matches" : "match"} your search
-          </p>
-        ) : null}
-      </div>
+      <AccountabilityMobileFilterDisclosure
+        title="Search MPs"
+        active={Boolean(normalized)}
+        className="mt-6"
+      >
+        <div
+          className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm max-sm:rounded-none max-sm:border-0 max-sm:bg-transparent max-sm:p-0 max-sm:shadow-none sm:p-5"
+          role="search"
+        >
+          <label htmlFor="mp-roster-search" className={filterLabelClass}>
+            {accountabilityProse.mpRosterSearchLabel}
+          </label>
+          <input
+            id="mp-roster-search"
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={accountabilityProse.mpRosterSearchPlaceholder}
+            autoComplete="off"
+            enterKeyHint="search"
+            className={`w-full touch-manipulation rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-2.5 text-sm text-[var(--foreground)] transition-shadow focus-visible:border-[var(--primary)]/35 ${focusRingSmClass}`}
+          />
+          {normalized ? (
+            <p className="mt-2 text-xs text-[var(--foreground-secondary)]" role="status" aria-live="polite">
+              {filtered.length} of {rows.length} MP{rows.length === 1 ? "" : "s"}{" "}
+              {filtered.length === 1 ? "matches" : "match"} your search
+            </p>
+          ) : null}
+        </div>
+      </AccountabilityMobileFilterDisclosure>
 
       {filtered.length === 0 ? (
         <p className="mt-6 text-sm text-[var(--foreground-secondary)]" role="status">
@@ -81,7 +91,7 @@ export function ParliamentaryRosterList({ rows, showPromises }: Props) {
 
             return (
               <li key={m.slug}>
-                <article className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
+                <article className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="flex min-w-0 flex-1 items-start gap-3">
                       <MpPortrait name={m.name} portraitPath={m.portraitPath} size="md" />

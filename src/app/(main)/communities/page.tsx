@@ -160,7 +160,7 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
       />
       <section className="section-spacing section-full bg-[var(--section-light)] pb-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <p className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+          <p className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
             Independent civic spaces linked to traditional areas — not official Traditional Council channels.{" "}
             <Link href="/methodology" className={primaryNavLinkClass}>
               Methodology
@@ -230,7 +230,7 @@ export default async function CommunitiesIndexPage({ searchParams }: Props) {
                       <li key={p.postId}>
                         <Link
                           href={`/communities/${p.communitySlug}/post/${p.postId}`}
-                          className="block rounded-xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[var(--primary)]/30"
+                          className="block rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm transition hover:border-[var(--primary)]/30"
                         >
                           <p className="text-xs font-medium text-[var(--foreground-secondary)]">{p.communityName}</p>
                           <p className="mt-2 line-clamp-4 text-sm text-[var(--foreground)]">{p.snippet}</p>

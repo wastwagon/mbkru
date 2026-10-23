@@ -79,6 +79,11 @@ export type AccessibilityVoiceStrings = {
   voiceLanguageLabel: string;
   languageScopeNote: string;
   speechSpeedLabel: string;
+  displayThemeLabel: string;
+  displayThemeSystem: string;
+  displayThemeLight: string;
+  displayThemeDark: string;
+  displayThemeNote: string;
   cloudAudioHeading: string;
   whisperDictation: string;
   openAiReadAloud: string;
@@ -456,6 +461,12 @@ const accessibilityByLang: Record<VoiceChromeLangId, AccessibilityVoiceStrings> 
     languageScopeNote:
       "Voice chat and read-aloud use this language. Report form labels may translate; legal text stays in English.",
     speechSpeedLabel: "Speech speed",
+    displayThemeLabel: "Display theme",
+    displayThemeSystem: "Match system",
+    displayThemeLight: "Light",
+    displayThemeDark: "Dark",
+    displayThemeNote:
+      "Colours for pages, cards, and forms. Brand teal sections (footer, Voice band) stay unchanged.",
     cloudAudioHeading: "Cloud audio (OpenAI)",
     whisperDictation: "Whisper for dictation",
     openAiReadAloud: "OpenAI voice for read-aloud",
@@ -499,6 +510,12 @@ const accessibilityByLang: Record<VoiceChromeLangId, AccessibilityVoiceStrings> 
     languageScopeNote:
       "Voice chat ne kenkan fa kasa yi. Report form labels betumi akyerɛ; mmara nsɛm wɔ Borɔfo mu.",
     speechSpeedLabel: "Kenkan bere",
+    displayThemeLabel: "Screen colours",
+    displayThemeSystem: "Sɛ device no",
+    displayThemeLight: "Hɔ kɔkɔɔ (Light)",
+    displayThemeDark: "Sum (Dark)",
+    displayThemeNote:
+      "Kratafa, card, ne form ngo. Footer ne Voice band teal no rema sɛnea ɛte.",
     cloudAudioHeading: "Cloud audio (OpenAI)",
     whisperDictation: "Whisper ma nhomasua",
     openAiReadAloud: "OpenAI nne ma kenkan",
@@ -541,6 +558,11 @@ const accessibilityByLang: Record<VoiceChromeLangId, AccessibilityVoiceStrings> 
     languageScopeNote:
       "Voice chat kɛ kenkan fa gɔŋ ni. Report form labels le translate; legal text le English.",
     speechSpeedLabel: "Kenkan speed",
+    displayThemeLabel: "Screen colours",
+    displayThemeSystem: "Sɛ device lɛ",
+    displayThemeLight: "Light",
+    displayThemeDark: "Dark",
+    displayThemeNote: "Page, card, kɛ form colours. Footer kɛ Voice band teal no change.",
     cloudAudioHeading: "Cloud audio (OpenAI)",
     whisperDictation: "Whisper ma dictation",
     openAiReadAloud: "OpenAI nɔ ma kenkan",
@@ -582,6 +604,12 @@ const accessibilityByLang: Record<VoiceChromeLangId, AccessibilityVoiceStrings> 
     languageScopeNote:
       "Tattaunawa da karatu suna wannan harshe. Rubutun fom na iya fassara; rubutun doka yana Turanci.",
     speechSpeedLabel: "Gudun karatu",
+    displayThemeLabel: "Launi na allo",
+    displayThemeSystem: "Kamar na'ura",
+    displayThemeLight: "Haske (Light)",
+    displayThemeDark: "Duhu (Dark)",
+    displayThemeNote:
+      "Launukan shafuka, katuna, da fom. Footer da Voice band na teal sun kasance.",
     cloudAudioHeading: "Cloud audio (OpenAI)",
     whisperDictation: "Whisper don rubutu ta sautin",
     openAiReadAloud: "OpenAI murya don karatu",
@@ -623,6 +651,12 @@ const accessibilityByLang: Record<VoiceChromeLangId, AccessibilityVoiceStrings> 
     languageScopeNote:
       "Voice chat kple xlẽ zãa gbegbe sia. Report form labels ate ŋu translate; legal nuwo nɔ English.",
     speechSpeedLabel: "Xlẽ ƒoƒo",
+    displayThemeLabel: "Site nɔnɔmetata",
+    displayThemeSystem: "Naɖeɖe kple device",
+    displayThemeLight: "Kekeli (Light)",
+    displayThemeDark: "Zi (Dark)",
+    displayThemeNote:
+      "Nuƒoƒo, card, kple form nɔnɔmetatawo. Footer kple Voice teal band woɖeɖe o.",
     cloudAudioHeading: "Cloud audio (OpenAI)",
     whisperDictation: "Whisper na nuŋlɔla",
     openAiReadAloud: "OpenAI nu na xlẽ",

@@ -37,8 +37,8 @@ import { partnerCategoryLabel } from "@/lib/content/partners-cms";
 import { prisma } from "@/lib/db/prisma";
 import { primaryLinkClass } from "@/lib/primary-link-styles";
 
-const sectionClass = "mt-2 rounded-xl border border-[var(--border)] bg-white p-5";
-const rowClass = "rounded-xl border border-[var(--border)] bg-white p-4";
+const sectionClass = "mt-2 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5";
+const rowClass = "rounded-xl border border-[var(--border)] bg-[var(--card)] p-4";
 const editDetailsClass =
   "mt-3 rounded-lg border border-[var(--border)] bg-[var(--section-light)]/60 p-3";
 

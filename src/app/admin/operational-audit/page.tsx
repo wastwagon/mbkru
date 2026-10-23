@@ -63,7 +63,7 @@ export default async function AdminOperationalAuditPage({ searchParams }: Props)
         description="Review sensitive admin actions, including notification retries, queue resets, and related controls."
       />
 
-      <form className="mt-2 grid gap-3 rounded-xl border border-[var(--border)] bg-white p-4 md:grid-cols-4">
+      <form className="mt-2 grid gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 md:grid-cols-4">
         <FormField label="Window (hours)" htmlFor="hours">
           <Input
             id="hours"
@@ -105,7 +105,7 @@ export default async function AdminOperationalAuditPage({ searchParams }: Props)
         </div>
       </form>
 
-      <div className="mt-6 rounded-xl border border-[var(--border)] bg-white p-4">
+      <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
         <p className="text-xs text-[var(--foreground-secondary)]">
           Showing {logs.length} row(s), newest first. Time window starts at {since.toISOString()}.
         </p>

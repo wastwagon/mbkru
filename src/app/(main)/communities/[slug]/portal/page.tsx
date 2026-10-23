@@ -201,7 +201,7 @@ export default async function CommunityCouncilPortalPage({ params }: Props) {
             </Link>
           </p>
 
-          <div className="mt-6 rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
+          <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm">
             <h2 className="font-display text-base font-semibold text-[var(--foreground)]">How this workspace fits together</h2>
             <ul className="mt-3 list-inside list-disc space-y-2 text-sm leading-relaxed text-[var(--foreground-secondary)]">
               <li>
@@ -323,11 +323,11 @@ function PortalFeedSection({
       <h2 className="text-lg font-semibold text-[var(--foreground)]">{meta.title}</h2>
       <p className="mt-1 text-sm text-[var(--foreground-secondary)]">{meta.description}</p>
       {!showPosts ? (
-        <p className="mt-4 rounded-xl border border-[var(--border)] bg-white px-4 py-6 text-sm text-[var(--foreground-secondary)]">
+        <p className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-6 text-sm text-[var(--foreground-secondary)]">
           Sign in and join this community to view and participate in these threads.
         </p>
       ) : posts.length === 0 ? (
-        <p className="mt-4 rounded-xl border border-dashed border-[var(--border)] bg-white/80 px-4 py-8 text-center text-sm text-[var(--foreground-secondary)]">
+        <p className="mt-4 rounded-xl border border-dashed border-[var(--border)] bg-[var(--card)]/80 px-4 py-8 text-center text-sm text-[var(--foreground-secondary)]">
           No threads in this section yet — use <strong className="text-[var(--foreground)]">Post &amp; membership</strong>{" "}
           above to start one ({kind.toLowerCase()}).
         </p>

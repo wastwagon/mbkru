@@ -153,7 +153,7 @@ export default async function AdminCommunityDetailPage({ params, searchParams }:
 
       <CommunityCoverEditor communityId={community.id} initialCover={community.coverMedia} />
 
-      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-5">
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Default MP for council evaluation</h2>
         <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Pre-selects the MP in the council workspace evaluation form for this community. Leave unset to require manual
@@ -228,7 +228,7 @@ export default async function AdminCommunityDetailPage({ params, searchParams }:
         </p>
       ) : null}
 
-      <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-5">
+      <section className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Provision Queen Mother / moderator login</h2>
         <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Creates or resets a member account, assigns the community role, and emails temporary login details plus links to
@@ -283,7 +283,7 @@ export default async function AdminCommunityDetailPage({ params, searchParams }:
         </form>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-[var(--border)] bg-white p-5">
+      <section className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Forums</h2>
         <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
           Changing a forum slug breaks existing URLs. Empty forums only can be deleted.
@@ -413,7 +413,7 @@ export default async function AdminCommunityDetailPage({ params, searchParams }:
                   </div>
                   <button
                     type="submit"
-                    className="w-fit rounded-xl border border-[var(--border)] bg-white px-4 py-2 text-sm font-medium hover:bg-[var(--muted)]"
+                    className="w-fit rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-2 text-sm font-medium hover:bg-[var(--muted)]"
                   >
                     Save forum
                   </button>
@@ -442,7 +442,7 @@ export default async function AdminCommunityDetailPage({ params, searchParams }:
         ) : (
           <ul className="mt-4 space-y-5">
             {openPostReports.map((r) => (
-              <li id={`mod-report-${r.id}`} key={r.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
+              <li id={`mod-report-${r.id}`} key={r.id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
                 <p className="text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">
                   Reporter: {r.reporter.displayName ?? r.reporter.email}
                   <span className="ml-2 font-normal normal-case text-[var(--foreground-secondary)]">{r.reporter.email}</span>
@@ -526,7 +526,7 @@ export default async function AdminCommunityDetailPage({ params, searchParams }:
         ) : (
           <ul className="mt-4 space-y-4">
             {activeMembers.map((m) => (
-              <li key={m.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
+              <li key={m.id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
                 <p className="text-sm text-[var(--foreground)]">
                   {m.member.displayName ?? m.member.email}
                   <span className="ml-2 text-xs text-[var(--foreground-secondary)]">{m.member.email}</span>
@@ -615,7 +615,7 @@ export default async function AdminCommunityDetailPage({ params, searchParams }:
         ) : (
           <ul className="mt-4 space-y-4">
             {bannedMembers.map((m) => (
-              <li key={m.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
+              <li key={m.id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
                 <p className="text-sm text-[var(--foreground)]">
                   {m.member.displayName ?? m.member.email}
                   <span className="ml-2 text-xs text-[var(--foreground-secondary)]">{m.member.email}</span>
@@ -652,7 +652,7 @@ export default async function AdminCommunityDetailPage({ params, searchParams }:
         ) : (
           <ul className="mt-4 space-y-3">
             {community.memberships.map((m) => (
-              <li key={m.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
+              <li key={m.id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
                 <p className="text-sm text-[var(--foreground)]">
                   {m.member.displayName ?? m.member.email}
                   <span className="ml-2 text-xs text-[var(--foreground-secondary)]">{m.member.email}</span>
@@ -681,7 +681,7 @@ export default async function AdminCommunityDetailPage({ params, searchParams }:
         ) : (
           <ul className="mt-4 space-y-6">
             {pendingPosts.map((p) => (
-              <li id={`mod-post-${p.id}`} key={p.id} className="rounded-xl border border-[var(--border)] bg-white p-4">
+              <li id={`mod-post-${p.id}`} key={p.id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
                 <p className="text-xs font-medium uppercase tracking-wide text-[var(--foreground-secondary)]">
                   {p.kind} · {p.author.displayName ?? p.author.email}
                 </p>

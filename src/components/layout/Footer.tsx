@@ -3,6 +3,7 @@ import { FooterMobileInstallLink } from "@/components/pwa/FooterMobileInstallLin
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { Logo } from "@/components/ui/Logo";
+import { FooterDeveloperCredit } from "@/components/layout/FooterDeveloperCredit";
 import { FooterMemberAuth } from "@/components/layout/FooterMemberAuth";
 import { getServerPlatformPhase } from "@/config/platform";
 import {
@@ -14,10 +15,10 @@ import { footerTrustLine } from "@/config/site-disclaimers";
 import {
   focusRingOnDark50Class,
   focusRingOnDark60Class,
-  focusRingOnDark70IconClass,
   focusRingOnDarkSolidClass,
 } from "@/lib/primary-link-styles";
-import { content, footerGalleryAlts, footerGalleryImages } from "@/lib/site-content";
+import { PublicSocialLinks } from "@/components/layout/PublicSocialLinks";
+import { content, footerGalleryAlts, footerGalleryImages, getPublicSocialLinks } from "@/lib/site-content";
 
 const footerNavLinkClass = `inline-flex min-h-11 max-w-full items-center rounded-md px-1 py-1.5 -mx-1 text-sm text-white/80 transition-[color,transform] duration-200 ease-out hover:text-white hover:translate-x-0.5 motion-reduce:hover:translate-x-0 ${focusRingOnDark60Class}`;
 
@@ -27,45 +28,20 @@ export async function Footer() {
   const platformLinks = getFooterPlatformFlowLinks(phase);
   const organizationLinks = getFooterOrganizationLinks(phase);
   const legalLinks = getFooterLegalLinks();
+  const resolvedSocialLinks = getPublicSocialLinks();
 
   const platformSplitAt = Math.ceil(platformLinks.length / 2);
   const platformLinksCol1 = platformLinks.slice(0, platformSplitAt);
   const platformLinksCol2 = platformLinks.slice(platformSplitAt);
 
   const socialLinks = (
-    <div className="flex flex-wrap gap-2 sm:gap-3">
-      <a
-        href={content.social.facebook}
-        className={`flex h-11 w-11 touch-manipulation items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white hover:text-[var(--accent-warm)] sm:h-10 sm:w-10 ${focusRingOnDark70IconClass}`}
-        aria-label="Facebook"
-      >
-        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-        </svg>
-      </a>
-      <a
-        href={content.social.linkedin}
-        className={`flex h-11 w-11 touch-manipulation items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white hover:text-[var(--accent-warm)] sm:h-10 sm:w-10 ${focusRingOnDark70IconClass}`}
-        aria-label="LinkedIn"
-      >
-        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-        </svg>
-      </a>
-      <a
-        href={content.social.twitter}
-        className={`flex h-11 w-11 touch-manipulation items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white hover:text-[var(--accent-warm)] sm:h-10 sm:w-10 ${focusRingOnDark70IconClass}`}
-        aria-label="Twitter"
-      >
-        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-        </svg>
-      </a>
-    </div>
+    <PublicSocialLinks links={resolvedSocialLinks} variant="footer" className="flex flex-wrap gap-2 sm:gap-3" />
   );
 
   return (
-    <footer className="relative bg-[var(--footer-bg)] text-white">
+    <footer
+      className="relative bg-[var(--footer-bg)] text-white pb-[calc(var(--mobile-bottom-nav-height)+max(0.5rem,env(safe-area-inset-bottom)))] lg:pb-0"
+    >
       <div className="mx-auto max-w-7xl px-6 sm:px-8">
         {/* Upper CTA section */}
         <div className="flex flex-col items-stretch gap-8 border-b border-white/20 py-11 sm:flex-row sm:items-center sm:justify-between sm:gap-10 sm:py-12">
@@ -201,7 +177,7 @@ export async function Footer() {
               {footerTrustLine.termsLabel}
             </Link>
           </p>
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between lg:gap-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-3">
               <Logo href="/" theme="dark" className="w-fit scale-90 origin-left opacity-90 sm:scale-95" />
               {socialLinks}
@@ -217,9 +193,12 @@ export async function Footer() {
                 ))}
               </nav>
             </div>
-            <p className="text-sm text-white/60 lg:max-w-md lg:text-right">
-              © {currentYear} My Brother&apos;s Keeper Restoration United (MBKRU). All rights reserved.
-            </p>
+            <div className="flex flex-col gap-4 lg:max-w-sm lg:shrink-0">
+              <p className="text-sm text-white/60 lg:text-right">
+                © {currentYear} My Brother&apos;s Keeper Restoration United (MBKRU). All rights reserved.
+              </p>
+              <FooterDeveloperCredit />
+            </div>
           </div>
         </div>
       </div>

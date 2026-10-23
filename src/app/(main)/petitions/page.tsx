@@ -68,7 +68,7 @@ export default async function PetitionsIndexPage({ searchParams }: IndexProps) {
             </p>
           ) : null}
           <AccountabilityDisclaimerCallout variant="civicParticipation" className="mb-6" />
-          <p className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+          <p className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)]">
             Citizen signature campaigns — separate from MBKRU Voice reports and public cause threads.{" "}
             <Link href="/citizens-voice/causes" className={primaryNavLinkClass}>
               Public causes
@@ -106,7 +106,7 @@ export default async function PetitionsIndexPage({ searchParams }: IndexProps) {
 
                 return (
                   <li key={p.id}>
-                    <article className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
+                    <article className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm transition hover:border-[var(--primary)]/35 sm:p-5">
                       <div className="flex flex-wrap items-start gap-3">
                         <TopicPictogram variant={p.topic as PetitionTopic} />
                         <div className="min-w-0 flex-1">

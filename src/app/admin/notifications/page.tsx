@@ -87,7 +87,7 @@ export default async function AdminNotificationsPage({ searchParams }: Props) {
         </div>
       ) : null}
 
-      <form action={processNotificationQueueAction} className="mt-6 flex flex-wrap items-center gap-3 rounded-xl border border-[var(--border)] bg-white p-4">
+      <form action={processNotificationQueueAction} className="mt-6 flex flex-wrap items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
         <label htmlFor="limit" className="text-sm text-[var(--foreground)]">
           Process up to
         </label>
@@ -110,12 +110,12 @@ export default async function AdminNotificationsPage({ searchParams }: Props) {
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Pending / processing</h2>
         <ul className="mt-3 space-y-2">
           {pending.length === 0 ? (
-            <li className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--foreground-secondary)]">
+            <li className="rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--foreground-secondary)]">
               No pending jobs.
             </li>
           ) : (
             pending.map((job) => (
-              <li key={job.id} className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm">
+              <li key={job.id} className="rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm">
                 <p className="font-mono text-[11px] text-[var(--foreground-secondary)]">{job.id}</p>
                 <p className="text-[var(--foreground)]">
                   {job.channel} · {job.kind} · {job.status}
@@ -133,7 +133,7 @@ export default async function AdminNotificationsPage({ searchParams }: Props) {
         <h2 className="text-sm font-semibold text-[var(--foreground)]">Recent failed</h2>
         <ul className="mt-3 space-y-2">
           {failed.length === 0 ? (
-            <li className="rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--foreground-secondary)]">
+            <li className="rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--foreground-secondary)]">
               No failed jobs.
             </li>
           ) : (

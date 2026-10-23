@@ -51,7 +51,7 @@ export function ParliamentCsvReconcile() {
   }
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-white p-5">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
       <h2 className="text-sm font-semibold text-[var(--foreground)]">Dry-run reconcile (CSV)</h2>
       <p className="mt-1 text-xs text-[var(--foreground-secondary)]">
         Same format as MP import. Compares the file to the current database{" "}

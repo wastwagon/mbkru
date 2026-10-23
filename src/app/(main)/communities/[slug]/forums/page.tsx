@@ -74,7 +74,7 @@ export default async function CommunityForumsIndexPage({ params }: Props) {
           ) : (
             <ul className="mt-8 space-y-3">
               {forums.map((f) => (
-                <li key={f.id} className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
+                <li key={f.id} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm">
                   <Link
                     href={`/communities/${encodeURIComponent(c.slug)}/forums/${encodeURIComponent(f.slug)}`}
                     className={`${primaryLinkClass} text-base font-semibold`}

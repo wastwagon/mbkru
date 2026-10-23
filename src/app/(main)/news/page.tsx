@@ -104,7 +104,7 @@ export default async function NewsPage() {
                 <Link
                   key={article.id}
                   href={article.href}
-                  className="group flex flex-col rounded-xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-card)] transition-all duration-300 hover:border-[var(--primary)]/20 hover:shadow-[var(--shadow-card-hover)] sm:flex-row sm:gap-6"
+                  className="group flex flex-col rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-[var(--shadow-card)] transition-all duration-300 hover:border-[var(--primary)]/20 hover:shadow-[var(--shadow-card-hover)] sm:flex-row sm:gap-6"
                 >
                   <div className="relative h-40 w-full shrink-0 overflow-hidden rounded-lg sm:h-32 sm:w-40">
                     <Image
@@ -141,7 +141,7 @@ export default async function NewsPage() {
                 </Link>
               ))}
               {sidebarItems.length === 0 ? (
-                <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-[var(--border)] bg-white/50 p-8 text-center text-sm text-[var(--foreground-secondary)]">
+                <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-[var(--border)] bg-[var(--card)]/50 p-8 text-center text-sm text-[var(--foreground-secondary)]">
                   Only one story is published right now.
                 </div>
               ) : null}
@@ -158,7 +158,7 @@ export default async function NewsPage() {
                   <li key={article.id}>
                       <Link
                       href={article.href}
-                      className="group flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-white shadow-[var(--shadow-sm)] transition hover:border-[var(--primary)]/25"
+                      className="group flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-sm)] transition hover:border-[var(--primary)]/25"
                     >
                       <div className="relative aspect-[16/10] w-full overflow-hidden bg-[var(--section-light)]">
                         <Image

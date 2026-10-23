@@ -62,7 +62,7 @@ export function HomePageClient({
       <HomeParticipateHub data={atAGlance} showLiveHighlights={false} showLiveTools />
 
       {showMpSearch ? (
-        <section className="section-spacing section-full border-t border-[var(--border)] bg-white">
+        <section className="section-spacing section-full border-t border-[var(--border)] bg-[var(--background)]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <FindYourRepresentative rows={mpRoster} variant="prominent" />
           </div>
@@ -74,7 +74,7 @@ export function HomePageClient({
       <OperationalPillarsRegionsSection showPillars={false} id="ghana-regions" />
 
       {newsBeyondHero.length > 0 ? (
-        <section className="section-spacing section-full border-t border-[var(--border)] bg-white">
+        <section className="section-spacing section-full border-t border-[var(--border)] bg-[var(--background)]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={reducedMotion ? false : { opacity: 0, y: 20 }}
@@ -118,7 +118,7 @@ export function HomePageClient({
                 >
                   <Link
                     href={article.href}
-                    className="group flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-white shadow-[var(--shadow-card)] transition-all duration-300 hover:border-[var(--primary)]/20 hover:shadow-[var(--shadow-card-hover)]"
+                    className="group flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-card)] transition-all duration-300 hover:border-[var(--primary)]/20 hover:shadow-[var(--shadow-card-hover)]"
                   >
                     <div className="relative aspect-[16/10] overflow-hidden">
                       <Image
