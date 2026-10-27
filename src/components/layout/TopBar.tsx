@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
 
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { isFocusedMemberRoute } from "@/lib/platform/focused-member-routes";
@@ -24,36 +23,11 @@ export function TopBar() {
   const hideOnRoute = launchPolish && isFocusedMemberRoute(pathname);
 
   const socialLinks = getPublicSocialLinks();
-  const [collapsed, setCollapsed] = useState(false);
-  const lastScrollY = useRef(0);
-
-  useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      if (y < 48) {
-        setCollapsed(false);
-      } else if (y > lastScrollY.current + 8) {
-        setCollapsed(true);
-      } else if (y < lastScrollY.current - 8) {
-        setCollapsed(false);
-      }
-      lastScrollY.current = y;
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   if (hideOnRoute) return null;
 
   return (
-    <div
-      className={`relative z-40 overflow-hidden bg-[var(--accent-gold)] text-white transition-[max-height,opacity,transform] duration-300 ease-out motion-reduce:transition-none lg:max-h-none lg:opacity-100 lg:translate-y-0 ${
-        collapsed
-          ? "max-h-0 opacity-0 -translate-y-full pointer-events-none lg:pointer-events-auto"
-          : "max-h-48 opacity-100 translate-y-0"
-      }`}
-      aria-hidden={collapsed}
-    >
+    <div className="relative z-40 overflow-hidden bg-[var(--accent-gold)] text-white">
       <div className="relative mx-auto flex max-w-7xl flex-col gap-2 px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2 sm:px-6 sm:py-2 lg:px-8">
         <div className="absolute bottom-0 left-4 right-4 h-[2px] bg-gradient-to-r from-transparent via-white/40 to-transparent sm:left-6 sm:right-6 lg:left-8 lg:right-8" aria-hidden />
         <div className="flex w-full flex-wrap items-center justify-center gap-2 sm:flex-nowrap sm:justify-start sm:gap-x-6">

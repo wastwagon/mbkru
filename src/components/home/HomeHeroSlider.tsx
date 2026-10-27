@@ -61,6 +61,9 @@ export function HomeHeroSlider({
 
   useEffect(() => {
     if (reducedMotion || slides.length <= 1) return;
+    const mobile =
+      typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches;
+    if (mobile) return;
     timerRef.current = setInterval(() => {
       setActive((a) => (a + 1) % slides.length);
     }, AUTO_MS);

@@ -11,17 +11,24 @@ function dismissalStorageKey() {
   return `${siteTrustNotice.storageKey}${siteTrustNotice.version}`;
 }
 
+function readDismissed(): boolean {
+  try {
+    return localStorage.getItem(dismissalStorageKey()) === "1";
+  } catch {
+    return false;
+  }
+}
+
+/** Reserved height avoids layout shift while we read localStorage (mobile flicker fix). */
+const PLACEHOLDER_CLASS =
+  "relative z-[55] min-h-[4.25rem] border-b border-transparent bg-[var(--section-light)]/95 sm:min-h-[3.5rem]";
+
 /** Dismissible trust notice above the header; footer trust line remains when closed. */
 export function SiteTrustNotice() {
-  const [visible, setVisible] = useState(false);
+  const [state, setState] = useState<"pending" | "open" | "closed">("pending");
 
   useEffect(() => {
-    try {
-      if (localStorage.getItem(dismissalStorageKey()) === "1") return;
-      setVisible(true);
-    } catch {
-      setVisible(true);
-    }
+    setState(readDismissed() ? "closed" : "open");
   }, []);
 
   const dismiss = useCallback(() => {
@@ -30,13 +37,17 @@ export function SiteTrustNotice() {
     } catch {
       /* private mode */
     }
-    setVisible(false);
+    setState("closed");
   }, []);
 
-  if (!visible) return null;
+  if (state === "closed") return null;
 
   const launchPolish = platformFeatures.publicLaunchPolish(getPublicPlatformPhase());
   const bodyText = launchPolish ? siteTrustNotice.compactBody : siteTrustNotice.body;
+
+  if (state === "pending") {
+    return <div className={PLACEHOLDER_CLASS} aria-hidden="true" />;
+  }
 
   return (
     <div

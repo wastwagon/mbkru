@@ -43,7 +43,8 @@ export function usePwaInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [iosHint, setIosHint] = useState(false);
   const [installing, setInstalling] = useState(false);
-  const [dismissed, setDismissed] = useState(true);
+  const [storageReady, setStorageReady] = useState(false);
+  const [bannerHidden, setBannerHidden] = useState(true);
 
   const mode = useMemo((): PwaInstallMode => {
     if (deferredPrompt) return "android";
@@ -54,10 +55,11 @@ export function usePwaInstall() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (isStandaloneDisplay()) {
-      setDismissed(true);
+      setBannerHidden(true);
+      setStorageReady(true);
       return;
     }
-    setDismissed(isDismissedRecently());
+    setBannerHidden(isDismissedRecently());
 
     function onBeforeInstall(e: Event) {
       e.preventDefault();
@@ -66,6 +68,7 @@ export function usePwaInstall() {
 
     window.addEventListener("beforeinstallprompt", onBeforeInstall);
     if (isIosSafari()) setIosHint(true);
+    setStorageReady(true);
 
     return () => window.removeEventListener("beforeinstallprompt", onBeforeInstall);
   }, []);
@@ -76,7 +79,7 @@ export function usePwaInstall() {
     } catch {
       /* private mode */
     }
-    setDismissed(true);
+    setBannerHidden(true);
     setDeferredPrompt(null);
   }, []);
 
@@ -98,7 +101,7 @@ export function usePwaInstall() {
   }, [deferredPrompt, dismiss]);
 
   const canPrompt = mode !== null && !isStandaloneDisplay();
-  const showBanner = canPrompt && dismissed;
+  const showBanner = storageReady && canPrompt && !bannerHidden;
   const showAccountCard = canPrompt;
 
   return {

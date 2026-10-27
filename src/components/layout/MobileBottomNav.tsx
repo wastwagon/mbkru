@@ -86,7 +86,7 @@ export function MobileBottomNav() {
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-[100] border-t border-[var(--border)] bg-[var(--card)]/95 pb-[max(0.25rem,env(safe-area-inset-bottom))] shadow-[0_-4px_24px_rgb(0_0_0_/0.08)] backdrop-blur-md supports-[backdrop-filter]:bg-[var(--card)]/85 lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-[100] border-t border-[var(--border)] bg-[var(--card)] pb-[max(0.25rem,env(safe-area-inset-bottom))] shadow-[0_-4px_24px_rgb(0_0_0_/0.08)] lg:hidden"
     >
       <ul className="mx-auto flex max-w-lg items-stretch justify-around gap-0.5 px-1 pt-1">
         {links.map((item) => {

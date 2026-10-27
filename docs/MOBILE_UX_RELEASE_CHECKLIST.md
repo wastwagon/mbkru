@@ -13,7 +13,8 @@ npm run test:e2e:smoke         # critical routes + mobile shell + footer credit 
 
 | Area | Check |
 |------|--------|
-| **Bottom tab bar** | Home, Voice, Tracker, Communities, Account — no overlap on footer copyright or OceanCyber credit |
+| **Bottom tab bar** | Home, Voice, Tracker, Communities, Account — no overlap on compact mobile footer |
+| **Scroll / flicker** | Gold top bar stays fixed height while scrolling; trust notice uses reserved height on first paint |
 | **Voice submit** | Sticky submit clears tab bar; disclaimer checkbox reachable (main layout handles bottom inset — no extra section padding) |
 | **Track report** | Tracking code field + sticky **Check status** |
 | **Promises browse** | Quick chips visible; **Filter commitments** disclosure expands |
