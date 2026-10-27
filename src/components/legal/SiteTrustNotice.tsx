@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
+import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { siteTrustNotice } from "@/config/site-disclaimers";
 import { focusRingSmClass, primaryLinkClass } from "@/lib/primary-link-styles";
 
@@ -34,6 +35,9 @@ export function SiteTrustNotice() {
 
   if (!visible) return null;
 
+  const launchPolish = platformFeatures.publicLaunchPolish(getPublicPlatformPhase());
+  const bodyText = launchPolish ? siteTrustNotice.compactBody : siteTrustNotice.body;
+
   return (
     <div
       className="relative z-[55] border-b border-[var(--primary)]/20 bg-[var(--section-light)]/95"
@@ -42,7 +46,7 @@ export function SiteTrustNotice() {
     >
       <div className="mx-auto flex max-w-7xl items-start gap-3 px-4 py-2.5 sm:items-center sm:gap-4 sm:px-6 lg:px-8">
         <p className="min-w-0 flex-1 text-xs leading-relaxed text-[var(--foreground-secondary)] sm:text-sm">
-          {siteTrustNotice.body}{" "}
+          {bodyText}{" "}
           <Link href="/report-card" className={`font-medium ${primaryLinkClass}`}>
             {siteTrustNotice.reportCardLabel}
           </Link>

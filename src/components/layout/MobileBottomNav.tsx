@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 import { getMobileBottomNavLinks } from "@/config/public-platform-nav";
+import { isFocusedMemberRoute } from "@/lib/platform/focused-member-routes";
 import {
   MBKRU_VOICE_OPEN_CHANGE_EVENT,
   openVoiceChat,
@@ -80,6 +81,7 @@ export function MobileBottomNav() {
   }, []);
 
   if (links.length === 0) return null;
+  if (platformFeatures.publicLaunchPolish(phase) && isFocusedMemberRoute(pathname)) return null;
 
   return (
     <nav

@@ -19,6 +19,13 @@ import { getMemberSessionSecretKey } from "@/lib/member/jwt-config";
 
 const ADMIN_COOKIE = "mbkru_admin";
 
+/** Forward pathname to Server Components (`getRequestPathname`). */
+function continueWithPathname(request: NextRequest): NextResponse {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-mbkru-pathname", request.nextUrl.pathname);
+  return NextResponse.next({ request: { headers: requestHeaders } });
+}
+
 const GATE_CACHE_MS = 5000;
 let gateCache: { at: number; underConstruction: boolean } | null = null;
 /** Last successful probe result — reused when a later probe fails (stale beats a guess). */
@@ -161,7 +168,7 @@ export async function proxy(request: NextRequest) {
 
   if (pathname.startsWith("/admin")) {
     if (pathname === "/admin/login") {
-      return privateSurfaceHeaders(NextResponse.next());
+      return privateSurfaceHeaders(continueWithPathname(request));
     }
 
     const key = getSessionSecretKey();
@@ -178,7 +185,7 @@ export async function proxy(request: NextRequest) {
 
     try {
       await jwtVerify(token, key);
-      return privateSurfaceHeaders(NextResponse.next());
+      return privateSurfaceHeaders(continueWithPathname(request));
     } catch {
       return privateSurfaceHeaders(NextResponse.redirect(new URL("/admin/login", request.url)));
     }
@@ -193,7 +200,7 @@ export async function proxy(request: NextRequest) {
 
     const denied = await enforceMemberSession(request);
     if (denied) return denied;
-    return privateSurfaceHeaders(NextResponse.next());
+    return privateSurfaceHeaders(continueWithPathname(request));
   }
 
   if (
@@ -203,7 +210,7 @@ export async function proxy(request: NextRequest) {
   ) {
     const denied = await enforceMemberSession(request);
     if (denied) return denied;
-    return privateSurfaceHeaders(NextResponse.next());
+    return privateSurfaceHeaders(continueWithPathname(request));
   }
 
   if (
@@ -213,7 +220,7 @@ export async function proxy(request: NextRequest) {
   ) {
     const denied = await enforceMemberSession(request);
     if (denied) return denied;
-    return privateSurfaceHeaders(NextResponse.next());
+    return privateSurfaceHeaders(continueWithPathname(request));
   }
 
   if (
@@ -223,7 +230,7 @@ export async function proxy(request: NextRequest) {
   ) {
     const denied = await enforceMemberSession(request);
     if (denied) return denied;
-    return privateSurfaceHeaders(NextResponse.next());
+    return privateSurfaceHeaders(continueWithPathname(request));
   }
 
   if (
@@ -233,10 +240,10 @@ export async function proxy(request: NextRequest) {
   ) {
     const denied = await enforceMemberSession(request);
     if (denied) return denied;
-    return privateSurfaceHeaders(NextResponse.next());
+    return privateSurfaceHeaders(continueWithPathname(request));
   }
 
-  return NextResponse.next();
+  return continueWithPathname(request);
 }
 
 export const config = {

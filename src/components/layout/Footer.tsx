@@ -6,6 +6,8 @@ import { Logo } from "@/components/ui/Logo";
 import { FooterDeveloperCredit } from "@/components/layout/FooterDeveloperCredit";
 import { FooterMemberAuth } from "@/components/layout/FooterMemberAuth";
 import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
+import { isFocusedMemberRoute } from "@/lib/platform/focused-member-routes";
+import { getRequestPathname } from "@/lib/platform/request-pathname";
 import {
   getFooterLegalLinks,
   getFooterOrganizationLinks,
@@ -26,6 +28,8 @@ export async function Footer() {
   const currentYear = new Date().getFullYear();
   const phase = getServerPlatformPhase();
   const launchPolish = platformFeatures.publicLaunchPolish(phase);
+  const pathname = await getRequestPathname();
+  const focusedFooter = launchPolish && isFocusedMemberRoute(pathname);
   const platformLinks = getFooterPlatformFlowLinks(phase);
   const organizationLinks = getFooterOrganizationLinks(phase);
   const legalLinks = getFooterLegalLinks();
@@ -44,7 +48,22 @@ export async function Footer() {
       className="relative bg-[var(--footer-bg)] text-white pb-[calc(var(--mobile-bottom-nav-height)+max(0.5rem,env(safe-area-inset-bottom)))] lg:pb-0"
     >
       <div className="mx-auto max-w-7xl px-6 sm:px-8">
-        {launchPolish ? (
+        {focusedFooter ? (
+          <div className="border-b border-white/20 py-8">
+            <p className="max-w-2xl text-sm leading-relaxed text-white/85">{footerTrustLine.body}</p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Button href="/citizens-voice/submit" className="justify-center">
+                Submit a report
+              </Button>
+              <Link
+                href="/account"
+                className={`inline-flex min-h-11 items-center justify-center rounded-xl border border-white/40 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10 ${focusRingOnDarkSolidClass}`}
+              >
+                My account
+              </Link>
+            </div>
+          </div>
+        ) : launchPolish ? (
           <div className="flex flex-col gap-4 border-b border-white/20 py-8 sm:flex-row sm:items-center sm:justify-between sm:py-9">
             <p className="max-w-xl text-sm leading-relaxed text-white/90">
               Report an issue, track a submission, or explore public accountability data.
@@ -93,7 +112,7 @@ export async function Footer() {
           </div>
         )}
 
-        {/* Main columns — platform spans two columns (split list); brand block removed (logo + socials live in bottom bar). */}
+        {!focusedFooter ? (
         <div className="grid gap-10 py-10 sm:grid-cols-2 sm:gap-8 lg:grid-cols-5 lg:gap-6 sm:py-12">
           <div className="sm:col-span-2 lg:col-span-2">
             <h3 className="text-base font-semibold text-white">Our Platform</h3>
@@ -183,6 +202,7 @@ export async function Footer() {
             </div>
           </div>
         </div>
+        ) : null}
 
         {/* Bottom bar — logo, socials, legal, copyright */}
         <div className="border-t border-white/20 py-6">

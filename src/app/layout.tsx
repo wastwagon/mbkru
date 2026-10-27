@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Kumbh_Sans, Lora, Playfair_Display } from "next/font/google";
 import { colorThemeBootScript } from "@/lib/client/color-theme";
+import { OrganizationJsonLd } from "@/components/seo/OrganizationJsonLd";
 import { heroContent } from "@/lib/site-content";
 import "./globals.css";
 
@@ -56,7 +57,9 @@ const googleSiteVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `MBKRU Advocates | ${heroContent.tagline}`,
+    default: launchPolishMeta
+      ? "MBKRU Advocates | Independent civic accountability in Ghana"
+      : `MBKRU Advocates | ${heroContent.tagline}`,
     template: "%s | MBKRU Advocates",
   },
   description: launchPolishMeta
@@ -123,6 +126,7 @@ export default function RootLayout({
         <Script id="mbkru-color-theme-boot" strategy="beforeInteractive">
           {colorThemeBootScript}
         </Script>
+        {launchPolishMeta ? <OrganizationJsonLd /> : null}
       </head>
       <body
         className={`${kumbhSans.variable} ${lora.variable} ${playfairDisplay.variable} font-sans flex min-h-screen flex-col antialiased`}

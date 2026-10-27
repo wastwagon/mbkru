@@ -7,6 +7,9 @@ export const siteTrustNotice = {
   ariaLabel: "Site notice",
   body:
     "MBKRU is an independent civic accountability programme — not a government agency, court, or the Electoral Commission. People's Report Card scores and narratives are editorial assessments with published methodology — not legal findings or official oversight. Citizen Voice reports are moderated programme submissions, not regulator decisions. Share only what you can stand behind.",
+  /** Phase 4+ launch polish — shorter banner to reduce header height. */
+  compactBody:
+    "Independent civic accountability programme — not government, a court, or the Electoral Commission. Report Card and Voice listings are editorial programme content, not legal findings.",
   reportCardLabel: "People's Report Card",
   methodologyLabel: "Methodology",
   termsLabel: "Terms",

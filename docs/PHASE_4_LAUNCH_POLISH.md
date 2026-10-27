@@ -13,3 +13,12 @@ Set **`NEXT_PUBLIC_PLATFORM_PHASE=4`** at **build time** (Coolify build args + e
 | SEO | Default `og:image` + Twitter large card; neutral meta description |
 
 Pre-launch behaviour (waitlist, verbose footer) remains on phases **1–3**.
+
+### Also in phase 4 (continued polish)
+
+- **JSON-LD** Organization + WebSite in root layout
+- **Neutral default** browser title when built at phase 4
+- **Shorter** dismissible site trust notice (`siteTrustNotice.compactBody`)
+- **Focused member routes** (`/login`, `/register`, `/account/*`): hide gold TopBar + mobile bottom nav; compact footer (no link grid)
+- **Home participate hub** capped at six action cards
+- **Removed** unused `RoadmapModal` component

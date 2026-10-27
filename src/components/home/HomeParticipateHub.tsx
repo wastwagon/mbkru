@@ -244,6 +244,9 @@ export function HomeParticipateHub({ data, showLiveHighlights = true, showLiveTo
     },
   ].filter(Boolean) as { href: string; title: string; body: string }[]);
 
+  const launchPolish = platformFeatures.publicLaunchPolish(phase);
+  const hubActions = launchPolish ? actions.slice(0, 6) : actions;
+
   const reducedMotion = usePrefersReducedMotion();
 
   return (
@@ -303,7 +306,7 @@ export function HomeParticipateHub({ data, showLiveHighlights = true, showLiveTo
         ) : null}
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:mt-12 lg:grid-cols-3 xl:grid-cols-4">
-          {actions.map((a, i) => (
+          {hubActions.map((a, i) => (
             <motion.div
               key={`${a.href}-${a.title}`}
               initial={reducedMotion ? false : { opacity: 0, y: 16 }}

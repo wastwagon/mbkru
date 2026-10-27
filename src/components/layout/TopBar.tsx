@@ -1,7 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+
+import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
+import { isFocusedMemberRoute } from "@/lib/platform/focused-member-routes";
 import { focusRingOnDark85PillClass } from "@/lib/primary-link-styles";
 import { PublicSocialLinks } from "@/components/layout/PublicSocialLinks";
 import { content, getPublicSocialLinks } from "@/lib/site-content";
@@ -15,6 +19,10 @@ const contactInfo = {
 const contactLinkClass = `flex min-h-11 min-w-0 touch-manipulation items-center justify-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs text-white/95 transition-colors duration-200 hover:bg-white/20 hover:text-white sm:min-h-0 sm:justify-start sm:bg-transparent sm:px-0 sm:py-0 sm:text-sm ${focusRingOnDark85PillClass}`;
 
 export function TopBar() {
+  const pathname = usePathname() ?? "";
+  const launchPolish = platformFeatures.publicLaunchPolish(getPublicPlatformPhase());
+  const hideOnRoute = launchPolish && isFocusedMemberRoute(pathname);
+
   const socialLinks = getPublicSocialLinks();
   const [collapsed, setCollapsed] = useState(false);
   const lastScrollY = useRef(0);
@@ -34,6 +42,8 @@ export function TopBar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  if (hideOnRoute) return null;
 
   return (
     <div
