@@ -13,6 +13,7 @@ import { MemberImpersonationBanner } from "@/components/member/MemberImpersonati
 import { MemberPresenceHeartbeat } from "@/components/member/MemberPresenceHeartbeat";
 import { PwaInstallBanner } from "@/components/pwa/PwaInstallBanner";
 import { PwaServiceWorkerRegister } from "@/components/pwa/PwaServiceWorkerRegister";
+import { LaunchPolishVoiceChatSlot } from "@/components/layout/LaunchPolishVoiceChatSlot";
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { mobileMainBottomPadClass } from "@/lib/mobile-ui-classes";
 
@@ -57,7 +58,9 @@ export default async function MainLayout({
           <BackToTop />
         </div>
         <div className="pointer-events-auto max-lg:[&:empty]:hidden">
-          <MBKRUVoiceChatbot />
+          <LaunchPolishVoiceChatSlot>
+            <MBKRUVoiceChatbot />
+          </LaunchPolishVoiceChatSlot>
         </div>
       </div>
       <AccessibilityVoiceTools />

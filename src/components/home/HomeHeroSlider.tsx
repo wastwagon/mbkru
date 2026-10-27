@@ -48,6 +48,7 @@ export function HomeHeroSlider({
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const phase = getPublicPlatformPhase();
   const voiceLive = platformFeatures.citizensVoicePlatform(phase);
+  const launchPolish = platformFeatures.publicLaunchPolish(phase);
   const voicePrimaryHref = voiceLive ? "/citizens-voice/submit" : "/citizens-voice";
   const voicePrimaryLabel = voiceLive ? "Report an issue" : "Explore Voice";
 
@@ -131,7 +132,7 @@ export function HomeHeroSlider({
                     {heroContent.homepageSubhead}
                   </p>
                   <p className="mt-1 text-xs font-medium text-[var(--ghana-gold)]">{heroContent.motto}</p>
-                  <div className="mt-5 flex flex-wrap gap-3">
+                  <div className="mt-5">
                     <Button
                       href={voicePrimaryHref}
                       variant="primary"
@@ -142,18 +143,32 @@ export function HomeHeroSlider({
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                       </svg>
                     </Button>
-                    <Link
-                      href="/parliament-tracker"
-                      className="inline-flex items-center gap-2 rounded-xl border-2 border-white/55 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:border-[var(--ghana-gold)] hover:bg-white/20"
-                    >
-                      Accountability hub
-                    </Link>
-                    <Link
-                      href="/about"
-                      className="inline-flex items-center gap-2 rounded-xl border-2 border-white/35 px-5 py-2.5 text-sm font-semibold text-white/95 hover:border-white/55 hover:bg-white/10"
-                    >
-                      About MBKRU
-                    </Link>
+                    {launchPolish ? (
+                      <p className="mt-3 text-xs font-medium text-white/85 sm:text-sm">
+                        <Link href="/parliament-tracker" className="underline decoration-white/40 underline-offset-2 hover:text-white">
+                          Accountability hub
+                        </Link>
+                        <span className="text-white/50"> · </span>
+                        <Link href="/about" className="underline decoration-white/40 underline-offset-2 hover:text-white">
+                          About
+                        </Link>
+                      </p>
+                    ) : (
+                      <div className="mt-3 flex flex-wrap gap-3">
+                        <Link
+                          href="/parliament-tracker"
+                          className="inline-flex items-center gap-2 rounded-xl border-2 border-white/55 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:border-[var(--ghana-gold)] hover:bg-white/20"
+                        >
+                          Accountability hub
+                        </Link>
+                        <Link
+                          href="/about"
+                          className="inline-flex items-center gap-2 rounded-xl border-2 border-white/35 px-5 py-2.5 text-sm font-semibold text-white/95 hover:border-white/55 hover:bg-white/10"
+                        >
+                          About MBKRU
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 </>
               ) : slide.kind === "news" ? (

@@ -21,6 +21,7 @@ import type { RepresentativeSearchRow } from "@/components/accountability/FindYo
 import { OperationalPillarsRegionsSection } from "@/components/operational-pillars/OperationalPillarsRegionsSection";
 import type { HomeAtAGlanceData } from "@/lib/home-at-a-glance-types";
 import type { GovernmentCommitmentsHomePreview as GovernmentCommitmentsHomePreviewData } from "@/lib/home-government-preview-types";
+import { getPublicPlatformPhase, platformFeatures } from "@/config/platform";
 
 export type HomePageNewsItem = PublicNewsItem;
 
@@ -38,6 +39,7 @@ export function HomePageClient({
   showMpSearch?: boolean;
 }) {
   const reducedMotion = usePrefersReducedMotion();
+  const launchPolish = platformFeatures.publicLaunchPolish(getPublicPlatformPhase());
   const totalNewsCount = newsCatalog.length;
   const heroNews = newsCatalog.slice(0, 2);
   const heroNewsSlugs = new Set(heroNews.map((p) => p.slug));
@@ -55,11 +57,15 @@ export function HomePageClient({
         glanceStats={glanceStats}
       />
 
-      <HomeTrustStrip />
+      {launchPolish ? null : <HomeTrustStrip />}
 
       <HomeDataProvenanceRibbon />
 
-      <HomeParticipateHub data={atAGlance} showLiveHighlights={false} showLiveTools />
+      <HomeParticipateHub
+        data={atAGlance}
+        showLiveHighlights={!launchPolish}
+        showLiveTools={false}
+      />
 
       {showMpSearch ? (
         <section className="section-spacing section-full border-t border-[var(--border)] bg-[var(--background)]">
@@ -69,7 +75,7 @@ export function HomePageClient({
         </section>
       ) : null}
 
-      {accountabilityPreview ? <AccountabilityHomePreview data={accountabilityPreview} /> : null}
+      {accountabilityPreview && !launchPolish ? <AccountabilityHomePreview data={accountabilityPreview} /> : null}
 
       <OperationalPillarsRegionsSection showPillars={false} id="ghana-regions" />
 

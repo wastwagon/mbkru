@@ -2,6 +2,7 @@
  * Platform phase and feature flags for MBKRU delivery.
  * Phase 1 = marketing + CMS + lead capture (no auth, no complaints DB).
  * Phase 2+ = gated in code and via NEXT_PUBLIC_PLATFORM_PHASE at build time.
+ * Phase 4 = public launch polish (slim chrome, no waitlist CTAs, clearer primary actions).
  *
  * Public routes and labels for header, footer, and About strip live in `public-platform-nav.ts`
  * so navigation stays consistent with these flags.
@@ -9,11 +10,13 @@
  * @see docs/ARCHITECTURE.md
  */
 
-export type PlatformPhase = 1 | 2 | 3;
+export type PlatformPhase = 1 | 2 | 3 | 4;
 
 function parsePhase(raw: string | undefined): PlatformPhase {
   const n = Number.parseInt(raw ?? "1", 10);
-  if (n === 2 || n === 3) return n;
+  if (n === 4) return 4;
+  if (n === 3) return 3;
+  if (n === 2) return 2;
   return 1;
 }
 
@@ -88,4 +91,10 @@ export const platformFeatures = {
 
   /** Read-only partner JSON/CSV programme (`/api/mps`, etc.) + public terms page `/partner-api` */
   partnerJsonProgramme: (phase: PlatformPhase) => phase >= 2,
+
+  /**
+   * Phase 4 — go-live UX: remove waitlist surfaces, slim footer/home/Voice chrome, single primary CTAs.
+   * All Phase 3 accountability and Voice features remain enabled (phase ≥ 3 checks still apply).
+   */
+  publicLaunchPolish: (phase: PlatformPhase) => phase >= 4,
 } as const;

@@ -8,6 +8,10 @@ import "./globals.css";
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://mbkruadvocates.org";
 
+const buildPhase = Number.parseInt(process.env.NEXT_PUBLIC_PLATFORM_PHASE ?? "1", 10);
+const launchPolishMeta = buildPhase >= 4;
+const defaultOgImage = "/images/mbkru-voice-digital.jpg";
+
 /**
  * Disable `link rel=preload` for all Google fonts. Next still injects `@font-face` styles — fonts load normally without
  * preload hints, which avoids Chrome “preloaded but not used within a few seconds” warnings (common when many weights
@@ -55,8 +59,9 @@ export const metadata: Metadata = {
     default: `MBKRU Advocates | ${heroContent.tagline}`,
     template: "%s | MBKRU Advocates",
   },
-  description:
-    "My Brother's Keeper Restoration United (MBKRU) — A direct voice between the President and people of Ghana. Advocate for the disenfranchised, watchdog for accountability, catalyst for poverty eradication.",
+  description: launchPolishMeta
+    ? "MBKRU Advocates — independent civic accountability for Ghana. Report issues, track public commitments, and explore the People's Report Card and MP tracker."
+    : "My Brother's Keeper Restoration United (MBKRU) — A direct voice between the President and people of Ghana. Advocate for the disenfranchised, watchdog for accountability, catalyst for poverty eradication.",
   keywords: [
     "Ghana",
     "civic accountability",
@@ -70,7 +75,25 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_GH",
+    ...(launchPolishMeta
+      ? {
+          images: [
+            {
+              url: defaultOgImage,
+              width: 1200,
+              height: 630,
+              alt: "MBKRU Advocates — civic accountability in Ghana",
+            },
+          ],
+        }
+      : {}),
   },
+  twitter: launchPolishMeta
+    ? {
+        card: "summary_large_image",
+        images: [defaultOgImage],
+      }
+    : undefined,
   robots: {
     index: true,
     follow: true,

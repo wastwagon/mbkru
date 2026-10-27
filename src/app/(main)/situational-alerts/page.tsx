@@ -9,6 +9,7 @@ import { ProcessFlowDiagram, SITUATIONAL_ALERT_FLOW_STEPS } from "@/components/u
 import { images } from "@/lib/site-content";
 import { pageHeaderPresets } from "@/lib/page-header-presets";
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
+import { isPublicLaunchPolishEnabled } from "@/lib/platform/launch-polish";
 import { isSituationalAlertsIntakeEnabled } from "@/lib/reports/situational-alerts-gate";
 
 export const metadata: Metadata = {
@@ -48,6 +49,7 @@ const howItWorks = [
 ];
 
 export default async function SituationalAlertsPage() {
+  const launchPolish = isPublicLaunchPolishEnabled();
   const intakeOn = isSituationalAlertsIntakeEnabled() && isCitizensVoiceEnabled();
 
   return (
@@ -163,25 +165,26 @@ export default async function SituationalAlertsPage() {
         </section>
       ) : null}
 
-      {/* Early Access — premium CTA card */}
-      <section className="section-spacing section-full bg-[var(--section-light)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="overflow-hidden rounded-2xl border border-[var(--primary)]/20 bg-[var(--card)] shadow-[var(--shadow-card)]">
-            <div className="bg-gradient-to-r from-[var(--primary)]/5 via-[var(--card)] to-[var(--primary)]/5 px-6 py-8 sm:p-10">
-              <span className="inline-block rounded-full bg-[var(--primary)]/10 px-4 py-1.5 text-sm font-medium text-[var(--primary)]">
-                Early Access
-              </span>
-              <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
-                Get Early Access
-              </h2>
-              <p className="mt-2 text-[var(--foreground-secondary)]">
-                Be among the first to join the Physical Engagement Network. Register your email for early access.
-              </p>
-              <EarlyAccessForm />
+      {!launchPolish ? (
+        <section className="section-spacing section-full bg-[var(--section-light)]">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="overflow-hidden rounded-2xl border border-[var(--primary)]/20 bg-[var(--card)] shadow-[var(--shadow-card)]">
+              <div className="bg-gradient-to-r from-[var(--primary)]/5 via-[var(--card)] to-[var(--primary)]/5 px-6 py-8 sm:p-10">
+                <span className="inline-block rounded-full bg-[var(--primary)]/10 px-4 py-1.5 text-sm font-medium text-[var(--primary)]">
+                  Early Access
+                </span>
+                <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
+                  Get Early Access
+                </h2>
+                <p className="mt-2 text-[var(--foreground-secondary)]">
+                  Be among the first to join the Physical Engagement Network. Register your email for early access.
+                </p>
+                <EarlyAccessForm />
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
     </div>
   );
 }

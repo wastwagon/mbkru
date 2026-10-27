@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
+import { isPublicLaunchPolishEnabled } from "@/lib/platform/launch-polish";
 import { CitizensVoiceHubActions } from "@/components/voice/CitizensVoiceHubActions";
 import { VoiceOpenChatCTA } from "@/components/voice/VoiceOpenChatCTA";
 import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
@@ -17,11 +18,15 @@ import {
 import { isCitizensVoiceEnabled } from "@/lib/reports/citizens-voice-gate";
 import { images } from "@/lib/site-content";
 
-export const metadata: Metadata = {
-  title: "Digital Platform — MBKRU Voice",
-  description:
-    "Secure national membership portal. Registration, personal dashboard, geo-tagged complaints, public statistics.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const launchPolish = isPublicLaunchPolishEnabled();
+  return {
+    title: launchPolish ? "MBKRU Voice" : "Digital Platform — MBKRU Voice",
+    description: launchPolish
+      ? "Submit reports with evidence, track with a code, and manage submissions from your member account."
+      : "Secure national membership portal. Registration, personal dashboard, geo-tagged complaints, public statistics.",
+  };
+}
 
 const keyBenefits = [
   {
@@ -56,6 +61,7 @@ const keyBenefits = [
 ];
 
 export default async function CitizensVoicePage() {
+  const launchPolish = isPublicLaunchPolishEnabled();
   const voiceOn = isCitizensVoiceEnabled();
   const showStats = isPublicVoiceStatisticsEnabled();
   const civicEngagement = isCivicPetitionsAndPublicCausesEnabled();
@@ -65,12 +71,16 @@ export default async function CitizensVoicePage() {
   return (
     <div>
       <PageHeader
-        title="Digital Platform — MBKRU Voice"
+        title={launchPolish ? "MBKRU Voice" : "Digital Platform — MBKRU Voice"}
         description={
           voiceOn
             ? civicEngagement
-              ? "Submit reports with evidence, track with a code, and manage submissions from your account. Selected reports may be published as public causes where members support and discuss — see Public causes."
-              : "Submit reports with evidence, track with a code, and manage submissions from your account."
+              ? launchPolish
+                ? "Submit a report, track with your code, or sign in to manage submissions. Public causes may open for member discussion when staff publish them."
+                : "Submit reports with evidence, track with a code, and manage submissions from your account. Selected reports may be published as public causes where members support and discuss — see Public causes."
+              : launchPolish
+                ? "Submit a report, track with your code, or sign in to manage submissions from your account."
+                : "Submit reports with evidence, track with a code, and manage submissions from your account."
             : "Digital platform for citizen voice — membership portal, personal dashboard, and public statistics."
         }
         eyebrow={voicePreset.eyebrow}
@@ -78,40 +88,63 @@ export default async function CitizensVoicePage() {
         heroImageAlt={voicePreset.heroImageAlt}
       />
 
-      {/* Hero section — full-width with hero image */}
       <section className="section-spacing section-full bg-gradient-to-b from-[var(--section-light)] to-[var(--background)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <AccountabilityDisclaimerCallout variant="voiceSubmit" className="mb-6" />
-          <ProcessFlowDiagram
-            className="mb-8"
-            title="How a Voice report moves"
-            steps={VOICE_REPORT_LIFECYCLE_STEPS}
-          />
-          <div className="mb-4 lg:hidden">
-            <VoiceOpenChatCTA />
-          </div>
-          <p className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)] sm:hidden">
-            AI chat for questions — not for emergencies or legal advice.{" "}
-            <Link href="/privacy" className={primaryLinkClass}>
-              Privacy
-            </Link>
-            {" · "}
-            <Link href="/terms" className={primaryLinkClass}>
-              Terms
-            </Link>
-          </p>
-          <div className="mb-6 hidden rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 text-sm leading-relaxed text-[var(--foreground-secondary)] sm:block">
-            MBKRU Voice includes reporting tools and an AI-assisted customer service chat experience. Do not use chat for
-            legal strategy or emergency response. For urgent safety matters, contact local emergency services first. See{" "}
-            <Link href="/privacy" className={primaryLinkClass}>
-              Privacy Policy
-            </Link>{" "}
-            and{" "}
-            <Link href="/terms" className={primaryLinkClass}>
-              Terms of Use
-            </Link>
-            .
-          </div>
+          {!launchPolish ? (
+            <ProcessFlowDiagram
+              className="mb-8"
+              title="How a Voice report moves"
+              steps={VOICE_REPORT_LIFECYCLE_STEPS}
+            />
+          ) : null}
+          {voiceOn && launchPolish ? (
+            <div className="mb-8">
+              <CitizensVoiceHubActions showStats={showStats} civicEngagement={civicEngagement} />
+            </div>
+          ) : null}
+          {!launchPolish ? (
+            <>
+              <div className="mb-4 lg:hidden">
+                <VoiceOpenChatCTA />
+              </div>
+              <p className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm leading-relaxed text-[var(--foreground-secondary)] sm:hidden">
+                AI chat for questions — not for emergencies or legal advice.{" "}
+                <Link href="/privacy" className={primaryLinkClass}>
+                  Privacy
+                </Link>
+                {" · "}
+                <Link href="/terms" className={primaryLinkClass}>
+                  Terms
+                </Link>
+              </p>
+              <div className="mb-6 hidden rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 text-sm leading-relaxed text-[var(--foreground-secondary)] sm:block">
+                MBKRU Voice includes reporting tools and an AI-assisted customer service chat experience. Do not use chat
+                for legal strategy or emergency response. For urgent safety matters, contact local emergency services
+                first. See{" "}
+                <Link href="/privacy" className={primaryLinkClass}>
+                  Privacy Policy
+                </Link>{" "}
+                and{" "}
+                <Link href="/terms" className={primaryLinkClass}>
+                  Terms of Use
+                </Link>
+                .
+              </div>
+            </>
+          ) : (
+            <p className="mb-6 text-sm leading-relaxed text-[var(--foreground-secondary)]">
+              AI chat answers programme questions — not emergencies or legal advice.{" "}
+              <Link href="/privacy" className={primaryLinkClass}>
+                Privacy
+              </Link>
+              {" · "}
+              <Link href="/terms" className={primaryLinkClass}>
+                Terms
+              </Link>
+            </p>
+          )}
+          {launchPolish ? null : (
           <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-12">
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-[var(--shadow-card)] ring-1 ring-black/5">
               <Image
@@ -157,10 +190,18 @@ export default async function CitizensVoicePage() {
               </ul>
             </div>
           </div>
+          )}
+          {launchPolish ? (
+            <ProcessFlowDiagram
+              className="mt-4"
+              title="How a Voice report moves"
+              steps={VOICE_REPORT_LIFECYCLE_STEPS}
+            />
+          ) : null}
         </div>
       </section>
 
-      {/* Key Benefits — full-width cards */}
+      {!launchPolish ? (
       <section className="section-spacing section-full bg-[var(--background)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -186,8 +227,9 @@ export default async function CitizensVoicePage() {
           </div>
         </div>
       </section>
+      ) : null}
 
-      {voiceOn ? (
+      {voiceOn && !launchPolish ? (
         <section className="section-spacing section-full bg-[var(--section-dark)] text-white">
           <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
             <h2 className="font-display text-xl font-bold sm:text-2xl">Report intake</h2>
@@ -206,25 +248,26 @@ export default async function CitizensVoicePage() {
         </section>
       ) : null}
 
-      {/* Early Access — premium CTA card */}
-      <section className="section-spacing section-full bg-[var(--section-light)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="overflow-hidden rounded-2xl border border-[var(--primary)]/20 bg-[var(--card)] shadow-[var(--shadow-card)]">
-            <div className="bg-gradient-to-r from-[var(--primary)]/5 via-[var(--card)] to-[var(--primary)]/5 px-6 py-8 sm:p-10">
-              <span className="inline-block rounded-full bg-[var(--primary)]/10 px-4 py-1.5 text-sm font-medium text-[var(--primary)]">
-                Early Access
-              </span>
-              <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
-                Get Early Access
-              </h2>
-              <p className="mt-2 text-[var(--foreground-secondary)]">
-                Be among the first to join MBKRU Voice. Register your email for early access.
-              </p>
-              <EarlyAccessForm />
+      {!launchPolish ? (
+        <section className="section-spacing section-full bg-[var(--section-light)]">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="overflow-hidden rounded-2xl border border-[var(--primary)]/20 bg-[var(--card)] shadow-[var(--shadow-card)]">
+              <div className="bg-gradient-to-r from-[var(--primary)]/5 via-[var(--card)] to-[var(--primary)]/5 px-6 py-8 sm:p-10">
+                <span className="inline-block rounded-full bg-[var(--primary)]/10 px-4 py-1.5 text-sm font-medium text-[var(--primary)]">
+                  Early Access
+                </span>
+                <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
+                  Get Early Access
+                </h2>
+                <p className="mt-2 text-[var(--foreground-secondary)]">
+                  Be among the first to join MBKRU Voice. Register your email for early access.
+                </p>
+                <EarlyAccessForm />
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
     </div>
   );
 }

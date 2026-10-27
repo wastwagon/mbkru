@@ -6,7 +6,9 @@
 function parsePlatformPhase(): number {
   const raw = process.env.PLATFORM_PHASE ?? process.env.NEXT_PUBLIC_PLATFORM_PHASE ?? "1";
   const n = Number.parseInt(raw, 10);
-  if (n === 2 || n === 3) return n;
+  if (n === 4) return 4;
+  if (n === 3) return 3;
+  if (n === 2) return 2;
   return 1;
 }
 

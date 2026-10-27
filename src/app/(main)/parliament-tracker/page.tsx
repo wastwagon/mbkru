@@ -24,6 +24,7 @@ import {
 } from "@/lib/reports/accountability-pages";
 import { primaryLinkClass, primaryNavLinkClass } from "@/lib/primary-link-styles";
 import { getCachedMpsPublicRoster } from "@/lib/server/accountability-cache";
+import { isPublicLaunchPolishEnabled } from "@/lib/platform/launch-polish";
 import { loadRecentMpPerformanceIntakes } from "@/lib/server/promises-member-sheet-load";
 
 export const metadata: Metadata = {
@@ -53,6 +54,7 @@ const accountabilityStepIcons = {
 } as const;
 
 export default async function ParliamentTrackerPage() {
+  const launchPolish = isPublicLaunchPolishEnabled();
   const showPromises = isPromisesBrowseEnabled();
   const showReportCard = isReportCardPublicEnabled();
   const partnerDataPage = isPartnerApiTermsPageEnabled();
@@ -300,54 +302,55 @@ export default async function ParliamentTrackerPage() {
         </div>
       </section>
 
-      {/* Tracker signup — premium CTA card */}
-      <section className="section-spacing section-full bg-[var(--section-light)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="overflow-hidden rounded-2xl border border-[var(--primary)]/20 bg-[var(--card)] shadow-[var(--shadow-card)]">
-            <div className="bg-gradient-to-r from-[var(--primary)]/5 via-[var(--card)] to-[var(--primary)]/5 px-6 py-8 sm:p-10">
-              <span className="inline-block rounded-full bg-[var(--primary)]/10 px-4 py-1.5 text-sm font-medium text-[var(--primary)]">
-                Stay Informed
-              </span>
-              <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
-                Get Tracker Notifications
-              </h2>
-              <p className="mt-2 text-[var(--foreground-secondary)]">{accountabilityProse.trackerSignupUpdates}</p>
-              <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-2 text-sm sm:gap-x-4">
-                <Link href="/methodology" className={primaryNavLinkClass}>
-                  Methodology
-                </Link>
-                {showPromises ? (
-                  <>
-                    <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
-                      ·
-                    </span>
-                    <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className={primaryNavLinkClass}>
-                      {accountabilityCatalogueNavMedium.byMp}
-                    </Link>
-                    <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
-                      ·
-                    </span>
-                    <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={primaryNavLinkClass}>
-                      {accountabilityCatalogueNavMedium.browseAll}
-                    </Link>
-                  </>
-                ) : null}
-                {showReportCard ? (
-                  <>
-                    <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
-                      ·
-                    </span>
-                    <Link href="/report-card" className={primaryNavLinkClass}>
-                      People&apos;s Report Card
-                    </Link>
-                  </>
-                ) : null}
-              </p>
-              <TrackerSignupForm />
+      {!launchPolish ? (
+        <section className="section-spacing section-full bg-[var(--section-light)]">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="overflow-hidden rounded-2xl border border-[var(--primary)]/20 bg-[var(--card)] shadow-[var(--shadow-card)]">
+              <div className="bg-gradient-to-r from-[var(--primary)]/5 via-[var(--card)] to-[var(--primary)]/5 px-6 py-8 sm:p-10">
+                <span className="inline-block rounded-full bg-[var(--primary)]/10 px-4 py-1.5 text-sm font-medium text-[var(--primary)]">
+                  Stay Informed
+                </span>
+                <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
+                  Get Tracker Notifications
+                </h2>
+                <p className="mt-2 text-[var(--foreground-secondary)]">{accountabilityProse.trackerSignupUpdates}</p>
+                <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-2 text-sm sm:gap-x-4">
+                  <Link href="/methodology" className={primaryNavLinkClass}>
+                    Methodology
+                  </Link>
+                  {showPromises ? (
+                    <>
+                      <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
+                        ·
+                      </span>
+                      <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.promisesByMp} className={primaryNavLinkClass}>
+                        {accountabilityCatalogueNavMedium.byMp}
+                      </Link>
+                      <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
+                        ·
+                      </span>
+                      <Link href={ACCOUNTABILITY_CATALOGUE_ROUTES.browseAllPromises} className={primaryNavLinkClass}>
+                        {accountabilityCatalogueNavMedium.browseAll}
+                      </Link>
+                    </>
+                  ) : null}
+                  {showReportCard ? (
+                    <>
+                      <span className="text-[var(--foreground-secondary)]/50" aria-hidden>
+                        ·
+                      </span>
+                      <Link href="/report-card" className={primaryNavLinkClass}>
+                        People&apos;s Report Card
+                      </Link>
+                    </>
+                  ) : null}
+                </p>
+                <TrackerSignupForm />
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
     </div>
   );
 }

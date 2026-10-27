@@ -2,7 +2,7 @@
 
 Short checklist for production Docker / Coolify hosts. Complements `README.md` and `docker-entrypoint.sh`.
 
-**Related:** [`PHASE_TASKS.md`](./PHASE_TASKS.md) (phase backlog) · [`SAFE_IMPLEMENTATION_PHASES.md`](./SAFE_IMPLEMENTATION_PHASES.md) (phased rollout + `npm run verify:release-gates`) · [`MEMBER_FINDINGS_REMEDIATION_PHASES.md`](./MEMBER_FINDINGS_REMEDIATION_PHASES.md) (pre-launch gate + launch checklist) · [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md) (MP roster import) · [`PARTNER_API.md`](./PARTNER_API.md) (embed JSON draft) · [`OBSERVABILITY.md`](./OBSERVABILITY.md) · [`SECURITY_CHECKLIST.md`](./SECURITY_CHECKLIST.md)
+**Related:** [`PHASE_TASKS.md`](./PHASE_TASKS.md) (phase backlog) · [`PHASE_4_LAUNCH_POLISH.md`](./PHASE_4_LAUNCH_POLISH.md) (go-live UX) · [`SAFE_IMPLEMENTATION_PHASES.md`](./SAFE_IMPLEMENTATION_PHASES.md) (phased rollout + `npm run verify:release-gates`) · [`MEMBER_FINDINGS_REMEDIATION_PHASES.md`](./MEMBER_FINDINGS_REMEDIATION_PHASES.md) (pre-launch gate + launch checklist) · [`CSV_IMPORT_RUNBOOK.md`](./CSV_IMPORT_RUNBOOK.md) (MP roster import) · [`PARTNER_API.md`](./PARTNER_API.md) (embed JSON draft) · [`OBSERVABILITY.md`](./OBSERVABILITY.md) · [`SECURITY_CHECKLIST.md`](./SECURITY_CHECKLIST.md)
 
 ---
 
@@ -23,6 +23,12 @@ Use while editorial, legal, and data work continues **without deleting programme
 **Public exceptions while gated:** `/under-construction`, `/contact`, `/api/health`, `/admin/*`. Members and guests do **not** bypass the gate.
 
 **Fail-safe:** the proxy probes `/api/site-gate` over loopback (`127.0.0.1:$PORT`) in production. If the probe fails it reuses the last known value, else **fails closed** (shows the holding page) — a broken probe can no longer silently expose a gated site. Belt-and-braces: keep `PUBLIC_UNDER_CONSTRUCTION=1` set on production until launch day.
+
+---
+
+## Phase 4 public launch polish (mbkru.org)
+
+After the construction gate is off, set **`NEXT_PUBLIC_PLATFORM_PHASE=4`** in Coolify **build args** and **rebuild** (runtime restart alone is not enough). This removes waitlist CTAs, slims the footer and homepage, and adds default social preview images. See [`PHASE_4_LAUNCH_POLISH.md`](./PHASE_4_LAUNCH_POLISH.md). Confirm `/api/health` reports `"phase":4` and `/citizens-voice` has no Early Access form.
 
 ---
 

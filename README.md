@@ -259,7 +259,7 @@ Local Docker Desktop and production are separate. **Code reaches the live site o
 Coolify env (already on the VPS — change there, not in local `.env`):
 
 - `NEXT_PUBLIC_SITE_URL` = `https://mbkru.org` (**rebuild** after changing any `NEXT_PUBLIC_*`)
-- `NEXT_PUBLIC_PLATFORM_PHASE` = `3`
+- `NEXT_PUBLIC_PLATFORM_PHASE` = `4` (go-live polish; use `3` only if you need pre-launch waitlist UI)
 - `DATABASE_URL`, `ADMIN_SESSION_SECRET`, `MEMBER_SESSION_SECRET`, plus optional Resend / Turnstile / Hubtel keys
 - Persistent volumes for `/app/public/uploads` and `/app/var/private-uploads`
 

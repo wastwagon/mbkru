@@ -38,5 +38,13 @@ describe("platformFeatures", () => {
     expect(platformFeatures.accountabilityScorecards(3)).toBe(true);
     expect(platformFeatures.electionObservatory(3)).toBe(true);
     expect(platformFeatures.partnerJsonProgramme(3)).toBe(true);
+    expect(platformFeatures.publicLaunchPolish(3)).toBe(false);
+  });
+
+  it("phase 4: phase 3 features plus public launch polish UX", () => {
+    expect(platformFeatures.accountabilityScorecards(4)).toBe(true);
+    expect(platformFeatures.electionObservatory(4)).toBe(true);
+    expect(platformFeatures.publicLaunchPolish(4)).toBe(true);
+    expect(platformFeatures.citizensVoicePlatform(4)).toBe(true);
   });
 });

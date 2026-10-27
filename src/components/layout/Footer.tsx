@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Logo } from "@/components/ui/Logo";
 import { FooterDeveloperCredit } from "@/components/layout/FooterDeveloperCredit";
 import { FooterMemberAuth } from "@/components/layout/FooterMemberAuth";
-import { getServerPlatformPhase } from "@/config/platform";
+import { getServerPlatformPhase, platformFeatures } from "@/config/platform";
 import {
   getFooterLegalLinks,
   getFooterOrganizationLinks,
@@ -25,6 +25,7 @@ const footerNavLinkClass = `inline-flex min-h-11 max-w-full items-center rounded
 export async function Footer() {
   const currentYear = new Date().getFullYear();
   const phase = getServerPlatformPhase();
+  const launchPolish = platformFeatures.publicLaunchPolish(phase);
   const platformLinks = getFooterPlatformFlowLinks(phase);
   const organizationLinks = getFooterOrganizationLinks(phase);
   const legalLinks = getFooterLegalLinks();
@@ -43,36 +44,54 @@ export async function Footer() {
       className="relative bg-[var(--footer-bg)] text-white pb-[calc(var(--mobile-bottom-nav-height)+max(0.5rem,env(safe-area-inset-bottom)))] lg:pb-0"
     >
       <div className="mx-auto max-w-7xl px-6 sm:px-8">
-        {/* Upper CTA section */}
-        <div className="flex flex-col items-stretch gap-8 border-b border-white/20 py-11 sm:flex-row sm:items-center sm:justify-between sm:gap-10 sm:py-12">
-          <div className="max-w-2xl">
-            <h2 className="font-display text-base font-bold leading-snug text-white sm:text-lg lg:text-xl">
-              Stay close to accountability news and citizen-voice tools
-            </h2>
-            <p className="mt-4 text-sm leading-relaxed text-white/85 sm:mt-5 sm:text-base">
-              MBKRU is deploying non-partisan tools for Ghanaians to follow public commitments, share concerns safely, and
-              access clear information — Voice reporting, accountability datasets, and methodology scale with your
-              deployment phase.
+        {launchPolish ? (
+          <div className="flex flex-col gap-4 border-b border-white/20 py-8 sm:flex-row sm:items-center sm:justify-between sm:py-9">
+            <p className="max-w-xl text-sm leading-relaxed text-white/90">
+              Report an issue, track a submission, or explore public accountability data.
             </p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Button href="/citizens-voice/submit" className="w-full justify-center sm:w-auto">
+                Submit a report
+              </Button>
+              <Link
+                href="/contact"
+                className={`inline-flex w-full touch-manipulation items-center justify-center rounded-xl border border-white/40 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10 sm:w-auto ${focusRingOnDarkSolidClass}`}
+              >
+                Contact
+              </Link>
+            </div>
           </div>
-          <div className="flex w-full shrink-0 flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-            <Button href="/citizens-voice" className="w-full justify-center sm:w-auto">
-              Join Voice
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Button>
-            <Link
-              href="/contact"
-              className={`inline-flex w-full touch-manipulation items-center justify-center gap-2 rounded-xl border-2 border-white/50 bg-white px-6 py-3.5 text-sm font-semibold text-[var(--footer-bg)] transition-all duration-[400ms] hover:border-white hover:bg-white/90 sm:w-auto sm:py-3 active:scale-[0.99] motion-reduce:active:scale-100 ${focusRingOnDarkSolidClass}`}
-            >
-              Get in Touch
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
+        ) : (
+          <div className="flex flex-col items-stretch gap-8 border-b border-white/20 py-11 sm:flex-row sm:items-center sm:justify-between sm:gap-10 sm:py-12">
+            <div className="max-w-2xl">
+              <h2 className="font-display text-base font-bold leading-snug text-white sm:text-lg lg:text-xl">
+                Stay close to accountability news and citizen-voice tools
+              </h2>
+              <p className="mt-4 text-sm leading-relaxed text-white/85 sm:mt-5 sm:text-base">
+                MBKRU is deploying non-partisan tools for Ghanaians to follow public commitments, share concerns safely,
+                and access clear information — Voice reporting, accountability datasets, and methodology scale with your
+                deployment phase.
+              </p>
+            </div>
+            <div className="flex w-full shrink-0 flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+              <Button href="/citizens-voice" className="w-full justify-center sm:w-auto">
+                Join Voice
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Button>
+              <Link
+                href="/contact"
+                className={`inline-flex w-full touch-manipulation items-center justify-center gap-2 rounded-xl border-2 border-white/50 bg-white px-6 py-3.5 text-sm font-semibold text-[var(--footer-bg)] transition-all duration-[400ms] hover:border-white hover:bg-white/90 sm:w-auto sm:py-3 active:scale-[0.99] motion-reduce:active:scale-100 ${focusRingOnDarkSolidClass}`}
+              >
+                Get in Touch
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Main columns — platform spans two columns (split list); brand block removed (logo + socials live in bottom bar). */}
         <div className="grid gap-10 py-10 sm:grid-cols-2 sm:gap-8 lg:grid-cols-5 lg:gap-6 sm:py-12">
