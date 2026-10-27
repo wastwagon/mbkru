@@ -49,6 +49,7 @@
     "data:refresh-members-seed-wikipedia": "node scripts/wikipedia-mps-2024-to-parliament-members-seed.mjs",
     "data:ghana-map-paths": "node scripts/generate-ghana-regions-map-paths.mjs",
     "icons:pwa": "node scripts/generate-pwa-icons.mjs",
+    "verify:docker": "docker build -t mbkru-verify:local .",
     "data:list-mp-constituency-slugs": "tsx scripts/list-mp-constituency-slugs.ts",
     "postinstall": "prisma generate"
   },

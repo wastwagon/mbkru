@@ -133,6 +133,20 @@ On every **`prisma db seed`** (unless **`SEED_COMMUNITY_STEWARDS=0`**), the seed
 
 **Coolify / first deploy:** set **`RUN_DB_SEED_ON_BOOT=1`** once so migrate + seed run together, or after migrate run **`npm run db:seed:community-stewards`** inside the container. Communities that already have leadership (e.g. pilot `pilot.member@mbkru.local` on Ajumako) are **skipped**. Rotate the shared steward password before real pilots.
 
+## Coolify: Docker build OK but deploy fails (exit 255 on “unpacking”)
+
+If the log shows **`npm run build` DONE**, runner stages **DONE**, **`exporting layers` DONE**, then fails on **`unpacking to docker.io/library/...`** with exit code **255**, the image built successfully — the **host** failed while loading it into local Docker (not an app compile error).
+
+| Check | Action |
+|-------|--------|
+| Disk | On the Coolify server: `df -h /var/lib/docker` — aim for several GB free |
+| Docker cache | `docker system df` then `docker system prune -af` and `docker builder prune -af` (removes unused images; review first) |
+| Rebuild mode | Avoid **build with no cache** on every deploy unless needed — it produces larger layers and fills disk faster |
+| RAM | Small VPS + `--no-cache` can OOM during unpack; add swap or upgrade RAM |
+| Verify image locally | `npm run verify:docker` (or `DATABASE_URL="" docker build -t mbkru:local .`) on a dev machine |
+
+After freeing disk, **Redeploy** once. If it still fails, SSH to the server and run `docker compose build` in Coolify’s build directory to see the full stderr line after `unpacking`.
+
 ## Secrets and build-time variables
 
 - Rotate **`ADMIN_SESSION_SECRET`**, **`MEMBER_SESSION_SECRET`** (Phase 2+), **`ADMIN_PASSWORD`**, Resend, Turnstile, and database credentials on any suspected leak.
