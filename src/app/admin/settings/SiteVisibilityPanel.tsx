@@ -13,6 +13,8 @@ type ApiResponse = {
   ok?: boolean;
   error?: string;
   config?: PublicSiteConfig;
+  envConstructionOverride?: boolean;
+  effectivePublicUnderConstruction?: boolean;
 };
 
 export function SiteVisibilityPanel() {
@@ -21,6 +23,8 @@ export function SiteVisibilityPanel() {
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [config, setConfig] = useState<PublicSiteConfig | null>(null);
+  const [envConstructionOverride, setEnvConstructionOverride] = useState(false);
+  const [effectivePublicUnderConstruction, setEffectivePublicUnderConstruction] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -30,6 +34,8 @@ export function SiteVisibilityPanel() {
       const data = (await res.json()) as ApiResponse;
       if (!res.ok) throw new Error(data.error ?? res.statusText);
       setConfig(data.config ?? null);
+      setEnvConstructionOverride(Boolean(data.envConstructionOverride));
+      setEffectivePublicUnderConstruction(Boolean(data.effectivePublicUnderConstruction));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not load site visibility settings.");
     } finally {
@@ -59,7 +65,9 @@ export function SiteVisibilityPanel() {
       });
       const data = (await res.json()) as ApiResponse;
       if (!res.ok) throw new Error(data.error ?? res.statusText);
-      setConfig(data.config ?? config);
+      if (data.config) setConfig(data.config);
+      setEnvConstructionOverride(Boolean(data.envConstructionOverride));
+      setEffectivePublicUnderConstruction(Boolean(data.effectivePublicUnderConstruction));
       setSaved(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Save failed.");
@@ -98,6 +106,40 @@ export function SiteVisibilityPanel() {
         </a>{" "}
         above.
       </p>
+
+      {envConstructionOverride ? (
+        <div
+          className="mt-4 rounded-xl border border-amber-200 bg-amber-50/90 p-4 text-sm leading-relaxed text-amber-950"
+          role="status"
+        >
+          <p className="font-semibold">Deploy environment is forcing the gate on</p>
+          <p className="mt-1">
+            <code className="rounded bg-amber-100/80 px-1">PUBLIC_UNDER_CONSTRUCTION</code> is set on the server, so
+            visitors stay on the holding page even if you uncheck the box below and save. Uncheck here to prepare the
+            database, then remove that variable from production hosting (or run{" "}
+            <code className="rounded bg-amber-100/80 px-1">npm run ops:construction:off</code> on the server) and
+            redeploy or restart the app.
+          </p>
+        </div>
+      ) : null}
+
+      {!envConstructionOverride && effectivePublicUnderConstruction ? (
+        <p className="mt-4 text-sm font-medium text-amber-900" role="status">
+          Visitors currently see the under-construction page (saved setting is on).
+        </p>
+      ) : null}
+
+      {!envConstructionOverride && !effectivePublicUnderConstruction ? (
+        <p className="mt-4 text-sm font-medium text-emerald-800" role="status">
+          Visitors can browse the public site (gate is off).
+        </p>
+      ) : null}
+
+      {envConstructionOverride ? (
+        <p className="mt-4 text-sm font-medium text-amber-900" role="status">
+          Live status for visitors: under construction (environment override).
+        </p>
+      ) : null}
 
       <label className="mt-6 flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--section-light)]/40 p-4">
         <input

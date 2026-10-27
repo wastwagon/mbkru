@@ -3,7 +3,12 @@ import { z } from "zod";
 
 import { getAdminSession } from "@/lib/admin/session";
 import { logAdminOperationalAudit } from "@/lib/server/admin-operational-audit";
-import { getPublicSiteConfig, updatePublicSiteConfig } from "@/lib/server/site-config";
+import { isPublicUnderConstructionEnvOverride } from "@/lib/construction-gate-env";
+import {
+  getEffectivePublicUnderConstruction,
+  getStoredPublicSiteConfig,
+  updatePublicSiteConfig,
+} from "@/lib/server/site-config";
 
 const patchSchema = z.object({
   publicUnderConstruction: z.boolean(),
@@ -17,8 +22,13 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const config = await getPublicSiteConfig();
-  return NextResponse.json({ config });
+  const config = await getStoredPublicSiteConfig();
+  const envConstructionOverride = isPublicUnderConstructionEnvOverride();
+  return NextResponse.json({
+    config,
+    envConstructionOverride,
+    effectivePublicUnderConstruction: getEffectivePublicUnderConstruction(config),
+  });
 }
 
 export async function PATCH(request: Request) {
@@ -53,7 +63,13 @@ export async function PATCH(request: Request) {
       },
     });
 
-    return NextResponse.json({ ok: true, config });
+    const envConstructionOverride = isPublicUnderConstructionEnvOverride();
+    return NextResponse.json({
+      ok: true,
+      config,
+      envConstructionOverride,
+      effectivePublicUnderConstruction: getEffectivePublicUnderConstruction(config),
+    });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Update failed";
     return NextResponse.json({ error: message }, { status: 503 });

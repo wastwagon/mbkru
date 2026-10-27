@@ -33,15 +33,25 @@ async function loadSiteConfigFromDb(): Promise<PublicSiteConfig> {
   }
 }
 
-export async function getPublicSiteConfig(): Promise<PublicSiteConfig> {
-  if (envConstructionOverride()) {
-    return { ...DEFAULT_PUBLIC_SITE_CONFIG, publicUnderConstruction: true };
-  }
+/** DB-backed settings (admin edits this; not affected by deploy env override). */
+export async function getStoredPublicSiteConfig(): Promise<PublicSiteConfig> {
   if (!isDatabaseConfigured()) return DEFAULT_PUBLIC_SITE_CONFIG;
   return unstable_cache(loadSiteConfigFromDb, ["site-config-row"], {
     tags: [SITE_CONFIG_CACHE_TAG],
     revalidate: 5,
   })();
+}
+
+/** Effective public settings (env override forces gate on regardless of DB). */
+export async function getPublicSiteConfig(): Promise<PublicSiteConfig> {
+  if (envConstructionOverride()) {
+    return { ...DEFAULT_PUBLIC_SITE_CONFIG, publicUnderConstruction: true };
+  }
+  return getStoredPublicSiteConfig();
+}
+
+export function getEffectivePublicUnderConstruction(stored: PublicSiteConfig): boolean {
+  return stored.publicUnderConstruction || envConstructionOverride();
 }
 
 export async function isPublicSiteUnderConstruction(): Promise<boolean> {

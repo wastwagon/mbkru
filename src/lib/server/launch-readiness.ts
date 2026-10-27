@@ -11,7 +11,7 @@ import {
   incompleteCatalogueCommitmentsInDbWhere,
 } from "@/lib/promises/incomplete-citations";
 import { getHubtelGhanaCardConfig } from "@/lib/server/hubtel-ghana-card-config";
-import { getPublicSiteConfig } from "@/lib/server/site-config";
+import { getStoredPublicSiteConfig } from "@/lib/server/site-config";
 
 export type LaunchCheckStatus = "ok" | "warn" | "blocker" | "manual";
 
@@ -203,7 +203,7 @@ export async function getLaunchReadiness(): Promise<LaunchReadiness> {
     };
   }
 
-  const config = await getPublicSiteConfig();
+  const config = await getStoredPublicSiteConfig();
   const envOverride = isPublicUnderConstructionEnvOverride();
 
   const [trainingReports, incompleteCatalogueCommitments, publishedCycleRows] = await Promise.all([
