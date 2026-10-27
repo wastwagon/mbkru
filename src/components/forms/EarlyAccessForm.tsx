@@ -1,5 +1,7 @@
 "use client";
 
+/** Loaded only via `PreLaunchLeadCaptureFormSlot` (phases 1–3). Not used on phase 4 public builds. */
+
 import type { TurnstileInstance } from "@marsidev/react-turnstile";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";

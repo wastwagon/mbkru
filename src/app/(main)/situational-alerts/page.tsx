@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { EarlyAccessForm } from "@/components/forms/EarlyAccessForm";
+import { PreLaunchLeadCaptureSection } from "@/components/forms/PreLaunchLeadCaptureSection";
 import { AccountabilityDisclaimerCallout } from "@/components/legal/AccountabilityDisclaimerCallout";
 import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -165,26 +165,12 @@ export default async function SituationalAlertsPage() {
         </section>
       ) : null}
 
-      {!launchPolish ? (
-        <section className="section-spacing section-full bg-[var(--section-light)]">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="overflow-hidden rounded-2xl border border-[var(--primary)]/20 bg-[var(--card)] shadow-[var(--shadow-card)]">
-              <div className="bg-gradient-to-r from-[var(--primary)]/5 via-[var(--card)] to-[var(--primary)]/5 px-6 py-8 sm:p-10">
-                <span className="inline-block rounded-full bg-[var(--primary)]/10 px-4 py-1.5 text-sm font-medium text-[var(--primary)]">
-                  Early Access
-                </span>
-                <h2 className="mt-3 font-display text-2xl font-bold text-[var(--foreground)] sm:text-3xl">
-                  Get Early Access
-                </h2>
-                <p className="mt-2 text-[var(--foreground-secondary)]">
-                  Be among the first to join the Physical Engagement Network. Register your email for early access.
-                </p>
-                <EarlyAccessForm />
-              </div>
-            </div>
-          </div>
-        </section>
-      ) : null}
+      <PreLaunchLeadCaptureSection
+        variant="early-access"
+        eyebrow="Early Access"
+        title="Get Early Access"
+        description="Be among the first to join the Physical Engagement Network. Register your email for early access."
+      />
     </div>
   );
 }

@@ -18,6 +18,9 @@ export const siteTrustNotice = {
 /** Footer backstop when the dismissible banner has been closed. */
 export const footerTrustLine = {
   body: "MBKRU is an independent, non-partisan civic accountability programme — not a government agency, court, or regulator.",
+  /** Phase 4+ public footer — one line; methodology/terms stay as links below. */
+  compactBody:
+    "Independent civic accountability programme — not government, a court, or regulator. Emergencies: contact local services.",
   emergencyNote: "For emergencies, contact local emergency services.",
   methodologyLabel: "Methodology",
   termsLabel: "Terms",
@@ -46,6 +49,11 @@ export const accountabilityDisclaimers = {
     body:
       "Your report may be reviewed by staff and, where policy allows, summarized in public listings or threads. Take a moment to check accuracy and tone before sending.",
     sharingNote: voiceSharingMindfulNote,
+  },
+  trackReport: {
+    title: "About tracking",
+    body:
+      "Your tracking code is your citizen receipt — save it when you submit. Status and team notes here are for reference only; they do not create a formal complaint to regulators, the Electoral Commission, or the courts. Voice chat is AI-assisted for navigation help only.",
   },
   reportCardScores: {
     title: "About People's Report Card scores",

@@ -22,3 +22,4 @@ Pre-launch behaviour (waitlist, verbose footer) remains on phases **1–3**.
 - **Focused member routes** (`/login`, `/register`, `/account/*`): hide gold TopBar + mobile bottom nav; compact footer (no link grid)
 - **Home participate hub** capped at six action cards
 - **Removed** unused `RoadmapModal` component
+- **Civic UX** — `ParticipationFeedbackLoop` on Voice + track; compact disclaimers (no duplicate legal links); slimmer footer + `footerTrustLine.compactBody`; waitlist forms in async chunks via `PreLaunchLeadCaptureSection` — see `docs/CIVIC_UX_BEST_PRACTICES.md`

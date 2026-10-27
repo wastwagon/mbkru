@@ -38,6 +38,7 @@ export async function Footer() {
   const platformSplitAt = Math.ceil(platformLinks.length / 2);
   const platformLinksCol1 = platformLinks.slice(0, platformSplitAt);
   const platformLinksCol2 = platformLinks.slice(platformSplitAt);
+  const slimPlatformFooter = launchPolish && !focusedFooter;
 
   const socialLinks = (
     <PublicSocialLinks links={resolvedSocialLinks} variant="footer" className="flex flex-wrap gap-2 sm:gap-3" />
@@ -113,14 +114,16 @@ export async function Footer() {
         )}
 
         {!focusedFooter ? (
-        <div className="grid gap-10 py-10 sm:grid-cols-2 sm:gap-8 lg:grid-cols-5 lg:gap-6 sm:py-12">
-          <div className="sm:col-span-2 lg:col-span-2">
+        <div
+          className={`grid gap-10 py-10 sm:grid-cols-2 sm:gap-8 sm:py-12 ${slimPlatformFooter ? "lg:grid-cols-4 lg:gap-6" : "lg:grid-cols-5 lg:gap-6"}`}
+        >
+          <div className={slimPlatformFooter ? "sm:col-span-2" : "sm:col-span-2 lg:col-span-2"}>
             <h3 className="text-base font-semibold text-white">Our Platform</h3>
-            <div className="mt-5 grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-x-10">
-              <ul className="space-y-3">
+            {slimPlatformFooter ? (
+              <ul className="mt-5 space-y-3">
                 <FooterMemberAuth />
                 <FooterMobileInstallLink />
-                {platformLinksCol1.map((link) => (
+                {platformLinks.map((link) => (
                   <li key={link.href}>
                     <Link href={link.href} className={footerNavLinkClass}>
                       {link.label}
@@ -128,10 +131,12 @@ export async function Footer() {
                   </li>
                 ))}
               </ul>
-              <div>
-                <h4 className="sr-only">More platform links</h4>
+            ) : (
+              <div className="mt-5 grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-x-10">
                 <ul className="space-y-3">
-                  {platformLinksCol2.map((link) => (
+                  <FooterMemberAuth />
+                  <FooterMobileInstallLink />
+                  {platformLinksCol1.map((link) => (
                     <li key={link.href}>
                       <Link href={link.href} className={footerNavLinkClass}>
                         {link.label}
@@ -139,8 +144,20 @@ export async function Footer() {
                     </li>
                   ))}
                 </ul>
+                <div>
+                  <h4 className="sr-only">More platform links</h4>
+                  <ul className="space-y-3">
+                    {platformLinksCol2.map((link) => (
+                      <li key={link.href}>
+                        <Link href={link.href} className={footerNavLinkClass}>
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Organization — index2 "Useful links" */}
@@ -180,7 +197,7 @@ export async function Footer() {
             </div>
           </div>
 
-          {/* Engagement gallery — 3x3 grid */}
+          {slimPlatformFooter ? null : (
           <div>
             <h3 className="text-base font-semibold text-white">Engagement</h3>
             <div className="mt-5 grid grid-cols-3 gap-1.5">
@@ -201,13 +218,16 @@ export async function Footer() {
               ))}
             </div>
           </div>
+          )}
         </div>
         ) : null}
 
         {/* Bottom bar — logo, socials, legal, copyright */}
         <div className="border-t border-white/20 py-6">
           <p className="mb-5 max-w-4xl text-xs leading-relaxed text-white/65">
-            {footerTrustLine.body} {footerTrustLine.emergencyNote}{" "}
+            {launchPolish && !focusedFooter
+              ? footerTrustLine.compactBody
+              : `${footerTrustLine.body} ${footerTrustLine.emergencyNote}`}{" "}
             <Link href="/methodology" className={`font-medium text-white/80 underline-offset-2 hover:text-white hover:underline ${focusRingOnDark50Class}`}>
               {footerTrustLine.methodologyLabel}
             </Link>
