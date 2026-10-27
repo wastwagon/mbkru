@@ -10,7 +10,7 @@ export function OrganizationJsonLd() {
         name: "MBKRU Advocates",
         alternateName: "My Brother's Keeper Restoration United",
         url: siteUrl,
-        logo: `${siteUrl}/icons/icon-512.png`,
+        logo: `${siteUrl}/logo-mbkru.svg`,
       },
       {
         "@type": "WebSite",

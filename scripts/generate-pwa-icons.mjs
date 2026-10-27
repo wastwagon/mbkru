@@ -1,95 +1,56 @@
 /**
- * Generates minimal PNG icons for PWA manifest (teal brand square + gold accent).
- * Run: node scripts/generate-pwa-icons.mjs
+ * Regenerate favicon + PWA PNGs from public/icons/mbkru-brand-icon-source.png
+ * (same artwork for browser tab, Apple touch, and install launcher).
+ *
+ * Requires macOS `sips`. Run: node scripts/generate-pwa-icons.mjs
  */
-import { writeFileSync, mkdirSync } from "node:fs";
+import { execSync } from "node:child_process";
+import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import zlib from "node:zlib";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outDir = join(__dirname, "..", "public", "icons");
-mkdirSync(outDir, { recursive: true });
+const source = join(outDir, "mbkru-brand-icon-source.png");
+const padColor = "E8ECEF";
 
-function crc32(buf) {
-  let c = ~0;
-  for (let i = 0; i < buf.length; i++) {
-    c ^= buf[i];
-    for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
-  }
-  return ~c >>> 0;
+if (!existsSync(source)) {
+  console.error("Missing source image:", source);
+  process.exit(1);
 }
 
-function chunk(type, data) {
-  const len = Buffer.alloc(4);
-  len.writeUInt32BE(data.length);
-  const typeBuf = Buffer.from(type);
-  const crc = Buffer.alloc(4);
-  crc.writeUInt32BE(crc32(Buffer.concat([typeBuf, data])));
-  return Buffer.concat([len, typeBuf, data, crc]);
+function sips(...args) {
+  execSync(`sips ${args.join(" ")}`, { stdio: "inherit" });
 }
 
-function png(size, draw) {
-  const raw = Buffer.alloc((size * 4 + 1) * size);
-  for (let y = 0; y < size; y++) {
-    raw[y * (size * 4 + 1)] = 0;
-    for (let x = 0; x < size; x++) {
-      const [r, g, b, a] = draw(x, y, size);
-      const o = y * (size * 4 + 1) + 1 + x * 4;
-      raw[o] = r;
-      raw[o + 1] = g;
-      raw[o + 2] = b;
-      raw[o + 3] = a;
-    }
-  }
-  const compressed = zlib.deflateSync(raw);
-  const sig = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
-  const ihdr = Buffer.alloc(13);
-  ihdr.writeUInt32BE(size, 0);
-  ihdr.writeUInt32BE(size, 4);
-  ihdr[8] = 8;
-  ihdr[9] = 6;
-  return Buffer.concat([
-    sig,
-    chunk("IHDR", ihdr),
-    chunk("IDAT", compressed),
-    chunk("IEND", Buffer.alloc(0)),
-  ]);
-}
+const square = join(outDir, "_square-pad.png");
+const maskPad = join(outDir, "_mask-pad.png");
 
-function brandPixel(x, y, size, maskable = false) {
-  const pad = maskable ? Math.floor(size * 0.1) : 0;
-  const inner = size - pad * 2;
-  const rx = x - pad;
-  const ry = y - pad;
-  if (rx < 0 || ry < 0 || rx >= inner || ry >= inner) return [0, 0, 0, 0];
-  const radius = inner * 0.18;
-  const inRound =
-    rx >= radius &&
-    ry >= radius &&
-    rx <= inner - radius &&
-    ry <= inner - radius
-      ? true
-      : (rx < radius && ry < radius && (rx - radius) ** 2 + (ry - radius) ** 2 <= radius ** 2) ||
-        (rx > inner - radius && ry < radius && (rx - (inner - radius)) ** 2 + (ry - radius) ** 2 <= radius ** 2) ||
-        (rx < radius && ry > inner - radius && (rx - radius) ** 2 + (ry - (inner - radius)) ** 2 <= radius ** 2) ||
-        (rx > inner - radius &&
-          ry > inner - radius &&
-          (rx - (inner - radius)) ** 2 + (ry - (inner - radius)) ** 2 <= radius ** 2);
+const width = Number(
+  execSync(`sips -g pixelWidth "${source}" | awk '/pixelWidth/{print $2}'`).toString().trim(),
+);
+const height = Number(
+  execSync(`sips -g pixelHeight "${source}" | awk '/pixelHeight/{print $2}'`).toString().trim(),
+);
+const max = Math.max(width, height);
 
-  if (!inRound) return [0, 0, 0, 0];
+sips(`-p ${max} ${max}`, `"${source}"`, `--padColor ${padColor}`, `--out "${square}"`);
 
-  const goldBand = ry > inner * 0.38 && ry < inner * 0.48;
-  if (goldBand) return [233, 185, 73, 255];
-  return [13, 148, 136, 255];
-}
-
-for (const [name, size, maskable] of [
-  ["icon-192.png", 192, false],
-  ["icon-512.png", 512, false],
-  ["icon-maskable-512.png", 512, true],
+for (const [size, name] of [
+  [512, "icon-512.png"],
+  [192, "icon-192.png"],
+  [180, "apple-touch-icon.png"],
+  [32, "favicon-32.png"],
 ]) {
-  writeFileSync(join(outDir, name), png(size, (x, y, s) => brandPixel(x, y, s, maskable)));
+  const tmp = join(outDir, `_gen-${size}.png`);
+  sips(`-z ${size} ${size}`, `"${square}"`, `--out "${tmp}"`);
+  execSync(`mv "${tmp}" "${join(outDir, name)}"`);
 }
 
-console.log("Wrote PWA icons to public/icons/");
+const maskOuter = Math.round(max * 1.12);
+sips(`-p ${maskOuter} ${maskOuter}`, `"${square}"`, `--padColor ${padColor}`, `--out "${maskPad}"`);
+sips(`-z 512 512`, `"${maskPad}"`, `--out "${join(outDir, "icon-maskable-512.png")}"`);
+
+execSync(`rm -f "${square}" "${maskPad}"`);
+
+console.log("Wrote favicon + PWA icons from mbkru-brand-icon-source.png");
